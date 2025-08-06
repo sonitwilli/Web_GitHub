@@ -1,4 +1,5 @@
 import React from 'react';
+import styles from './ErrorState.module.css';
 
 interface ErrorStateProps {
   onTryAgain: () => void;
@@ -23,7 +24,7 @@ const ErrorState: React.FC<ErrorStateProps> = ({ onTryAgain }) => {
         Không tìm thấy nội dung
       </h3>
       <button
-        className="border-0 outline-unset text-base font-semibold leading-tight text-white bg-white/10 rounded-lg px-16 h-10 mt-2"
+        className={`border-0 outline-unset text-base font-semibold leading-tight text-white rounded-lg px-16 h-10 mt-2 ${styles.tryAgainButton}`}
         onClick={onTryAgain}
       >
         Nhấn để thử lại

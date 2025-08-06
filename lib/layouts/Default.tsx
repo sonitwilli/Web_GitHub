@@ -69,10 +69,6 @@ export default function DefaultLayout({ children }: Props) {
     return false;
   }, []);
 
-  const isHomePage = useMemo(() => {
-    return router.pathname === '/';
-  }, [router.pathname]);
-
   useEffect(() => {
     if (notiData && notiData.length > 0) {
       subscribeFirebaseNoti(notiData, (newNoti) => {
@@ -144,7 +140,7 @@ export default function DefaultLayout({ children }: Props) {
 
         {scrollDistance > 0 && !hasBlockedRoute && <ScrollTop />}
         <PreventKidModal />
-        {isMobileOrTablet && isHomePage && <DownloadAppControlBar />}
+        {isMobileOrTablet && <DownloadAppControlBar />}
       </main>
       <Footer />
       <SideTagButton />

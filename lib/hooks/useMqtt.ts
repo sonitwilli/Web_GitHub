@@ -17,13 +17,13 @@ export const useMqtt = () => {
   const reconnectDuration = useRef(0);
   const reconnectCount = useRef(0);
   const getRealConfigs = () => {
-    const config = localStorage.getItem(MQTT_CONFIG);
+    const config = localStorage.getItem(MQTT_CONFIG) || {};
     const mqttConfig: MqttConfigType =
-      store?.getState().mqtt.mqttConfigs || (config
+      store?.getState().mqtt.mqttConfigs || config
         ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
           JSON.parse(config)
-        : {});
+        : {};
 
     return mqttConfig;
   };

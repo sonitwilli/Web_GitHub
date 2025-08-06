@@ -8,7 +8,7 @@ const SearchingLayout = () => {
   return (
     <>
       <DefaultLayout>
-        <div className="mt-24 md:mt-26 lg:mt-32 px-4 lg:px-8">
+        <div className="mt-24 md:mt-26 lg:mt-32 px-4 lg:px-6">
           <SearchingPage />
         </div>
       </DefaultLayout>

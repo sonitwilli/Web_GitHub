@@ -238,16 +238,54 @@ const getStreamData = async ({
 // Extended response data for preview streams
 export interface PreviewResponseData {
   // Common fields
+  url?: string;
+  url_clean?: string;
+  url_dash_av1?: string;
+  url_dash_h264?: string;
+  url_dash_dolby_vision?: string;
+  url_dash_drm?: string;
+  url_dash_drm_av1?: string;
+  url_dash_drm_dolby_vision?: string;
+  url_dash_drm_h265?: string;
+  url_dash_drm_h265_hdr_10?: string;
+  url_dash_drm_h265_hdr_10_plus?: string;
+  url_dash_drm_h265_hlg?: string;
+  url_dash_drm_vp9?: string;
+  url_dash_h265?: string;
+  url_dash_h265_hdr_10?: string;
+  url_dash_h265_hdr_10_plus?: string;
+  url_dash_h265_hlg?: string;
+  url_dash_no_drm?: string;
+  url_dash_vp9?: string;
+  url_hls_av1?: string;
+  url_hls_h264?: string;
+  url_hls_dolby_vision?: string;
+  url_hls_drm?: string;
+  url_hls_drm_av1?: string;
+  url_hls_drm_dolby_vision?: string;
+  url_hls_drm_h265?: string;
+  url_hls_drm_h265_hdr_10?: string;
+  url_hls_drm_h265_hdr_10_plus?: string;
+  url_hls_drm_h265_hlg?: string;
+  url_hls_drm_vp9?: string;
+  url_hls_h265?: string;
+  url_hls_h265_hdr_10?: string;
+  url_hls_h265_hdr_10_plus?: string;
+  url_hls_h265_hlg?: string;
+  url_hls_vp9?: string;
+  url_hls_h264_hdr_10?: string;
+  url_hls_h264_hdr_10_plus?: string;
+  url_hls_h264_hlg?: string;
+  url_hls_h264_vp9?: string;
   url_dash?: string;
   url_hls?: string;
-  url_hls_h265?: string;
-  url_dash_h265?: string;
+  url_sub?: string;
+
   src?: string;
   src_h265?: {
     dash: string;
     hls: string;
   };
-  url?: string;
   enable_preview?: '0' | '1';
 
   // VOD preview fields (direct in responseData)
@@ -279,57 +317,97 @@ export interface PreviewResponseData {
   msg?: string;
   error_code?: number;
   data?: {
-    url_dash_h265_hdr_10?: string;
-    enable_p2p_quanteec?: string;
-    revalidate_span?: number;
-    url_hls_h265?: string;
-    must_revalidate?: number;
-    url_dash_dolby_vision?: string;
-    session?: string;
-    ping_multicast?: string;
-    operator?: number;
-    url_dash_drm_h265?: string;
-    ping_mqtt?: string;
+    // Basic stream URLs
+    url?: string;
+    url_clean?: string;
+    url_dash?: string;
+    url_hls?: string;
+    url_sub?: string;
+
+    // DASH URLs with different codecs
+    url_dash_av1?: string;
+    url_dash_h264?: string;
     url_dash_h265?: string;
-    url_dash_h265_hlg?: string;
-    url_hls_dolby_vision?: string;
-    ping_enc?: boolean;
-    url_hls_h265_hdr_10_plus?: string;
-    wmt?: string;
-    url_hls_h265_hdr_10?: string;
-    ping_qnet?: number;
-    is_logged_in?: number;
+    url_dash_dolby_vision?: string;
+    url_dash_vp9?: string;
+    url_dash_h265_hdr_10?: string;
     url_dash_h265_hdr_10_plus?: string;
-    mqtt_mode?: string;
-    overlay_logo?: string;
-    url_dash_drm_h265_hlg?: string;
-    merchant?: string;
-    require_vip_plan?: string;
+    url_dash_h265_hlg?: string;
+    url_dash_no_drm?: string;
+
+    // DASH DRM URLs
+    url_dash_drm?: string;
+    url_dash_drm_av1?: string;
+    url_dash_drm_h265?: string;
+    url_dash_drm_dolby_vision?: string;
+    url_dash_drm_vp9?: string;
+    url_dash_drm_h265_hdr_10?: string;
     url_dash_drm_h265_hdr_10_plus?: string;
-    require_active?: number;
-    ttl_preview?: string;
+    url_dash_drm_h265_hlg?: string;
+
+    // HLS URLs with different codecs
+    url_hls_av1?: string;
+    url_hls_h264?: string;
+    url_hls_h265?: string;
+    url_hls_dolby_vision?: string;
+    url_hls_vp9?: string;
+    url_hls_h265_hdr_10?: string;
+    url_hls_h265_hdr_10_plus?: string;
+    url_hls_h265_hlg?: string;
+    url_hls_h264_hdr_10?: string;
+    url_hls_h264_hdr_10_plus?: string;
+    url_hls_h264_hlg?: string;
+    url_hls_h264_vp9?: string;
+
+    // HLS DRM URLs
+    url_hls_drm?: string;
+    url_hls_drm_av1?: string;
+    url_hls_drm_h265?: string;
+    url_hls_drm_dolby_vision?: string;
+    url_hls_drm_vp9?: string;
+    url_hls_drm_h265_hdr_10?: string;
+    url_hls_drm_h265_hdr_10_plus?: string;
+    url_hls_drm_h265_hlg?: string;
+
+    // Stream configuration
+    session?: string;
     stream_session?: string;
+    merchant?: string;
+    is_logged_in?: number;
+    is_vip?: number;
+    audio?: string;
+    require_vip_plan?: string;
+    require_active?: number;
+    ping_enable?: boolean;
+    ping_enc?: boolean;
+    ping_multicast?: string;
+    ping_mqtt?: string;
+    ping_qnet?: number;
+    ping_session?: string;
+
+    // Content metadata
+    trailer_url?: string;
+    timeshift_url?: string;
+    tip_img?: string;
+    audio_img?: string;
+    overlay_logo?: string;
+    ttl_preview?: string;
+
+    // P2P and technical settings
+    enable_p2p_quanteec?: string;
+    content_id_p2p_quanteec?: string;
+    mqtt_mode?: string;
+    operator?: number;
+    revalidate_span?: number;
+    must_revalidate?: number;
+    wmt?: string;
+
+    // Required object message
     require_obj_msg?: {
       available?: string;
       subtitle?: string;
       title?: string;
     };
-    timeshift_url?: string;
-    url_dash_drm_h265_hdr_10?: string;
-    content_id_p2p_quanteec?: string;
-    url_hls_h265_hlg?: string;
-    ping_session?: string;
-    ping_enable?: boolean;
-    url?: string;
-    tip_img?: string;
-    audio_img?: string;
-    url_dash_no_drm?: string;
-    is_vip?: number;
-    audio?: string;
-    trailer_url?: string;
-    url_dash_drm_dolby_vision?: string;
-    url_dash?: string;
-    url_hls?: string;
   };
 }
 

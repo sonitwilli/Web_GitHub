@@ -75,7 +75,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
   const playVideo = () => {
     try {
       const finalUrl = previewHandled
-        ? dataStream?.url || dataStream?.trailer_url || getUrlToPlay()
+        ? getUrlToPlay() || dataStream?.trailer_url
         : showLoginPlayer && loginManifestUrl
         ? loginManifestUrl
         : isTimeShift && srcTimeShift

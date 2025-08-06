@@ -1,4 +1,5 @@
 import { BlockItemType } from '@/lib/api/blocks';
+import { useRouter } from 'next/router';
 import { useMemo, useEffect, useState, useRef } from 'react';
 import { SlideDirectionType } from '../slider/HandleImage';
 
@@ -8,7 +9,9 @@ interface Props {
 
 export default function BlockPlaceholder({ block }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const [itemCount, setItemCount] = useState(6);
+  const isSearchPage = router.pathname === '/tim-kiem';
 
   const blockDirection = useMemo<SlideDirectionType>(() => {
     if (
@@ -65,7 +68,7 @@ export default function BlockPlaceholder({ block }: Props) {
   }, []);
 
   return (
-    <div className="f-container">
+    <div className={isSearchPage ? "search-placeholder f-slider-container" : "f-container"}>
       <div 
         ref={containerRef}
         className="flex items-center gap-[16px] w-full flex-nowrap overflow-hidden"

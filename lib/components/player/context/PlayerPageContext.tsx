@@ -383,39 +383,46 @@ export function PlayerPageContextProvider({ children }: Props) {
 
       if (!isPreview) return false;
 
-      // Create H265 sources based on browser
-      const src_h265 = {
-        dash: '',
-        hls: '',
-      };
-
-      const { isSafari } = userAgentInfo() || {};
-
-      if (isSafari) {
-        src_h265.hls =
-          responseData?.data?.url_hls_h265 ||
-          responseData?.url_hls_h265 ||
-          responseData?.data?.url_hls ||
-          responseData?.url_hls ||
-          '';
-        src_h265.dash = '';
-      } else {
-        src_h265.dash =
-          responseData?.data?.url_dash_h265 ||
-          responseData?.url_dash_h265 ||
-          responseData?.data?.url_dash ||
-          responseData?.url_dash ||
-          '';
-        src_h265.hls = '';
-      }
-
       // Set dataStream with complete preview data for Player to work without additional config
       const previewStreamData: StreamItemType = {
-        url:
-          src_h265.hls ||
-          src_h265.dash ||
-          responseData?.url ||
-          responseData?.data?.url,
+        url_dash: responseData?.data?.url_dash || responseData?.url_dash,
+        url_dash_av1:
+          responseData?.data?.url_dash_av1 || responseData?.url_dash_av1,
+        url_dash_dolby_vision:
+          responseData?.data?.url_dash_dolby_vision ||
+          responseData?.url_dash_dolby_vision,
+        url_dash_h265:
+          responseData?.data?.url_dash_h265 || responseData?.url_dash_h265,
+        url_dash_h265_hdr_10:
+          responseData?.data?.url_dash_h265_hdr_10 ||
+          responseData?.url_dash_h265_hdr_10,
+        url_dash_h265_hdr_10_plus:
+          responseData?.data?.url_dash_h265_hdr_10_plus ||
+          responseData?.url_dash_h265_hdr_10_plus,
+        url_dash_h265_hlg:
+          responseData?.data?.url_dash_h265_hlg ||
+          responseData?.url_dash_h265_hlg,
+        url_dash_vp9:
+          responseData?.data?.url_dash_vp9 || responseData?.url_dash_vp9,
+        url_hls: responseData?.data?.url_hls || responseData?.url_hls,
+        url_hls_av1:
+          responseData?.data?.url_hls_av1 || responseData?.url_hls_av1,
+        url_hls_dolby_vision:
+          responseData?.data?.url_hls_dolby_vision ||
+          responseData?.url_hls_dolby_vision,
+        url_hls_h265:
+          responseData?.data?.url_hls_h265 || responseData?.url_hls_h265,
+        url_hls_h265_hdr_10:
+          responseData?.data?.url_hls_h265_hdr_10 ||
+          responseData?.url_hls_h265_hdr_10,
+        url_hls_h265_hdr_10_plus:
+          responseData?.data?.url_hls_h265_hdr_10_plus ||
+          responseData?.url_hls_h265_hdr_10_plus,
+        url_hls_h265_hlg:
+          responseData?.data?.url_hls_h265_hlg ||
+          responseData?.url_hls_h265_hlg,
+        url_hls_vp9:
+          responseData?.data?.url_hls_vp9 || responseData?.url_hls_vp9,
 
         // All required properties for Player functionality
         session: responseData?.data?.session || responseData?.session,

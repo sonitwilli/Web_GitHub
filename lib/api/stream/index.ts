@@ -32,6 +32,7 @@ export interface StreamItemType {
   url?: string;
   url_clean?: string;
   url_dash_av1?: string;
+  url_dash_h264?: string;
   url_dash_dolby_vision?: string;
   url_dash_drm?: string;
   url_dash_drm_av1?: string;
@@ -48,6 +49,7 @@ export interface StreamItemType {
   url_dash_no_drm?: string;
   url_dash_vp9?: string;
   url_hls_av1?: string;
+  url_hls_h264?: string;
   url_hls_dolby_vision?: string;
   url_hls_drm?: string;
   url_hls_drm_av1?: string;
@@ -62,6 +64,12 @@ export interface StreamItemType {
   url_hls_h265_hdr_10_plus?: string;
   url_hls_h265_hlg?: string;
   url_hls_vp9?: string;
+  url_hls_h264_hdr_10?: string;
+  url_hls_h264_hdr_10_plus?: string;
+  url_hls_h264_hlg?: string;
+  url_hls_h264_vp9?: string;
+  url_dash?: string;
+  url_hls?: string;
   url_sub?: string;
   warning?: string[];
   require_vip_plan?: string;

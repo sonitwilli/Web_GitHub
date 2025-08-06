@@ -70,6 +70,8 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
         url_hls_h265,
         url_hls_drm_h265,
         // 264
+        url_dash,
+        url_hls,
         url_dash_drm,
         url_hls_drm,
         url_dash_no_drm,
@@ -111,7 +113,7 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
         av1 = isDrm ? url_hls_drm_av1 : url_hls_av1;
         vp9 = isDrm ? url_hls_drm_vp9 : url_hls_vp9;
         h265 = isDrm ? url_hls_drm_h265 : url_hls_h265;
-        h264 = isDrm ? url_hls_drm : url;
+        h264 = isDrm ? url_hls_drm : url_hls || url;
       } else {
         dolby = isDrm
           ? url_dash_drm_dolby_vision || url_hls_drm_dolby_vision
@@ -135,8 +137,13 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
           ? url_dash_drm_h265 || url_hls_drm_h265
           : url_dash_h265 || url_hls_h265;
         h264 = isDrm
-          ? url_dash_drm
-          : url_dash_no_drm || url_sub || url_clean || url;
+          ? url_dash_drm || url_hls_drm
+          : url_dash_no_drm ||
+            url_dash ||
+            url_hls ||
+            url_sub ||
+            url_clean ||
+            url;
       }
       return {
         DOLBY_VISION_CODEC: dolby,

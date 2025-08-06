@@ -94,7 +94,7 @@ const SuggestList = ({
   };
 
   return (
-    <div className={`absolute left-0 right-0 z-5 h-[288px] ${styles.suggestScrollbar}`}>
+    <div className={`absolute left-0 right-0 z-5 ${styles.suggestScrollbar}`}>
       <div
         className={`suggest-scrollbar mx-auto z-1 max-w-[848px]
           bg-eerie-black rounded-[16px] mt-2 text-[15px] 2xl:text-[18px] overflow-hidden max-h-[280px]

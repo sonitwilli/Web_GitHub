@@ -86,7 +86,7 @@ const SummaryCommentPage: React.FC = () => {
     if (typingIntervalRef.current) {
       clearInterval(typingIntervalRef.current);
       typingIntervalRef.current = null;
-    }
+    } 
     isTypingRef.current = false;
   };
 
@@ -219,6 +219,7 @@ const SummaryCommentPage: React.FC = () => {
     const getUserInfo = async () => {
       if (typeof window !== 'undefined') {
         try {
+          localStorage.removeItem('isActived');
           await window?.waitForSdk?.();
           setIsIconLoaded(true);
           window?.sdk?.emit('loadSuccess', { success: true });
@@ -229,6 +230,7 @@ const SummaryCommentPage: React.FC = () => {
           if (id && idMovie) {
             // Set tab đầu tiên làm active tab mặc định
             setActiveTab(0);
+            setWithExpiry('isActived', [0], 7200 * 1000);
             fetchDataMessage(id);
           } else if (!id) {
             window?.sdk?.requestLogin?.();
@@ -571,14 +573,15 @@ const SummaryCommentPage: React.FC = () => {
   const fetchDataMessage = async (id: string) => {
     try {
       setLoading(true);
-      const tabs = await getWithExpiry('tabsSum');
-      const isActivedTab = await getWithExpiry('isActived');
+      const tabs = await getWithExpiry('tabsSum') || [];
+      const isActivedTab = await getWithExpiry('isActived') || [];
       const firstLoad = (router.query['first-load'] as string) || '1';
       const activeTabIndex = (activeTab <= -1) ? 0 : activeTab;
 
-      if ((tabs !== null && firstLoad === '0') || isActivedTab.length >= 2) {
+      if ((tabs !== null && firstLoad === '0') ||  isActivedTab && isActivedTab.length > 0 && tabs && tabs.length > 0 && isActivedTab.length >= tabs.length ) {
         setTabs(tabs);
         setLoading(false);
+        setIsReport(true);
         setMessages([
           { text: tabs[activeTabIndex].html || '', loading: false },
         ]);
@@ -625,6 +628,7 @@ const SummaryCommentPage: React.FC = () => {
           console.log('first load 2', router.query['first-load']);
 
           setMessages([{ text: newTabs[activeTabIndex]?.html || '', loading: false }]);
+          setIsReport(true);
         }
       } else {
         setLoading(false);

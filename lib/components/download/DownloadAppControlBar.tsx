@@ -62,7 +62,7 @@ export default function DownloadApp({ className }: DownloadAppProps) {
 
   return (
     <div
-      className={`fixed bottom-[16px] left-0 w-[92%] ml-[4%] z-[9999] bg-black-olive-404040 rounded-[8px] flex flex-row items-center py-[12px] px-[14px] gap-[8px] h-[64px]  ${
+      className={`fixed bottom-[16px] left-0 w-[92%] ml-[4%] z-[2] bg-black-olive-404040 rounded-[8px] flex flex-row items-center py-[12px] px-[14px] gap-[8px] h-[64px]  ${
         className || ''
       }`}
     >

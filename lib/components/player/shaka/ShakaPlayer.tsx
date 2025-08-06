@@ -167,7 +167,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   const playVideo = useCallback(
     ({ newUrl }: { newUrl?: string } = {}) => {
       const finalUrl = previewHandled
-        ? dataStream?.url || dataStream?.trailer_url || getUrlToPlay()
+        ? getUrlToPlay() || dataStream?.trailer_url
         : showLoginPlayer && loginManifestUrl
         ? loginManifestUrl
         : newUrl || getUrlToPlay();
@@ -364,7 +364,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   }
   useEffect(() => {
     const finalUrl = previewHandled
-      ? dataStream?.url || dataStream?.trailer_url || getUrlToPlay()
+      ? getUrlToPlay() || dataStream?.trailer_url
       : showLoginPlayer && loginManifestUrl
       ? loginManifestUrl
       : getUrlToPlay();
