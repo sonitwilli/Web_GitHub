@@ -37,24 +37,20 @@ export default function BlockPlaceholder({ block }: Props) {
   useEffect(() => {
     const calculateItemCount = () => {
       if (containerRef.current) {
-        const containerWidth = containerRef.current.offsetWidth;
-        const minItemWidth = 200; // Minimum width per item
-        const gap = 16; // Gap between items
+        // Calculate the current padding based on container width and screen width
+        const screenWidth = window.innerWidth;     
+        let itemsPerRow: number;
         
-        // Calculate how many full items can fit
-        const maxItems = Math.floor((containerWidth + gap) / (minItemWidth + gap));
-        
-        // Ensure only even numbers: 2, 4, or 6
-        let evenCount;
-        if (maxItems >= 6) {
-          evenCount = 6;
-        } else if (maxItems >= 4) {
-          evenCount = 4;
+        // Use screen width breakpoints to match CSS media queries exactly
+        if (screenWidth >= 1280) {
+          itemsPerRow = 6;
+        } else if (screenWidth >= 768) {
+          itemsPerRow = 4;
         } else {
-          evenCount = 2;
+          itemsPerRow = 2;
         }
         
-        setItemCount(evenCount);
+        setItemCount(itemsPerRow);
       }
     };
 
