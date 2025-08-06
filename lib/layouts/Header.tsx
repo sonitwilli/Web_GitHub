@@ -97,7 +97,13 @@ const defaultMenu: MenuItem[] = [
 ];
 
 export default function Header() {
-  const [openMobileMenu, setOpenMobileMenu] = useState(false);
+  const headerContext = useContext(HeaderContext);
+  const [localOpenMobileMenu, setLocalOpenMobileMenu] = useState(false);
+  
+  // Use context value if available, otherwise use local state
+  const openMobileMenu = headerContext?.openMobileMenu ?? localOpenMobileMenu;
+  const setOpenMobileMenu = headerContext?.setOpenMobileMenu ?? setLocalOpenMobileMenu;
+  
   const [shouldHideHeaderAds, setShouldHideHeaderAds] = useState(false);
   const { scrollDistance } = useScroll();
   const { updateActiveMenuItem, clickLinkItem } = useMenu();
@@ -298,9 +304,7 @@ export default function Header() {
   }, [router, menus]);
 
   return (
-    <HeaderContext.Provider
-      value={{ menus, activeMenu, openMobileMenu, setOpenMobileMenu }}
-    >
+    <>
       <header
         className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-black tablet:bg-transparent ${
           scrollDistance > 300 || isCategoryPage ? '!bg-black' : ''
@@ -434,6 +438,6 @@ export default function Header() {
 
       {!shouldHideHeaderAds && <HeaderAds />}
       <HomepageBannerAds />
-    </HeaderContext.Provider>
+    </>
   );
 }

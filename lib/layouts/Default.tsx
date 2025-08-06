@@ -1,6 +1,6 @@
 import useScroll from '@/lib/hooks/useScroll';
 import Footer from './Footer';
-import Header from './Header';
+import Header, { HeaderContext } from './Header';
 import dynamic from 'next/dynamic';
 import useScreenSize from '../hooks/useScreenSize';
 import { useContext, useEffect, useMemo, useState } from 'react';
@@ -48,6 +48,7 @@ export default function DefaultLayout({ children }: Props) {
   const { notiData } = useAppSelector((state) => state.firebase);
   const [detailNoti, setDetailNoti] = useState<DetailMessageItem | null>(null);
   const { hasBlockedRoute } = useNetwork();
+  const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   // Chỉ hiện ở Mobile và Tablet
   const isMobileOrTablet = useMemo(() => {
@@ -94,7 +95,7 @@ export default function DefaultLayout({ children }: Props) {
   const { scrollDistance } = useScroll();
   const { width } = useScreenSize();
   const appCtx = useContext(AppContext);
-  const { hoveredBlock: block, hoveredSlide: slide } = appCtx;
+  const { hoveredBlock: block, hoveredSlide: slide, menus } = appCtx;
 
   const isPageNotMinHeight = useMemo(() => {
     if (router.isReady) {
@@ -116,7 +117,9 @@ export default function DefaultLayout({ children }: Props) {
   }, [isPageNotMinHeight]);
 
   return (
-    <>
+    <HeaderContext.Provider
+      value={{ menus, activeMenu: undefined, openMobileMenu, setOpenMobileMenu }}
+    >
       <Viewport />
       <Header />
       <main className={`${isMinHeightScreen ? 'min-h-screen' : ''}`}>
@@ -151,6 +154,6 @@ export default function DefaultLayout({ children }: Props) {
           <NetworkError />
         </>
       )}
-    </>
+    </HeaderContext.Provider>
   );
 }

@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { getUserAgent } from '@/lib/utils/methods';
 import Image from 'next/image';
+import { HeaderContext } from '@/lib/layouts/Header';
 
 interface DownloadAppProps {
   className?: string;
@@ -17,13 +18,15 @@ interface WindowWithGtag extends Window {
 
 export default function DownloadApp({ className }: DownloadAppProps) {
   const router = useRouter();
+  const headerCtx = useContext(HeaderContext);
+  const { openMobileMenu } = headerCtx;
   const [dynamicLink, setDynamicLink] = useState({
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/ung-dung/download`,
     text: 'Tải xuống',
   });
 
-  // Ẩn ở một số trang đặc biệt
-  const shouldHide = router.pathname.includes('/minigame/vong-quay-may-man');
+  // Ẩn ở một số trang đặc biệt hoặc khi mobile menu mở
+  const shouldHide = router.pathname.includes('/minigame/vong-quay-may-man') || openMobileMenu;
 
   // Lấy dynamic link từ API
   const getDynamicLink = useCallback(async () => {
