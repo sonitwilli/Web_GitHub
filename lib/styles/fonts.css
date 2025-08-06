@@ -1,0 +1,97 @@
+/* SF Pro Display */
+@font-face {
+  font-family: 'SFProDisplay';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/SF-UI-Display-Light.ttf);
+}
+
+@font-face {
+  font-family: 'SFProDisplay';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/SF-UI-Display-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'SFProDisplay';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/SF-UI-Display-Semibold.ttf);
+}
+
+@font-face {
+  font-family: 'SFProDisplay';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(fonts/SF-UI-Display-Bold.ttf);
+}
+
+@font-face {
+  font-family: 'SFProDisplay';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(fonts/SF-Pro-Display-Heavy.otf);
+}
+
+/* Roboto */
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-Light.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-Regular.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-Medium.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-SemiBold.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-Bold.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-ExtraBold.ttf);
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url(fonts/roboto/Roboto-Black.ttf);
+}

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="FPT Play" />
+    <meta
+      name="keywords"
+      content="Xem trực tiếp bóng đá, thể thao, Xem Ngoại Hạng Anh, Serie A, World Cup, Việt Nam, Park Hang-Seo, Messi, Ronaldo, Barcelona, Juventus, Manchester United, Liverpool"
+    />
+    <meta name="viewport" content="width=960, user-scalable=no" />
+    <title>Trực Tiếp | FPT Play</title>
+    <meta content="" name="" />
+    <meta property="fb:app_id" content="1583620945254783" />
+    <link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+    <link
+      href="https://fptplay.vn/favicon.ico"
+      rel="shortcut icon"
+      type="image/x-icon"
+    />
+    <meta property="og:site_name" content="fptplay.vn" />
+    <link rel="alternate" href="https://fptplay.vn" hreflang="vi-vn" />
+
+    <meta name="description" content="Trực Tiếp | FPT Play" />
+    <meta property="og:title" content="Trực Tiếp | FPT Play" />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content="https://fptplay.vn/bong-da.html" />
+    <meta
+      property="og:image"
+      content="https://fptplay.vn/images/SEO-images/cover-img-n-x.jpg"
+    />
+    <meta property="og:description" content="Trực Tiếp | FPT Play" />
+
+    <meta name="DC.Title" content="Trực Tiếp | FPT Play" />
+    <meta name="DC.Creator" content="Fptplay" />
+    <meta
+      name="DC.Subject"
+      content="Xem trực tiếp bóng đá, thể thao, Xem Ngoại Hạng Anh, Serie A, World Cup, Việt Nam, Park Hang-Seo, Messi, Ronaldo, Barcelona, Juventus, Manchester United, Liverpool"
+    />
+    <meta name="DC.Description" content="Trực Tiếp | FPT Play" />
+    <meta name="DC.Publisher" content="Fptplay" />
+    <meta name="DC.Contributor" content="Fptplay" />
+    <meta name="DC.Date" content="07/06/2019" />
+    <meta name="DC.type" scheme="DCTERMS.DCMIType" content="Text" />
+    <meta name="DC.format" content="text/html; charset=UTF-8" />
+    <meta name="DC.format" content="89804 bytes" />
+    <meta
+      name="DC.identifier"
+      scheme="DCTERMS.URI"
+      content=" https://fptplay.vn"
+    />
+    <meta name="DC.language" scheme="DCTERMS.RFC1766" content="vi" />
+    <meta name="geo.region" content="VN" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/vue-toastification@1.7.14/dist/index.css"
+    />
+    <script src="https://unpkg.com/vue-toastification@1.7.14/dist/umd/index.min.js"></script>
+    <!-- Google Analytics -->
+    <script>
+      ;(function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r
+        ;(i[r] =
+          i[r] ||
+          function () {
+            ;(i[r].q = i[r].q || []).push(arguments)
+          }),
+          (i[r].l = 1 * new Date())
+        ;(a = s.createElement(o)), (m = s.getElementsByTagName(o)[0])
+        a.async = 1
+        a.src = g
+        m.parentNode.insertBefore(a, m)
+      })(
+        window,
+        document,
+        'script',
+        'https://www.google-analytics.com/analytics.js',
+        'ga'
+      )
+
+      ga('create', 'UA-124500027-1', 'auto')
+      ga('set', 'page', window.location.pathname)
+      ga('send', 'pageview')
+    </script>
+    <!-- End Google Analytics -->
+  </head>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+    }
+
+    .container {
+      background: no-repeat top center;
+      background-size: 100% 100%;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ice {
+      height: 264px;
+      width: 100%;
+      background: url(/landing-tructiep/images/ice-1.png) no-repeat top center;
+      position: absolute;
+      bottom: 0px;
+      z-index: 2;
+      background-size: 100% 100%;
+    }
+
+    .tg-left {
+      background: url(/landing-tructiep/images/tg-l.png) no-repeat top left;
+      width: 211px;
+      height: 815px;
+      position: absolute;
+      bottom: 52px;
+      left: 133px;
+      z-index: 1;
+    }
+
+    .tg-right {
+      background: url(/landing-tructiep/images/tg-r.png) no-repeat top left;
+      width: 212px;
+      height: 815px;
+      position: absolute;
+      bottom: 52px;
+      right: 153px;
+      z-index: 1;
+    }
+
+    .wrapper-video {
+      width: 700px;
+      height: 80vh;
+      position: absolute;
+      z-index: 3;
+      left: 50%;
+      top: 15px;
+      margin-left: -350px;
+    }
+
+    .wrapper-video .video {
+      width: 700px;
+      height: 395px;
+      /* box-shadow: 0 10px 16px 0 rgba(0,0,0,0.6),0 6px 20px 0 rgba(0,0,0,0.6); */
+    }
+
+    .beer {
+      display: none;
+    }
+
+    .button {
+      width: 320px;
+      margin-left: 28%;
+      text-align: center;
+      position: absolute;
+      bottom: 0;
+    }
+
+    .btn {
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-weight: bold;
+      font-size: 1.2em;
+      padding: 10px 10px;
+      text-decoration: none;
+      width: 300px;
+      display: block;
+      border-radius: 5px;
+      text-align: center;
+      margin-bottom: 20px;
+      background-size: 100% 100%;
+      background: -moz-linear-gradient(45deg, #ec211d 0%, #e85b2d 100%);
+      background: -webkit-linear-gradient(45deg, #ec211d 0%, #e85b2d 100%);
+      background: linear-gradient(45deg, #ec211d 0%, #e85b2d 100%);
+      filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ec211d', endColorstr='#e85b2d', GradientType=1);
+      /* box-shadow: 0 5px 10px 0 rgba(0,0,0,0.6),0 5px 10px 0 rgba(0,0,0,0.6); */
+    }
+
+    .btn:hover {
+      background: #ec211d;
+    }
+
+    .btn span {
+      display: inline-block;
+      display: none;
+    }
+
+    .disable {
+      background: #2c2c2e !important;
+      color: #616161;
+      cursor: not-allowed;
+      text-decoration: none;
+    }
+
+    .disable span {
+      display: inline-block;
+    }
+
+    @media screen and (min-width: 1500px) and (max-width: 1600px) {
+      .container {
+        background-size: 100% 100%;
+      }
+
+      .ice {
+        height: 210px;
+      }
+
+      .tg-left {
+        width: 160px;
+        height: 615px;
+        bottom: 42px;
+        left: 112px;
+        background-size: 100% 100%;
+      }
+
+      .tg-right {
+        width: 160px;
+        height: 615px;
+        bottom: 42px;
+        right: 112px;
+        background-size: 100% 100%;
+      }
+
+      .wrapper-video {
+        width: 587px;
+        top: 15px;
+        margin-left: -288px;
+      }
+
+      .wrapper-video .video {
+        width: 587px;
+        height: 330px;
+      }
+    }
+
+    @media screen and (min-width: 1367px) and (max-width: 1499px) {
+      .container {
+        background-size: 100% 100%;
+      }
+
+      .ice {
+        height: 190px;
+        width: 102%;
+      }
+
+      .tg-left {
+        width: 140px;
+        height: 540px;
+        bottom: 40px;
+        left: 98px;
+        background-size: 100% 100%;
+      }
+
+      .tg-right {
+        width: 140px;
+        height: 540px;
+        bottom: 40px;
+        right: 98px;
+        background-size: 100% 100%;
+      }
+
+      .wrapper-video {
+        width: 587px;
+        top: 15px;
+        margin-left: -290px;
+      }
+
+      .wrapper-video .video {
+        width: 587px;
+        height: 330px;
+      }
+
+      .button {
+        width: 320px;
+        margin-left: 24%;
+      }
+
+      .btn {
+        padding: 10px 7px;
+        font-size: 18px;
+      }
+    }
+
+    @media screen and (min-width: 999px) and (max-width: 1367px) {
+      .container {
+        background-size: 100% 100%;
+      }
+
+      .ice {
+        height: 190px;
+        width: 102%;
+      }
+
+      .tg-left {
+        width: 140px;
+        height: 540px;
+        bottom: 40px;
+        left: 98px;
+        background-size: 100% 100%;
+      }
+
+      .tg-right {
+        width: 140px;
+        height: 540px;
+        bottom: 40px;
+        right: 98px;
+        background-size: 100% 100%;
+      }
+
+      .wrapper-video {
+        width: 500px;
+        top: 15px;
+        margin-left: -250px;
+      }
+
+      .wrapper-video .video {
+        width: 500px;
+        height: 281px;
+      }
+
+      .button {
+        width: 320px;
+        margin-left: 20%;
+      }
+
+      .btn {
+        padding: 10px 7px;
+        font-size: 18px;
+      }
+    }
+
+    @media screen and (min-width: 480px) and (max-width: 998px) {
+      .container {
+        background-size: 100% 100% !important;
+        background: #ddeef2 no-repeat top center;
+      }
+
+      .mb-footer {
+        background-size: 100% auto !important;
+        background: no-repeat bottom center;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 2;
+        bottom: 0px;
+        left: 0px;
+      }
+
+      .button {
+        margin: 60px auto 0px auto;
+      }
+
+      .ice {
+        height: 360px;
+        background-size: contain;
+        background-position: -188px 30px;
+      }
+
+      .tg-left {
+        width: 173px;
+        height: 700px;
+        bottom: -5px;
+        left: 80px;
+        background-size: 100% 100%;
+        -ms-transform: rotate(10deg);
+        /* IE 9 */
+        -webkit-transform: rotate(10deg);
+        /* Safari prior 9.0 */
+        transform: rotate(10deg);
+      }
+
+      .tg-right {
+        width: 173px;
+        height: 700px;
+        bottom: -95px;
+        left: 380px;
+        background-size: 100% 100%;
+        -ms-transform: rotate(-16deg);
+        /* IE 9 */
+        -webkit-transform: rotate(-16deg);
+        /* Safari prior 9.0 */
+        transform: rotate(-16deg);
+      }
+
+      .wrapper-video {
+        width: 90%;
+        top: 50px;
+        margin-left: -45%;
+      }
+
+      .wrapper-video .video {
+        width: 100%;
+        height: 486px;
+      }
+
+      .beer {
+        background: url(/landing-tructiep/images/beer.png) no-repeat top left;
+        background-size: 100% 100%;
+        width: 300px;
+        height: 470px;
+        position: absolute;
+        bottom: 52px;
+        right: 70px;
+        z-index: 1;
+        display: block;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .button .btn {
+        width: 50%;
+        margin-left: 24%;
+      }
+
+      .btn {
+        padding: 20px 7px;
+      }
+    }
+
+    @media screen and (max-width: 999px) and (orientation: landscape) {
+      .container {
+        background-size: cover !important;
+        background: #ddeef2 no-repeat top center;
+      }
+    }
+
+    @media (max-device-width: 960px) and (orientation: landscape) {
+      .tg-left,
+      .tg-right,
+      .beer {
+        display: none;
+      }
+
+      .wrapper-video {
+        width: 60%;
+        top: 20px;
+        margin-left: -30%;
+      }
+
+      .wrapper-video .video {
+        height: 328px;
+      }
+
+      .button {
+        width: 280px;
+        margin: 20px auto;
+      }
+
+      .button .btn {
+        width: 280px;
+        font-size: 1em;
+      }
+    }
+
+    .no-btn {
+      background: none;
+    }
+
+    .no-btn:hover {
+      color: #e85b2d;
+      background: none;
+    }
+    .cache-image {
+      display: none;
+    }
+    .no-internet-toast-container.Vue-Toastification__toast {
+      overflow: visible;
+      background: transparent;
+      box-shadow: none;
+      min-height: 0;
+    }
+    .no-internet-toast-container .no-internet-toast {
+      position: fixed;
+      top: calc(80px - 1em - 4px);
+      left: auto;
+      right: calc(40px - 1em - 4px);
+      background: #1f1f1ff2;
+      border-radius: 16px;
+      padding: 24px;
+      z-index: 10000;
+      width: 440px;
+      max-width: 440px;
+      display: flex;
+      align-items: center;
+      user-select: none;
+    }
+    .no-internet-toast-container .no-internet-toast .no-internet-icon {
+      margin-right: 8px;
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+    }
+    .no-internet-toast-container .no-internet-toast .no-internet-content {
+      font-size: 20px;
+      line-height: 24px;
+      font-weight: 500;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 2;
+    }
+    @media screen and (max-device-width: 600px) {
+      .Vue-Toastification__container.top-left,
+      .Vue-Toastification__container.top-right,
+      .Vue-Toastification__container.top-center {
+        top: 0 !important;
+        right: 0 !important;
+        width: 100%;
+        max-width: 100%;
+      }
+      .Vue-Toastification__container .Vue-Toastification__toast {
+        width: 100% !important;
+        max-width: 100%;
+        border-radius: 0px !important;
+        margin-bottom: 0.5rem !important;
+      }
+      .no-internet-toast-container .no-internet-toast {
+        width: calc(100vw - 30px);
+        max-width: 80%;
+        top: 72px;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+      .no-internet-toast-container .no-internet-toast .no-internet-icon {
+        width: 100px;
+        height: 100px;
+        margin-right: 16px;
+      }
+      .no-internet-toast-container .no-internet-toast .no-internet-content {
+        font-size: 40px;
+        line-height: unset;
+      }
+    }
+  </style>
+
+  <body>
+    <div class="container" id="container" onclick="clickQC()">
+      <div class="wrapper-video">
+        <div class="video">
+          <ins
+            class="adsplay-placement adsplay-placement-relative"
+            data-aplpm="11010801-11030801"
+          ></ins>
+        </div>
+        <div class="button" id="button">
+          <a id="button1" class="btn disable" onclick="event.stopPropagation()"
+            ><span></span
+          ></a>
+          <a id="button2" class="btn disable" onclick="event.stopPropagation()"
+            ><span></span
+          ></a>
+          <a id="button3" class="btn disable" onclick="event.stopPropagation()"
+            ><span></span
+          ></a>
+        </div>
+      </div>
+      <img class="cache-image" src="/images/no-internet/no-internet.svg" />
+      <!--  <div id="mb-footer" class="mb-footer"></div>-->
+    </div>
+
+    <script>
+      let settingFromCookie = ''
+      let expireCookie = 14400
+      try {
+        const cookies = document.cookie
+        const cookiesArr = cookies.split(';')
+        const settingCookie = cookiesArr.find((item) =>
+          item.includes('setting_welcome')
+        )
+        const settingArr = settingCookie.split('=')
+        settingFromCookie = settingArr && settingArr[1] ? settingArr[1] : ''
+
+        const expireWelcomeCookie = cookiesArr.find((item) =>
+          item.includes('expire_welcome')
+        )
+        const expireWelcomeArr = expireWelcomeCookie.split('=')
+        expireCookie =
+          expireWelcomeArr && expireWelcomeArr[1] ? expireWelcomeArr[1] : 14400
+      } catch (error) {}
+
+      var setting = settingFromCookie
+      if (!setting) {
+        window.location.href = '/'
+      } else {
+        setting = JSON.parse(decodeURIComponent(settingFromCookie))
+        if (setting[0]) {
+          var bg_1_pc = setting[0].landscape
+          var bg_1_mb = setting[0].portrait
+        }
+        if (setting[1]) {
+          var bg_2_pc = setting[1].landscape
+          var bg_2_mb = setting[1].portrait
+        }
+
+        // if (window.location.href.includes("dev") || window.location.href.includes("my.fptplay")) {
+        //     setting[0].ads_url = '37605'
+        //     var flight_id_1_pc = setting[0].ads_url;
+        //     var flight_id_1_mb = setting[0].ads_url;
+        //     var flight_id_2_pc = setting[0].ads_url;
+        //     var flight_id_2_mb = setting[0].ads_url;
+        // } else {
+        var flightIdAds = setting[0].ads_url.substring(
+          setting[0].ads_url.indexOf('flightId=') + 9
+        )
+        var flight_id_1_pc = flightIdAds
+        var flight_id_1_mb = flightIdAds
+        var flight_id_2_pc = flightIdAds
+        var flight_id_2_mb = flightIdAds
+        // }
+      }
+
+      function shuffle(array) {
+        var currentIndex = array.length,
+          temporaryValue,
+          randomIndex
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+          // Pick a remaining element...
+          randomIndex = Math.floor(Math.random() * currentIndex)
+          currentIndex -= 1
+          // And swap it with the current element.
+          temporaryValue = array[currentIndex]
+          array[currentIndex] = array[randomIndex]
+          array[randomIndex] = temporaryValue
+        }
+        return array
+      }
+
+      // Used like so
+      var arr = []
+      // const time = new Date();
+      // var hours = time.getHours();
+      // console.log(hours);
+      // if(parseInt(hours) > 12){
+      if (screen.width < 999) {
+        // Mobile
+        for (var i = 0; i < 1; i++) {
+          arr.push(flight_id_1_mb) //Oxy
+        }
+        for (var i = 0; i < 1; i++) {
+          arr.push(flight_id_2_mb) //Oxy
+        }
+      } else {
+        //Desktop
+        for (var i = 0; i < 1; i++) {
+          arr.push(flight_id_1_pc) //Oxy
+        }
+        for (var i = 0; i < 1; i++) {
+          arr.push(flight_id_2_pc) //Oxy
+        }
+      }
+      // }
+      if (arr.length > 0) arr = shuffle(arr)
+      var flightId = arr[0]
+
+      function change() {
+        console.log(flightId)
+        if (flightId == flight_id_1_pc || flightId == flight_id_1_mb) {
+          //Desktop Oxy
+          // console.log('oxy');
+          if (screen.width >= 999) {
+            document.getElementById('container').style.backgroundImage =
+              'url(' + bg_1_pc + ')'
+            // document.getElementById('button').style.marginTop = '70%';
+          } else {
+            document.getElementById('container').style.backgroundImage =
+              'url(' + bg_1_mb + ')'
+            // document.getElementById('button').style.marginTop = '70%';
+          }
+        } else {
+          //Shopee
+          // console.log('shopee');
+          if (screen.width >= 999) {
+            document.getElementById('container').style.backgroundImage =
+              'url(' + bg_2_pc + ')'
+            // document.getElementById('button').style.marginTop = '70%';
+          } else {
+            document.getElementById('container').style.backgroundImage =
+              'url(' + bg_2_mb + ')'
+            // document.getElementById('button').style.marginTop = '70%';
+          }
+        }
+      }
+
+      function clickQC() {
+        if (flightId == flight_id_1_pc || flightId == flight_id_1_mb) {
+          //Honda
+          // window.open("https://clk.ambientdsp.com/track/clko?vc=gaj&fid=1639131165&crid=1639131271&ts=[timestamp]&rnd=[adb_random_number]", '_blank');
+        } else if (flightId == flight_id_2_pc || flightId == flight_id_2_mb) {
+          //Tiger
+          // window.open("https://clk.ambientdsp.com/track/clko?vc=gaj&fid=1639131165&crid=1639131271&ts=[timestamp]&rnd=[adb_random_number]***", '_blank');
+        }
+      }
+
+      change()
+
+      function link(type, id) {
+        var url = ''
+        switch (type) {
+          case 'home':
+            url = '/trang/home'
+            break
+          case 'event':
+            url = '/su-kien/' + id + '?type=event'
+            break
+          case 'eventtv':
+            url = '/su-kien/' + id + '?type=eventtv'
+            break
+          case 'vod':
+            url = '/xem-video/' + id
+            break
+          case 'livetv':
+            url = 'xem-truyen-hinh/' + id
+            break
+          default:
+            url = '/trang/home'
+        }
+        return url
+      }
+
+      function setTime() {
+        if (setting) {
+          localStorage.setItem('view_ads', 'OK')
+          if (setting[0]) {
+            var timeCountdown1 = setting[0].countdown
+            var textButton1 = setting[0].text
+            var linkButton1 = link(setting[0].type, setting[0].object_id)
+            var textButtonFinal1 = textButton1
+            if (timeCountdown1 > 1) {
+              textButtonFinal1 += ' <span>(' + timeCountdown1 + ')</span>'
+            } else {
+              document.getElementById('button1').classList.remove('disable')
+            }
+            document.getElementById('button1').innerHTML = textButtonFinal1
+          }
+          if (setting[1]) {
+            var timeCountdown2 = setting[1].countdown
+            var textButton2 = setting[1].text
+            var linkButton2 = link(setting[1].type, setting[1].object_id)
+            var textButtonFinal2 = textButton2
+            if (timeCountdown2 > 1) {
+              textButtonFinal2 += ' <span>(' + timeCountdown2 + ')</span>'
+            } else {
+              document.getElementById('button2').classList.remove('disable')
+            }
+            document.getElementById('button2').innerHTML = textButtonFinal2
+          }
+          if (setting[2]) {
+            var timeCountdown3 = setting[2].countdown
+            var textButton3 = setting[2].text
+            var linkButton3 = link(setting[2].type, setting[2].object_id)
+            var textButtonFinal3 = textButton3
+            if (timeCountdown3 > 1) {
+              textButtonFinal3 += ' <span>(' + timeCountdown3 + ')</span>'
+            } else {
+              document.getElementById('button3').classList.remove('disable')
+            }
+            document.getElementById('button3').innerHTML = textButtonFinal3
+          }
+
+          if (timeCountdown1 != undefined) {
+            interval1 = setInterval(function () {
+              if (timeCountdown1 > 1) {
+                timeCountdown1--
+                document.getElementById('button1').innerHTML =
+                  textButton1 + ' <span>(' + timeCountdown1 + ')</span>'
+              } else {
+                clearInterval(interval1)
+                document.getElementById('button1').classList.remove('disable')
+                document.getElementById('button1').innerHTML = textButton1
+                document
+                  .getElementById('button1')
+                  .setAttribute('href', '/trang/home')
+              }
+            }, 1000)
+          } else {
+            document.getElementById('button1').style.display = 'none'
+          }
+
+          if (timeCountdown2 != undefined) {
+            interval2 = setInterval(function () {
+              if (timeCountdown2 > 1) {
+                timeCountdown2--
+                document.getElementById('button2').innerHTML =
+                  textButton2 + ' <span>(' + timeCountdown2 + ')</span>'
+              } else {
+                clearInterval(interval2)
+                document.getElementById('button2').classList.remove('disable')
+                document.getElementById('button2').innerHTML = textButton2
+                document
+                  .getElementById('button2')
+                  .setAttribute('href', linkButton2)
+              }
+            }, 1000)
+          } else {
+            document.getElementById('button2').style.display = 'none'
+          }
+
+          if (timeCountdown3 != undefined) {
+            interval3 = setInterval(function () {
+              if (timeCountdown3 > 1) {
+                timeCountdown3--
+                document.getElementById('button3').innerHTML =
+                  textButton3 + ' <span>(' + timeCountdown3 + ')</span>'
+              } else {
+                clearInterval(interval3)
+                document.getElementById('button3').classList.remove('disable')
+                document.getElementById('button3').innerHTML = textButton3
+                document
+                  .getElementById('button3')
+                  .setAttribute('href', linkButton3)
+              }
+            }, 1000)
+          } else {
+            document.getElementById('button3').style.display = 'none'
+          }
+        }
+      }
+
+      function loadAds() {
+        if (typeof window.InitAdsPlayBanner === 'function') {
+          window.InitAdsPlayBanner()
+          return
+        }
+        var scr = document.createElement('script')
+        scr.src = 'https://ads.fptplay.vn/sdk/v2/display.js'
+        scr.onload = function () {
+          window.InitAdsPlayBanner()
+        }
+        document.body.appendChild(scr)
+        setTime()
+      }
+      if (document.readyState == 'loading') {
+        document.addEventListener('DOMContentLoaded', loadAds)
+      } else {
+        loadAds()
+      }
+
+      var countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4
+      window.addEventListener('load', () => {
+        intervaltohome = setInterval(function () {
+          console.log(countdownToHome)
+          if (countdownToHome > 0) {
+            if (document.visibilityState === 'visible') {
+              countdownToHome--
+            }
+          } else {
+            clearInterval(intervaltohome)
+            window.location.href = '/trang/home'
+          }
+        }, 1000)
+      })
+
+      window.addEventListener('beforeunload', () => {
+        countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4
+      })
+
+      //Tracking
+      function randomUuidv4() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+          /[xy]/g,
+          function (c) {
+            const r = (Math.random() * 16) | 0,
+              v = c === 'x' ? r : (r & 0x3) | 0x8
+            return v.toString(16)
+          }
+        )
+      }
+
+      function getBrowserDetail() {
+        let module = {
+          options: [],
+          header: [
+            navigator.platform,
+            navigator.userAgent,
+            navigator.appVersion,
+            navigator.vendor,
+            window.opera,
+          ],
+          dataos: [
+            {
+              name: 'Windows Phone',
+              value: 'Windows Phone',
+              version: 'OS',
+              mobile: true,
+            },
+            {
+              name: 'Windows',
+              value: 'Win',
+              version: 'NT',
+              mobile: false,
+            },
+            {
+              name: 'iPhone',
+              value: 'iPhone',
+              version: 'OS',
+              mobile: true,
+            },
+            {
+              name: 'iPad',
+              value: 'iPad',
+              version: 'OS',
+              mobile: true,
+            },
+            {
+              name: 'Kindle',
+              value: 'Silk',
+              version: 'Silk',
+              mobile: true,
+            },
+            {
+              name: 'Android',
+              value: 'Android',
+              version: 'Android',
+              mobile: true,
+            },
+            {
+              name: 'PlayBook',
+              value: 'PlayBook',
+              version: 'OS',
+              mobile: false,
+            },
+            {
+              name: 'BlackBerry',
+              value: 'BlackBerry',
+              version: '/',
+              mobile: false,
+            },
+            {
+              name: 'MacOS',
+              value: 'Mac',
+              version: 'OS X',
+              mobile: false,
+            },
+            {
+              name: 'Linux',
+              value: 'Linux',
+              version: 'rv',
+              mobile: false,
+            },
+            {
+              name: 'Palm',
+              value: 'Palm',
+              version: 'PalmOS',
+              mobile: false,
+            },
+          ],
+          databrowser: [
+            {
+              name: 'Cốc Cốc',
+              value: 'coc_coc_browser',
+              version: 'coc_coc_browser',
+            },
+            {
+              name: 'Chrome',
+              value: 'Chrome',
+              version: 'Chrome',
+            },
+            {
+              name: 'Firefox',
+              value: 'Firefox',
+              version: 'Firefox',
+            },
+            {
+              name: 'Safari',
+              value: 'Safari',
+              version: 'Version',
+            },
+            {
+              name: 'Internet Explorer',
+              value: 'MSIE',
+              version: 'MSIE',
+            },
+            {
+              name: 'Opera',
+              value: 'Opera',
+              version: 'Opera',
+            },
+            {
+              name: 'BlackBerry',
+              value: 'CLDC',
+              version: 'CLDC',
+            },
+            {
+              name: 'Mozilla',
+              value: 'Mozilla',
+              version: 'Mozilla',
+            },
+          ],
+          init: function () {
+            var agent = this.header.join(' '),
+              os = this.matchItem(agent, this.dataos),
+              browser = this.matchItem(agent, this.databrowser)
+
+            return {
+              os: os,
+              browser: browser,
+            }
+          },
+          matchItem: function (string, data) {
+            let i = 0,
+              j = 0,
+              html = '',
+              regex,
+              regexv,
+              match,
+              matches,
+              version
+
+            for (i = 0; i < data.length; i += 1) {
+              regex = new RegExp(data[i].value, 'i')
+              match = regex.test(string)
+              if (match) {
+                regexv = new RegExp(data[i].version + '[- /:;]([\\d._]+)', 'i')
+                matches = string.match(regexv)
+                version = ''
+                if (matches) {
+                  if (matches[1]) {
+                    matches = matches[1]
+                  }
+                }
+                if (matches) {
+                  matches = matches.split(/[._]+/)
+                  for (j = 0; j < matches.length; j += 1) {
+                    if (j === 0) {
+                      version += matches[j] + '.'
+                    } else {
+                      version += matches[j]
+                    }
+                  }
+                } else {
+                  version = '0'
+                }
+                return {
+                  name: data[i].name,
+                  version: parseFloat(version),
+                  mobile: data[i].mobile !== undefined ? data[i].mobile : null,
+                }
+              }
+            }
+            return {
+              name: 'unknown',
+              version: 0,
+            }
+          },
+        }
+        return module.init()
+      }
+
+      function getTimeZone() {
+        let offset = new Date().getTimezoneOffset()
+        let hours = Math.floor(Math.abs(offset) / 60)
+        let hoursStr = hours < 10 ? '0' + hours : hours
+        let minutes = Math.abs(offset) - hours * 60
+        let minutesStr = minutes < 10 ? '0' + minutes : minutes
+        let prefix = offset < 0 ? '+' : '-'
+        return 'UTC' + prefix + hoursStr + ':' + minutesStr
+      }
+
+      function getDateTime() {
+        const a = new Date()
+        return (
+          a.getFullYear() +
+          '-' +
+          (parseInt(a.getMonth()) + 1 < 10
+            ? '0' + (parseInt(a.getMonth()) + 1)
+            : parseInt(a.getMonth()) + 1) +
+          '-' +
+          (a.getDate() < 10 ? '0' + a.getDate() : a.getDate()) +
+          ' ' +
+          (a.getHours() < 10 ? '0' + a.getHours() : a.getHours()) +
+          ':' +
+          (a.getMinutes() < 10 ? '0' + a.getMinutes() : a.getMinutes()) +
+          ':' +
+          (a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds()) +
+          '.' +
+          a.getMilliseconds()
+        )
+      }
+
+      function commonParams() {
+        let deviceId = localStorage.getItem('deviceId') //Lấy chuỗi Id thiết bị lưu trong local storage
+        if (!deviceId) {
+          //Nếu chưa lưu thì tạo mới 1 chuỗi bằng random và lưu xuống
+          deviceId = randomUuidv4()
+          localStorage.setItem('deviceId', deviceId)
+        }
+        let tabId = sessionStorage.getItem('tabId') //Lấy chuỗi Id thiết bị lưu trong local storage
+        if (!tabId) {
+          //Nếu chưa lưu thì tạo mới 1 chuỗi bằng random và lưu xuống
+          tabId = new Date().getTime()
+          sessionStorage.setItem('tabId', tabId)
+        }
+        let eventId = randomUuidv4()
+        let browsers = getBrowserDetail() || {}
+        return {
+          p: 'web-playfpt',
+          av: '1.0.1',
+          tna: 'fplay',
+          tv: '1.1.0',
+          eid: eventId,
+          did: deviceId,
+          tz: getTimeZone(),
+          dtm: getDateTime(),
+          res: screen.width + 'x' + screen.height,
+          aid:
+            window.location.host == 'fptplay.vn'
+              ? 'fptplay:production'
+              : 'fptplay_test',
+          scid: '/bong-da',
+          ast: tabId,
+          dmf: browsers.browser.name,
+          dml: browsers.browser.version,
+          ost: browsers.os.name,
+          ov: browsers.os.version,
+          dvt: browsers.os.mobile ? 'mobile' : 'pc',
+        }
+      }
+
+      function sendTrackingView() {
+        let params = commonParams()
+        params['eac'] = 'view'
+        params['eca'] = 'src'
+        params['ela'] = '/bong-da'
+        params['iid'] = 'landing-page'
+        params['iid'] = 'landing-page'
+        params['inm'] = 'landing-page'
+        sendTracking(params, 'https://ua.fptplay.net/i')
+      }
+
+      function sendTracking(params, url = 'https://ua.fptplay.net/i') {
+        axios
+          .get(url, {
+            params: params,
+            headers: {
+              'content-type': 'application/json; charset=UTF-8',
+            },
+          })
+          .catch(function (error) {
+            console.error('tracking', error)
+          })
+      }
+
+      sendTrackingView()
+    </script>
+    <script type="module">
+      // Initialize Vue instance
+      Vue.use(VueToastification.default, {
+        maxToasts: 1,
+        newestOnTop: true,
+      })
+      const app = new Vue({
+        el: '#container',
+        data() {
+          return {
+            isOnLine: true,
+            currentToastStatus: null,
+            lastToastTime: 0,
+            toastDuration: 3000,
+            toastTimer: null,
+            gereralInfoMessage: null,
+          }
+        },
+        mounted() {
+          this.gereralInfoMessage =
+            localStorage.getItem('gereral_info_message') &&
+            JSON.parse(localStorage.getItem('gereral_info_message'))
+
+          window.addEventListener('online', () => {
+            this.checkConnectionStatus(true)
+          })
+          window.addEventListener('offline', () => {
+            this.checkConnectionStatus(false)
+          })
+        },
+        methods: {
+          checkConnectionStatus(status) {
+            const now = Date.now()
+
+            // xoá hết hàng đợi toast đã set timeout
+            if (this.toastTimer) {
+              clearTimeout(this.toastTimer)
+              this.toastTimer = null
+            }
+
+            // nếu status mới trùng với toast đang show thì không làm gì cả
+            if (status === this.currentToastStatus) {
+              return
+            }
+            // nếu status mới khác toast đang show thì set timeout toast mới bằng thời gian hiển thị còn lại của toast đang show
+            const remainingTime = this.lastToastTime + this.toastDuration - now
+            if (remainingTime > 0) {
+              this.toastTimer = setTimeout(() => {
+                this.showToastNoInternet(status)
+              }, remainingTime)
+            } else {
+              // remainingTime <=0 nghĩa là không có toast nào đang show, hiển thị toast mới ngay mà không cần timeout
+              this.showToastNoInternet(status)
+            }
+          },
+          showToastNoInternet(status) {
+            let ToastReport = null
+            let options = {
+              timeout: 3000,
+              closeOnClick: false,
+              icon: false,
+              draggable: false,
+              closeButton: false,
+              hideProgressBar: true,
+              toastClassName: 'no-internet-toast-container',
+              preventOnClickOutside: true,
+            }
+            let props = {}
+            if (status) {
+              props = {
+                image: '/images/no-internet/internet-connected.svg',
+                content:
+                  this.gereralInfoMessage?.common?.msg_noti_have_internet ||
+                  'Đã có kết nối mạng',
+              }
+              ToastReport = Vue.extend({
+                template: `<div class="no-internet-toast"><img class="no-internet-icon" src="/images/no-internet/internet-connected.svg"/><span class="no-internet-content">${props?.content}</span></div>`,
+              })
+            } else {
+              props = {
+                image: '/images/no-internet/no-internet.svg',
+                content:
+                  this.gereralInfoMessage?.common?.msg_noti_no_internet ||
+                  'Mất kết nối mạng',
+              }
+              ToastReport = Vue.extend({
+                template: `<div class="no-internet-toast"><img class="no-internet-icon" src="/images/no-internet/no-internet.svg"/><span class="no-internet-content">${props?.content}</span></div>`,
+              })
+            }
+            this.$toast(
+              {
+                render: (h) => h(ToastReport),
+              },
+              options
+            )
+            this.currentToastStatus = status
+            this.lastToastTime = Date.now()
+          },
+        },
+      })
+    </script>
+  </body>
+</html>

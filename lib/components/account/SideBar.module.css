@@ -1,0 +1,19 @@
+.mobile-scrollbar::-webkit-scrollbar {
+  height: 2px !important;
+  width: 2px !important;
+  background: transparent !important;
+  display: inline-block !important;
+  -webkit-appearance: none !important;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}
+
+.mobile-scrollbar::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  border-radius: 4px !important;
+  display: inline-block !important;
+}

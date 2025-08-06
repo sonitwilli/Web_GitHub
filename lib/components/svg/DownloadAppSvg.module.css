@@ -1,0 +1,8 @@
+.svgContainer svg {
+  cursor: pointer;
+  color: white;
+}
+
+.svgContainer svg:hover {
+  color: #ff6500;
+}

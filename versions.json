@@ -1,0 +1,1724 @@
+{
+    "versions": [
+        {
+            "version": "8.0.17",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Sự kiện][Truyền hình] Lỗi player bị scale hoặc zoom che blocks",
+                "[WEB][DetailVOD] Lỗi hiển thị sai vị trí của label, btn Theo dõi, btn Chia sẻ ở trang chi tiết VOD ở trình duyệt safari",
+                "[WEB][DetailVOD] Lỗi hiển thị btn Xem thêm ở block Nội dung liên quan ở màn hình chi tiết VOD",
+                "[Sub Online] Đề xuất luồng mua gói từ việc xem quảng cáo",
+                "[WEB][Truyền hình] Lỗi default tab và hover icon trước Zoom",
+                "[WEB][PreviewVOD] Lỗi vẫn hiển thị CLHA đối với preview VOD",
+                "[WEB][PlayerVOD] Lỗi vẫn hiển thị các popup cài đặt ở playerbar sau khi thanh playerbar đã ẩn và hiển thị lại",
+                "[WEB][PreviewVOD] Lỗi hiển thị lại guide thông báo khi thực hiện tua tới/lui 10s sau khi đã nhấn btn x ở guide thông báo",
+                "[WEB][PreviewVOD] Lỗi highlight cam cho btn Đăng ký/Thuê phim ở guide thông báo preview 5 phút",
+                "[Web V5] Quảng cáo Instream"
+            ]
+        }, 
+        {
+            "version": "8.0.16",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Comment] Lỗi nhấn button Like & Reply comment",
+                "[Web][TrackingLog] Không ghi nhận LogId 145 khi Back/Exit/Button/ Thoát browser tại màn hình Limit Devices",
+                "[Web][TrackingLog] Không ghi nhận/Ghi nhận không đúng LogId 145 khi Back/Exit/Button/ Thoát browser tại màn hình Nhập OTP",
+                "[Web][TrackingLog] Ghi nhận không đúng LogId 145 khi Back/Exit/Button/ Thoát browser tại màn hình Xác thực mã OTP",
+                "[WEB][Comment] Lỗi row bên dưới text comment",
+                "[WEB][Comment] Lỗi không sent comment sau khi nhấn Trả lời, xóa comment",
+                "[WEB][Comment] Lỗi gửi bình luận cấp 2 khi gửi comment cấp 1",
+                "[ANRMOBI][iOS][Livechat] Lỗi hiển thị duplicate tin nhắn trên vùng bình luận khi gửi tin nhắn",
+                "[WEB][Livechat] Vỡ UI danh sách sticker/tin nhắn sticker tại khung chat ở safari",
+                "[WEB][Tìm kiếm] Lỗi hiển thị trang 404 khi search từ khóa có chứa ký tự '/'",
+                "[WEB][Trang chủ] Lỗi chọn tab trong dropdown Xem thêm và hover button Mua gói",
+                "[WEB][PlayerVOD] Lỗi hiển thị danh sách phát ở player VOD",
+                "[Web V5] Toast mất kết nối internet",
+                "[WEB][Truyền hình] Lỗi card label, Content panel title, dropdown NPS ở Side panel",
+                "[WEB][Notification] Lỗi bộ lọc thông báo",
+                "[WEB][Sự kiện] Lỗi không hiện popup Đăng nhập tài khoản khi vào detail sự kiện chưa tới giờ phát",
+                "[WEB][Màn hình thanh toán] Lỗi redirect không đúng phim đã thuê khi chọn xem ngay",
+                "[WEB][Sự kiện] Lỗi UI khi chọn sự kiện tiếp sóng K+",
+                "[WEB][Truyền hình] Lỗi card label và hover card",
+                "[WEB][Sự kiện] Lỗi thiếu Logo & Tên kênh đối với sự kiện tiếp song",
+                "[WEB][Comment] Lỗi format hiển thị thời gian gửi bình luận",
+                "[WEB][Comment] Lỗi hiển thị trạng thái reactions khi chưa đăng nhập",
+                "[WEB][Màn hình thanh toán] Hiển thị sai button trong màn hình Thanh toán thành công",
+                "[IOS][Comment] Lỗi layout khi Báo cáo bình luận trong lúc hiển thị keyboard"
+            ]
+        },  
+        {
+            "version": "8.0.15",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Comment] Lỗi tổng số bình luận trên title và hiện button 'Xem thêm bình luận v'",
+                "[WEB][Comment] Không hiện khung chat bình luận đối với nd chưa có comment",
+                "[WEB][Comment] Lỗi cho phép nhập > 300 kí tự, không hiện thông báo quá ký tự",
+                "[WEB][Comment] Lỗi placeholder input field và toast thông báo khi gửi 2 comment liên tục < 2s",
+                "[WEB][Comment] Enable button Sent khi chỉ nhập Space/ Shift+enter (xuống dòng)",
+                "[WEB][Comment] Lỗi hiện menu cài đặt",
+                "[WEB][Comment] Lỗi không ẩn comment report",
+                "[WEB][Comment] Không xóa được bình luận cấp 2",
+                "[WEB][Comment] Lỗi text gửi bình luận và trạng thái gửi bình luận khi lỗi api",
+                "[WEB][Comment] Lỗi hiển thị avatar và title Bình luận (0)",
+                "[WEB][Màn hình thanh toán] Sai button trong màn hình thanh toán thành công phim có phí",
+                "[WEB][Livechat] Lỗi hiển thị livechat ở chế độ responsive mobile",
+                "[WEB][Màn hình mua gói] Lỗi UI khi scroll xuống trong màn hình mua gói",
+                "[WEB][Màn hình thanh toán] Hiển thị label Giảm giá chưa đúng vị trí",
+                "[WEB][Player] Lỗi không chuyển từ icon Toàn màn hình sang Thoát toàn màn hình khi mở mode Toàn màn hình và ngược lại",
+                "[WEB][Truyền hình] Lỗi khi nhập ký tự hợp lệ và không hợp lệ",
+                "[WEB][Truyền hình] Lỗi không hiện logo FPT Play + tên kênh/ tên chương trình trên playback",
+                "[WEB][Truyền hình] Lỗi không hiện icon Mở rộng và pause, tua/seek không auto play với ts",
+                "[WEB][Truyền hình] Lỗi hiện placeholder, không play được timeshift",
+                "[WEB][Sự kiện] Không follow/ unfollow được sự kiện",
+                "[WEB][DRM-Responsive] Lỗi popup Thông báo không hỗ trợ xem DRM",
+                "[WEB][CommentbyAI] Lỗi ẩn button 'Gửi báo cáo' sau khi ẩn keyboard trên một số device",
+                "[WEB][Đăng xuất] Lỗi không có chức năng đăng xuất ở responsive mobile",
+                "[WEB][Sự kiện] Lỗi không giới hạn row của title và description",
+                "[WEB][Màn hình thanh toán] Không hiển thị popup Đăng nhập khi bị đá thiết bị",
+                "[WEB][Livechat] Lỗi không bật được chức năng Trò chuyện ở mobile browser",
+                "[WEB][Livechat] Lỗi hiển thị thanh menu khi mở khung livechat ở mobile browser (responsive web)",
+                "[WEB][Comment] Lỗi không hiện block Bình luận khi chưa đăng nhập"
+            ]
+        },  
+        {
+            "version": "8.0.14",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Truyền hình] Lỗi không redirect về Trang chủ khi nhấn button Đóng trên popup Thông báo lỗi",
+                "[WEB][Quản lý thiết bị] Lỗi không hiển thị đúng đối với trường hợp mất kết nối internet",
+                "[WEB][PlayerVOD] Lỗi chưa thao tác được bằng keyboard shortcuts ở player VOD",
+                "[WEB][Popup Yêu cầu đăng nhập] Lỗi hiển thị UI khi thực hiện responsive web",
+                "[WEB][Màn hình thanh toán] Không hiển thị popup Đăng nhập khi bị đá thiết bị",
+                "[WEB][Màn hình thanh toán] Sai câu báo lỗi 'Ngày/ Tháng hết hạn' trong thẻ tín dụng",
+                "[WEB][Màn hình thanh toán] Hiển thị sai Giảm giá trong màn hình thanh toán thành công",
+                "[WEB][Màn hình thanh toán] Sai button trong màn hình thanh toán thành công phim có phí",
+                "[WEB][Màn hình thanh toán] Hiển thị sai button trong màn hình Thanh toán thành công",
+                "[WEB][Sự kiện] Lỗi image và redirect khi nhấn title ở block Highlight",
+                "[WEB][Detail] Lỗi hiển thị sai thông báo đối với nội dung Galaxy",
+                "[WEB][CommentbyAI] Lỗi ẩn button 'Gửi báo cáo' sau khi ẩn keyboard trên một số device",
+                "[WEB][Sự kiện] Lỗi countdown sự kiện trên Highlight và Block gợi ý nội dung",
+                "[WEB][Sự kiện] Lỗi hiện sai label sự kiện ở detail page"
+            ]
+        },  
+        {
+            "version": "8.0.13",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Footer] Lỗi khi nhấn các mục ở Footer",
+                "[WEB][Login] Lỗi hiển thị popup thông báo đối với tài khoản bị xóa",
+                "[WEB][Login] Lỗi không chặn spam btn Gửi lại OTP",
+                "[WEB][Login] Lỗi hiển thị của popup Đăng xuất không thành công",
+                "[WEB][Quicklogin] Lỗi chưa disable thiết bị đăng nhập ở màn hình vượt giới hạn thiết bị khi đăng nhập nhanh"
+            ]
+        },  
+        {
+            "version": "8.0.12",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Login] Lỗi hiển thị thông báo lỗi khi nhấn btn Tiếp tục ở màn hình Đăng nhập hoặc đăng ký nhiều lần (>10 lần)",
+                "[WEB][Sự kiện] Lỗi player khi play sự kiện A ở 1 khoảng thời gian lâu và chuyển sang sự kiện B",
+                "[WEB][PreviewVOD/TVOD] Lỗi không hiển thị đúng câu thông báo từ API trả về",
+                "[WEB][Login] Lỗi không ràng chỉ cho phép nhập 10 số ở màn hình Đăng nhập hoặc đăng ký",
+                "[Web V5] Update logic hiển thị danh sách tập phim bộ",
+                "[WEB][Login] Lỗi hiển thị sai popup thông báo hết phiên (expire token) khi nhấn vào btn Nhận mã OTP ngay/Gửi lại OTP/Tiếp tục (popup Vượt giới hạn thiết bị)"
+            ]
+        },        
+        {
+            "version": "8.0.11",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Trang chủ] Lỗi popup Tải app, banner block Horizontal Banner with Title, button switch không cố định",
+                "[Web V5] Quảng cáo Outstream",
+                "[WEB][Truyền hình] Lỗi button play/pause khi play đến hết timeshift",
+                "[WEB][Quicklogin] Lỗi hiển thị sai popup đối với trường hợp bấm btn Xác nhận mã code khi chưa đăng nhập/Trường hợp thiết bị đang nhập mã code đăng nhập nhanh bị đá bởi 1 thiết bị khác",
+                "[WEB][Login] Lỗi hiển thị sai popup đối với trường hợp mất mạng khi bấm btn Tiếp tục/Nhận mã OTP/Xác nhận/Tiếp tục (ở popup vượt giới hạn thiết bị)",
+                "[WEB][Quicklogin] Lỗi chưa hiển thị popup thông báo khi mất kết nối internet",
+                "[WEB][Sự kiện] Lỗi không hiện card label",
+                "[WEB][Màn hình thanh toán] Mục thông tin thanh toán chưa đúng vị trí",
+                "[WEB][Màn hình thanh toán] Không hiển thị thông tin gói Upsell",
+                "[WEB][Màn hình thanh toán] Màn hình thanh toán thành công hiển thị sai text và khác field",
+                "[WEB][Màn hình thanh toán] Hiển thị sai màn hình thanh toán gói NoAds",
+                "[WEB][Màn hình thanh toán] Không cộng ngày/ giảm tiền khi áp dụng mã khuyến mãi thành công"
+            ]
+        },
+        {
+            "version": "8.0.10",
+            "date": "Dự kiến",
+            "content": [
+                "SEO Google Meta Data",
+                "[Player] Bookmark",
+                "Responsive mobile trang chủ, trang category, trang vod detail",
+                "Responsive mobile trang xem truyền hình",
+                "Responsive mobile trang tài khoản, cài đặt, multi profile",
+                "Responsive mobile trang xem sự kiện, công chiếu, playlist, modal login",
+                "[WEB][SapCongChieu] Lỗi không ẩn element khi auto play nội dung scc",
+                "[WEB][Quicklogin] Lỗi nháy màn hình khi truy cập/reload page Đăng nhập nhanh",
+                "Trang mua gói, chi tiết thanh toán",
+                "[WEB][Notification] Lỗi bộ lọc ở popup Thông báo",
+                "[WEB][QuickLogin] Lỗi không truy cập được web khi thực hiện quét mã QR trên box/TV",
+                "[WEB][Back] Lỗi không hiện đúng trang với deeplink khi nhấn Back",
+                "[WEB][Quicklogin] Lỗi hiển thị sai popup đối với trường hợp bấm btn Xác nhận mã code khi chưa đăng nhập",
+                "[WEB][Quicklogin] Lỗi sai text btn ở popup thông báo mã xác nhận không hợp lệ",
+                "[WEB][Trang chủ] Không ẩn description khi để play hết trailer, chọn lại item highlight",
+                "[WEB][Trang chủ][Sắp công chiếu] Hiển thị sai format thời gian công chiếu và không full khung poster",
+                "[WEB][Trang chủ][Sắp công chiếu] Lỗi phát trailer ở block Sắp công chiếu",
+                "[WEB][Quản lý thiết bị] Lỗi không bỏ chọn thiết bị khi chọn vào thiết bị đã chọn",
+                "[WEB][Quản lý thiết bị] Lỗi UI tooltip ở thiết bị box whitelist + Chưa highlight khi hover vào btn Đăng xuất thiết bị",
+                "[WEB][Quản lý thiết bị] Lỗi hiển thị khi nhấn btn Đăng xuất thiết bị đối với trường hợp bị đá bởi 1 thiết bị khác",
+                "[WEB][Quicklogin] Lỗi hiển thị popup Đăng nhập hoặc Đăng ký đè khi đăng nhập nhanh với tài khoản quá giới hạn thiết bị",
+                "[WEB][Trang chủ] Không follow được nội dung khi nhấn button ở HoverExpand",
+                "[WEB][Trang chủ] Lỗi số lượng item switch khi còn nhiều hơn 3 item trước/sau",
+                "[WEB][Trang chủ] Lỗi chuyển image slider và diều hướng khi nhấn title ở block Highlight, New vod detail"
+            ]
+        },
+        {
+            "version": "8.0.9",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][PlayerVOD] Lỗi hiển thị popup thông báo lỗi (4032) khi thực hiện đăng nhập sau khi play VOD bất kỳ",
+                "[WEB][Preview VOD] Lỗi không play được preview TVOD trên trình duyệt MS Edge",
+                "[WEB][Trực tiếp] Lỗi tự động thay đổi âm thanh khi điều chỉnh chất lượng hình ảnh ở sự kiện multiaudio",
+                "[WEB][Trang chủ] Lỗi hover expand không full poster",
+                "[WEB][Truyền hình] Lỗi url thay đổi nhưng không back về tab trước đó",
+                "[WEB][V5][Lịch sử giao dịch] Lỗi UI lệch giữa các cột và ẩn giá tiền với lịch sử giao dịch của ví ZaloPay"
+            ]
+        },  
+        {
+            "version": "8.0.8",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Notification] Lỗi hiển thị icon có thông báo mới đối với trường hợp Chưa đăng nhập/Không có thông báo mới",
+                "[WEB][Notification] Lỗi không hiển thị popup mục Thông báo khi đăng nhập thành công",
+                "[WEB][Notification] Lỗi không hiển thị tooltip khi hover vào btn Xem tất cả ở popup Thông báo",
+                "[WEB][Notification] Lỗi hiển thị image ở danh sách thông báo",
+                "[WEB][Notification] Lỗi hiển thị trạng thái icon chuông thông báo (chấm đỏ) khi thực hiện lọc và scroll danh sách thông báo",
+                "[WEB][Notification] Lỗi chưa chuyển trạng thái thông báo realtime sang Đã đọc khi chọn vào btn Xem tất cả ở popup Thông báo",
+                "[WEB][Notification] Lỗi hiển thị vỡ UI của item ở danh sách thông báo",
+                "[WEB][Notification] Lỗi scroll danh sách thông báo nhưng scroll luôn màn hình bên dưới thông báo",
+                "[WEB][Notification] Lỗi không dẫn đến trang nội dung kênh/sự kiện/VOD khi nhấn vào noti thông báo",
+                "[WEB][Notificaction] Lỗi nhấn vào vùng item dẫn đến chi tiết thông báo",
+                "[WEB][Tổng quan] Lỗi sai flow khi nhấn vào Đổi mã quản lý đối với tài khoản Chưa thiết lập mã",
+                "[WEB][Tổng quan] Lỗi dẫn sai trang hỗ trợ khi nhấn vào Trung tâm trợ giúp FPT Play",
+                "[WEB] Chưa auto focus vào input khi mở các popup Xác thực mã OTP/Nhập mã quản lý/Thiết lập mã quản lý",
+                "[WEB][Xác thực OTP] Lỗi giao diện khi hiển thị thông báo lỗi dưới input",
+                "[WEB][V5][Lịch sử giao dịch] Lỗi UI lệch giữa các cột và ẩn giá tiền với lịch sử giao dịch của ví ZaloPay",
+                "[WEB][V5][ Lịch sử giao dịch] Lỗi sai image placeholder khi API không trả hình hoặc trả sai hình icon cổng thanh toán",
+                "[WEB][V5][Quản lý gia hạn dịch vụ] Lỗi UI cho trường hợp đá thiết bị",
+                "[WEB][Đăng xuất] Lỗi hiển thị popup Yêu cầu đăng nhập khi thực hiện đăng xuất từ Tài khoản & cài đặt",
+                "[WEB][V5][Quản lý gia hạn dịch vụ] Lỗi UI button Mở rộng ở trạng thái hover",
+                "[WEB][V5][Quản lý gia hạn dịch vụ] Lỗi chưa bold tên gói khoảng cách cột tên gói đang hẹp"
+            ]
+        },  
+        {
+            "version": "8.0.7",
+            "date": "Dự kiến",
+            "content": [
+                "Trang xem Playlist Âm nhạc",
+                "[WEB][Login] FID: Lỗi bị giựt màn hình sau khi login FID",
+                "[WEB][Tìm kiếm] Lỗi không dẫn đến màn hình chi tiết các nội dung ở trang tìm kiếm gây ra lỗi không chọn được các page khác",
+                "[WEB][Xác thực OTP] Lỗi cho phép nhập kí tự chữ vào input Nhập mã OTP ở popup Xác thực",
+                "[WEB][V5][Quản lý gia hạn dịch vụ] Sai UI place holder nhập mã OTP khi hủy gia hạn",
+                "[WEB][V5][Quản lý gia hạn dịch vụ] Lỗi UI button Mở rộng ở trạng thái hover",
+                "[WEB][V5][Lịch sử giao dịch] Sai UI cho trường hợp user không có lịch sử giao dịch nào",
+                "[WEB][Mã quản lý] Lỗi hiển thị thông báo 'Gửi OTP không thành công' khi chọn vào chức năng Đổi mã quản lý",
+                "[WEB][ReportPlayer] Lỗi không hiển thị popup Yêu cầu đăng nhập ở player truyền hình khi chọn chức năng Báo cáo sự cố đối với kênh NonDRM",
+                "[WEB][V5][Quản lý thanh toán và gói] Lỗi UI ở các tab trong quản lý thanh toán và gói ở trạng thái hover",
+                "[WEB][V5][Gói đang sử dụng] Lỗi UI khi tên phim quá dài"
+            ]
+        },  
+        {
+            "version": "8.0.6",
+            "date": "Dự kiến",
+            "content": [
+                "[Player] Report",
+                "Sidetag Firebase",
+                "[Player] Preview 5 phút",
+                "Trang xem Playlist Âm nhạc",
+                "Tracking UTM",
+                "[WEB][PreviewVOD] Lỗi không hiển thị popup yêu cầu đăng nhập ở mode fullscreen",
+                "[WEB][Tìm kiếm] Lỗi hiển thị sai màn hình đối với từ khóa không có kết quả trả về",
+                "[WEB][Tìm kiếm] Lỗi không hiển thị btn Xóa và icon đồng hồ ở lịch sử tìm kiếm khi người dùng nhập từ khóa liên quan đến lịch sử tìm kiếm"
+            ]
+        },            
+        {
+            "version": "8.0.5",
+            "date": "Dự kiến",
+            "content": [
+                "Điều hướng nội dung Galaxy Play",
+                "[WEB][MultiProfile] Lỗi đối với trường hợp Quên mã PIN khi chuyển đổi hồ sơ",
+                "[WEB][MultiProfile] Lỗi không ẩn dropdownlist Chỉnh sửa sau khi thực hiện xóa mã PIN hồ sơ",
+                "[WEB][MultiProfile] Lỗi hiển thị trường Phân loại hồ sơ đối với chỉnh sửa hồ sơ nhưng không thao tác được",
+                "[WEB][MultiProfile] Lỗi hiển thị ở popup Thiết lập mã PIN hồ sơ khi Tạo/Chỉnh sửa hồ sơ",
+                "[WEB][MultiProfile] Lỗi hiển thị ở popup Đổi mã PIN hồ sơ khi Tạo/Chỉnh sửa hồ sơ",
+                "[WEB][MultiProfile] Lỗi popup Thiết lập mã quản lý",
+                "[WEB][MultiProfile] Lỗi hiển thị sai thông báo đối với trường hợp expire token của popup Thiết lập mã hồ sơ"
+            ]
+        },         
+        {
+            "version": "8.0.4",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Tìm kiếm] Lỗi không hiển thị từ khóa vào input nếu trước đó đã tìm kiếm chính từ khóa đó",
+                "[WEB][Tìm kiếm] Lỗi hiển thị switch các item khi nhấn btn Next/Previous ở các block",
+                "Welcome Screen",
+                "Samsung SSO",
+                "[Player] Speed Button",
+                "[Player] Phân loại nội dung, Cảnh báo độ tuổi, Cảnh báo tình huống",
+                "[WEB][Login] Lỗi đăng nhập với tài khoản FID",
+                "[Player] Next, Watch Credit VOD",
+                "Sumary Comment AI",
+                "[ChatbotAI] Cập nhật Logic Authen / Athorize",
+                "Update Tracking Log"
+            ]
+        },  
+        {
+            "version": "8.0.3",
+            "date": "Dự kiến",
+            "content": [
+                "Trang xem sự kiện, công chiếu",
+                "Tài khoản: Quản lý thanh toán và gói",
+                "Fix bug Search",
+                "Fix bug MultiProfile"        
+            ]
+        },   
+        {
+            "version": "8.0.2",
+            "date": "Dự kiến",
+            "content": [
+                "Trang xem VOD, Update Player",
+                "Tài khoản: Tổng quan",
+                "Tài khoản: Thông tin tài khoản",
+                "Tài khoản: Quản lý thiết bị",
+                "Tracking/Log",
+                "Đăng nhập nhanh",
+                "Sort data block",
+                "[WEB][Login] Lỗi bị nháy màn hình khi mở màn hình Đăng nhập hoặc đăng ký",
+                "[WEB][Thư viện] Lỗi hiển thị title & description của popup Xóa tất cả Theo dõi/Lịch sử xem khi gặp lỗi API trả về rỗng",
+                "[WEB][Thư viện] Lỗi không hiển thị màn hình thông báo đối với trường hợp API trang Thư viện trả về 200 (data rỗng)/500"
+            ]
+        },        
+        {
+            "version": "8.0.1",
+            "date": "Dự kiến",
+            "content": [
+                "Trang diễn viên",
+                "Landing Page: chính sách, điều khoản",
+                "Lịch phát sóng",
+                "Trang xem truyền hình",
+                "Hộp thông báo",
+                "Thông báo Firebase",
+                "Multi Profile",
+                "Trang quản lý hồ sơ",
+                "Live Chat / Comment"
+            ]
+        },
+        {
+            "version": "8.0.0",
+            "date": "Dự kiến",
+            "content": [
+                "Trang chủ",
+                "Trang danh mục",
+                "Trang Block xem tất cả",
+                "Trang tìm kiếm",
+                "Trang lỗi 404, 500",
+                "Thư viện",
+                "Login"
+            ]
+        },
+        {
+            "version": "7.22.1",
+            "date": "Dự kiến",
+            "content": [
+                "[All]Cập nhật popup Đăng nhập/Đăng xuất",
+                "[WEB]Điều chỉnh lại Deeplink của short videos",
+                "[Mobile/ website] Bổ sung hiển thị và xử lý deeplink trong tin nhắn role Admin và Pin Message của tính năng Live-comment",
+                "[Mobile/ website] Phase 2: update live comment",
+                "Điều chỉnh log Sprint 16"
+            ]
+        },
+        {
+            "version": "7.21.16",
+            "date": "Dự kiến",
+            "content": [
+                "[iOS][FiFa] Không điều hướng được khi nhấn button Xem ngay trên banner của OS18",
+                "[WEB][Livechat] Lỗi placeholder đối với ảnh đại diện của bộ sticker"
+            ]
+        },
+        {
+            "version": "7.21.15",
+            "date": "Dự kiến",
+            "content": [
+                "[Sub Online] Các request cho campaign FIFA Club WC 2025",
+                "[Web, Mobile] Bổ sung bộ sticker trên live-comment"
+            ]
+        },
+        {
+            "version": "7.21.14",
+            "date": "15/05/2025",
+            "content": [
+                "[Livechat] Vùng chat không kéo theo hiển thị emoji mới nhất khi nhập emoji vượt quá 3 dòng",
+                "[Livechat] Lỗi che mất bình luận khi nhập chat",
+                "[iOS][Livechat] Lỗi mất con trỏ khi mở keyboard device"
+            ]
+        },
+        {
+            "version": "7.21.13",
+            "date": "15/05/2025",
+            "content": [
+                "1.[WEB][Samsung SSO] Lỗi đăng nhập không thành công tài khoản FPT Play ở domain Samsung SSO",
+                "2.[WEB][CommentbyAI] Không mở được summary comment đối với 1 số wifi",
+                "3.[WEB][Live Chat] Lỗi không hiển thị full video khi bật popup 'Trò chuyện' ở màn hình full-screen",
+                "4.[iOS][Livechat] Không scroll được bình luận khi bắt đầu hiển thị icon arrow",
+                "5.[ANRMOBI][iOS][Livechat] Vùng chat không kéo theo hiển thị emoji mới nhất khi nhập emoji vượt quá 3 dòng",
+                "6.[ANRMOBI][iOS][Livechat] Icon arrow bị lệch bên phải",
+                "7.[ANRMOBI][iOS][Livechat] Lỗi không thực hiện gửi bình luận được",
+                "8.[iOS][Livechat] Vùng bình luận bị giật khi scroll lên bình luận cũ nhất",
+                "9.[WEB][Live Chat] Lỗi hiển thị popup 'Trò chuyện'",
+                "10.[ANRMOBI][iOS][Livechat] Lỗi không xóa được bình luận của chính user",
+                "11.[iOS][Livechat] Không scroll được bình luận khi bắt đầu hiển thị icon arrow",
+                "12.[ANRMOBI][iOS][Livechat] Icon arrow bị lệch bên phải",
+                "13.[iOS][Livechat] Không hiển thị keyboard device khi chọn button keyboard ở tab emoji"
+            ]
+        },
+        {
+            "version": "7.21.12",
+            "date": "15/05/2025",
+            "content": [
+                "1.[ANRMOBI][iOS][Livechat] Lỗi khi thao tác ở bottomsheet emoji",
+                "2.[ANRMOBI][iOS][Livechat] Lỗi UI vùng nhấn để hiển thị cài đặt bình luận",
+                "3.[ANRMOBI][iOS][Livechat] Lỗi không xóa được bình luận của chính user",
+                "4.[WEB][Live Chat] Lỗi không hiển tin popup thông báo và không lưu tin nhắn ở input field khi mất kết nối internet hoặc lỗi API gửi tin",
+                "5.[ANRMOBI][iOS][Livechat] Lỗi hiển thị icon arrow khi đã ở bình luận mới nhất",
+                "6.[ANRMOBI][iOS][Livechat] Lỗi vùng bình luận không bị giữ lại trong phạm vi default",
+                "7.[iOS][Livechat] Không scroll được bình luận khi bắt đầu hiển thị icon arrow"
+            ]
+        },
+        {
+            "version": "7.21.11",
+            "date": "15/05/2025",
+            "content": [
+                "1.Điều chỉnh Log Sprint 15",
+                "2.[All platform][Tracking log] Tính năng hủy đặt lịch cho Sắp công chiếu",
+                "3.[WEB][ChatbotAI] Lỗi vẫn hiển thị gợi ý tìm kiếm khi profile đã hết lượt hỏi trong ngày",
+                "4.[WEB][CommentbyAI] Lỗi UI textbox đè button Gửi góp ý trường hợp nhập nhiều ký tự",
+                "5.[WEB][Live Chat] Lỗi hiển thị popup 'Trò chuyện' khi click out-size ở màn hình full-screen sự kiện",
+                "6.[WEB][Live Chat] Lỗi không hiển thị full video khi bật popup 'Trò chuyện' ở màn hình full-screen",
+                "7.[ANRMOBI][iOS][Livechat] Lỗi UI ở vùng bình luận",
+                "8.[WEB][Live Chat] Lỗi hiển thị popup 'Trò chuyện'",
+                "9.[iOS][Livechat] Không nhập được nhiều emoji một lần",
+                "10.[WEB][Live Chat] Các lỗi không hiển thị tin nhắn trong list messages và input text",
+                "11.[WEB][Live Chat] Lỗi hiển finger-print ở popup 'Trò chuyện' khi sự kiện có bật",
+                "12.[WEB][Live Chat] Lỗi hiển tin nhắn ghim của admin ở popup 'Trò chuyện'",
+                "13.[WEB][Live Chat] Lỗi bình luận không hiển thị khi sự kiện treo lâu",
+                "14.[WEB][Live Chat] Lỗi giao diện hiển thị khi cấm chat người dùng",
+                "15.[iOS][Livechat] Không hiển thị đầu tin nhắn ghim ở trạng thái thu gọn",
+                "16.[ANRMOBI][iOS][Livechat] Không nhập được xuống dòng"
+            ]
+        },
+        {
+            "version": "7.21.10",
+            "date": "15/05/2025",
+            "content": [
+                "1.[Website][Label overlay] Không hiển thị label ở block 'Nội dung tham gia'",
+                "2.[WEB][ChatbotAI] Lỗi hiển thị khung chatbot ở những trang không có setup/quyền hiển thị",
+                "3.[WEB][ChatbotAI] Lỗi vẫn cho phép người dùng nhập và gửi tin nhắn khi đã hết lượt hỏi trong ngày",
+                "4.[WEB][Live Chat] Lỗi thanh scroll ở màn hình popup 'Trò chuyện' kích thước màn hình default",
+                "5.[WEB][Live Chat] Lỗi overlap dropdown-list chức năng ở bình luận cuối cùng trong popup 'Trò chuyện'",
+                "6.[ANRMOBI][iOS][Livechat] Lỗi UI ở vùng bình luận",
+                "7.[WEB][Live Chat] Lỗi hiển thị popup 'Trò chuyện'",
+                "8.[ANRMOBI][iOS][Livechat] Lỗi UI ở vùng chat: https",
+                "9.[iOS][Livechat] Không hiển thị đầu tin nhắn ghim ở trạng thái thu gọn",
+                "10.[WEB][Live Chat] Lỗi hiển finger-print ở popup 'Trò chuyện' khi sự kiện có bật",
+                "11.[WEB][Live Chat] Lỗi bình luận không hiển thị khi sự kiện treo lâu",
+                "12.[WEB][Live Chat] Lỗi không hiển thị popup 'Yêu cầu đăng nhập' ở màn hình full-screen khi click button 'Trò chuyện trực tiếp'",
+                "13.[WEB][Live Chat] Lỗi giao diện hiển thị khi cấm chat người dùng",
+                "14.[ANRMOBI][iOS][Livechat] Lỗi vùng bình luận không nhận được tin nhắn khi kết nối lại mạng",
+                "15.[ANRMOBI][iOS][Livechat] Button keyboard và Delete bị mờ"
+            ]
+        },
+        {
+            "version": "7.21.9",
+            "date": "15/05/2025",
+            "content": [
+                "1.[WEB][Live Chat] Lỗi thanh scroll ở màn hình popup 'Trò chuyện' kích thước màn hình default",
+                "2.[WEB][Live Chat] Lỗi không tự động xuống dòng ở input field chat khi nhập kí tự nhiều hơn 1 dòng",
+                "3.[WEB][Live Chat] Lỗi không hiển thị lớp 'Mask bottom gradient' và button 'Arrow down'",
+                "4.[WEB][Live Chat] Các lỗi không hiển thị tin nhắn trong list messages và input text",
+                "5.[ANRMOBI][iOS][Livechat] Lỗi không xóa được bình luận của chính user",
+                "6.[WEB][Live Chat] Lỗi hiển tin nhắn ghim của admin ở popup 'Trò chuyện'",
+                "7.[WEB][Live Chat] Lỗi không hiển tin popup thông báo và không lưu tin nhắn ở input field khi mất kết nối internet hoặc lỗi API gửi tin",
+                "8.[WEB][Live Chat] Lỗi vẫn hiển thị chức năng 'Livechat' ở bản staging_KH",
+                "9.[WEB][Live Chat] Lỗi giao diện hiển thị khi cấm chat người dùng",
+                "10.[ANRMOBI][iOS][Livechat] Lỗi hiển thị icon arrow"
+            ]
+        },
+        {
+            "version": "7.21.8",
+            "date": "15/05/2025",
+            "content": [
+                "[WEB][ChatbotAI] Lỗi hiển thị placeholder ở input chat",
+                "[WEB][ChatbotAI] Lỗi hiển thị ở ô nhập Lý do khác của tương tác dislike",
+                "[web/mobile] Bổ sung tính năng theo Luật điện ảnh 2022",
+                "[WEB][Hồ sơ][Chỉnh sửa hồ sơ] Lỗi chưa lưu thay đổi ở màn hình chỉnh sửa hồ sơ",
+                "[WEB][Block Khám Phá] Lỗi bị lặp items ở trang 'Xem thêm'",
+                "[WEB][CommentbyAI] Lỗi lưu lại báo cáo sau khi Gửi góp ý thành công",
+                "[WEB][CommentbyAI] Hiển thị sai topic demo khi tắt khung Tổng hợp bình luận - TH đang focus tab 'Từ các nguồn khác'",
+                "[WEB][CommentbyAI] Lỗi không gọi lại API khi nhấn button 'Nhấn để thử lại'",
+                "[WEB][CommentbyAI] Lỗi không update data khi đã có dữ liệu summary comment mới",
+                "[Website][Label overlay] Vẫn còn hiển thị label ở vị trí Bottom center ở block Sắp công chiếu"
+            ]
+        },
+        {
+            "version": "7.21.7",
+            "date": "15/05/2025",
+            "content": [
+                "[WEB][Lịch sử xem] Lỗi hiển thị ở popup thông báo khi xóa lịch sử xem bị lỗi",
+                "[WEB][Block Khám Phá] Lỗi bị lặp items ở trang 'Xem thêm'",
+                "[WEB][CommentbyAI] Lỗi lưu lại báo cáo sau khi Gửi góp ý thành công",
+                "[WEB][CommentbyAI] Lỗi UI text count ký tự khi nhập quá 1000 ký tự",
+                "[WEB][Notification] Lỗi vỡ lay-out thông báo",
+                "[WEB][NextMovie] Lỗi không phát trailer khi chọn vào btn Phát trailer ở màn hình nextmovie phim bộ (tập cuối)",
+                "[WEB] Lỗi không hiển thị button 'Mua phim' ở TVOD không có preview"
+            ]
+        },
+        {
+            "version": "7.21.6",
+            "date": "15/05/2025",
+            "content": [
+                "[NEW] Làm lại comment và live comment (cho VOD + live, live › VOD)",
+                "[WEB][CommentbyAI] Lỗi UI ở bottomsheet Tổng hợp bình luận",
+                "[WEB][Hồ sơ][Chỉnh sửa hồ sơ] Lỗi chưa lưu thay đổi ở màn hình chỉnh sửa hồ sơ",
+                "[WEB][NextMovie] Lỗi không phát trailer khi chọn vào btn Phát trailer ở màn hình nextmovie phim bộ (tập cuối)"
+            ]
+        },
+        {
+            "version": "7.21.5",
+            "date": "15/05/2025",
+            "content": [
+                "AI chatbot",
+                "[WEB][Huỷ đặt lịch] Lỗi không huỷ đặt lịch được VOD sắp công chiếu trong detail VOD",
+                "[WEB][CommentbyAI] Lỗi UI icon AI ở title bottomsheet Tổng hợp bình luận",
+                "[WEB][CommentbyAI] Lỗi không hiển thị Hint info khi nhấn icon ( ? )",
+                "[WEB][Label overlays] Hiển thị label lỗi tại màn hình search",
+                "[WEB][Label overlays] không hiển thị label banner sau khi setup từ cms",
+                "[WEB]Bổ sung hình ảnh hiển thị nhiều trường hợp Banner Overlay",
+                "[WEB][Quicklogin] Lỗi cho phép nhập kí tự chữ/đặc biệt ở màn hình nhập mã code",
+                "[WEB][LoginFID] Lỗi không play tiếp nội dung/trang đang xem mà quay về Trang chủ khi đăng nhập FID thành công(trường hợp vượt giới hạn thiết bị)",
+                "[WEB][Lịch sử xem] Không hiển thị tùy chọn Lịch sử xem ở các hồ sơ khác khi đang đăng nhập hồ sơ master",
+                "[WEB][CommentbyAI] Lỗi hiển thị progress bar màu cam khi mở bottomsheet Tổng hợp bình luận",
+                "[WEB][CommentbyAI] Lỗi UI khi chọn tab các nguồn trường hợp đang hiển thị Hint info",
+                "[WEB][CommentbyAI] iOS_Lỗi cho phép zoom in/ out trên khung Tổng hợp bình luận",
+                "[WEB][CommentbyAI][Report] Lỗi hint text ngắt chữ không đúng",
+                "[WEB][CommentbyAI] Lỗi không yêu cầu login khi mở tính năng summary comment",
+                "[WEB][CommentbyAI] Lỗi UI ở bottomsheet Tổng hợp bình luận",
+                "[WEB][Hồ sơ][Chỉnh sửa hồ sơ] Lỗi chưa lưu thay đổi ở màn hình chỉnh sửa hồ sơ"
+            ]
+        },
+        {
+            "version": "7.21.4",
+            "date": "15/05/2025",
+            "content": [
+                "[WEB][LoginFID] Lỗi không play tiếp nội dung/trang đang xem mà quay về Trang chủ khi đăng nhập FID thành công(trường hợp vượt giới hạn thiết bị)",
+                "[WEB][Player] Lỗi mất 1 số btn (pause/play, tua tới/lui 10s) ở player bar VOD",
+                "[WEB][Lịch sử xem] Không hiển thị tùy chọn Lịch sử xem ở các hồ sơ khác khi đang đăng nhập hồ sơ master",
+                "[WEB][Lịch sử xem] Lỗi đang hiển thị tên nội dung xem xuống nhiều dòng"
+            ]
+        },
+        {
+            "version": "7.21.3",
+            "date": "15/05/2025",
+            "content": [
+                "[Web] Điều chỉnh deeplink trỏ về Block Short Video",
+                "Samsung tich hop SSO",
+                "[Payment] Nâng cấp và bổ sung thêm cổng thanh toán với FPT Pay v4",
+                "[Payment] Payment Hub",
+                "[WEB][QuickLogin] Lỗi hiển thị sai tên btn ở popup thông báo Mã không hợp lệ",
+                "[WEB][Quicklogin] Lỗi cho phép nhập kí tự chữ/đặc biệt ở màn hình nhập mã code",
+                "[WEB][QuickLogin] Lỗi không hiển thị thông báo 'Đăng xuất không thành công' khi thiết bị A chọn đăng xuất thiết bị trong danh sách mà thiết bị B đã chọn đăng xuất trước đó",
+                "[WEB][Huỷ đặt lịch] Lỗi hiển thị giao diện text button 'Đặt lịch' - 'Huỷ đặt lịch' ở detail sự kiện",
+                "[WEB][Player][CLHA] Lỗi không hiển thị CLHA ở debug đúng với lựa chọn ở popup Cài đặt",
+                "[WEB][Player] Lỗi hiển thị khoảng cách giữa process bar với màn hình video",
+                "[WEB][Huỷ đặt lịch] Lỗi hiển thị giao diện button 'Đặt lịch' - 'Huỷ đặt lịch' ở block 'Sắp công chiếu' khác với thiết kế",
+                "[WEB][Huỷ đặt lịch] Lỗi hiển thị giao diện icon chuông trong button 'Đặt lịch' - 'Huỷ đặt lịch' ở detail VOD khác với thiết kế",
+                "[WEB][Huỷ đặt lịch] Lỗi không huỷ đặt lịch được VOD sắp công chiếu trong detail VOD",
+                "[WEB] Lỗi hiển thị các items trên block Highlights giống nhau giữa các profile",
+                "[WEB][Sắp công chiếu] Lỗi không thao tác được icon 'Âm thanh' ở block 'Sắp công chiếu'"
+            ]
+        },
+        {
+            "version": "7.21.2",
+            "date": "15/05/2025",
+            "content": [
+                "[Webview Mobile] Summary comment by AI",
+                "Tích hợp MQTT thu thập dữ liệu phát trên các nền tảng - Ping CCU",
+                "[API] Đồng bộ quy trình đăng nhập/ đăng ký - Quicklogin - Renew",
+                "Optimize cho luong login OTP - FPLAY",
+                "Optimize QoE & QoS",
+                "[All platform] Tính năng hủy đặt lịch cho Sắp công chiếu",
+                "[IOS/Web] Optimize log liên quan đến Init Player",
+                "[WEB][Tốc độ phát] Lỗi hiển thị icon không đúng với design",
+                "[WEB][Tốc độ phát] Lỗi không lưu tốc độ phát sau khi pause VOD và play",
+                "[WEB] Lỗi hiển thị header menu của profile Kid"
+            ]
+        },
+        {
+            "version": "7.21.0",
+            "date": "15/05/2025",
+            "content": [
+                "[Web] Thêm chức năng tốc độ phát player hiện tại (x0.5 , x1 , x1,5)",
+                "Chuyển label tĩnh (design cứng trên poster) thành label động",
+                "Cập nhật affiliate cho landing page từ fpt.vn",
+                "[WEB][DetailVOD] Lỗi highlight tất cả btn Nhóm tập khi chọn vào tập đang phát"
+            ]
+        },
+        {
+            "version": "7.20.6",
+            "date": "31/03/2025",
+            "content": [
+                "[WEB][ReportPlayer] Lỗi hiển thị popup Report khi scroll chuột ở Safari",
+                "[WEB][Highlight Block Recommend] Lỗi không hiển thị items của nhóm items CMS khi vị trí items trùng với items được PIN RECOMMEND",
+                "[WEB][ReportPlayer] Điều chỉnh disable btn Gửi khi chọn >=1 option nhưng nhập > 1000 kí tự ở Nội dung chưa phù hợp khác",
+                "[Web][EVENT] - Điều chỉnh logic hiển thị title button & description mua gói"
+            ]
+        },
+        {
+            "version": "7.20.5",
+            "date": "31/03/2025",
+            "content": [
+                "[WEB][KARAOKE] Lỗi đang hiển thị tick chọn nhiều loại audio",
+                "[WEB] Lỗi hiển thị duplicate API segment (.m4s) khi play VOD bất kì",
+                "[WEB][Profile] Lỗi vẫn hiển thị các block và items của Profile thường ở Profile kid",
+                "[WEB][Highlight Block Recommend] Lỗi không hiển thị các items Recommend khi người dùng có dữ liệu Recommend ở Highlight Block",
+                "[WEB][Vì Bạn Đã Xem] Lỗi vẫn hiển thị button 'Xem tất cả' khi số items của block chỉ có 30 items",
+                "[WEB][Highlight Block Recommend] Lỗi vẫn hiển thị các items Recommend trên block Highlight khi đã đăng xuất tài khoản",
+                "[WEB][Vì Bạn Đã Xem] Lỗi không hiển thị title mặc định của block Vì bạn đã xem",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị duplicate items trên block Hightlight",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị sự kiện khi sự kiện có trong dữ liệu RECOMMEND",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị items của nhóm items CMS sai thứ tự",
+                "[WEB][Vì Bạn Đã Xem] Lỗi không hiển thị dữ liệu trang detai 'Vì bạn đã xem'",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị duplicates items của nhóm items CMS",
+                "[WEB][Player] Lỗi không đóng popup detail 'Âm thanh & phụ đề' và 'Cài đặt'",
+                "[WEB][Player] Lỗi không hiển thị full video khi bật full-screen VOD trên màn hình 4K",
+                "[web/mobile] Bổ sung tính năng theo Luật điện ảnh 2022 (Hiển thị UX/UI chưa api)",
+                "[WEB][Sự kiện] Lỗi hiển thị banner khi khi kết thúc sự kiện DRM",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị duplicates items event trên block Highlight",
+                "[WEB][Highlight Block Recommend] Lỗi hiển thị sai vị trí các items trên block Highlight"
+            ]
+        },
+        {
+            "version": "7.20.3",
+            "date": "31/03/2025",
+            "content": [
+                "Điều chỉnh Landing page Short Videos",
+                "[WEB] Lỗi giảm CLHA khi chuyển loại Âm thanh ở VOD có Multi-Audio",
+                "[WEB][Login] Lỗi chưa ràng 10 kí tự đối với trường Số điện thoại (vẫn hiện được kí tự thứ 11)",
+                "Đánh dấu những nội dung có thể đăng lên highlight để phục vụ cho việc recommendation",
+                "[AI][LLM] Xây dựng Recommendation ver 3 + block vì bạn đã xem",
+                "Update set cookie httpOnly cho các trường User",
+                "Đồng bộ tite block `Nội dung tham gia`trên toàn bộ platform box android/smartTV/mobile website"
+            ]
+        },
+        {
+            "version": "7.20.2",
+            "date": "31/03/2025",
+            "content": [
+                "[WEB] Lỗi không highlight đúng tên tab (Apps) trên Top Navigation bar",
+                "Điều chỉnh ghi log cho cơ chế Next/AutoNext/Phim liên quan",
+                "[WEB][Login] Lỗi auto fill số điện thoại vào trường OTP",
+                "[WEB] Lỗi giảm CLHA khi chuyển loại Âm thanh ở VOD có Multi-Audio",
+                "[WEB][OTP 6 số] Lỗi không thay đổi câu hint của pop-up 'Xác thực mã OTP' khi API re-send bị lỗi",
+                "[WEB] Lỗi hiển thị player của timeshift kênh"
+            ]
+        },
+        {
+            "version": "7.20.0",
+            "date": "31/03/2025",
+            "content": [
+                "Cập nhật API user/info mới cho Web, Mobile",
+                "[Web] Flow OTP mới cho các chức năng",
+                "[Payment] Cho hiển thị cổng thanh toán QR trên web mobile",
+                "[Web/ mobile] Bổ sung thêm log tracking sâu hơn cho FPT ID",
+                "[WEB][Notifiaction] Lỗi hiển thị noti sai thời gian (đang filter các noti của ngày hôm qua cho hôm nay)",
+                "[WEB][Deeplink] Lỗi không truy cập được Lịch thi đấu và Kết quả ở các Giải đấu danh mục Thể thao từ Deep-link"
+            ]
+        },
+        {
+            "version": "7.19.9",
+            "date": "14/01/2025",
+            "content": [
+                "Chỉ cho phép xem kênh truyền hình, sự kiện DRM bằng Edge và Safari"
+            ]
+        },
+        {
+            "version": "7.19.8",
+            "date": "30/12/2024",
+            "content": [
+                "Đổi logic xử lý user theo yêu cầu từ CSOC",
+                "Update kích thước hình ảnh block feature_horizontal_slider",
+                "[WEB][Quản lý thiết bị] Lỗi không hiện data khi reload trang/Không disable btn Xóa thiết bị khi chưa chọn item nào",
+                "Fix bug CityAds",
+                "Bổ sung type khi mờ link Pladio"
+            ]
+        },
+        {
+            "version": "7.19.7",
+            "date": "30/12/2024",
+            "content": [
+                "Fix Bug hiển thị Side Tag Safari",
+                "Update logic vào trang Year in review khi user chưa login",
+                "[WEB][Profile] Lỗi hiển thị avatar sau khi chỉnh sửa thay đổi avatar"
+            ]
+        },
+        {
+            "version": "7.19.6",
+            "date": "30/12/2024",
+            "content": [
+                "Fix bug Year In review"
+            ]
+        },
+        {
+            "version": "7.19.2",
+            "date": "30/12/2024",
+            "content": [
+                "[WEB/MOBILE]Year In review",
+                "[Log] Year anh Review",
+                "[Web] Xử lý logic với content Pladio",
+                "Tích hợp tracking để kết nối Affiliate CityAds",
+                "Lỗi không hiển thị đầy đủ chức năng phần Player Bar của Truyền Hình và Sự Kiện ở Browser Web Mobile",
+                "[WEB][Âm lượng] Lỗi không lưu điều chỉnh Âm lượng trước đó khi chọn Xem ngay ở màn hình Next movie",
+                "Lỗi không play được ở lần đầu truy cập kênh Truyền Hình ở Web Browser Mobile hệ điều hành iOS"
+            ]
+        },
+        {
+            "version": "7.19.1",
+            "date": "30/12/2024",
+            "content": [
+                "Bổ sung Log Login F-ID, OTP",
+                "Bổ sung utm cho các campaign internal app",
+                "Lỗi sau khi bình luận không xóa text vừa bình luận ở trường 'Viết bình luận'",
+                "[WEB][FPT Play Rewards] Lỗi hiển thị icon play ở thông tin hạng điểm"
+            ]
+        },
+        {
+            "version": "7.18.8",
+            "date": "28/11/2024",
+            "content": [
+                "Hạ game VNG",
+                "Update lỗi không hiển thị data trên mobile ios"
+            ]
+        },
+        {
+            "version": "7.18.7",
+            "date": "24/11/2024",
+            "content": [
+                "Hiển thị bảo trì Game VNG"
+            ]
+        },
+        {
+            "version": "7.18.6",
+            "date": "19/11/2024",
+            "content": [
+                "[WEB][Trực tiếp] Lỗi hiển thị giật đen ở màn hình player của sự kiện trực tiếp NoDRM Multiaudio ở trình duyệt Safari",
+                "[WEB][Tài khoản & Cài đặt] Lỗi giao diện khi nhập mã quản lý phổ biến/trùng với mã cũ ở popup Thiết lập mã quản lý"
+            ]
+        },
+        {
+            "version": "7.18.5",
+            "date": "19/11/2024",
+            "content": [
+                "[WEB][Truyền hình]Không phát được kênh VTV1 trên Safari",
+                "[WEB][Thông báo lỗi]Lỗi hiển thị của popup retry internet",
+                "[WEB][Codec VOD]Lỗi không play được VOD DRM trong play-list",
+                "[WEB][Codec VOD]Lỗi hiển thị CLHA VOD không chính xác ở trình duyệt Edge",
+                "[WEB][Truyền hình] Lỗi không hiển thị player bar mà hiển thị popup Đăng nhập khi chọn vào player"
+            ]
+        },
+        {
+            "version": "7.18.3",
+            "date": "19/11/2024",
+            "content": [
+                "[web] Mapping log/tool tra cứu mã lỗi Kibana - bổ sung log issueId",
+                "Cập nhật hiển thị thông báo thanh toán thất bại từ API",
+                "[Log] bổ sung log audio codec",
+                "[WEB][Sắp công chiếu]Lỗi không hiển thị ellipsis khi nội dung của trường 'Thời gian công chiếu' hơn 1 dòng kí tự",
+                "[WEB][Preview Sự kiện K+] Lỗi không phát preview khi duplicate tab trên Safari",
+                "[WEB][Sự kiện] Lỗi loading khá lâu mới play sự kiện",
+                "[WEB][Preview Live] Lỗi phát không đúng thời gian play preview trên Safari",
+                "[WEB][PreviewK+] Lỗi khi login không thành công đối với tài khoản chưa đăng nhập khi chọn xem preview sự kiện và các kênh DRM"
+            ]
+        },
+        {
+            "version": "7.18.2",
+            "date": "19/11/2024",
+            "content": [
+                "[SEO] Update một số thông tin liên quan SEO",
+                "[Web] Bổ sung trackingLog cho phần truy cập vào ứng dụng Gamezone/VNG",
+                "Multi codec Audio: Dolby-FLAC-AC3-AAC",
+                "[Website] Tối ưu load data trang chủ",
+                "[Web] - Bổ sung log cho player Kênh (pause/resume trên kênh timeshift)",
+                "[WEB][Deeplink danh mục]Lỗi hiển thị underline của danh mục",
+                "[WEB][Thông báo lỗi]Lỗi không hiển thị Toast khi mất kết nối/ khôi phục kết nối internet ở trình duyệt Firefox",
+                "[WEB][Thông báo lỗi]Lỗi hiển sai nội dung của Toast khi mất kết nối internet",
+                "[WEB][Thông báo lỗi]Lỗi không hiển thị Toast thông báo khi mất kết nối internet / khôi phục kết nối internet ở trang Player - Fullscreen",
+                "[WEB][Thông báo lỗi]Lỗi không hiển thị ellipsis khi nội dung của Toast hơn 2 dòng kí tự",
+                "[WEB][Thông báo lỗi]Lỗi không tự động reload trang sau khi khôi phục kết nối internet",
+                "[Player] Điều chỉnh load file SigmaPacker và ShakaUI",
+                "[WEB][Deeplink danh mục]Lỗi hiển thị sai tên danh mục phụ (SUB Categories) của danh mục HBO GO",
+                "[WEB][Deeplink danh mục]Lỗi không hiển đúng tên danh mục của danh mục V-League, NBA",
+                "[WEB][Preview sự kiện] Thiếu chức năng chia sẻ ở player của Detail sự kiện tiếp sóng K+",
+                "[WEB] [Preview Sự kiện] Đang redirect về sai page khi chọn back từ màn hình thanh toán trên Safari",
+                "[WEB][Sự kiện] Lỗi hiển thị toast thông báo preview khi điều chỉnh Âm thanh",
+                "[WEB][Login] Lỗi không login thành công khi có bật landing page",
+                "Bug tracking UTM, Ads",
+                "[WEB][Codec VOD]Lỗi không play VOD với chuẩn CODEC cao nhất của trình duyệt hỗ trợ",
+                "[WEB][Deeplink danh mục]Lỗi hiển thị căn lề của data trường 'Danh mục'",
+                "[WEB][Sắp công chiếu]Lỗi không autoplay trailer khi hover vào VOD có trailer ở block Sắp Công Chiếu"
+            ]
+        },
+        {
+            "version": "7.18.1",
+            "date": "19/11/2024",
+            "content": [
+                "Multi codec Audio: Dolby-FLAC-AC3-AAC",
+                "Multi codec video: [Tối ưu] Check logic thứ tự ưu tiên play AV1-VP9-H265-H264",
+                "Preview 5p cho Event",
+                "[Website] QoE cập nhật log pharse 2",
+                "Bổ sung tham số is_preview khi KH đăng ký từ Preview",
+                "Bổ sung logic cache data Recommend",
+                "[Client] Tối ưu player",
+                "[SEO] Bổ sung deeplink cho thể loại trong trang detail",
+                "Điều chỉnh Toast thông báo trạng thái kết nối mạng",
+                "Thiết lập cờ httponly khi lưu cookie data",
+                "[WEB][Truyền hình] Chưa ẩn tên block Nổi bật khi không có item",
+                "[WEB][Tài khoản và cài đặt] [Nhập mã kích hoạt] Lỗi không auto focus vào ô Nhập mã",
+                "[VNG]Playzone - Điều chỉnh header menu và bổ sung CTKM",
+                "[WEB] Lỗi hiển thị text metadata block Highlight ở trình duyệt Safari",
+                "[Web] Thay đổi thông tin 'Ngày công chiếu' của 'Block coming soon'",
+                "[WEB][Player][MultiSub] Lỗi hiển thị màu chữ phụ đề khi vừa bật",
+                "Tối ưu logic check thông báo event, vod",
+                "[WEB][PreviewK+] Chưa hiển thị popup hết lượt ngay sau khi mất kết nối internet",
+                "[WEB][PreviewK+] MS Edge_Lỗi phát preview quá 5p chưa dừng",
+                "Bổ sung thêm điều kiện check expire time theo thời gian từ API tính năng Preview",
+                "[WEB][AR_WC] Không hiển thị cảnh báo đối với lần hiển thị 2,3(nội dung >20p)"
+            ]
+        },
+        {
+            "version": "7.17.9",
+            "date": "7/10/2024",
+            "content": [
+                "[WEB] [PreviewK+] Lỗi không ẩn chức năng CLHA ở preview",
+                "[WEB][Game Center] Lỗi không highlight text tab Kho game khi vào truy cập Game Center",
+                "[WEB][Game Center] Lỗi không truy cập được tab Kho game từ tab Nạp Game ở Game Center",
+                "Fix lỗi 404 trang /xem-truyen-hinh"
+            ]
+        },
+        {
+            "version": "7.17.8",
+            "date": "7/10/2024",
+            "content": [
+                "Đổi hình Zalopay, Update gói FPT 3G"
+            ]
+        },
+        {
+            "version": "7.17.7",
+            "date": "7/10/2024",
+            "content": [
+                "SideTag Button trên Website"
+            ]
+        },
+        {
+            "version": "7.17.6",
+            "date": "7/10/2024",
+            "content": [
+                "[WEB][LogIn_SignUp] Lỗi có thể nhập trường OTP hơn 6 ký tự khi đăng nhập/đăng ký bằng trình duyệt FireFox",
+                "[WEB] Lỗi đen màn hình khi truy cập vào trang",
+                "[WEB][Truyền Hình] Lỗi trang bị auto reload khi vào kênh HBO GO trên trình duyệt Edge",
+                "[WEB][LogIn_SignUp] Lỗi trang login bị auto reload không ngừng",
+                "Cập nhật thông tin browser name, browser version trong phần quản lý thiết bị, log kibana",
+                "Cập nhật config off lowlatency trong player"
+            ]
+        },
+        {
+            "version": "7.17.5",
+            "date": "7/10/2024",
+            "content": [
+                "Bổ sung Log QoE",
+                "Fix bug Log",
+                "[Web][Profile] Nhập được kí tự đặc biệt vào Input tại các màn hình Thiết lập mã pin, Đổi mã Pin hồ sơ",
+                "[WEB][Truyền hình] Chỉnh lại vị trí popup thông báo lỗi",
+                "Bổ sung cơ chế inapp purchase cho Game (SDK - App)",
+                "[Web][Comment] Comment đầu tiên không hiển thị avatar và tên người dùng",
+                "[Web][Comment] Lỗi bị duplicate comment sau khi gửi 1 reply comment",
+                "[Web][FID] Không show màn hình thông báo Hết thời gian làm việc tại màn hình Vượt quá thiết bị khi không thao tác >10 phút",
+                "[WEB][PreviewK+] Chỉnh lại toast thông báo đúng với BE trả về",
+                "[WEB][PreviewK+] Lỗi loading và hiển thị popup mà không phát preview khi chọn xem preview lần 1,2 trên Safari",
+                "[WEB][PreviewK+] Báo cáo sự cố_Lỗi không chọn được vào bất kỳ option nào ở popup khi ở chế độ Fullscreen",
+                "[WEB][PreviewK+] Lỗi không hiện popup Yêu cầu đăng ký sau khi xem thử preview lần 1/2",
+                "[Web][FID] Thông tin ở màn hình Vượt quá thiết bị đang hard từ client",
+                "Lỗi chuyển tập phim lẻ khi bấm vào đang xem"
+            ]
+        },
+        {
+            "version": "7.17.2",
+            "date": "7/10/2024",
+            "content": [
+                "Preview K+",
+                "Log preview K+",
+                "QoE, bổ sung thêm log",
+                "Cập nhật thông tin gamezone => playzone",
+                "Lỗi mở link sự kiện, công chiếu trên web ios",
+                "[SEO] Bổ sung tính năng rating - thêm 1 field định dạng và làm tròn số",
+                "[Web][Chrome] lỗi không ẩn cảnh báo tình huống khi hết thời gian hiển thị",
+                "[Web][Comment] Không hiển thị nội dung comment",
+                "[Web][Safari] Lỗi mất phụ đề trong icon Phụ đề và Âm Thanh, phụ đề cũng ko hiển thị trên player khi reload",
+                "[Web][FID] Nhập đúng mã OTP nhưng hiển thị thông báo hết hạn và chuyển tới màn hình kế tiếp"
+            ]
+        },
+        {
+            "version": "7.16.5",
+            "date": "28/8/2024",
+            "content": [
+                "Bổ sung giá trị profile trên wellcome screen",
+                "[Web/App] Web game VNG trên web fptplay.vn",
+                "Triển khai F-ID với FPT Play đăng nhập, đăng ký",
+                "Triển khai F-ID với FPT Play Multi Profile",
+                "Triển khai F-ID với FPT Play xóa tài khoản",
+                "[Player] Update logic ABR và logic hiển thị chất lượng"
+            ]
+        },
+        {
+            "version": "7.16.3",
+            "date": "28/8/2024",
+            "content": [
+                "Tích hợp phương thức thanh toán VietQR",
+                "Update thanh toán Credit 3DS",
+                "Update logic ABR và logic hiển thị chất lượng",
+                "Bổ sung tính năng Điều chỉnh Tốc độ Phát cho VOD Player",
+                "Bổ sung xếp hạng trên trang google",
+                "Quản lý gia hạn dịch vụ và Quản lí phương thức thanh toán",
+                "Bổ sung log load danh sách Block hiển thị trên trang"
+            ]
+        },
+        {
+            "version": "7.15.7",
+            "date": "24/6/2024",
+            "content": [
+                "Xử lý logic switch luồng H265 & H264",
+                "Đổi định dạng ưu tiên từ HSL sang Dash trên web",
+                "Tối ưu logic load trang khi scroll"
+            ]
+        },
+        {
+            "version": "7.15.2",
+            "date": "24/6/2024",
+            "content": [
+                "Vote Rating",
+                "Điều chỉnh Highlight - và định dạng thời gian (sự kiện)",
+                "Homepage recommendation (sorting block home)",
+                "Làm động vị trí quảng cáo trên Page (all platform)",
+                "Update logic hiển thị danh sách tập cho phim bộ, playlist theo yêu cầu phục vụ SEO",
+                "Điều chỉnh logic đang pause , seek thì tự play lại cho đồng nhất với các platform khác",
+                "[WEB][Account] Hiện thông báo không phù hợp khi bỏ trống trường nhập Gmail",
+                "[WEB][Truyền hình] Lỗi Play chương trình Live/ Hiện popup yêu cầu đăng nhập rồi auto tắt khi chọn timeshift khi chưa login",
+                "[WEB][Detail VOD] Lỗi không hiện button swipe left khi hover ở block Danh sách tập",
+                "[WEB][Sport] Lỗi không nhấn được button Xem thêm ở màn hình Lịch thi đấu",
+                "[WEB][Đang xem] Lỗi không clear VOD trên block Đang xem khi xem đến credit",
+                "[Log] gửi UTM log",
+                "[WEB][Player] Lỗi auto tắt Fullscreen khi next chapter/ auto next chapter",
+                "[LOG] Web - Fix bug tồn đọng Sprint 8"
+            ]
+        },
+        {
+            "version": "7.14.11",
+            "date": "24/04/2024",
+            "content": [
+                "[LOG] Web - Điều chỉnh fields ItemId của Log thay đổi thông tin profile",
+                "Bổ sung tham số screen width/height, 4k lên APIs để làm cơ sở trả nội dụng 4k về sau, bổ sung Log kibana",
+                "Preview 5m VOD",
+                "Update limit comment thay đổi từ hardcode sang API",
+                "Đồng nhất lại format URL phần image cho đồng nhất tất cả platform",
+                "Điều chỉnh cấu trúc Welcome screen trên Web động",
+                "Profile V2",
+                "Pladio chuyển qua định dạng link stream mp3",
+                "[Playlist] Tính Năng Next Playlist/ item"
+            ]
+        },
+        {
+            "version": "7.13.14",
+            "date": "19/02/2024",
+            "content": [
+                "[Truyền hình] Lỗi chọn chương trình timeshift khi chưa login",
+                "[Login] Lỗi chọn được button Tiếp tục - disable khi đăng kí tài khoản",
+                "[ReportPlayer] Sai title thông báo lỗi lấy danh sách report",
+                "[ReportPlayer] Không hiện thông báo lỗi khi lấy danh sách report",
+                "[Noti] Lỗi hiện sai format DD/MM/YYYY ở Hộp thư",
+                "Update logic retry api, retry stream",
+                "Tự động đóng Lịch phát sóng sau 10s không hoạt động",
+                "[AR-WC] Hiển thị AR-WC ở BL, BR bị chồng lên player bar",
+                "[Profile] Lỗi identify khi switch profile ở tab khác",
+                "[AR-WC] Lỗi sau khi nhấn Bỏ qua quảng cáo, không hiện AR-WC và hiện lại khi seek về đầu",
+                "[ReportPlayer] Lỗi highlight checkbox sau khi hủy chọn các checkbox đã chọn trước đó",
+                "[ReportPlayer] Lỗi không thay đổi cursor point khi hover các ô checkbox và text các selection",
+                "[ReportPlayer] Lỗi hiện vị trí report không đúng với yêu cầu",
+                "[ReportPlayer] Lỗi play lại từ đầu khi thoát popup Yêu cầu đăng nhập",
+                "[ReportPlayer] Lỗi không hiện icon Report khi play Timeshift",
+                "Multiple profiles",
+                "Bổ sung tính năng báo cáo sự cố (report) trên player VOD",
+                "Bổ sung phân loại độ tuổi & cảnh báo tình huống",
+                "Cập nhật màn hình player khi chưa Đăng nhập",
+                "Bổ sung meta data cho event ở banner home & detail event",
+                "Log kibana profile",
+                "Fix lỗi thanh toán shopee pay trên web mobile"
+            ]
+        },
+        {
+            "version": "7.12.10",
+            "date": "28/12/2023",
+            "content": [
+                "Year in Review 2023 FPT Play"
+            ]
+        },
+        {
+            "version": "7.12.8",
+            "date": "15/12/2023",
+            "content": [
+                "Update tracking, log",
+                "Update SEO",
+                "Tính năng xóa tài khoản",
+                "Bổ sung flow Play VOD đối với DRM TDM (Thủ đô media)",
+                "Hiển thị thông tin debug",
+                "Thêm field cho VOD / Event / Truyền hình để đồng bộ data",
+                "Updated logic end-time bị nháy đen (event - fptlive - dẫn kênh)",
+                "Điều chỉnh logic Display + Play profile",
+                "Cho phép xem truyền hình, sự kiện DRM trên Cốc Cốc và không cho xem trên Chrome",
+                "Tối ưu gọi API noti/room chuyển qua firebase",
+                "Vòng quay may mắn",
+                "Điều chỉnh giao diện gói Upsell - Combo",
+                "Recommend Next Playlist",
+                "[MoMo-FPT Play] V/v nâng cấp luồng Subscription",
+                "Cập nhật logic play sự kiện từ lịch thi đấu",
+                "Tracking và thống kê số liệu traffic users mua gói SA",
+                "Tối ưu SEO video schema trên web",
+                "Optimize SEO web pharse 3",
+                "Bổ sung cơ chế FingerPrint cho nội dung Non DRM",
+                "[Đang Xem] Lỗi không play tại bookmark khi nhấn chọn play VOD trong Danh sách tập",
+                "[Đang Xem] Lỗi không lưu Đang xem đối với phim bộ (khác tập 1)"
+            ]
+        },
+        {
+            "version": "7.11.7",
+            "date": "16/10/2023",
+            "content": [
+                "Tích hợp sử dụng mã code Sodexo trên website",
+                "Update lỗi UX/UI mobile",
+                "Bỏ popup thông báo khi đăng nhập thành công",
+                "Chuẩn hóa tiếp phần tên hiển thị của multi sub/audio cho VOD",
+                "[Detail VOD] Lỗi play không đúng tập được chọn(chỉ bị lần đầu)"
+            ]
+        },
+        {
+            "version": "7.10.6",
+            "date": "21/09/2023",
+            "content": [
+                "Lỗi hiển thị subtitle cho đúng design trên Safari",
+                "Lỗi giao diện Landingpage Lướt sóng trên sân bóng"
+            ]
+        },
+        {
+            "version": "4.4.4",
+            "date": "21/09/2023",
+            "content": [
+                "Cập nhật trang HDSD Box 650",
+                "Landing page Nạp/Mua card điện thoại",
+                "Điều chỉnh URL mua-goi theo chuẩn deeplink mới",
+                "Thêm vị trí trong Quy hoạch Giới hạn độ tuổi cho VOD",
+                "Landing page Cast",
+                "Landing page Lướt sóng trên sân bóng",
+                "Cập nhật subtitle theo thiết kế",
+                "Client OTT: bổ sung thêm thông tin hợp đồng lên hệ thống log",
+                "Bổ sung thêm trường màn hình thông báo lỗi chi tiết nội dung đang bị lỗi",
+                "Update trang chào bạn mới theo thông tin trong loop mail",
+                "Optimize logic login và register user, điều chỉnh UX/UI theo thiết kế",
+                "[Safari] Lỗi không hiện màn hình next movies",
+                "Lỗi không hiện icon Next khi next video trong playlist (video nonDRM next video DRM)",
+                "Lỗi bị lệch icon khi xem full screen player shaka",
+                "Lỗi giao diện LPS khi luồng TS bị lỗi"
+            ]
+        },
+        {
+            "version": "4.3.1",
+            "date": "21/09/2023",
+            "content": [
+                "Update Meta Data SEO từ api theo loop mail: Các vấn đề của SEO và Tracking Tool",
+                "Tối ưu deeplink theo định nghĩa mới nhằm quy hoạch",
+                "Lỗi clevertap không đổi khi user login",
+                "Auto next Timeshift",
+                "Login SSO",
+                "Update UX/UI theo thiết kế",
+                "Update CAMP CHÀO BẠN MỚI THÁNG 08/2023"
+            ]
+        },
+        {
+            "version": "4.2.4",
+            "date": "19/07/2023",
+            "content": [
+                "Hotfix update logic retry + domain msky",
+                "[Player] Lỗi hiện màn hình mua gói khi chuyển tập không yêu cầu gói",
+                "[Giới hạn độ tuổi] Thời gian hiển thị duration chưa đúng",
+                "[Truyền hình] Chọn được TS kênh không có TS nhóm kênh HBO Go"
+            ]
+        },
+        {
+            "version": "4.2.1",
+            "date": "21/06/2023",
+            "content": [
+                "Đổi email hỗ trợ hotrofptplay@fpt.com",
+                "Fix lỗi màn hình đen khi xem sự kiện DRM",
+                "Update logic xem TSTV của những kênh DRM",
+                "Lỗi cache Avatar khi thực hiện chuyển kênh",
+                "[Error Noti] Lỗi sai text button Về Trang chủ trong popup Thông báo lỗi",
+                "[Login] Lỗi scroll down khi tắt popup đăng nhập trên Safari",
+                "[Trang chủ] Hủy đặt lịch trong block Sắp công chiếu trong detail",
+                "[Account] Lỗi không lưu thay đổi Tên hiển thị",
+                "[Login] Lỗi nhập được kí tự chữ/ đặc biệt trong popup Đăng kí khi đăng nhập qua social",
+                "[Player] Lỗi double tick khi xem VOD có 3 sub Phụ đề",
+                "[Account] Lỗi không lưu thay đổi Tên hiển thị"
+            ]
+        },
+        {
+            "version": "4.2.0",
+            "date": "21/06/2023",
+            "content": [
+                "[Player] Lỗi không hiện logo FPT trên player HBOGO",
+                "[ACCOUNT] Lỗi không giới hạn đặt tên hiển thị từ 6-20 ký tự",
+                "Không focus vào mục Liên hệ trên Menu bên trái",
+                "[Search] Lỗi search không đúng từ khóa playlist",
+                "Quy Hoạch Giới Hạn Độ Tuổi Cho VOD",
+                "[Player] Lỗi không thao tác được playback trên player DRM",
+                "[Login] Lỗi banner Yêu cầu Đăng nhập đè chèn popup Yêu cầu Đăng nhập",
+                "Màn hình thông báo lỗi | Cải tiến màn hình thông báo lỗi",
+                "Tích hợp CDN P2P",
+                "Fix bug scale image trang mua gói",
+                "Cập nhật logic play kênh truyền hình, sự kiện DRM TDM",
+                "[Player] Lỗi hiển thị sai thứ tự option Multiaudio trên Safari"
+            ]
+        },
+        {
+            "version": "4.1.7",
+            "date": "19/04/2023",
+            "content": [
+                "Campaign Chào bạn mới",
+                "Quản lý đơn hàng trên mobile Wap (shopertainment)",
+                "Không lưu bookmark Đang xem phim bộ trong search",
+                "Không lưu bookmark tập phim bộ khi chọn trong mục khác block đang xem/ tìm kiếm",
+                "[Share] Link share không giống link đang xem",
+                "[Login] Lỗi câu thông báo tiếng anh trong popup nhập OTP",
+                "[Trực tiếp] Lỗi Default Pause sự kiện FPTLIVE DRM trên Safari",
+                "[Truyền hình] Lỗi giao diện player truyền hình khi zoom brower",
+                "[DetailVOD] Lỗi focus không đúng nhóm 'danh sách tập' khi nhấn chọn Xem thêm",
+                "[Player] Lỗi không hiển thị Recommend VOD",
+                "[Trực tiếp] Đặt lịch sự kiện này bị dính đặt lịch sự kiện khác",
+                "[Trực tiếp] Hiện popup báo lỗi khi hạ sự kiện DRM FPT Live bằng tool CMS",
+                "[Trực tiếp][Safari] Không hiện banner kết thúc sự kiện FPT Live DRM khi hạ sự kiện trên CMS",
+                "[Truyền hình] Lỗi vỡ layout page Truyền hình khi xem Timeshift lỗi (trên Safari)",
+                "[Trực tiếp] Không hiện banner kết thúc khi hạ sự kiện FPT live nonDRM trên CMS",
+                "[Payment] Không disable button Áp dụng khi chưa nhập code"
+            ]
+        },
+        {
+            "version": "4.1.6",
+            "date": "19/04/2023",
+            "content": [
+                "Hiển thị mục V.league trên Menu không có nội dung",
+                "Lỗi hiển thị Xem tất cả chưa đúng trên nhóm tập Detail VOD",
+                "Lỗi Video sự kiện FPTLive hiển thị không đúng tỷ lệ màn hình trên Safari",
+                "Vị trí mục 'Bảo Hành' dưới footer chưa đúng",
+                "Không clear Huyện khi chọn lại tỉnh thành trong mục điểm giao dịch",
+                "Mục điểm giao dịch chưa đúng design",
+                "Không có nội dung trong trang bảo hành",
+                "Lỗi hiển thị icon Âm thanh & Phụ đề",
+                "Lỗi khi nhấn chọn navigation menu",
+                "Lỗi hiển thị tên của Sub trong popup Option Phụ đề",
+                "Text 'Mọi thắc mắc liên hệ...' chưa canh giữa trang",
+                "Thỉnh thoảng không play realtime sau khi pause VOD công chiếu",
+                "Lỗi không hiển thị Highlight trên màn hình Trang chủ",
+                "Lỗi double tick Âm thanh/Phụ đề trên player sự kiện Công chiếu noDRM trên Safari",
+                "Lỗi play lại từ đầu khi thay đổi Chất lượng Auto với sự kiện Công chiếu noDRM trên trình duyệt Chrome/Edge",
+                "[Trực tiếp] Lỗi không lưu Âm thanh đã chọn trong MultiAudio/Sub khi chọn Chất lượng khác",
+                "[Trực tiếp]Lỗi hiển thị Popup Thông báo sự kiện đã kết thúc trên Edge/ Safari",
+                "[Trực tiếp] Lỗi không hiện popup Sự kiện đã kết thúc khi hạ sự kiện FPTLIVE DRM trên M.Edge",
+                "[Truyền hình] Một số kênh không hiện icon play khi hover vào"
+            ]
+        },
+        {
+            "version": "4.1.5",
+            "date": "19/04/2023",
+            "content": [
+                "Không hiện banner kết thúc khi off luồng trong sự kiện DRM",
+                "Chọn Xem tất cả trong block Kênh cá nhân không được",
+                "Lỗi không lưu selection Phụ đề trên Safari browser",
+                "Số lượng item trong các block/ highlight đang gắn cứng",
+                "Đổi Facebook AppID",
+                "Tracking chất lượng Streaming",
+                "Nghiên cứu logic Multi Audio cho các nội dung Sự Kiện",
+                "Hiển thị thử nghiệm Block Danh mục",
+                "Tối ưu deeplink",
+                "Cho phép hiển thị Playlist khi Search",
+                "Multidevices - Yêu cầu bổ sung EpisodeID cho lượt xem phim",
+                "Thêm trang bảo hành vào fptplay.vn",
+                "Muti audio , multi sub cho nội dung VOD",
+                "Sai logo HBO Go trên menu",
+                "Lỗi đường viền trên Banner Highlight",
+                "Lỗi đường viền ngang dưới player Truyền hình",
+                "Không chặn sự kiện trước 1 tiếng từ highlight",
+                "Lỗi không tự động switch chất lượng khi mạng yếu trên VOD DRM",
+                "[Deeplink+icon] Mua đáy bán đỉnh",
+                "Lỗi focus nhóm tập chưa đúng sau khi nhấn chọn 'Xem tất cả'"
+            ]
+        },
+        {
+            "version": "4.1.4",
+            "date": "23/02/2023",
+            "content": [
+                "Phần header page chưa đúng design",
+                "Lỗi chuyển multi Audio bị giật lag",
+                "Truyền hình Player DRM không hiện icon multi Audio",
+                "Chất lượng kênh truyền hình không giống nhau trong Block và DS kênh",
+                "Sự kiện không phải tiếp sóng nhưng không hiện banner",
+                "Luồng lỗi khi thao tác hạ highlight trước endtime",
+                "Focus không đúng mục khi chọn các mục dưới Footer",
+                "Không hiện icon Next trong DS playlist",
+                "Số lượng item trên highlight không đủ 10 items",
+                "Fix lỗi không hiện thông tin mua gói",
+                "Hiện banner khác trước khi load đúng banner trên hightlight",
+                "Hiện thanh timeline khi nhấp đúp vào player đang live",
+                "Update hiển thị banner mua gói khi xem vod theo design",
+                "Hiện icon play khi xem chương trình Live",
+                "Lỗi hiển thị nút Timeshift khi chưa đăng nhập",
+                "Lỗi nhập quá 10 kí tự trên popup Đăng nhập",
+                "Lỗi nhập kí tự chữ trong popup Đăng nhập",
+                "Lỗi không hiện MutilAudio trên player noDRM trên Safari",
+                "Lỗi hiển thị Progress Bar Âm lượng khi user không hover icon Âm lượng trên VOD, Kênh DRM",
+                "Hiện không đúng hình và description khi share moments",
+                "Mất menu bên trái khi chọn các mục trong browser Firefox",
+                "Bổ sung log tracking Streaming",
+                "Lỗi hiển thị lỗi 'Không có nguồn tương thích cho media này' chưa đúng",
+                "Cập nhật Process Bar trong Danh sách tập khi chuyển tập",
+                "Share Blogger không hiện nội dung trong bài post",
+                "Lỗi không hiện popup thông báo Tiếp tục ở lại Trang hoặc Về trang chủ",
+                "HDSD | Tạo domain và up pdf hướng dẫn sử dụng cho thiết bị",
+                "Các vấn đề của SEO và Tracking Tool: theo loop mail 'Các vấn đề của SEO và Tracking Tool'"
+            ]
+        },
+        {
+            "version": "4.1.1",
+            "date": "13/01/2023",
+            "content": [
+                "Fix lỗi cache avatar khi bị đá thiết bị",
+                "Update giao diện trang lỗi theo thiết kế",
+                "Lỗi call 2 API verify khi xác thực OTP",
+                "Fix lỗi bấm button chọn phụ đề, chọn âm thanh",
+                "Fix lỗi hiển thị khi thanh toán thành công",
+                "Xem gì mùa Tết"
+            ]
+        },
+        {
+            "version": "3.1.2",
+            "date": "25/08/2022",
+            "content": [
+                "Update xử lý Đăng ký / Đăng nhập cho đối tác (Vote45)",
+                "Fix lỗi Duplicate tab khi xem truyền hình k+",
+                "Landingpage ngôi sao 30s",
+                "Bổ sung thêm Keyword ở log play những VOD đền từ search, bổ sung keyword ở log click content trang search",
+                "Tích hợp control show/hide button login facebook, google",
+                "Update trang Đăng ký dịch vụ, tin tức gọi động từ API",
+                "Update poster ngang cho Block Phim liên quan",
+                "Ẩn cổng thanh toán QR trên web mobile",
+                "Bồ sung gọi song song api tracking ipv6"
+            ]
+        },
+        {
+            "version": "3.0.8",
+            "date": "06/06/2022",
+            "content": [
+                "Hiển thị icon HBO GO trên menu",
+                "Update trang dich-vu/3g: bỏ gói S0 mobifone",
+                "Đăng ký dịch vụ",
+                "Fix lỗi hiển thị description detail VOD",
+                "Fix lỗi link chia sẻ trong mục Reward Referral",
+                "Thêm button 'Tải ứng dụng FPT Play để trải nghiệm tốt hơn' trên web mobile",
+                "Update API Search Algorithms mới",
+                "Update show icon Timeshift",
+                "Tối ưu SEO",
+                "Update tracking CDP",
+                "Fix lỗi hiển thị sự kiện chat realtime",
+                "Remove tính năng 'yêu cầu đăng nhập sau 10 phút' cho các nội dung xem miễn phí",
+                "Thay đổi email CS",
+                "Resize các Poster/ Banner theo đúng tỉ lệ",
+                "Điều chỉnh pop-up thông báo",
+                "Optimize chat realtime sự kiện",
+                "Update overlay logo VOD",
+                "Update flow K+ client khi ping timeout",
+                "Log ping k+ error",
+                "Update trang /dich-vu/3g",
+                "Update show FingerPrint K+",
+                "Truyền hình DRM chỉ cho phép xem trên trình duyệt Edge và Safari",
+                "Fix lỗi FingerPrint",
+                "Chuyển luồng các trang liên quan chính sách từ hardcode sang API",
+                "Thêm thông báo xác nhận gia hạn mua gói thanh toán từ API",
+                "Update show icon MAX/VIP from API",
+                "Thêm thanh toán Credit, Napas Card Foxpay",
+                "Quản lý thẻ thanh toán Foxpay",
+                "Tích hợp gọi api cho một số trang static: điều khoản, chính sách",
+                "Đồng bộ thông tin dịch vụ đang sử dụng trên FPT Play",
+                "Update gửi thêm url cho tracking play"
+            ]
+        },
+        {
+            "version": "2.0.8",
+            "date": "12/01/2022",
+            "content": [
+                "Update show icon MAX/VIP from API",
+                "Thêm thanh toán Credit, Napas Card Foxpay",
+                "Quản lý thẻ thanh toán Foxpay",
+                "Tích hợp gọi api cho một số trang static: điều khoản, chính sách",
+                "Đồng bộ thông tin dịch vụ đang sử dụng trên FPT Play",
+                "Update gửi thêm url cho tracking play"
+            ]
+        },
+        {
+            "version": "2.0.7",
+            "date": "07/01/2022",
+            "content": [
+                "Fix lỗi CCU K+ khi đổi profile",
+                "Thêm tham số drm khi gọi api",
+                "Cho phép xem kênh truyền hình HBO có DRM và No-DRM"
+            ]
+        },
+        {
+            "version": "2.0.6",
+            "date": "17/11/2021",
+            "content": [
+                "Update limit comment thay đổi từ hardcode sang API",
+                "Bổ sung tham số screen width/height, 4k lên APIs để làm cơ sở trả nội dụng 4k về sau, bổ sung Log kibana",
+                "Preview VOD",
+                "Profile h264 / h265/ 4K",
+                "Đồng nhất lại format URL phần image cho đồng nhất tất cả platform",
+                "Profile V2",
+                "Pladio chuyển qua định dạng link stream mp3",
+                "[Playlist] Tính Năng Next Playlist/ item",
+                "Điều chỉnh cấu trúc Welcome screen trên Web động",
+                "[WEB][Truyền hình] Lỗi không auto next timeshift khi bật LPS khác ngày hôm nay",
+                "Fix lỗi khi bấm nút back trên trình duyệt."
+            ]
+        },
+        {
+            "version": "7.13.14",
+            "date": "19/02/2024",
+            "content": [
+                "[Truyền hình] Lỗi chọn chương trình timeshift khi chưa login",
+                "[Login] Lỗi chọn được button Tiếp tục - disable khi đăng kí tài khoản",
+                "[ReportPlayer] Sai title thông báo lỗi lấy danh sách report",
+                "[ReportPlayer] Không hiện thông báo lỗi khi lấy danh sách report",
+                "[Noti] Lỗi hiện sai format DD/MM/YYYY ở Hộp thư",
+                "Update logic retry api, retry stream",
+                "Tự động đóng Lịch phát sóng sau 10s không hoạt động",
+                "[AR-WC] Hiển thị AR-WC ở BL, BR bị chồng lên player bar",
+                "[Profile] Lỗi identify khi switch profile ở tab khác",
+                "[AR-WC] Lỗi sau khi nhấn Bỏ qua quảng cáo, không hiện AR-WC và hiện lại khi seek về đầu",
+                "[ReportPlayer] Lỗi highlight checkbox sau khi hủy chọn các checkbox đã chọn trước đó",
+                "[ReportPlayer] Lỗi không thay đổi cursor point khi hover các ô checkbox và text các selection",
+                "[ReportPlayer] Lỗi hiện vị trí report không đúng với yêu cầu",
+                "[ReportPlayer] Lỗi play lại từ đầu khi thoát popup Yêu cầu đăng nhập",
+                "[ReportPlayer] Lỗi không hiện icon Report khi play Timeshift",
+                "Multiple profiles",
+                "Bổ sung tính năng báo cáo sự cố (report) trên player VOD",
+                "Bổ sung phân loại độ tuổi & cảnh báo tình huống",
+                "Cập nhật màn hình player khi chưa Đăng nhập",
+                "Bổ sung meta data cho event ở banner home & detail event",
+                "Log kibana profile",
+                "Fix lỗi thanh toán shopee pay trên web mobile"
+            ]
+        },
+        {
+            "version": "7.12.10",
+            "date": "28/12/2023",
+            "content": [
+                "Year in Review 2023 FPT Play"
+            ]
+        },
+        {
+            "version": "7.12.8",
+            "date": "15/12/2023",
+            "content": [
+                "Update tracking, log",
+                "Update SEO",
+                "Tính năng xóa tài khoản",
+                "Bổ sung flow Play VOD đối với DRM TDM (Thủ đô media)",
+                "Hiển thị thông tin debug",
+                "Thêm field cho VOD / Event / Truyền hình để đồng bộ data",
+                "Updated logic end-time bị nháy đen (event - fptlive - dẫn kênh)",
+                "Điều chỉnh logic Display + Play profile",
+                "Cho phép xem truyền hình, sự kiện DRM trên Cốc Cốc và không cho xem trên Chrome",
+                "Tối ưu gọi API noti/room chuyển qua firebase",
+                "Vòng quay may mắn",
+                "Điều chỉnh giao diện gói Upsell - Combo",
+                "Recommend Next Playlist",
+                "[MoMo-FPT Play] V/v nâng cấp luồng Subscription",
+                "Cập nhật logic play sự kiện từ lịch thi đấu",
+                "Tracking và thống kê số liệu traffic users mua gói SA",
+                "Tối ưu SEO video schema trên web",
+                "Optimize SEO web pharse 3",
+                "Bổ sung cơ chế FingerPrint cho nội dung Non DRM",
+                "[Đang Xem] Lỗi không play tại bookmark khi nhấn chọn play VOD trong Danh sách tập",
+                "[Đang Xem] Lỗi không lưu Đang xem đối với phim bộ (khác tập 1)"
+            ]
+        },
+        {
+            "version": "7.11.7",
+            "date": "16/10/2023",
+            "content": [
+                "Tích hợp sử dụng mã code Sodexo trên website",
+                "Update lỗi UX/UI mobile",
+                "Bỏ popup thông báo khi đăng nhập thành công",
+                "Chuẩn hóa tiếp phần tên hiển thị của multi sub/audio cho VOD",
+                "[Detail VOD] Lỗi play không đúng tập được chọn(chỉ bị lần đầu)"
+            ]
+        },
+        {
+            "version": "7.10.6",
+            "date": "21/09/2023",
+            "content": [
+                "Lỗi hiển thị subtitle cho đúng design trên Safari",
+                "Lỗi giao diện Landingpage Lướt sóng trên sân bóng"
+            ]
+        },
+        {
+            "version": "4.4.4",
+            "date": "21/09/2023",
+            "content": [
+                "Cập nhật trang HDSD Box 650",
+                "Landing page Nạp/Mua card điện thoại",
+                "Điều chỉnh URL mua-goi theo chuẩn deeplink mới",
+                "Thêm vị trí trong Quy hoạch Giới hạn độ tuổi cho VOD",
+                "Landing page Cast",
+                "Landing page Lướt sóng trên sân bóng",
+                "Cập nhật subtitle theo thiết kế",
+                "Client OTT: bổ sung thêm thông tin hợp đồng lên hệ thống log",
+                "Bổ sung thêm trường màn hình thông báo lỗi chi tiết nội dung đang bị lỗi",
+                "Update trang chào bạn mới theo thông tin trong loop mail",
+                "Optimize logic login và register user, điều chỉnh UX/UI theo thiết kế",
+                "[Safari] Lỗi không hiện màn hình next movies",
+                "Lỗi không hiện icon Next khi next video trong playlist (video nonDRM next video DRM)",
+                "Lỗi bị lệch icon khi xem full screen player shaka",
+                "Lỗi giao diện LPS khi luồng TS bị lỗi"
+            ]
+        },
+        {
+            "version": "4.3.1",
+            "date": "21/09/2023",
+            "content": [
+                "Update Meta Data SEO từ api theo loop mail: Các vấn đề của SEO và Tracking Tool",
+                "Tối ưu deeplink theo định nghĩa mới nhằm quy hoạch",
+                "Lỗi clevertap không đổi khi user login",
+                "Auto next Timeshift",
+                "Login SSO",
+                "Update UX/UI theo thiết kế",
+                "Update CAMP CHÀO BẠN MỚI THÁNG 08/2023"
+            ]
+        },
+        {
+            "version": "4.2.4",
+            "date": "19/07/2023",
+            "content": [
+                "Hotfix update logic retry + domain msky",
+                "[Player] Lỗi hiện màn hình mua gói khi chuyển tập không yêu cầu gói",
+                "[Giới hạn độ tuổi] Thời gian hiển thị duration chưa đúng",
+                "[Truyền hình] Chọn được TS kênh không có TS nhóm kênh HBO Go"
+            ]
+        },
+        {
+            "version": "4.2.1",
+            "date": "21/06/2023",
+            "content": [
+                "Đổi email hỗ trợ hotrofptplay@fpt.com",
+                "Fix lỗi màn hình đen khi xem sự kiện DRM",
+                "Update logic xem TSTV của những kênh DRM",
+                "Lỗi cache Avatar khi thực hiện chuyển kênh",
+                "[Error Noti] Lỗi sai text button Về Trang chủ trong popup Thông báo lỗi",
+                "[Login] Lỗi scroll down khi tắt popup đăng nhập trên Safari",
+                "[Trang chủ] Hủy đặt lịch trong block Sắp công chiếu trong detail",
+                "[Account] Lỗi không lưu thay đổi Tên hiển thị",
+                "[Login] Lỗi nhập được kí tự chữ/ đặc biệt trong popup Đăng kí khi đăng nhập qua social",
+                "[Player] Lỗi double tick khi xem VOD có 3 sub Phụ đề",
+                "[Account] Lỗi không lưu thay đổi Tên hiển thị"
+            ]
+        },
+        {
+            "version": "4.2.0",
+            "date": "21/06/2023",
+            "content": [
+                "[Player] Lỗi không hiện logo FPT trên player HBOGO",
+                "[ACCOUNT] Lỗi không giới hạn đặt tên hiển thị từ 6-20 ký tự",
+                "Không focus vào mục Liên hệ trên Menu bên trái",
+                "[Search] Lỗi search không đúng từ khóa playlist",
+                "Quy Hoạch Giới Hạn Độ Tuổi Cho VOD",
+                "[Player] Lỗi không thao tác được playback trên player DRM",
+                "[Login] Lỗi banner Yêu cầu Đăng nhập đè chèn popup Yêu cầu Đăng nhập",
+                "Màn hình thông báo lỗi | Cải tiến màn hình thông báo lỗi",
+                "Tích hợp CDN P2P",
+                "Fix bug scale image trang mua gói",
+                "Cập nhật logic play kênh truyền hình, sự kiện DRM TDM",
+                "[Player] Lỗi hiển thị sai thứ tự option Multiaudio trên Safari"
+            ]
+        },
+        {
+            "version": "4.1.7",
+            "date": "19/04/2023",
+            "content": [
+                "Campaign Chào bạn mới",
+                "Quản lý đơn hàng trên mobile Wap (shopertainment)",
+                "Không lưu bookmark Đang xem phim bộ trong search",
+                "Không lưu bookmark tập phim bộ khi chọn trong mục khác block đang xem/ tìm kiếm",
+                "[Share] Link share không giống link đang xem",
+                "[Login] Lỗi câu thông báo tiếng anh trong popup nhập OTP",
+                "[Trực tiếp] Lỗi Default Pause sự kiện FPTLIVE DRM trên Safari",
+                "[Truyền hình] Lỗi giao diện player truyền hình khi zoom brower",
+                "[DetailVOD] Lỗi focus không đúng nhóm 'danh sách tập' khi nhấn chọn Xem thêm",
+                "[Player] Lỗi không hiển thị Recommend VOD",
+                "[Trực tiếp] Đặt lịch sự kiện này bị dính đặt lịch sự kiện khác",
+                "[Trực tiếp] Hiện popup báo lỗi khi hạ sự kiện DRM FPT Live bằng tool CMS",
+                "[Trực tiếp][Safari] Không hiện banner kết thúc sự kiện FPT Live DRM khi hạ sự kiện trên CMS",
+                "[Truyền hình] Lỗi vỡ layout page Truyền hình khi xem Timeshift lỗi (trên Safari)",
+                "[Trực tiếp] Không hiện banner kết thúc khi hạ sự kiện FPT live nonDRM trên CMS",
+                "[Payment] Không disable button Áp dụng khi chưa nhập code"
+            ]
+        },
+        {
+            "version": "4.1.6",
+            "date": "19/04/2023",
+            "content": [
+                "Hiển thị mục V.league trên Menu không có nội dung",
+                "Lỗi hiển thị Xem tất cả chưa đúng trên nhóm tập Detail VOD",
+                "Lỗi Video sự kiện FPTLive hiển thị không đúng tỷ lệ màn hình trên Safari",
+                "Vị trí mục 'Bảo Hành' dưới footer chưa đúng",
+                "Không clear Huyện khi chọn lại tỉnh thành trong mục điểm giao dịch",
+                "Mục điểm giao dịch chưa đúng design",
+                "Không có nội dung trong trang bảo hành",
+                "Lỗi hiển thị icon Âm thanh & Phụ đề",
+                "Lỗi khi nhấn chọn navigation menu",
+                "Lỗi hiển thị tên của Sub trong popup Option Phụ đề",
+                "Text 'Mọi thắc mắc liên hệ...' chưa canh giữa trang",
+                "Thỉnh thoảng không play realtime sau khi pause VOD công chiếu",
+                "Lỗi không hiển thị Highlight trên màn hình Trang chủ",
+                "Lỗi double tick Âm thanh/Phụ đề trên player sự kiện Công chiếu noDRM trên Safari",
+                "Lỗi play lại từ đầu khi thay đổi Chất lượng Auto với sự kiện Công chiếu noDRM trên trình duyệt Chrome/Edge",
+                "[Trực tiếp] Lỗi không lưu Âm thanh đã chọn trong MultiAudio/Sub khi chọn Chất lượng khác",
+                "[Trực tiếp]Lỗi hiển thị Popup Thông báo sự kiện đã kết thúc trên Edge/ Safari",
+                "[Trực tiếp] Lỗi không hiện popup Sự kiện đã kết thúc khi hạ sự kiện FPTLIVE DRM trên M.Edge",
+                "[Truyền hình] Một số kênh không hiện icon play khi hover vào"
+            ]
+        },
+        {
+            "version": "4.1.5",
+            "date": "19/04/2023",
+            "content": [
+                "Không hiện banner kết thúc khi off luồng trong sự kiện DRM",
+                "Chọn Xem tất cả trong block Kênh cá nhân không được",
+                "Lỗi không lưu selection Phụ đề trên Safari browser",
+                "Số lượng item trong các block/ highlight đang gắn cứng",
+                "Đổi Facebook AppID",
+                "Tracking chất lượng Streaming",
+                "Nghiên cứu logic Multi Audio cho các nội dung Sự Kiện",
+                "Hiển thị thử nghiệm Block Danh mục",
+                "Tối ưu deeplink",
+                "Cho phép hiển thị Playlist khi Search",
+                "Multidevices - Yêu cầu bổ sung EpisodeID cho lượt xem phim",
+                "Thêm trang bảo hành vào fptplay.vn",
+                "Muti audio , multi sub cho nội dung VOD",
+                "Sai logo HBO Go trên menu",
+                "Lỗi đường viền trên Banner Highlight",
+                "Lỗi đường viền ngang dưới player Truyền hình",
+                "Không chặn sự kiện trước 1 tiếng từ highlight",
+                "Lỗi không tự động switch chất lượng khi mạng yếu trên VOD DRM",
+                "[Deeplink+icon] Mua đáy bán đỉnh",
+                "Lỗi focus nhóm tập chưa đúng sau khi nhấn chọn 'Xem tất cả'"
+            ]
+        },
+        {
+            "version": "4.1.4",
+            "date": "23/02/2023",
+            "content": [
+                "Phần header page chưa đúng design",
+                "Lỗi chuyển multi Audio bị giật lag",
+                "Truyền hình Player DRM không hiện icon multi Audio",
+                "Chất lượng kênh truyền hình không giống nhau trong Block và DS kênh",
+                "Sự kiện không phải tiếp sóng nhưng không hiện banner",
+                "Luồng lỗi khi thao tác hạ highlight trước endtime",
+                "Focus không đúng mục khi chọn các mục dưới Footer",
+                "Không hiện icon Next trong DS playlist",
+                "Số lượng item trên highlight không đủ 10 items",
+                "Fix lỗi không hiện thông tin mua gói",
+                "Hiện banner khác trước khi load đúng banner trên hightlight",
+                "Hiện thanh timeline khi nhấp đúp vào player đang live",
+                "Update hiển thị banner mua gói khi xem vod theo design",
+                "Hiện icon play khi xem chương trình Live",
+                "Lỗi hiển thị nút Timeshift khi chưa đăng nhập",
+                "Lỗi nhập quá 10 kí tự trên popup Đăng nhập",
+                "Lỗi nhập kí tự chữ trong popup Đăng nhập",
+                "Lỗi không hiện MutilAudio trên player noDRM trên Safari",
+                "Lỗi hiển thị Progress Bar Âm lượng khi user không hover icon Âm lượng trên VOD, Kênh DRM",
+                "Hiện không đúng hình và description khi share moments",
+                "Mất menu bên trái khi chọn các mục trong browser Firefox",
+                "Bổ sung log tracking Streaming",
+                "Lỗi hiển thị lỗi 'Không có nguồn tương thích cho media này' chưa đúng",
+                "Cập nhật Process Bar trong Danh sách tập khi chuyển tập",
+                "Share Blogger không hiện nội dung trong bài post",
+                "Lỗi không hiện popup thông báo Tiếp tục ở lại Trang hoặc Về trang chủ",
+                "HDSD | Tạo domain và up pdf hướng dẫn sử dụng cho thiết bị",
+                "Các vấn đề của SEO và Tracking Tool: theo loop mail 'Các vấn đề của SEO và Tracking Tool'"
+            ]
+        },
+        {
+            "version": "4.1.1",
+            "date": "13/01/2023",
+            "content": [
+                "Fix lỗi cache avatar khi bị đá thiết bị",
+                "Update giao diện trang lỗi theo thiết kế",
+                "Lỗi call 2 API verify khi xác thực OTP",
+                "Fix lỗi bấm button chọn phụ đề, chọn âm thanh",
+                "Fix lỗi hiển thị khi thanh toán thành công",
+                "Xem gì mùa Tết"
+            ]
+        },
+        {
+            "version": "3.1.2",
+            "date": "25/08/2022",
+            "content": [
+                "Update xử lý Đăng ký / Đăng nhập cho đối tác (Vote45)",
+                "Fix lỗi Duplicate tab khi xem truyền hình k+",
+                "Landingpage ngôi sao 30s",
+                "Bổ sung thêm Keyword ở log play những VOD đền từ search, bổ sung keyword ở log click content trang search",
+                "Tích hợp control show/hide button login facebook, google",
+                "Update trang Đăng ký dịch vụ, tin tức gọi động từ API",
+                "Update poster ngang cho Block Phim liên quan",
+                "Ẩn cổng thanh toán QR trên web mobile",
+                "Bồ sung gọi song song api tracking ipv6"
+            ]
+        },
+        {
+            "version": "3.0.8",
+            "date": "06/06/2022",
+            "content": [
+                "Hiển thị icon HBO GO trên menu",
+                "Update trang dich-vu/3g: bỏ gói S0 mobifone",
+                "Đăng ký dịch vụ",
+                "Fix lỗi hiển thị description detail VOD",
+                "Fix lỗi link chia sẻ trong mục Reward Referral",
+                "Thêm button 'Tải ứng dụng FPT Play để trải nghiệm tốt hơn' trên web mobile",
+                "Update API Search Algorithms mới",
+                "Update show icon Timeshift",
+                "Tối ưu SEO",
+                "Update tracking CDP",
+                "Fix lỗi hiển thị sự kiện chat realtime",
+                "Remove tính năng 'yêu cầu đăng nhập sau 10 phút' cho các nội dung xem miễn phí",
+                "Thay đổi email CS",
+                "Resize các Poster/ Banner theo đúng tỉ lệ",
+                "Điều chỉnh pop-up thông báo",
+                "Optimize chat realtime sự kiện",
+                "Update overlay logo VOD",
+                "Update flow K+ client khi ping timeout",
+                "Log ping k+ error",
+                "Update trang /dich-vu/3g",
+                "Update show FingerPrint K+",
+                "Truyền hình DRM chỉ cho phép xem trên trình duyệt Edge và Safari",
+                "Fix lỗi FingerPrint",
+                "Chuyển luồng các trang liên quan chính sách từ hardcode sang API",
+                "Thêm thông báo xác nhận gia hạn mua gói thanh toán từ API",
+                "Update show icon MAX/VIP from API",
+                "Thêm thanh toán Credit, Napas Card Foxpay",
+                "Quản lý thẻ thanh toán Foxpay",
+                "Tích hợp gọi api cho một số trang static: điều khoản, chính sách",
+                "Đồng bộ thông tin dịch vụ đang sử dụng trên FPT Play",
+                "Update gửi thêm url cho tracking play"
+            ]
+        },
+        {
+            "version": "2.0.8",
+            "date": "12/01/2022",
+            "content": [
+                "Update show icon MAX/VIP from API",
+                "Thêm thanh toán Credit, Napas Card Foxpay",
+                "Quản lý thẻ thanh toán Foxpay",
+                "Tích hợp gọi api cho một số trang static: điều khoản, chính sách",
+                "Đồng bộ thông tin dịch vụ đang sử dụng trên FPT Play",
+                "Update gửi thêm url cho tracking play"
+            ]
+        },
+        {
+            "version": "2.0.7",
+            "date": "07/01/2022",
+            "content": [
+                "Fix lỗi CCU K+ khi đổi profile",
+                "Thêm tham số drm khi gọi api",
+                "Cho phép xem kênh truyền hình HBO có DRM và No-DRM"
+            ]
+        },
+        {
+            "version": "2.0.6",
+            "date": "17/11/2021",
+            "content": [
+                "Sigma DRM cho truyền hình DRM (k+, uefa)",
+                "Tích hợp gọi api cho một số trang static: mua gói, khuyến mãi, bóng đá",
+                "Update trang Thanh toán thành công",
+                "Điều chỉnh UI trang chọn Mua gói"
+            ]
+        },
+        {
+            "version": "2.0.5",
+            "date": "22/10/2021",
+            "content": [
+                "Thông báo ngưng hỗ trợ IE (Internet Explorer)",
+                "Khuyến cáo sử dụng Google Chrome",
+                "Trang Đăng ký dịch vụ",
+                "Navigation bar mới (Menu)",
+                "Fix bug mua gói khi bị remove thiết bị",
+                "Đổi thông báo tự động gia hạn trang thanh toán",
+                "Update landing mua-goi",
+                "Update trang Điều khoản sử dụng tháng 10",
+                "Landing Page Game Chơi hay chia"
+            ]
+        },
+        {
+            "version": "2.0.4",
+            "date": "12/10/2021",
+            "content": [
+                "Campaign Fifa Online 4"
+            ]
+        },
+        {
+            "version": "2.0.3",
+            "date": "01/10/2021",
+            "content": [
+                "Update trang điều khoản sử dụng, chính sách và quy định",
+                "Update landing khuyến mãi tháng 10, landing mua gói SMS",
+                "Fix bug chuyển bitrate bị đen màn hình các kênh DRM"
+            ]
+        },
+        {
+            "version": "2.0.2",
+            "date": "18/09/2021",
+            "content": [
+                "Fix bug đồng bộ tài khoản foxy"
+            ]
+        },
+        {
+            "version": "2.0.1",
+            "date": "16/09/2021",
+            "content": [
+                "Landing page Đồng bộ tài khoản",
+                "Bổ sung nội dung bán gói trên trang SMS"
+            ]
+        }
+    ]
+}

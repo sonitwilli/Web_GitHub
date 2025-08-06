@@ -1,0 +1,116 @@
+import { useEffect, useState } from 'react';
+import { formatVietnamDayTimeLabel } from '@/lib/utils/timeUtilsVN';
+import { useDispatch } from 'react-redux';
+import { setIsEndedLiveCountdown } from '@/lib/store/slices/playerSlice';
+
+type DataEvent = {
+  start_time?: number | string;
+  begin_time?: number | string;
+  end_time?: number | string;
+  label_event?: string;
+  type?: string;
+};
+
+type Props = {
+  dataEvent?: DataEvent;
+};
+
+export default function EventLiveStatus({ dataEvent }: Props) {
+  const [status, setStatus] = useState<string | null>(null);
+  const dispatch = useDispatch();
+
+  // Kiểm tra trạng thái kết thúc và cập nhật Redux một lần
+  useEffect(() => {
+    const parseTime = (val?: number | string): number =>
+      typeof val === 'string' ? parseInt(val, 10) : val ?? 0;
+    const getEndTime = (): number => parseTime(dataEvent?.end_time);
+
+    if (dataEvent?.type !== 'event' || !dataEvent?.end_time) {
+      dispatch(setIsEndedLiveCountdown(false));
+      return;
+    }
+
+    const end = getEndTime();
+    if (!end || isNaN(end)) {
+      dispatch(setIsEndedLiveCountdown(false));
+      return;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const hasEnded = now > end;
+    dispatch(setIsEndedLiveCountdown(hasEnded));
+  }, [dataEvent, dispatch]);
+
+  useEffect(() => {
+    const parseTime = (val?: number | string): number =>
+      typeof val === 'string' ? parseInt(val, 10) : val ?? 0;
+    const getStartTime = (): number =>
+      parseTime(dataEvent?.start_time) || parseTime(dataEvent?.begin_time);
+
+    const getEndTime = (): number => parseTime(dataEvent?.end_time);
+
+    const updateStatus = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const start = getStartTime();
+      const end = getEndTime();
+
+      if (!start || !end) {
+        setStatus(null);
+        return;
+      }
+
+      if (now < start) {
+        const countdown = start - now;
+
+        if (countdown < 1) {
+          setStatus(null);
+        } else if (countdown < 60) {
+          setStatus(`Còn ${countdown} giây nữa`);
+        } else if (countdown < 3600) {
+          setStatus(`Còn ${Math.floor(countdown / 60)} phút nữa`);
+        } else {
+          setStatus(formatVietnamDayTimeLabel(start));
+        }
+      } else if (now >= start && now <= end) {
+        setStatus(dataEvent?.label_event || 'LIVE');
+      } else if (now > end) {
+        setStatus('Đã kết thúc');
+        dispatch(setIsEndedLiveCountdown(now > end));
+      } else {
+        setStatus(null);
+      }
+    };
+
+    updateStatus();
+    const interval = setInterval(updateStatus, 1000);
+
+    return () => clearInterval(interval);
+  }, [dataEvent, dispatch]);
+
+  if (!status) return null;
+
+  const isLive = !status?.includes('kết thúc') && !status?.includes('Còn');
+  const isSchedule = status.includes('lúc');
+
+  return (
+    <div className="flex items-center gap-2 min-h-8 sm:gap-3">
+      {isSchedule && (
+        <span className="text-white font-medium text-base sm:text-[20px] leading-snug">
+          Phát sóng vào
+        </span>
+      )}
+
+      {isLive ? (
+        <span className="flex items-center justify-center px-2 sm:px-3 py-1 sm:py-[6px] rounded-md sm:rounded-lg bg-gradient-to-r from-vivid-red to-rosso-corsa text-white text-sm sm:text-base font-medium tracking-wide min-w-[51px] h-8 sm:h-[32px]">
+          {status}
+        </span>
+      ) : (
+        <span className="flex items-center justify-center px-2.5 py-1 bg-jet rounded-md sm:rounded-lg">
+          <span className="text-white-087 font-medium text-sm sm:text-[17px] leading-[20px]">
+            {status}
+          </span>
+        </span>
+      )}
+    </div>
+  );
+}

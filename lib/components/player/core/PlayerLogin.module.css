@@ -1,0 +1,12 @@
+.modal {
+  animation: identifier 0.3s forwards;
+}
+
+@keyframes identifier {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

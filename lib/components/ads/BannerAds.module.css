@@ -1,0 +1,13 @@
+.bannerAds .img_container {
+  opacity: 0;
+  animation: identifier 2s forwards;
+}
+
+@keyframes identifier {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

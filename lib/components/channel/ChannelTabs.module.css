@@ -1,0 +1,15 @@
+.tab::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 2px;
+  position: absolute;
+  left: 0;
+  bottom: -12.5px;
+  background: rgba(255, 101, 0, 1);
+  transition: width 0.3s ease-in-out;
+}
+
+.activeTab::after {
+  width: 100%;
+}

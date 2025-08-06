@@ -1,0 +1,444 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
+import {
+  BlockItemType,
+  BlockSlideItemType,
+  PageMetaType,
+} from '@/lib/api/blocks';
+import { createLink, thumbnailUrl, viToEn } from '@/lib/utils/methods';
+import Link from 'next/link';
+import HandleImage, { SlideDirectionType } from './HandleImage';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import { useRouter } from 'next/router';
+import { AppContext } from '../container/AppContainer';
+import { FaPlay } from 'react-icons/fa';
+import useEvent from '@/lib/hooks/useEvent';
+import AutoExpansionSlideItem from './AutoExpansionSlideItem';
+import { hexToRgbA } from '@/lib/utils/color';
+import dynamic from 'next/dynamic';
+import styles from './BlockSlideItem.module.css';
+import topSlideStyles from './TopSlideItem.module.css';
+import PosterOverlay from '../overlays/PosterOverlays';
+import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
+import { NewVodContext } from './embla/new-vod-detail-slider/NewVodDetail';
+import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+
+const VodProgress = dynamic(() => import('../vod/VodProgress'), {
+  ssr: false,
+});
+
+interface Props {
+  block?: BlockItemType;
+  slide?: BlockSlideItemType;
+  index?: number;
+  metaBlock?: PageMetaType;
+  styleTitle?: string;
+}
+
+export default function BlockSlideItem({
+  block,
+  slide,
+  index,
+  styleTitle = 'mt-[8px] mb-0 line-clamp-2 w-full text-[16px] font-[500] px-[4px]',
+  metaBlock,
+}: Props) {
+  const { dataChannel } = usePlayerPageContext();
+  const newVodCtx = useContext(NewVodContext);
+  const appCtx = useContext(AppContext);
+  const {
+    checkLive,
+    checkDataLive,
+    preSecond,
+    nextSecond,
+    preMin,
+    nextMin,
+    isShowLiveLabel,
+  } = useEvent({
+    block,
+    slide,
+  });
+  const { configs } = appCtx;
+  const router = useRouter();
+  const [posterOverlaysReady, setPosterOverlaysReady] = useState<string[]>([]);
+  // handle for poster overlays
+
+  // Logic kiểm tra từng status giống bên Nuxt
+  const isNewItem = useMemo(() => {
+    return (
+      slide?.is_new === '1' &&
+      configs?.image?.icon_new &&
+      block?.block_type !== 'highlight' &&
+      block?.block_type !== 'horizontal_highlight'
+    );
+  }, [slide, configs, block]);
+
+  const hasTopRight = false; // custom lại nếu cần
+
+  const hasBottomLeft = useMemo(() => {
+    const isEventType = ['event', 'eventtv'].includes(block?.type || '');
+    const isLiveTVAndMatchBlock =
+      slide?.type === 'livetv' &&
+      ['dang-phat-song', 'sap-phat-song'].includes(viToEn(block?.name || ''));
+    const isNotHighlight =
+      block?.block_type !== 'highlight' &&
+      block?.block_type !== 'horizontal_highlight';
+    return (isEventType || isLiveTVAndMatchBlock) && isNotHighlight;
+  }, [slide, block]);
+
+  const isOverlayPlaylist = useMemo(
+    () =>
+      slide?.type === 'vod_playlist' && slide?.playlist_total ? true : false,
+    [slide],
+  );
+
+  const isValidCountdown = useMemo(() => {
+    return (
+      (preSecond || preSecond || nextSecond || nextMin) &&
+      typeof preSecond !== 'undefined' &&
+      typeof nextSecond !== 'undefined' &&
+      typeof preMin !== 'undefined' &&
+      typeof nextMin !== 'undefined'
+    );
+  }, [preSecond, nextSecond, preMin, nextMin]);
+
+  // Tổng hợp positionLabelsStatus
+  const positionLabelsStatus = useMemo(
+    () => ({
+      TL: Boolean(isNewItem),
+      TR: Boolean(hasTopRight),
+      BL: Boolean(hasBottomLeft || checkLive || isShowLiveLabel),
+      BR: Boolean(isOverlayPlaylist),
+    }),
+    [
+      isNewItem,
+      hasTopRight,
+      hasBottomLeft,
+      checkLive,
+      isShowLiveLabel,
+      isOverlayPlaylist,
+    ],
+  );
+
+  const handlePosterOverlays = useCallback((positionRibbons: string[]) => {
+    setPosterOverlaysReady(positionRibbons);
+  }, []);
+
+  const blockDirection = useMemo<SlideDirectionType>(() => {
+    if (metaBlock?.block_style) {
+      if (metaBlock?.block_style === 'numeric_rank') {
+        return 'vertical';
+      }
+      if (metaBlock?.block_style?.toUpperCase().includes('VERTICAL')) {
+        return 'vertical';
+      }
+      return 'horizontal';
+    }
+    if (block?.block_type === 'numeric_rank') {
+      return 'vertical';
+    }
+    if (block?.block_type?.toUpperCase().includes('VERTICAL')) {
+      return 'vertical';
+    }
+    return 'horizontal';
+  }, [block, metaBlock]);
+  const slideLink = useMemo(() => {
+    if (block?.type === 'trailer') {
+      return `/xem-video/${viToEn(
+        dataChannel?.title || dataChannel?.title_origin || '',
+      )}-${dataChannel?.id}/tap-${Number(slide?.id_trailer) + 1}`;
+    }
+    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
+  }, [slide, block, dataChannel]);
+
+  const linearGradient = useMemo(() => {
+    if (!slide?.bg_color || block?.block_type !== 'numeric_rank') {
+      return '';
+    }
+    return `linear-gradient(to bottom, ${hexToRgbA(
+      slide?.bg_color || '',
+      '0',
+    )} 0%, ${hexToRgbA(slide?.bg_color || '', '1')} 45%, ${hexToRgbA(
+      slide?.bg_color || '',
+      '1',
+    )} 100%`;
+  }, [slide?.bg_color, block?.block_type]);
+
+  useEffect(() => {
+    checkDataLive();
+
+    const interval = setInterval(() => {
+      checkDataLive();
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slide, block]);
+  if (block?.block_type === 'auto_expansion') {
+    return (
+      <AutoExpansionSlideItem
+        block={block}
+        slide={slide}
+        index={(index || 0) + 1}
+      />
+    );
+  }
+
+  return (
+    <div
+    // className={`${
+    //   block?.block_type === 'participant'
+    //     ? 'w-[200px] flex justify-center h-[200px]'
+    //     : ''
+    // }`}
+    >
+      <Link
+        prefetch={false}
+        href={slideLink}
+        title={slide?.title_vie || slide?.title}
+        className={`relative block w-full  ${
+          block?.type === 'vod_related' ||
+          block?.type === 'famous_people' ||
+          block?.type === 'vod_season' ||
+          block?.type === 'trailer'
+            ? 'ease-out duration-300  hover:scale-[1.05]'
+            : ''
+        }`}
+        onClick={(ev) => {
+          if (block?.block_type === 'new_vod_detail') {
+            ev.preventDefault(); // Disable navigation
+            if (newVodCtx?.setSelectedSlide) {
+              newVodCtx.setSelectedSlide(slide || {});
+            }
+            return;
+          }
+        }}
+      >
+        <div
+          className={`${
+            block?.block_type === 'participant'
+              ? 'w-full min-w-full max-w-full relative slide-image-container'
+              : 'w-full min-w-full max-w-full relative slide-image-container'
+          }   ${block?.block_type === 'numeric_rank' ? 'pb-[53px]' : ''}`}
+        >
+          {block?.block_type !== 'participant' && (
+            <div className="z-[1] absolute w-full h-full top-0 left-0 bg-black-01 ease-out duration-100 hover:bg-transparent rounded-[16px]"></div>
+          )}
+          <div
+            className={`relative rounded-[12px] ${
+              block?.block_type === 'participant'
+                ? 'overflow-visible px-[27px] tablet:px-[30px] xl:px-[40px]'
+                : `${
+                    posterOverlaysReady.includes('top-ribbon')
+                      ? 'overflow-visible mt-[3px]'
+                      : posterOverlaysReady.includes('mid-ribbon')
+                      ? 'overflow-visible ml-[3px] mr-[3px]'
+                      : posterOverlaysReady.includes('bottom-ribbon')
+                      ? 'overflow-visible mb-[3px]'
+                      : 'overflow-hidden'
+                  }`
+            }`}
+            id={`image-slide-${slide?.id}`}
+          >
+            <HandleImage
+              imageAlt={slide?.title_vie || slide?.title || ''}
+              imageClassName={`w-full`}
+              imageUrl={thumbnailUrl({
+                block: block || {},
+                blockData: slide || {},
+                metaBlock,
+              })}
+              type={
+                block?.block_type === 'participant' ? 'circle' : blockDirection
+              }
+              block={block}
+              metaBlock={metaBlock}
+              slide={slide}
+              blockDirection={
+                block?.block_type === 'participant' ? 'circle' : blockDirection
+              }
+              imageRadius="rounded-[12px]"
+            />
+
+            {block?.type === 'trailer' && (
+              <div className="absolute right-2 bottom-1 py-0.5 px-1 bg-black/40 rounded-[6px] text-[12px] text-white-smoke font-semibold">
+                {slide?.detail?.duration_s || '30 giây'}
+              </div>
+            )}
+
+            {/* Poster Overlays Area */}
+            {slide?.poster_overlays && (
+              <PosterOverlay
+                posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
+                blockType={block?.block_type}
+                positionLabelsStatus={[positionLabelsStatus]}
+                onHandlePosterOverlays={handlePosterOverlays}
+              />
+            )}
+
+            {/* Progress bar */}
+            {slide?.time_watched && slide?.detail?.duration_i && (
+              <div className="w-full absolute left-0 bottom-0 h-[6px] z-2">
+                <VodProgress slide={slide} />
+              </div>
+            )}
+          </div>
+
+          {isNewItem && (
+            <div className="absolute left-[8px] top-[8px] flex flex-col gap-[8px] items-start">
+              <img
+                key={`label-img=${index}`}
+                src={configs?.image?.icon_new}
+                alt="new content"
+                className="h-[20px]"
+              />
+            </div>
+          )}
+
+          {isOverlayPlaylist && (
+            <div className="absolute bottom-[8px] right-[8px] black-bg text-[10px] font-[700] whitespace-nowrap px-[10px] py-[5px] rounded-[5px]">
+              {slide?.playlist_total} VIDEOS
+            </div>
+          )}
+
+          {block?.block_type !== 'participant' && (
+            <div className="play-overlay absolute w-full h-full top-0 left-0 bg-black-transparent flex items-center justify-center opacity-0 duration-200 ease-in">
+              <FaPlay size={24} />
+            </div>
+          )}
+
+          {!isNewItem &&
+            isShowLiveLabel &&
+            (checkLive && !isValidCountdown ? (
+              <div className="absolute bottom-[6px] left-[6px] bg-jet text-[12px] font-bold whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087">
+                {checkLive}
+              </div>
+            ) : (
+              <>
+                {isValidCountdown ? (
+                  <div className="text-[12px] absolute bottom-[6px] left-[6px] inline-flex items-center gap-[6px]">
+                    <div className={topSlideStyles.countdown_container}>
+                      <div
+                        className={topSlideStyles['move-number']}
+                        key={`s-${preMin}-${nextMin}`}
+                      >
+                        <div className="flex items-center justify-center">
+                          {preMin}
+                        </div>
+                        <div className="flex items-center justify-center">
+                          {nextMin}
+                        </div>
+                      </div>
+                    </div>
+                    <span>:</span>
+                    <div className={topSlideStyles.countdown_container}>
+                      <div
+                        className={topSlideStyles['move-number']}
+                        key={`m-${preSecond}-${nextSecond}`}
+                      >
+                        <div className="flex items-center justify-center">
+                          {preSecond}
+                        </div>
+                        <div className="flex items-center justify-center">
+                          {nextSecond}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="absolute bottom-[6px] left-[6px] flex items-center justify-center rounded-[6px] font-semibold text-[12px] leading-[100%] text-white">
+                    {slide?.label_event &&
+                    slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU' ? (
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] uppercase font-bold">
+                        Công chiếu
+                      </div>
+                    ) : slide?.label_event &&
+                      slide?.label_event?.toUpperCase() === 'LIVE' ? (
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] w-[35px] flex items-center justify-center uppercase font-bold">
+                        LIVE
+                      </div>
+                    ) : slide?.label_event &&
+                      slide?.label_event?.toUpperCase() === 'ĐANG PHÁT' ? (
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] w-[78px] flex items-center justify-center uppercase font-bold">
+                        Đang phát
+                      </div>
+                    ) : (
+                      checkLive && (
+                        <div className="text-[12px] whitespace-nowrap bg-jet px-[6px] py-[4px] rounded-[6px] text-white-087 font-bold">
+                          {checkLive}
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+              </>
+            ))}
+        </div>
+
+        {block?.block_type === 'numeric_rank' ? (
+          <div
+            className={`flex flex-col justify-start items-start numeric_rank_overlay absolute w-full h-[66%] xl:h-1/2 bottom-0 left-0 rounded-[12px] px-[12px] xl:px-[24px] pt-[59px]`}
+            style={{
+              background: `${linearGradient}`,
+            }}
+          >
+            <img
+              /*@ts-ignore*/
+              src={`/images/numeric/${index + 1}.png`}
+              alt="index number"
+              height={100}
+              className="h-[44px] xl:h-[72px]"
+            />
+            {block?.block_type === 'numeric_rank' && (
+              <h3 className="line-clamp-2 w-full text-[16px] font-[500] mb-[8px] tablet:mt-[12px] xl:mt-[16px]">
+                {slide?.title_vie || slide?.title}
+              </h3>
+            )}
+          </div>
+        ) : (
+          ''
+        )}
+        {(block?.block_type !== 'numeric_rank' &&
+          slide?.type !== 'livetv' &&
+          slide?.type !== 'page' &&
+          block?.block_type !== 'horizontal_slider_with_background' &&
+          block?.block_type !== 'new_vod_detail') ||
+        router?.pathname.includes('/su-kien/') ? (
+          <h3
+            className={`${styleTitle} ${
+              block?.block_type === 'participant'
+                ? `!mt-2 text-center flex flex-col`
+                : ''
+            }  ${
+              block?.block_type === 'numeric_rank'
+                ? `absolute w-full px-[24px] !mt-0 ${styles.slideTitle}`
+                : ''
+            }`}
+          >
+            <span
+              className={`${
+                block?.block_type === 'participant' ? 'line-clamp-1' : ''
+              }`}
+            >
+              {slide?.title_vie || slide?.title}
+            </span>
+            {block?.block_type === 'participant' && (
+              <>
+                <span className="text-[14px] text-spanish-gray">Diễn viên</span>
+              </>
+            )}
+          </h3>
+        ) : (
+          ''
+        )}
+      </Link>
+    </div>
+  );
+}

@@ -1,0 +1,22 @@
+.avatarList {
+  display: flex;
+  position: relative;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  border: 1px solid #1b1a19;
+  position: relative;
+}
+
+.avatar:not(:first-child) {
+  margin-left: -8px; /* dùng margin âm thay vì transform */
+}
+
+.avatarList .avatar {
+  z-index: auto; /* để trình tự avatar tự xếp theo dom */
+}

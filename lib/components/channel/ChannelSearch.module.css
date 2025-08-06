@@ -1,0 +1,27 @@
+.dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.dropdown::-webkit-scrollbar-thumb {
+  background: #888;
+}
+.dropdown::-webkit-scrollbar {
+  width: 4px;
+}
+.dropdown::-webkit-scrollbar-track {
+  background: transparent;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.form {
+  animation: identifier 0.5s forwards;
+}
+
+@keyframes identifier {
+  from {
+    width: 0;
+  }
+  to {
+    width: 576px;
+  }
+}

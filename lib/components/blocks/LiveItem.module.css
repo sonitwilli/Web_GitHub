@@ -1,0 +1,9 @@
+.link_container {
+}
+
+.overlay_container {
+}
+
+.link_container:hover .overlay_container {
+  opacity: 1;
+}

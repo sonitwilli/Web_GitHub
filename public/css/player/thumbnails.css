@@ -1,0 +1,57 @@
+/* a wrapper element that tracks the mouse vertically */
+.thumbnail-holder {
+  position: absolute;
+  left: -3000px;
+  bottom: 60px;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 2px solid white;
+}
+
+.thumbnail-holder-ts {
+  position: absolute;
+  left: -3000px;
+  bottom: 55px;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+/* the thumbnail image itself */
+.thumbnail-img {
+  position: absolute;
+  left: 0;
+  opacity: 1;
+  transition: opacity 0.2s ease;
+  max-width: unset !important;
+}
+
+.current-time-hover {
+  position: absolute;
+  overflow: hidden;
+  left: -3000px;
+  bottom: 0;
+  z-index: 10;
+  background-color: #000;
+  border-radius: 4px;
+  font-style: normal;
+  padding: 6px 8px 6px 8px;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+}
+
+.current-time-hover-ts {
+  overflow: hidden;
+  z-index: 10;
+  background-color: #000;
+  border-radius: 4px;
+  font-style: normal;
+  padding: 6px 8px 6px 8px;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  color: white;
+  text-align: center;
+  border-radius: 8px;
+}

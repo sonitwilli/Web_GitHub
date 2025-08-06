@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /loi-trang
+Disallow: /event/*
+Disallow: /test-video
+Disallow: /uplay/*
+Disallow: /wifi-marketing
+Disallow: /release/*
+
+User-agent: Mediapartenrs-Google
+Disallow:
+Allow: /ads.txt
+
+Sitemap: https://fptplay.vn/sitemap.xml

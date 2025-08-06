@@ -1,0 +1,100 @@
+.f-container {
+  width: 100%;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.no-container {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.chat-container {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.f-slider-container {
+  margin-left: -29px;
+  margin-right: -22px;
+  width: auto;
+  padding-left: 16px;
+  padding-right: 16px;
+}
+
+.b-title {
+  padding-left: 3px;
+}
+
+@media (min-width: 640px) {
+  .chat-container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .f-container {
+    padding-left: 24px;
+    padding-right: 24px;
+  }
+
+  .f-slider-container {
+    padding-left: 24px;
+    padding-right: 17px;
+  }
+
+  .b-title {
+    padding-left: 10px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .f-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .chat-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .f-slider-container {
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  .b-title {
+    padding-left: 34px;
+  }
+}
+
+@media (min-width: 1400px) {
+  .f-container {
+    padding-left: 104px;
+    padding-right: 104px;
+  }
+
+  .chat-container {
+    padding-left: 104px;
+    padding-right: 104px;
+  }
+
+  .f-slider-container {
+    padding-left: 84px;
+    padding-right: 80px;
+  }
+
+  .b-title {
+    padding-left: 72px;
+  }
+}

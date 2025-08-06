@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "5L2NM6YDYV.ftel.rad.fptplay",
+        "paths": [ "/xem-truyen-hinh/*", "/hbo-go/*", "/danh-muc/*", "/the-thao/*", "/mua-goi/*", "/serie-a/*", "/dich-vu/*", "/tai-khoan/*", "/xem-video/*", "/chi-tiet-video/*", "NOT /khuyen-mai/edumall",  "/khuyen-mai/*"]
+      }
+    ]
+  }
+}

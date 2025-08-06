@@ -1,0 +1,7 @@
+.bgMask {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, #000000 70%);
+}
+
+.bgMaskMobile {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.7) 0%, #000000 52.12%);
+}

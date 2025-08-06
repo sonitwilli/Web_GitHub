@@ -1,0 +1,28 @@
+.video::cue {
+  font-family: Roboto !important;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+  line-height: normal !important;
+  text-align: center !important;
+  text-shadow: 0px 1.913888931274414px 1.913888931274414px #000 !important;
+  -webkit-text-shadow: 0px 1.913888931274414px 1.913888931274414px #000 !important;
+  margin: 0 auto !important;
+  color: #fff !important;
+  -webkit-text-stroke: 0.5px rgba(0, 0, 0, 0.8);
+  /* Cho trình duyệt dựa trên WebKit (Safari, Chrome) */
+  -webkit-filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 1));
+  filter: drop-shadow(0px 2px 2px rgba(0, 0, 0, 1));
+  background-color: transparent;
+}
+
+@media screen and (min-width: 768px) {
+  .video::cue {
+    font-size: 37px !important;
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .video::cue {
+    width: 856px !important;
+  }
+}

@@ -1,0 +1,23 @@
+.espisode_content {
+  /* Prevent scroll chaining to parent containers */
+  overscroll-behavior: contain;
+  /* Ensure touch scrolling is smooth on mobile */
+  -webkit-overflow-scrolling: touch;
+}
+
+.espisode_content::-webkit-scrollbar {
+  height: 5px;
+}
+
+.espisode_content::-webkit-scrollbar {
+  width: 4px;
+}
+
+.espisode_content::-webkit-scrollbar-track {
+  background: rgba(85, 85, 85, 0); /* Hide track by making it transparent */
+}
+
+.espisode_content::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 30px;
+}

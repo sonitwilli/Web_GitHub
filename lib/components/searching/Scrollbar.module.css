@@ -1,0 +1,16 @@
+.suggestScrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.suggestScrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.suggestScrollbar::-webkit-scrollbar-track {
+  background: rgba(85, 85, 85, 0); /* Hide track by making it transparent */
+}
+
+.suggestScrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 30px;
+}

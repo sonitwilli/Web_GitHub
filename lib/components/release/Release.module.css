@@ -1,0 +1,16 @@
+.release_scrollbar::-webkit-scrollbar {
+  height: 5px;
+}
+
+.release_scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.release_scrollbar::-webkit-scrollbar-track {
+  background: rgba(85, 85, 85, 0); /* Hide track by making it transparent */
+}
+
+.release_scrollbar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 30px;
+}

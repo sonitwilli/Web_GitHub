@@ -1,0 +1,17 @@
+.ReactModal__Overlay {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.ReactModal__Content {
+  position: relative;
+  outline: none; /*fix cho Safari*/
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

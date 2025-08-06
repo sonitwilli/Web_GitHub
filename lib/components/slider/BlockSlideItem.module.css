@@ -1,0 +1,23 @@
+.imageContainer {
+  padding-bottom: 30px;
+}
+
+.slideTitle {
+  top: 80%;
+}
+
+@media screen and (min-width: 1024px) {
+  .imageContainer {
+    padding-bottom: 50px;
+  }
+}
+
+@media screen and (min-width: 1600px) {
+  .imageContainer {
+    padding-bottom: 90px;
+  }
+
+  .slideTitle {
+    top: 85%;
+  }
+}

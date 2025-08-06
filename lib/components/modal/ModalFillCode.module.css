@@ -1,0 +1,11 @@
+.disabledButton {
+  background-color: rgba(255, 255, 255, 0.07);
+}
+
+.enabledButton {
+  background: linear-gradient(135deg, #fe592a 0%, #e93013 100%);
+}
+
+.enabledButton:hover {
+  background: linear-gradient(135deg, #ff6b3d 0%, #ff4226 100%);
+}

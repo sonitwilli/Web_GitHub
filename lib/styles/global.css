@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@import './breakpoints.css';
+@import './colors.css';
+@import './fonts.css';
+@import './main.css';
+@import './grid.css';
+@import './embla.css';
+@import './modal.css';
+@import './text-shadow.css';

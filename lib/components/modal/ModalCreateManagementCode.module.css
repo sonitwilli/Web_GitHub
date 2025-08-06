@@ -1,0 +1,14 @@
+.disabledButton {
+  background-color: rgba(255, 255, 255, 0.07);
+  color: #404040;
+}
+
+.enabledButton {
+  background: linear-gradient(135deg, #fe592a 0%, #e93013 100%);
+  color: white;
+  transition: all 0.3s ease-out;
+}
+
+.enabledButton:hover {
+  background: linear-gradient(135deg, #ff6b3d 0%, #ff4226 100%);
+}

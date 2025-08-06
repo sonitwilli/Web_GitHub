@@ -1,0 +1,4 @@
+.svgContainer svg {
+  user-select: none;
+  color: #ff6500;
+}

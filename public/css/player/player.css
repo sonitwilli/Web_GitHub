@@ -1,0 +1,213 @@
+.c-control-button {
+  cursor: pointer;
+  position: relative;
+  display: none;
+}
+
+.c-control-button-fullscreen,
+.c-control-button-report,
+.c-control-button-audio,
+.c-control-button-resolution
+/* .c-control-button-forward */ {
+  display: block;
+}
+
+.c-control-button-volume {
+  display: flex;
+}
+
+.c-control-hover-text {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 28px);
+  background-color: rgba(27, 26, 25, 0.9);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 150%;
+  border-radius: 6px;
+  padding-top: 4px;
+  padding-right: 10px;
+  padding-bottom: 4px;
+  padding-left: 10px;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 2;
+}
+
+.c-control-button-icon:hover ~ .c-control-hover-text {
+  opacity: 1 !important;
+}
+/* .c-control-button:hover .c-control-hover-text {
+  opacity: 1;
+} */
+
+.c-control-button-fullscreen .c-control-hover-text {
+  left: unset !important;
+  transform: unset;
+  right: 0;
+}
+
+.c-control-button-playpause .c-control-hover-text {
+  left: 0 !important;
+  transform: unset;
+}
+
+/* channel */
+.player-wrapper-channel .c-control-button-live,
+.player-wrapper-event .c-control-button-live,
+.player-wrapper-premiere .c-control-button-live {
+  display: block;
+}
+
+/* timeshift */
+.player-wrapper-timeshift .c-control-button-playpause,
+.player-wrapper-timeshift .c-control-button-rewind,
+.player-wrapper-timeshift .c-control-button-forward,
+.player-wrapper-timeshift .c-control-button-duration {
+  display: block;
+}
+
+.player-wrapper-user-inactive {
+  cursor: none;
+}
+
+.player-wrapper-fullscreen .player_mask {
+  opacity: 1;
+}
+
+.player-wrapper-user-inactive #nvm_player_control,
+.player-wrapper-user-inactive .player_mask,
+.player-wrapper-user-inactive .player-expand {
+  opacity: 0;
+}
+.player-wrapper-user-inactive .skip-intro-button {
+  bottom: 48px !important;
+}
+.player-wrapper-user-inactive .situation-warning-content {
+  color: var(--color-white) !important;
+}
+.player-wrapper-user-inactive .watch-and-skip-credit {
+  bottom: 48px !important;
+}
+
+@media screen and (max-width: 1280px) {
+  .player-wrapper-user-inactive .skip-intro-button {
+    bottom: 28px !important;
+  }
+  .player-wrapper-user-inactive .watch-and-skip-credit {
+    bottom: 28px !important;
+  }
+}
+
+.player-wrapper-user-inactive .preview-popup-live,
+.player-wrapper-user-inactive .preview-popup-vod {
+  bottom: 4% !important;
+}
+
+.player-wrapper-fullscreen .player-expand {
+  display: none;
+}
+
+.player-wrapper-timeshift .c-control-button-resolution {
+  display: none;
+}
+
+.seek-bar-nvm {
+  display: none;
+}
+
+.player-wrapper-timeshift .seek-bar-nvm {
+  display: block;
+}
+
+.player-wrapper-timeshift.player-wrapper-fullscreen .c-control-button-schedule,
+.player-wrapper-channel.player-wrapper-fullscreen .c-control-button-schedule {
+  display: block;
+}
+
+.player-wrapper-login #nvm_player_control {
+  display: none;
+}
+
+/* vod */
+.player-wrapper-vod .c-control-button-playpause,
+.player-wrapper-vod .c-control-button-rewind,
+.player-wrapper-vod .c-control-button-forward,
+.player-wrapper-vod .c-control-button-duration,
+.player-wrapper-vod .c-control-button-speed,
+.player-wrapper-vod .seek-bar-nvm {
+  display: block;
+}
+.player-wrapper-vod.player-wrapper-fullscreen .c-control-button-episode-list {
+  display: block;
+}
+
+.player-wrapper-series .c-control-button-next-episode {
+  display: block;
+}
+.player-wrapper-final-episode .c-control-button-next-episode {
+  display: none;
+}
+
+.player-wrapper-chat .c-control-button-chat {
+  display: block;
+}
+
+.player-wrapper-only-one-episode.player-wrapper-fullscreen
+  .c-control-button-episode-list {
+  display: none;
+}
+
+.player-wrapper-paused #nvm_player_control {
+  opacity: 1;
+}
+.player-wrapper-paused .skip-intro-button {
+  bottom: 92px !important;
+}
+.player-wrapper-paused .watch-and-skip-credit {
+  bottom: 92px !important;
+}
+.player-wrapper-paused .preview-popup-live,
+.player-wrapper-paused .preview-popup-vod {
+  bottom: 72px !important;
+}
+
+@media screen and (max-width: 1280px) {
+  .player-wrapper-paused .skip-intro-button {
+    bottom: 84px !important;
+  }
+  .player-wrapper-paused .watch-and-skip-credit {
+    bottom: 84px !important;
+  }
+}
+
+/* playlist */
+.player-wrapper-playlist .c-control-button-playpause,
+.player-wrapper-playlist .c-control-button-rewind,
+.player-wrapper-playlist .c-control-button-forward,
+.player-wrapper-playlist .c-control-button-duration,
+.player-wrapper-playlist .c-control-button-speed,
+.player-wrapper-playlist .seek-bar-nvm,
+.player-wrapper-playlist .c-control-button-next-episode {
+  display: block;
+}
+.player-wrapper-playlist.player-wrapper-final-episode
+  .c-control-button-next-episode {
+  display: none;
+}
+
+.player-wrapper-user-inactive .MiddleButtons-container {
+  display: none;
+}
+
+.player-wrapper-expanded #video_id {
+  object-fit: contain;
+}
+
+@media screen and (max-width: 767px) {
+  .c-control-hover-text {
+    display: none !important;
+  }
+}

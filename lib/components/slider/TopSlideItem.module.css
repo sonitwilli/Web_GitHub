@@ -1,0 +1,49 @@
+.countdown_container {
+  height: 24px;
+  overflow: hidden;
+  background-color: #333333;
+  border-radius: 4px;
+  padding: 3px 4px;
+  width: 30px;
+  height: 24px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.move-number {
+  animation: moveNumberOut 1.5s ease-out;
+  animation-fill-mode: forwards;
+}
+
+.infoContainer {
+  animation: infoContainer 1s forwards;
+}
+
+@keyframes infoContainer {
+  0% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+  1% {
+    opacity: 0.1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes moveNumberOut {
+  0% {
+    transform: translateY(0%);
+  }
+  30% {
+    transform: translateY(-50%);
+  }
+  100% {
+    transform: translateY(-50%);
+  }
+}

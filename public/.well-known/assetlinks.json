@@ -1,0 +1,14 @@
+[
+    {
+        "relation": [
+            "delegate_permission/common.handle_all_urls"
+        ],
+        "target": {
+            "namespace": "android_app",
+            "package_name": "com.fplay.activity",
+            "sha256_cert_fingerprints": [
+                "85:42:99:D2:55:47:9F:55:4D:C4:34:8C:60:6C:A8:67:03:E8:E1:AB:BA:E9:DD:52:9C:2E:68:AD:C2:97:61:AC"
+            ]
+        }
+    }
+]

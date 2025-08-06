@@ -1,0 +1,14 @@
+/* Custom scrollbar for tbody in PaymentTransactionHistoryTable */
+.tbodyScrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #959595 #1B1A19;
+}
+
+.tbodyScrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.tbodyScrollbar::-webkit-scrollbar-button {
+  height: 0 !important;
+  display: none !important;
+}

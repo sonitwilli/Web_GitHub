@@ -1,0 +1,32 @@
+.textareaContainer {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.portlandOrangeBg {
+  background-color: var(--color-portland-orange);
+}
+
+.textarea {
+  min-height: 80px;
+  max-height: auto;
+  width: 100%;
+  outline: none;
+  overflow: hidden;
+  background: transparent;
+  line-break: auto;
+  border: 0;
+  resize: none;
+  color: rgba(255, 255, 255, 0.87);
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 400;
+  caret-color: var(--color-fpl);
+}
+
+.textarea::placeholder {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.characterCount {
+  color: rgba(255, 255, 255, 0.38);
+}
