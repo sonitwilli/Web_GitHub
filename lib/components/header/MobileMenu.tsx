@@ -58,11 +58,12 @@ export default function MobileMenu({ menus }: Props) {
 
       {/* black background */}
       <div
-        className={`fixed left-0 top-[80px] w-full h-full bg-black duration-300 ease-out ${
+        className={`fixed left-0 top-[80px] w-full bg-black duration-300 ease-out ${
           openMobileMenu
             ? 'z-1 pointer-events-auto opacity-60'
             : '-z-[1] pointer-events-none opacity-0'
         }`}
+        style={{ height: 'calc(100vh - 80px)' }}
       ></div>
 
       {/* Menus */}
@@ -72,9 +73,13 @@ export default function MobileMenu({ menus }: Props) {
           openMobileMenu
             ? 'w-[266px] tablet:w-[320px]'
             : 'w-[266px] xl:w-[250px]'
-        }  h-full z-[2] overflow-y-auto bg-smoky-black duration-300 ease-out ${
+        } z-[2] overflow-y-auto bg-smoky-black duration-300 ease-out ${
           openMobileMenu ? 'left-0' : '-left-[266px] xl:-left-[250px]'
         }`}
+        style={{ 
+          height: 'calc(100vh - 80px)',
+          paddingBottom: 'max(20px, env(safe-area-inset-bottom))'
+        }}
         onClick={() => {
           if (setOpenMobileMenu) setOpenMobileMenu(false);
         }}
