@@ -52,9 +52,9 @@ const SideTagButton: React.FC = () => {
     dispatch(changeListFloatBubbles(listFloatBubbles));
   }, [listFloatBubbles, dispatch]);
 
-  // Check if user is mobile
+  // Check if user is mobile or tablet
   const isMobile = useMemo(() => {
-    return width <= 768;
+    return width <= 1280;
   }, [width]);
 
   // Get profile type from localStorage

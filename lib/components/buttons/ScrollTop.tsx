@@ -3,15 +3,13 @@ import { useMemo } from 'react';
 
 export default function ScrollTop() {
   const sidetagPosition = useAppSelector((state) => state.sidetag.position);
+  const width = window.innerWidth;
 
   // Calculate dynamic right position based on sidetag position
   const dynamicStyle = useMemo(() => {
-    const additionalOffset = 24; // Additional offset when sidetag is at right bottom
+    const additionalOffset = 40; // Additional offset when sidetag is at right bottom
 
-    if (
-      sidetagPosition.hasPosition &&
-      sidetagPosition.position === 'right bottom'
-    ) {
+    if (width >= 1280) {
       return { marginRight: `${additionalOffset}px` };
     }
 
