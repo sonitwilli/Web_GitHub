@@ -143,7 +143,7 @@ export default function DefaultLayout({ children }: Props) {
 
         {scrollDistance > 0 && !hasBlockedRoute && <ScrollTop />}
         <PreventKidModal />
-        {isMobileOrTablet && <DownloadAppControlBar />}
+        <DownloadAppControlBar />
       </main>
       <Footer />
       <SideTagButton />

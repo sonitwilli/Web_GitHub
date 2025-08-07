@@ -4,6 +4,7 @@ import { getUserAgent } from '@/lib/utils/methods';
 import Image from 'next/image';
 import { HeaderContext } from '@/lib/layouts/Header';
 import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
+import useScreenSize from '@/lib/hooks/useScreenSize';
 
 interface DownloadAppProps {
   className?: string;
@@ -22,14 +23,12 @@ export default function DownloadApp({ className }: DownloadAppProps) {
   const headerCtx = useContext(HeaderContext);
   const { openMobileMenu } = headerCtx;
   const { isHidden: isManuallyHidden } = useDownloadBarControl();
+  const { width } = useScreenSize();
 
   const [dynamicLink, setDynamicLink] = useState({
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/ung-dung/download`,
     text: 'Tải xuống',
   });
-
-  // Ẩn ở một số trang đặc biệt hoặc khi mobile menu mở
-  const shouldHide = router.pathname.includes('/minigame/vong-quay-may-man') || openMobileMenu;
 
   // Lấy dynamic link từ API
   const getDynamicLink = useCallback(async () => {
@@ -63,6 +62,14 @@ export default function DownloadApp({ className }: DownloadAppProps) {
       });
     }
   }, []);
+
+  // Only show on screens smaller than 1280px (mobile + tablet)
+  if (width >= 1280) {
+    return null;
+  }
+
+  // Ẩn ở một số trang đặc biệt hoặc khi mobile menu mở
+  const shouldHide = router.pathname.includes('/minigame/vong-quay-may-man') || openMobileMenu;
 
   if (shouldHide || isManuallyHidden) return null;
 
