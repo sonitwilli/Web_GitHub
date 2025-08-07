@@ -86,6 +86,7 @@ import {
 import { showToast } from '@/lib/utils/globalToast';
 import { setIsOpenLiveChat } from '@/lib/store/slices/playerSlice';
 import { SHOW_REAL_TIME_CHAT } from '@/lib/constant/texts';
+import { showDownloadBarGlobally } from '@/lib/hooks/useDownloadBarControl';
 export const Commands: LivechatMethods = {
   getSupportedMethods() {
     return [
@@ -203,6 +204,8 @@ export const Commands: LivechatMethods = {
   destroy(): boolean {
     localStorage.setItem(SHOW_REAL_TIME_CHAT, '0');
     store.dispatch(setIsOpenLiveChat(false));
+    // Show download bar when chat is closed
+    showDownloadBarGlobally();
     return true;
   },
   getDeviceInfo(): deviceInfoResponse {

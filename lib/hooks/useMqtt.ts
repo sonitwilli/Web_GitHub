@@ -19,7 +19,7 @@ export const useMqtt = () => {
   const getRealConfigs = () => {
     const config = localStorage.getItem(MQTT_CONFIG)
       ? localStorage.getItem(MQTT_CONFIG)
-      : {};
+      : null;
     const mqttConfig: MqttConfigType =
       store?.getState().mqtt.mqttConfigs || (config
         ? // eslint-disable-next-line @typescript-eslint/ban-ts-comment

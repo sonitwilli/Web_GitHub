@@ -13,6 +13,7 @@ import LiveChatConfirmModal from './LiveChatConfirmModal';
 import LiveChatWarningModal from './LiveChatWarningModal';
 import ModalReportChat from '@/lib/components/modal/ModalReportChat';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
 
 // interface ReportDataItem {
 //   id: number
@@ -53,6 +54,7 @@ const RealtimeChatMega: React.FC<RealtimeChatMegaProps> = ({
   isRequiredLogin = false,
 }) => {
   const { portalTarget } = usePlayerPageContext();
+  const { hideBar, showBar } = useDownloadBarControl();
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [linkIframe, setLinkIframe] = useState<string | undefined>(undefined);
   // const [reportData, setReportData] = useState<ReportData>({})
@@ -204,6 +206,17 @@ const RealtimeChatMega: React.FC<RealtimeChatMegaProps> = ({
     dispatch,
   ]);
   const { isFullscreen } = useAppSelector((s) => s.player);
+
+  // Hide download bar when live chat is visible
+  useEffect(() => {
+    if (!open) {
+      // Live chat is visible (open=false means chat is shown)
+      hideBar();
+    } else {
+      // Live chat is hidden, show download bar again
+      showBar();
+    }
+  }, [open, hideBar, showBar]);
 
   // Render
   return (
