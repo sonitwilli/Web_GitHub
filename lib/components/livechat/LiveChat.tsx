@@ -55,6 +55,8 @@ const RealtimeChatMega: React.FC<RealtimeChatMegaProps> = ({
 }) => {
   const { portalTarget } = usePlayerPageContext();
   const { hideBar, showBar } = useDownloadBarControl();
+  // Track initial render to avoid hiding download bar on first mount
+  const isFirstRender = useRef(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [linkIframe, setLinkIframe] = useState<string | undefined>(undefined);
   // const [reportData, setReportData] = useState<ReportData>({})
@@ -209,13 +211,19 @@ const RealtimeChatMega: React.FC<RealtimeChatMegaProps> = ({
 
   // Hide download bar when live chat is visible
   useEffect(() => {
+    if (isFirstRender.current) {
+      // Skip initial mount
+      isFirstRender.current = false;
+      return;
+    }
     if (!open) {
-      // Live chat is visible (open=false means chat is shown)
       hideBar();
     } else {
-      // Live chat is hidden, show download bar again
       showBar();
     }
+    return () => {
+      showBar();
+    };
   }, [open, hideBar, showBar]);
 
   // Render
