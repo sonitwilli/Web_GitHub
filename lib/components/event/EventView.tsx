@@ -86,20 +86,28 @@ const EventView = ({ dataEvent, eventId }: Props) => {
           setLiveChatHeight('calc(100vh - 200px)'); // fallback
         }
 
-        // Scroll to top trước khi disable scroll trên mobile (chỉ thực hiện một lần)
-        if (!hasScrolledToTopRef.current) {
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-          hasScrolledToTopRef.current = true;
+        // Only disable scrolling if live chat is open on mobile
+        if (isOpenLiveChat) {
+          // Scroll to top trước khi disable scroll trên mobile (chỉ thực hiện một lần)
+          if (!hasScrolledToTopRef.current) {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            hasScrolledToTopRef.current = true;
 
-          // Disable HTML scroll on mobile sau khi scroll
-          setTimeout(() => {
+            // Disable HTML scroll on mobile sau khi scroll
+            setTimeout(() => {
+              document.documentElement.style.overflow = 'hidden';
+              document.body.style.overflow = 'hidden';
+            }, 300); // Delay để scroll animation hoàn thành
+          } else {
+            // Nếu đã scroll rồi thì chỉ disable scroll
             document.documentElement.style.overflow = 'hidden';
             document.body.style.overflow = 'hidden';
-          }, 300); // Delay để scroll animation hoàn thành
+          }
         } else {
-          // Nếu đã scroll rồi thì chỉ disable scroll
-          document.documentElement.style.overflow = 'hidden';
-          document.body.style.overflow = 'hidden';
+          // Re-enable scroll when live chat is closed on mobile
+          document.documentElement.style.overflow = '';
+          document.body.style.overflow = '';
+          hasScrolledToTopRef.current = false;
         }
       } else if (isTabletView) {
         // Tablet and above: fixed 720px height

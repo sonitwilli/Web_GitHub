@@ -6,7 +6,7 @@ export default function ScrollTop() {
 
   // Calculate dynamic right position based on sidetag position
   const dynamicStyle = useMemo(() => {
-    const baseRight = 104; // Default right position
+    const baseRight = 24;
     const additionalOffset = 24; // Additional offset when sidetag is at right bottom
 
     if (
