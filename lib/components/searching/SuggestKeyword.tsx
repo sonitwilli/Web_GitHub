@@ -38,7 +38,6 @@ const SuggestList = ({
   const renderItem = (item: SuggestKeyword, index: number) => {
     const text = item.keyword || '';
     const isHistory = item.is_history || false;
-    
     const trimmedKeyword = keyword.trim();
     const highlightLength = trimmedKeyword.length;
 
@@ -63,9 +62,25 @@ const SuggestList = ({
         <div className="flex flex-1 items-center min-w-0">
           <div className="flex items-center gap-3 text-white w-full overflow-hidden">
             {isHistory ? (
-              <FaClockRotateLeft className="w-[24px] h-[18px]" />
+              item.logo ? (
+                <img
+                  src={item.logo}
+                  alt="History logo"
+                  className="w-[24px] h-[24px] object-contain"
+                />
+              ) : (
+                <FaClockRotateLeft className="w-[24px] h-[18px]" />
+              )
             ) : (
-              <IoIosSearch className="w-[24px] h-[24px]" />
+              item.logo ? (
+                <img
+                  src={item.logo}
+                  alt="Search logo"
+                  className="w-[24px] h-[24px] object-contain"
+                />
+              ) : (
+                <IoIosSearch className="w-[24px] h-[24px]" />
+              )
             )}
             <div className="truncate w-full max-w-[92%]">
               {firstPart && (

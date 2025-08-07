@@ -11,12 +11,15 @@ type DataEvent = {
   type?: string;
 };
 
+type EventStatus = 'scheduled' | 'live' | 'ended' | null;
+
 type Props = {
   dataEvent?: DataEvent;
 };
 
 export default function EventLiveStatus({ dataEvent }: Props) {
   const [status, setStatus] = useState<string | null>(null);
+  const [eventStatus, setEventStatus] = useState<EventStatus>(null);
   const dispatch = useDispatch();
 
   // Kiểm tra trạng thái kết thúc và cập nhật Redux một lần
@@ -56,6 +59,7 @@ export default function EventLiveStatus({ dataEvent }: Props) {
 
       if (!start || !end) {
         setStatus(null);
+        setEventStatus(null);
         return;
       }
 
@@ -64,20 +68,27 @@ export default function EventLiveStatus({ dataEvent }: Props) {
 
         if (countdown < 1) {
           setStatus(null);
+          setEventStatus(null);
         } else if (countdown < 60) {
           setStatus(`Còn ${countdown} giây nữa`);
+          setEventStatus('scheduled');
         } else if (countdown < 3600) {
           setStatus(`Còn ${Math.floor(countdown / 60)} phút nữa`);
+          setEventStatus('scheduled');
         } else {
           setStatus(formatVietnamDayTimeLabel(start));
+          setEventStatus('scheduled');
         }
       } else if (now >= start && now <= end) {
         setStatus(dataEvent?.label_event || 'LIVE');
+        setEventStatus('live');
       } else if (now > end) {
         setStatus('Đã kết thúc');
+        setEventStatus('ended');
         dispatch(setIsEndedLiveCountdown(now > end));
       } else {
         setStatus(null);
+        setEventStatus(null);
       }
     };
 
@@ -89,8 +100,8 @@ export default function EventLiveStatus({ dataEvent }: Props) {
 
   if (!status) return null;
 
-  const isLive = !status?.includes('kết thúc') && !status?.includes('Còn');
-  const isSchedule = status.includes('lúc');
+  const isLive = eventStatus === 'live';
+  const isSchedule = eventStatus === 'scheduled';
 
   return (
     <div className="flex items-center gap-2 min-h-8 sm:gap-3">

@@ -144,7 +144,14 @@
   display: block;
 }
 
+/* Show next episode button for all VOD types that have episodes */
+.player-wrapper-vod .c-control-button-next-episode {
+  display: block;
+}
 .player-wrapper-series .c-control-button-next-episode {
+  display: block;
+}
+.player-wrapper-season .c-control-button-next-episode {
   display: block;
 }
 .player-wrapper-final-episode .c-control-button-next-episode {

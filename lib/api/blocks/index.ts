@@ -203,6 +203,7 @@ export interface BlockItemResponseType {
 
 export interface BlockMetaType {
   short_description?: string;
+  short_icon?: string;
   type?: string;
   name?: string;
   block_style?: BlockTypeType;

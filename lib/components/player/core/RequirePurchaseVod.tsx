@@ -36,13 +36,13 @@ export default function RequirePurchaseVod() {
                 dataChannel?.image?.landscape_title,
             })}
             placeHolder="/images/player_page_placeholder.png"
-            className="mx-auto max-h-[720px] h-full"
+            className="mx-auto h-full"
           />
         ) : (
           <img
             src="/images/player_page_placeholder.png"
             alt={dataChannel?.name || dataChannel?.title}
-            className="mx-auto max-h-[720px] h-full"
+            className="mx-auto h-full"
           />
         )}
 

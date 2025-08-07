@@ -36,7 +36,10 @@ export default function MqttContainer() {
     }
   };
   useEffect(() => {
-    handleCheckConfigs();
+    const token = localStorage.getItem('token');
+    if (token) {
+      handleCheckConfigs();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [appConfigs]);
   return <div className="MqttContainer NVM"></div>;

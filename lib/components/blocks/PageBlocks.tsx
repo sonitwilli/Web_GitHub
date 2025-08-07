@@ -20,7 +20,12 @@ export default function PageBlocks({
   onAllBlocksEmpty,
 }: Props) {
   const [emptyBlocks, setEmptyBlocks] = useState<Set<number>>(new Set());
+  const [firstBlockIndex, setFirstBlockIndex] = useState<number>(1);
+  const [lastBlockIndex, setLastBlockIndex] = useState<number>(() =>
+    blocks ? blocks.length - 1 : 0,
+  );
   const totalBlocksRef = useRef<number>(0);
+
   const handleBlockEmpty = useCallback(
     (blockIndex: number, isEmpty: boolean) => {
       setEmptyBlocks((prev) => {
@@ -39,7 +44,48 @@ export default function PageBlocks({
   // Reset empty blocks when keyword or blocks change
   useEffect(() => {
     setEmptyBlocks(new Set());
+    setFirstBlockIndex(1); // Reset về index 1 ban đầu
+    setLastBlockIndex(blocks ? blocks.length - 1 : 0); // Reset về index cuối ban đầu
   }, [keywordSearch, blocks]);
+
+  // Tự động cập nhật firstBlockIndex khi block hiện tại empty
+  useEffect(() => {
+    if (!blocks?.length) return;
+    // Tìm block đầu tiên không empty, bắt đầu từ index 1
+    let newFirstBlockIndex = 1;
+
+    while (
+      newFirstBlockIndex < blocks.length &&
+      emptyBlocks.has(newFirstBlockIndex)
+    ) {
+      newFirstBlockIndex++;
+    }
+
+    // Chỉ cập nhật nếu có thay đổi và vẫn trong phạm vi blocks
+    if (
+      newFirstBlockIndex !== firstBlockIndex &&
+      newFirstBlockIndex < blocks.length
+    ) {
+      setFirstBlockIndex(newFirstBlockIndex);
+    }
+  }, [emptyBlocks, blocks, firstBlockIndex]);
+
+  // Tự động cập nhật lastBlockIndex khi block hiện tại empty
+  useEffect(() => {
+    if (!blocks?.length) return;
+    // Tìm block cuối cùng không empty, bắt đầu từ blocks.length - 1
+    let newLastBlockIndex = blocks.length - 1;
+
+    while (newLastBlockIndex >= 0 && emptyBlocks.has(newLastBlockIndex)) {
+      newLastBlockIndex--;
+    }
+
+    // Chỉ cập nhật nếu có thay đổi và vẫn trong phạm vi blocks
+
+    if (newLastBlockIndex !== lastBlockIndex && newLastBlockIndex >= 0) {
+      setLastBlockIndex(newLastBlockIndex);
+    }
+  }, [emptyBlocks, blocks, lastBlockIndex]);
 
   // Check if all blocks are empty - separate effect to avoid conflicts
   useEffect(() => {
@@ -58,16 +104,18 @@ export default function PageBlocks({
         key={`${block.id || index}-${keywordSearch || 'no-search'}`}
         block={block}
         keywordSearch={keywordSearch}
-        onBlockEmpty={
-          keywordSearch
-            ? (isEmpty: boolean) => handleBlockEmpty(index, isEmpty)
-            : undefined
-        }
-        isFirstBlock={index === 1}
-        isLastBlock={index === blocks.length - 1}
+        onBlockEmpty={(isEmpty: boolean) => handleBlockEmpty(index, isEmpty)}
+        isFirstBlock={index === firstBlockIndex}
+        isLastBlock={index === lastBlockIndex}
       />
     ));
-  }, [blocks, keywordSearch, handleBlockEmpty]);
+  }, [
+    blocks,
+    keywordSearch,
+    handleBlockEmpty,
+    firstBlockIndex,
+    lastBlockIndex,
+  ]);
 
   if (typeof blocks === 'undefined' || !blocks?.length) {
     return <div className="h-screen"></div>;

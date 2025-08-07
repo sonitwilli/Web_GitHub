@@ -423,6 +423,7 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
     async ({ profile = {} as Profile } = {}) => {
       saveProfile({ profile });
       await new Promise(resolve => setTimeout(resolve, 1000));
+      await router.push("/")
       router.reload()
     },
     [router],

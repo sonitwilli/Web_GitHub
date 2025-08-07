@@ -101,8 +101,8 @@ export const ToastProvider = ({ children, container }: ToastProviderProps) => {
         ref={toastRef}
         className={`${
           container
-            ? 'absolute top-4 right-4 z-[999] w-[400px]'
-            : 'fixed top-[136px] right-10 z-[999] w-[400px]'
+            ? 'absolute top-4 right-4 z-[999] w-[250px] sm:w-[400px]'
+            : 'fixed top-[136px] right-10 z-[999] w-[250px] sm:w-[400px]'
         } transition-all ${isLeaving ? styles.toastLeave : styles.toastOpen} ${
           toast.wrapperStyle
         }`}

@@ -185,7 +185,6 @@ export default function PageBlockItem({
       </div>
     );
   }
-
   if (block?.type === 'search') {
     return (
       <div>
@@ -200,8 +199,15 @@ export default function PageBlockItem({
             {blockData?.meta?.name || block?.name}
           </h2>
           {blockData?.meta?.short_description && (
-            <div className="text-[16px] text-spanish-gray mt-1 w-full">
-              {blockData.meta.short_description}
+            <div className="text-[16px] text-spanish-gray mt-1 w-full flex items-center gap-2">
+              {blockData?.meta?.short_icon && (
+                <img
+                  src={blockData.meta.short_icon}
+                  alt="Short icon"
+                  className="w-[24px] h-[24px] object-contain"
+                />
+              )}
+              <span>{blockData.meta.short_description}</span>
             </div>
           )}
           {blockData?.data &&

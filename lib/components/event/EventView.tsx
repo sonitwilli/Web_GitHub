@@ -73,7 +73,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
       const isMobileView = window.innerWidth < 640; // tablet breakpoint
       const isTabletView = window.innerWidth < 1024;
 
-      if (isMobileView) {
+      if (isMobileView && !isExpanded) {
         // Mobile: calculate height based on player_wrapper + 80px
         if (playerWrapper) {
           const playerHeight = playerWrapper.offsetHeight;
@@ -220,7 +220,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
-  }, []); // Chỉ chạy một lần khi component mount
+  }, [isExpanded]); // Chỉ chạy một lần khi component mount
 
   // Memoize derived values
   const slideFromEvent = useMemo(

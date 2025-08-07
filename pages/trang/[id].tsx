@@ -13,7 +13,7 @@ import { SeoProps } from '@/lib/components/seo/SeoHead';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/store';
+import { useAppDispatch } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { loadJsScript } from '@/lib/utils/methods';
 
@@ -65,7 +65,6 @@ export default function CategoryPage() {
 
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { adsLoaded } = useAppSelector((state) => state.app);
 
   useEffect(() => {
     if (router.isReady && process.env.NEXT_PUBLIC_API_ADS) {
@@ -88,18 +87,6 @@ export default function CategoryPage() {
     <>
       <DefaultLayout>
         <div className="pt-[80px] tablet:pt-0">
-          {adsLoaded && (
-            <div className="ads_masthead_banner">
-              <ins
-                className="adsplay-placement adsplay-placement-relative"
-                data-aplpm="105-111"
-              />
-              <ins
-                className="adsplay-placement adsplay-placement-top-fixed"
-                data-aplpm="1911010302-"
-              />
-            </div>
-          )}
           <div className="mb-[40px] xl:mb-0">
             {highLightBlockData?.data &&
             highLightBlockData?.data?.length > 0 ? (

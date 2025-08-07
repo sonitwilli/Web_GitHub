@@ -12,6 +12,7 @@ export type Packages = {
   term_package_display?: string;
   type?: string;
   image_thumbnail?: string;
+  lbl_state?: string;
 };
 
 const usePackageData = () => {

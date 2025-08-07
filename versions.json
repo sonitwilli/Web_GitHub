@@ -1,6 +1,19 @@
 {
     "versions": [
         {
+            "version": "8.0.18",
+            "date": "Dự kiến",
+            "content": [
+                "[Web] [Tìm kiếm] Lỗi hiển thị placeholder bị cắt/mất một phần khi đang loading kết quả tìm kiếm ở responsive mobile",
+                "[WEB][Reponsive] Không hiện popup download app ở reponsive mode",
+                "[WEB][Preview] Lỗi không play được previewVOD ở Windows OS",
+                "[WEB][Truyền hình] Lỗi không hiện FingerPrint và Lịch phát sóng",
+                "[Web] [Tìm kiếm] Lỗi hiển thị short_descriptions tại block genre sematics ở responsive mobile",
+                "[WEB][Màn hình mua gói] Không hiển thị label 'Đang sử dụng'",
+                "[WEB][PlayerVOD] Lỗi UI player VOD đối với trường hợp scale trình duyệt"
+            ]
+        }, 
+        {
             "version": "8.0.17",
             "date": "Dự kiến",
             "content": [

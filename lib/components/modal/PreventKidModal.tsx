@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import ModalWrapper from '@/lib/components/modal/ModalWrapper'; // Giả định đường dẫn
 import { getConfig } from '@/lib/api/config'; // Import API getConfig
 import { PROFILE_TYPES, TYPE_PR } from '@/lib/constant/texts'; // Giả định constants
+import { usePlayerPageContext } from '../player/context/PlayerPageContext'; // Giả định context để lấy dataChannel
 
 // Danh sách whitelist
 const whiteList = [
@@ -19,9 +20,6 @@ const whiteList = [
 ];
 
 const whiteListIncludes = [
-  '/xem-video/',
-  '/su-kien/',
-  '/xem-truyen-hinh/',
   '/playlist/',
   '/cong-chieu/',
   '/tim-kiem',
@@ -32,6 +30,7 @@ const PreventKidModal: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [preventKidText, setPreventKidText] = useState('');
   const [profilesRouteChanged] = useState(false); // Giả định tạm thời, thay bằng Redux nếu cần
+  const { dataChannel } = usePlayerPageContext(); // Giả định context để lấy dataChannel
 
   // Lấy msg_not_support từ API
   useEffect(() => {
@@ -50,14 +49,26 @@ const PreventKidModal: React.FC = () => {
 
   // Kiểm tra điều kiện hiển thị modal
   useEffect(() => {
+    if (!router.isReady) return;
     const checkPreventKid = async () => {
       const path = router.asPath;
+      
       const validInclude = isWhiteListInclude(path);
+      
       if (path === '/' || validInclude) {
         return;
       }
 
+      if(path.includes('/xem-video') && !dataChannel) {
+        return
+      }
+
+      if(dataChannel?.is_kid === '1') {
+        return
+      }
+
       const valid = isWhiteList(path);
+      
       if (valid) {
         return;
       }
@@ -69,7 +80,7 @@ const PreventKidModal: React.FC = () => {
     };
 
     checkPreventKid();
-  }, [router.asPath, profilesRouteChanged]);
+  }, [router.asPath, profilesRouteChanged, router.isReady, dataChannel]);
 
   // Hàm kiểm tra whitelist
   const isWhiteList = (path: string): boolean => {

@@ -117,12 +117,14 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         } else {
           console.log('--- PLAYER HLS.JS ERROR INIT', data);
         }
-        handleAddError({ error: data });
-        if (!showLoginPlayer) {
-          if (clearErrorInterRef) {
-            clearErrorInterRef();
+        if (data?.fatal) {
+          handleAddError({ error: data });
+          if (!showLoginPlayer) {
+            if (clearErrorInterRef) {
+              clearErrorInterRef();
+            }
+            handleIntervalCheckErrors();
           }
-          handleIntervalCheckErrors();
         }
       });
     } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {

@@ -27,13 +27,21 @@ export const renderHeaderRow = (
       Mua gói
     </div>
     {pkgList.map((pkg, i) => (
-      <div key={i} className="flex h-full">
+      <div key={i} className="flex h-full relative">
         {pkg && (
-          <img
-            src={pkg.image_thumbnail || pkg.icon}
-            alt={pkg.package_name || ''}
-            className="object-fill"
-          />
+          <>
+            <img
+              src={pkg.image_thumbnail || pkg.icon}
+              alt={pkg.package_name || ''}
+              className="object-fill"
+            />
+            {/* "Đang sử dụng" label */}
+            {pkg.lbl_state && (
+              <div className="absolute w-[70%] top-0 left-1/2 -translate-x-1/2 z-1 bg-white text-black text-sm font-[400] px-2 py-1 rounded-b-xl transform text-center shadow-[0_1px_1px_0px_rgba(0,0,0,0.25)]">
+                {pkg.lbl_state}
+              </div>
+            )}
+          </>
         )}
       </div>
     ))}

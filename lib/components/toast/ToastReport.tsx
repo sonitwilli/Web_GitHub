@@ -23,8 +23,8 @@ export default function ToastReport({
   const [imgSrc, setImgSrc] = useState(icon);
 
   return (
-    <div className={`flex flex-col p-4 w-full gap-2 ${styleData}`} role="alert">
-      <div className="flex items-center gap-2 text-white font-semibold text-[20px] leading-[150%] tracking-normal">
+    <div className={`flex flex-col p-3 sm:p-4 w-full gap-2 ${styleData}`} role="alert">
+      <div className="flex items-center gap-2 text-white font-semibold text-[16px] sm:text-[20px] leading-[150%] tracking-normal">
         {customIcon ? (
           <div
             className="shrink-0"
