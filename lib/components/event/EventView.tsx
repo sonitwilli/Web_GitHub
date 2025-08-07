@@ -16,6 +16,7 @@ import { VIDEO_ID } from '@/lib/constant/texts';
 import { MaturityRating } from '@/lib/api/vod';
 import { useAppSelector } from '@/lib/store';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
+import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
 
 const ShareReaction = dynamic(() => import('../reaction/ShareReaction'), {
   ssr: false,
@@ -60,7 +61,9 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   const [liveChatHeight, setLiveChatHeight] = useState<string>('');
   const hasScrolledToTopRef = useRef(false);
-
+  const { hideBar } = useDownloadBarControl();
+  const isOpenLiveChat =
+    useAppSelector((s) => s.player.isOpenLiveChat) || false;
   // Handle responsive height calculation based on player-wrapper-play-success or player_wrapper DOM changes
   useEffect(() => {
     const updateHeight = () => {
@@ -108,6 +111,11 @@ const EventView = ({ dataEvent, eventId }: Props) => {
         // Re-enable HTML scroll on tablet+
         document.documentElement.style.overflow = '';
         document.body.style.overflow = '';
+      }
+      if (isMobileView || isTabletView) {
+        if (isOpenLiveChat) {
+          hideBar();
+        }
       }
     };
 
@@ -220,7 +228,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
-  }, [isExpanded]); // Chỉ chạy một lần khi component mount
+  }, [isExpanded, isOpenLiveChat, hideBar]); // Chỉ chạy một lần khi component mount
 
   // Memoize derived values
   const slideFromEvent = useMemo(
@@ -395,7 +403,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                 dataChannel?.comment_type === 'realtime' &&
                 !isFullscreen && (
                   <div
-                    className={`ease-out duration-500 sm:mt-6 xl:mt-0 relative z-1 ${
+                    className={`ease-out duration-500 sm:mt-6 xl:mt-0 relative z-3 ${
                       !isExpanded ? '' : 'w-0 max-w-0 overflow-hidden h-0'
                     }`}
                     style={{

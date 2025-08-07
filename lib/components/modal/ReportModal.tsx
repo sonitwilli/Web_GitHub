@@ -193,7 +193,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
 
         <div className="mt-6 relative">
           <h3 className="text-base font-normal leading-[1.3] text-white-smoke mb-2">
-            Lí do khác (Không bắt buộc)
+            Nội dung chưa phù hợp khác (Không bắt buộc)
           </h3>
 
           <div
@@ -204,7 +204,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
             <textarea
               name="submit-area"
               className="w-full border-0 h-[72px] outline-none bg-eerie-black break-words overflow-y-auto resize-none text-light-gray text-base leading-[1.3] font-normal"
-              placeholder="Nhập lý do"
+              placeholder="Viết báo cáo"
               value={text}
               onChange={handleTextChange}
               onFocus={handleTextareaFocus}
