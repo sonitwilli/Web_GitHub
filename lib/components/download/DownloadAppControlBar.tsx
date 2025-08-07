@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useState } from 'react';
 import { getUserAgent } from '@/lib/utils/methods';
 import Image from 'next/image';
 import { HeaderContext } from '@/lib/layouts/Header';
+import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
 
 interface DownloadAppProps {
   className?: string;
@@ -20,6 +21,8 @@ export default function DownloadApp({ className }: DownloadAppProps) {
   const router = useRouter();
   const headerCtx = useContext(HeaderContext);
   const { openMobileMenu } = headerCtx;
+  const { isHidden: isManuallyHidden } = useDownloadBarControl();
+
   const [dynamicLink, setDynamicLink] = useState({
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/ung-dung/download`,
     text: 'Tải xuống',
@@ -61,7 +64,7 @@ export default function DownloadApp({ className }: DownloadAppProps) {
     }
   }, []);
 
-  if (shouldHide) return null;
+  if (shouldHide || isManuallyHidden) return null;
 
   return (
     <div
