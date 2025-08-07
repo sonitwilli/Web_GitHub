@@ -1,5 +1,9 @@
 import { store, useAppDispatch } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
+import {
+  changePopupDataChatbot,
+  changeTimeOpenPopupLostNetworkChatbot,
+} from '@/lib/store/slices/chatbotSlice';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const useChatbotAiSdk = () => {
@@ -28,6 +32,10 @@ export const useChatbotAiSdk = () => {
     },
     openPopup(type: any, args: any) {
       console.log('openPopup', type, args);
+      if (type === 'warning') {
+        dispatch(changeTimeOpenPopupLostNetworkChatbot(new Date().getTime()));
+        dispatch(changePopupDataChatbot(args));
+      }
     },
     setDisplayMode() {
       return true;
@@ -47,6 +55,9 @@ export const useChatbotAiSdk = () => {
       };
 
       return user || '';
+      // return {
+      //   code: 401
+      // }
     },
     requestLogin() {
       dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));

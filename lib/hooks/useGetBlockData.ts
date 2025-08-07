@@ -42,9 +42,7 @@ export const useGetBlockData = ({
         setBlockData(res?.data);
         if (res?.data?.code === 401) {
           dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
-          setIsEmpty?.(false);
-          console.log('setError', res?.data?.code);
-
+          setIsEmpty?.(false);          
           setIsError?.(true);
           return;
         }

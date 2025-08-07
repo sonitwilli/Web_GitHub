@@ -310,7 +310,7 @@ const BroadcastSchedule: FC<Props> = ({
   ]);
 
   useEffect(() => {
-    console.log('isEndVideo :>> ', isEndVideo);
+    // console.log('isEndVideo :>> ', isEndVideo);
   }, [isEndVideo]);
 
   const { width } = useScreenSize();

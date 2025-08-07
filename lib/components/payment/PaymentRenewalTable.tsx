@@ -250,8 +250,6 @@ const PaymentRenewalTable: React.FC = () => {
     if (!selectedToken) return;
     // Giả lập lấy verify_token từ modal hoặc state nếu có
 
-    console.log('verify_token', verify_token);
-
     if (!verify_token) {
       showToast({
         title: ERROR,

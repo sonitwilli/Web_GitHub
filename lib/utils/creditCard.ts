@@ -208,8 +208,7 @@ export const validateExpDate = (
   }
 
   monthStr = monthStr.trim();
-  yearStr = yearStr.trim();
-  console.log('month year', monthStr, yearStr);
+  yearStr = yearStr.trim();  
   if (
     !Number.isInteger(Number(monthStr)) ||
     !Number.isInteger(Number(yearStr))

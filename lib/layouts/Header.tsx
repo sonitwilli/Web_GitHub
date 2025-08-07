@@ -98,12 +98,10 @@ const defaultMenu: MenuItem[] = [
 
 export default function Header() {
   const headerContext = useContext(HeaderContext);
-  const [localOpenMobileMenu, setLocalOpenMobileMenu] = useState(false);
+  const [localOpenMobileMenu] = useState(false);
   
   // Use context value if available, otherwise use local state
   const openMobileMenu = headerContext?.openMobileMenu ?? localOpenMobileMenu;
-  const setOpenMobileMenu = headerContext?.setOpenMobileMenu ?? setLocalOpenMobileMenu;
-  
   const [shouldHideHeaderAds, setShouldHideHeaderAds] = useState(false);
   const { scrollDistance } = useScroll();
   const { updateActiveMenuItem, clickLinkItem } = useMenu();

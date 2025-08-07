@@ -175,18 +175,15 @@ const PendingPaymentPage: React.FC = () => {
   }, [router.isReady, router.query, redirectUrl]);
 
   // Polling logic (simulate startChecking)
-  useEffect(() => {
-    console.log('useEffect');
+  useEffect(() => {    
     if (!router.isReady || !transId) return;
     const countDownDate = Date.now() + 300000; // 5 minutes
     let timeoutReached = false;
     const methodConfig = PAYMENT_METHODS.find(
       (item) => item.key === router.query.id,
-    );
-    console.log('methodConfig', methodConfig);
+    );    
     const checkUrl = methodConfig?.checkTransactionUrl;
     const poll = async () => {
-      console.log('poll');
       const now = Date.now();
       const distance = countDownDate - now;
       const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -200,8 +197,6 @@ const PendingPaymentPage: React.FC = () => {
         timeoutReached = true;
         return;
       }
-      console.log('checkUrl', checkUrl);
-      console.log('distance', distance);
       if (distance > 0 && checkUrl) {
         try {
           const res = await checkTransactionStatusApi(checkUrl, {

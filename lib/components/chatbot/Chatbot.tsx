@@ -1,32 +1,40 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   CHATBOT_SDK_ERRORS,
   WCHATBOT_CHAT_SESSION,
-} from "@/lib/constant/texts";
-import { useAppDispatch, useAppSelector } from "@/lib/store";
+} from '@/lib/constant/texts';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import {
   changeChatbotOpen,
   changeIsAlreadyRender,
-} from "@/lib/store/slices/chatbotSlice";
-import { useRouter } from "next/router";
-import { isArray } from "lodash";
-import { useChatbot } from "@/lib/hooks/useChatbot";
-import { useChatbotAiSdk } from "@/lib/hooks/sdk/useChatbotAI";
-import styles from "./Chatbot.module.css";
-// const CHATBOT_DOMAIN_ORIGIN = process.env.NEXT_PUBLIC_CHATBOT_DOMAIN_URL ?? '';
+  changePopupDataChatbot,
+  changeTimeOpenPopupLostNetworkChatbot,
+} from '@/lib/store/slices/chatbotSlice';
+import { useRouter } from 'next/router';
+import { isArray } from 'lodash';
+import { useChatbot } from '@/lib/hooks/useChatbot';
+import { useChatbotAiSdk } from '@/lib/hooks/sdk/useChatbotAI';
+import styles from './Chatbot.module.css';
+import ConfirmDialog from '../modal/ModalConfirm';
+const CHATBOT_DOMAIN_ORIGIN = process.env.NEXT_PUBLIC_CHATBOT_DOMAIN_URL ?? '';
 // const CHATBOT_DOMAIN_ORIGIN = 'http://localhost:9999';
-const CHATBOT_DOMAIN_ORIGIN = "https://dev.fptplay.vn";
+// const CHATBOT_DOMAIN_ORIGIN = 'https://dev.fptplay.vn';
 const CHATBOT_DOMAIN_FULL_URL = `${CHATBOT_DOMAIN_ORIGIN}/chatbot-ai`;
 
+const showPopup = false;
+
 const Chatbot = () => {
+  const { timeOpenPopupLostNetwork, popupData } = useAppSelector(
+    (s) => s.chatbot,
+  );
   const { listFloatBubbles } = useAppSelector((s) => s.sidetag);
   const { Commands } = useChatbotAiSdk();
   const router = useRouter();
   const { isAlreadyRender, chatbotOpen } = useAppSelector((s) => s.chatbot);
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [url, setUrl] = useState("");
+  const [url, setUrl] = useState('');
   const dispatch = useAppDispatch();
   const { info } = useAppSelector((s) => s.user);
   const { handleGetChatbotPartnerToken } = useChatbot();
@@ -36,12 +44,12 @@ const Chatbot = () => {
       return false;
     }
     // trang search thì true
-    if (router.pathname.includes("/tim-kiem")) {
+    if (router.pathname.includes('/tim-kiem')) {
       return true;
     }
     const listBubbleCurrentPage = listFloatBubbles?.find((item) => {
-      if (router.pathname === "/") {
-        return item.page_key === "home";
+      if (router.pathname === '/') {
+        return item.page_key === 'home';
       }
       return item.page_key === router.query.id;
     });
@@ -49,7 +57,7 @@ const Chatbot = () => {
     // page_key của list bubble trùng với page hiện tại
     if (listBubbleCurrentPage) {
       const chatbotItem = (listBubbleCurrentPage || {})?.items.find((x) => {
-        return x.type === "chatbot";
+        return x.type === 'chatbot';
       });
       return !!chatbotItem;
     } else {
@@ -66,9 +74,9 @@ const Chatbot = () => {
 
   useEffect(() => {
     const listener = (event: MessageEvent) => handleMessage(event);
-    window.addEventListener("message", listener);
+    window.addEventListener('message', listener);
 
-    return () => window.removeEventListener("message", listener);
+    return () => window.removeEventListener('message', listener);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -77,13 +85,13 @@ const Chatbot = () => {
     if (!iframe) return;
 
     iframe.contentWindow?.postMessage(
-      { type: "chatbot_open", value: chatbotOpen },
-      "*"
+      { type: 'chatbot_open', value: chatbotOpen },
+      '*',
     );
   }, [chatbotOpen]);
 
   const postMessage = (msg: any) => {
-    iframeRef.current?.contentWindow?.postMessage(msg, "*");
+    iframeRef.current?.contentWindow?.postMessage(msg, '*');
   };
 
   const handleReloadChatbot = async () => {
@@ -113,19 +121,19 @@ const Chatbot = () => {
     const { data } = event;
     try {
       switch (data.type) {
-        case "chatbot_open":
+        case 'chatbot_open':
           if (data.value === false) {
             dispatch(changeChatbotOpen(false));
             sessionStorage.setItem(
               WCHATBOT_CHAT_SESSION,
-              new Date().toISOString()
+              new Date().toISOString(),
             );
           }
           break;
-        case "chatbot_new_session":
+        case 'chatbot_new_session':
           sessionStorage.setItem(
             WCHATBOT_CHAT_SESSION,
-            new Date().toISOString()
+            new Date().toISOString(),
           );
           break;
         // case 'chatbot_send_request':
@@ -152,7 +160,7 @@ const Chatbot = () => {
             try {
               /*@ts-ignore*/
               const result = await Commands[data.command](
-                ...(data?.args || [])
+                ...(data?.args || []),
               );
               postMessage({ type: 2, id: data.id, result });
             } catch (err: any) {
@@ -174,8 +182,8 @@ const Chatbot = () => {
               result: null,
               error: {
                 code: 0,
-                message: "has no command data",
-                detail: "has no command data",
+                message: 'has no command data',
+                detail: 'has no command data',
               },
             });
           }
@@ -187,28 +195,50 @@ const Chatbot = () => {
           break;
       }
     } catch (err) {
-      console.error("Error handling chatbot message:", err);
+      console.error('Error handling chatbot message:', err);
     }
   };
 
-  if (info?.profile?.profile_type !== "1") return null;
+  const close = () => {
+    dispatch(changeTimeOpenPopupLostNetworkChatbot(undefined));
+    dispatch(changePopupDataChatbot(undefined));
+  };
+
+  if (info?.profile?.profile_type !== '1') return null;
 
   return (
     <>
       <div
         id="chatbot"
         className={`${styles.chatbot} ${
-          chatbotOpen && isValidRoute ? "" : "hidden"
+          chatbotOpen && isValidRoute ? '' : 'hidden'
         }`}
       >
         <iframe
           ref={iframeRef}
           /*@ts-ignore*/
           src={url || null}
-          className={`${styles["chatbot-iframe"]}`}
-          style={{ border: "none" }}
+          className={`${styles['chatbot-iframe']}`}
+          style={{ border: 'none' }}
         />
       </div>
+
+      {showPopup && (
+        <ConfirmDialog
+          open={!!timeOpenPopupLostNetwork}
+          modalContent={{
+            title: 'Thông báo',
+            content: popupData?.data?.length ? popupData?.data[0]?.title : '',
+            buttons: {
+              accept: popupData?.data?.length
+                ? popupData?.data[0]?.button
+                : 'Đóng',
+            },
+          }}
+          bodyContentClassName="!text-[16px] !text-spanish-gray !leading-[130%] tracking-[0.32px]"
+          onSubmit={close}
+        />
+      )}
     </>
   );
 };

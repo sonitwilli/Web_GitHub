@@ -961,7 +961,6 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
     const timer = setInterval(() => {
       time -= 1;
 
-      console.log('time', time);
       if (time <= 0) {
         clearInterval(timer);
         onDone();

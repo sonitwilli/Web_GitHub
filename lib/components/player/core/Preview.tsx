@@ -329,8 +329,7 @@ const Preview: React.FC<PreviewProps> = ({
               },
             });
             setShowConfirmModal(true);
-          } else {
-            console.log('window.location.pathname', window.location.pathname);
+          } else {            
             localStorage.setItem(
               trackingStoreKey.BACK_LINK_PLAY,
               window.location.pathname,

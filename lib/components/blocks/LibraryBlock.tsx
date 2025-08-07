@@ -62,7 +62,6 @@ export default function LibraryBlock() {
 
   // Function to handle error updates from LibraryBlockItem
   const handleErrorData = (index: number, isError: boolean) => {
-    console.log('isError', index, isError);
     setIsError((prev) => {
       const newIsError = [...prev];
       newIsError[index] = isError;

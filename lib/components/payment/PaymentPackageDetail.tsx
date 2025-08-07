@@ -88,7 +88,6 @@ const PaymentPackageDetail = () => {
     const fetchPlans = async (packageId?: string) => {
       setLoading(true);
       try {
-        console.log('packageId', packageId, router.query.id);
         const packageType = packageId || router.query.id;
         const res = await getPackagePlans({
           from_source: (router.query.from_source as string) || 'main',
@@ -205,8 +204,7 @@ const PaymentPackageDetail = () => {
   //   return result ? JSON.parse(JSON.stringify(result)) : null;
   // };
   const handleCouponChange = (couponData: CouponData | null) => {
-    setCoupon(couponData);
-    console.log('couponData', couponData);
+    setCoupon(couponData);    
   };
   type QRModalData = {
     text: { checkUrl: string; returnUrl: string };
@@ -226,8 +224,7 @@ const PaymentPackageDetail = () => {
     setIsSubmitCreditCard(false);
     setFormData({});
   };
-  const handleSubmitCreditCard = (data: CreditCardData) => {
-    console.log('data', data);
+  const handleSubmitCreditCard = (data: CreditCardData) => {    
     // update formData with credit card information
     setFormData({
       card_number: data.card_number,
@@ -241,8 +238,7 @@ const PaymentPackageDetail = () => {
 
   // Watch for isSubmitCreditCard changes and call handleCheckout
   useEffect(() => {
-    if (isSubmitCreditCard) {
-      console.log('isSubmitCreditCard33', isSubmitCreditCard);
+    if (isSubmitCreditCard) {      
       handleCheckout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -257,8 +253,7 @@ const PaymentPackageDetail = () => {
         setLoading(false);
         return;
       }
-      const res = await checkout({ coupon: coupon ?? undefined });
-      console.log('res', res);
+      const res = await checkout({ coupon: coupon ?? undefined });      
       if (
         (isQRMethod(currentGateway) && typeof res === 'object') ||
         (typeof res === 'object' &&

@@ -215,7 +215,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
     });
 
     useEffect(() => {
-      console.log('isRegister', isRegister);
+      // console.log('isRegister', isRegister);
     }, [isRegister]);
 
     const formatPhone = useCallback(() => {

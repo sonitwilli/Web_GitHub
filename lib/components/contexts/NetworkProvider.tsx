@@ -35,8 +35,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
     if (isOffline) {
       const handleRouteChangeStart = (url: string) => {
         // Prevent navigation if offline
-        if (router.asPath !== url) {
-          console.log('🚫 Network offline - blocking route:', url);
+        if (router.asPath !== url) {          
           setHasBlockedRoute(true);
 
           // Restore URL to current/original state
@@ -68,8 +67,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         const target = event.target as HTMLElement;
         const link = target.closest('a, [href]') as HTMLAnchorElement;
 
-        if (link && link.href && link.href !== window.location.href) {
-          console.log('🚫 Network offline - blocking link click:', link.href);
+        if (link && link.href && link.href !== window.location.href) {          
           event.preventDefault();
           event.stopPropagation();
           setHasBlockedRoute(true);
@@ -131,9 +129,12 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         });
         setHasShownOfflineToast(false);
       }
-      // Reset blocked route status when back online
-      console.log('✅ Network back online - hiding NetworkError');
+      // Reset blocked route status when back online - KHÔNG RELOAD TRANG
+      console.log('✅ Network back online - hiding NetworkError (no reload)');
       setHasBlockedRoute(false);
+
+      // ✅ QUAN TRỌNG: Chỉ hiển thị thông báo và ẩn NetworkError,
+      // KHÔNG reload trang để giữ nguyên trạng thái hiện tại của user
     }
   }, [isOnline, isOffline, hasShownOfflineToast, router.asPath]);
 

@@ -98,8 +98,7 @@ const ModalCreditCard: React.FC<ModalCreditCardProps> = ({
           setCardType(validate.data as CardType);
         }
       } else if (key === 'expDate') {
-        validate = validateExpDate(val);
-        console.log('validate exp date', validate);
+        validate = validateExpDate(val);        
         if (validate?.data && 'month' in validate.data) {
           setCardExp(validate.data as CardExpiry);
         }
