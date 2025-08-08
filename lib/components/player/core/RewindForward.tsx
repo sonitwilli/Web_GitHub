@@ -9,7 +9,8 @@ interface Props {
 }
 
 export default function RewindForward({ type }: Props) {
-  const { isVideoPaused } = usePlayerPageContext();
+  const { isVideoPaused, isEndVideo, videoCurrentTime, videoDuration } =
+    usePlayerPageContext();
   const rewind = () => {
     try {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
@@ -58,18 +59,34 @@ export default function RewindForward({ type }: Props) {
       </div>
 
       {type === 'fullcreen' && (
-        <img
-          src={`${
-            isVideoPaused
-              ? '/images/player/play_arrow.png'
-              : '/images/player/pause.png'
-          }`}
-          alt="play-pause"
-          width={40}
-          height={40}
-          className="w-[40px] h-[40px]"
-          onClick={play}
-        />
+        <>
+          {isEndVideo &&
+          typeof videoCurrentTime === 'number' &&
+          typeof videoDuration === 'number' &&
+          videoCurrentTime >= videoDuration ? (
+            <img
+              src="/images/player/replay.png"
+              className="w-[40px] h-[40px]"
+              alt="play-pause"
+              width={40}
+              height={40}
+              onClick={play}
+            />
+          ) : (
+            <img
+              src={`${
+                isVideoPaused
+                  ? '/images/player/play_arrow.png'
+                  : '/images/player/pause.png'
+              }`}
+              alt="play-pause"
+              width={40}
+              height={40}
+              className="w-[40px] h-[40px]"
+              onClick={play}
+            />
+          )}
+        </>
       )}
 
       <div

@@ -74,7 +74,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
       const playerWrapper =
         playerWrapperSuccess || document.getElementById('player_wrapper');
       const isMobileView = window.innerWidth < 640; // tablet breakpoint
-      const isTabletView = window.innerWidth < 1024;
+      const isTabletView = window.innerWidth < 1280;
 
       if (isMobileView && !isExpanded) {
         // Mobile: calculate height based on player_wrapper + 80px

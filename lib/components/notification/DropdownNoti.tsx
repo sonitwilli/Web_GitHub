@@ -243,7 +243,7 @@ export default function DropdownNoti({
   return (
     <div
       ref={notiModalRef}
-      className={`absolute top-[-2px] tablet:top-10 xl:top-[calc(100%+28px)] right-[-108px] tablet:left-[-50px] xl:left-1/2 tablet:-translate-x-1/2 z-50 w-[calc(100vw-2px)] h-[772px] tablet:w-[480px] tablet:h-[813px] bg-eerie-black tablet:rounded-2xl shadow-xl flex flex-col overflow-hidden border border-charleston-green`}
+      className={`absolute top-[-2px] tablet:top-10 xl:top-[calc(100%+28px)] right-[-108px] tablet:left-[-50px] xl:left-1/2 tablet:-translate-x-1/2 z-50 w-[calc(100vw-2px)] h-[calc(100vh-2px)] tablet:w-[480px] tablet:h-[813px] bg-eerie-black tablet:rounded-2xl shadow-xl flex flex-col overflow-hidden border border-charleston-green`}
     >
       <div className="flex justify-between items-center p-4">
         {inboxDetail ? (

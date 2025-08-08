@@ -14,7 +14,7 @@ export interface Props {
 export default function ShareReaction({ onClick, isChannel, type }: Props) {
   return (
     <button
-      className={`bg-white-012 border border-white-024 hover:bg-white-016 rounded-full p-[7px] xl:p-[11px] hover:cursor-pointer flex items-center justify-center ${
+      className={`bg-white-012 border border-white-024 hover:bg-white-016 rounded-full p-[7px] xl:p-[11px] xl:mr-[16px] hover:cursor-pointer flex items-center justify-center ${
         isChannel
           ? '!bg-charleston-green hover:!bg-black-olive-404040 !rounded-[40px] !border-none gap-[8px] !w-fit !h-fit !p-0 !px-[16px] !py-[8px]'
           : ''

@@ -97,13 +97,13 @@ export default function NotificationPopup({
               (e.target as HTMLImageElement).src =
                 '/images/default_icon_noti.png';
             }}
-            className="w-32 h-18 rounded-lg object-cover bg-black"
+            className="w-32 h-18 rounded-lg object-cover bg-black flex-shrink-0"
           />
-          <div className="flex flex-col w-[312px] space-y-1">
+          <div className="flex flex-col flex-1 min-w-0 space-y-1">
             <div className="font-semibold text-lg leading-[130%] tracking-wide text-white-smoke truncate">
               {title}
             </div>
-            <div className="text-sm leading-[130%] tracking-wide text-white-smoke line-clamp-2">
+            <div className="text-sm leading-[130%] tracking-wide text-white-smoke line-clamp-2 overflow-hidden">
               {body}
             </div>
           </div>
@@ -111,14 +111,14 @@ export default function NotificationPopup({
       ) : (
         <div className="flex flex-col gap-2 w-full h-full">
           <div className="flex flex-row items-center gap-4 w-full h-10">
-            <div className="w-[39.63px] h-[39.63px] rounded-full flex items-center justify-center">
+            <div className="w-[39.63px] h-[39.63px] rounded-full flex items-center justify-center flex-shrink-0">
               <LogoFPTPlayMini />
             </div>
-            <div className="font-semibold text-[20px] leading-[130%] tracking-[0.02em] text-white-smoke truncate">
+            <div className="font-semibold text-[20px] leading-[130%] tracking-[0.02em] text-white-smoke truncate flex-1 min-w-0">
               {title}
             </div>
           </div>
-          <div className="text-sm leading-[130%] tracking-[0.02em] text-white-smoke line-clamp-2">
+          <div className="text-sm leading-[130%] tracking-[0.02em] text-white-smoke line-clamp-2 overflow-hidden">
             {body}
           </div>
         </div>

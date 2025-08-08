@@ -139,11 +139,7 @@ const WatchVideoComponent = () => {
   // Watch and skip credit hook using context
   const hasNextEpisode =
     dataChannel?.episodes && dataChannel.episodes.length > 1;
-  const {
-    isVisible: watchAndSkipCreditVisible,
-    watchCredit,
-    skipToNext,
-  } = useWatchAndSkipCredit(
+  const { watchCredit, skipToNext } = useWatchAndSkipCredit(
     (dataStream as DataStreamField)?.end_content ?? 0,
     hasNextEpisode,
     () => {},
@@ -176,7 +172,37 @@ const WatchVideoComponent = () => {
       return currentVideoIndex === dataPlaylist.videos.length - 1;
     })();
 
-    return isSingleMovie || isFinalEpisodeOfSeries || isLastVideoOfPlaylist;
+    // Check if has end_content for final episode
+    const dataStreamField = dataStream as DataStreamField;
+    const hasEndContent =
+      dataStreamField?.end_content && dataStreamField.end_content > 0;
+    const isFinalEpisodeWithEndContent = isFinalEpisode && hasEndContent;
+
+    const result =
+      isSingleMovie ||
+      isFinalEpisodeOfSeries ||
+      isLastVideoOfPlaylist ||
+      isFinalEpisodeWithEndContent;
+
+    return result;
+  })();
+
+  // WatchAndSkipCredit logic - only show when not final episode and has end_content
+  const shouldShowWatchAndSkipCredit = (() => {
+    if (!dataChannel || !dataChannel.episodes) return false;
+    if (dataChannel.episodes.length === 1) return false;
+
+    const dataStreamField = dataStream as DataStreamField;
+    const hasEndContent =
+      dataStreamField?.end_content && dataStreamField.end_content > 0;
+
+    const result =
+      dataChannel.episodes.length > 1 &&
+      !previewHandled &&
+      !isFinalEpisode &&
+      hasEndContent;
+
+    return result;
   })();
 
   return (
@@ -332,17 +358,18 @@ const WatchVideoComponent = () => {
                             {autoNextVisible && !previewHandled && (
                               <AutoNextVideo isExpanded={isExpanded ?? false} />
                             )}
-                            {watchAndSkipCreditVisible && !previewHandled && (
-                              <WatchAndSkipCredit
-                                endContent={
-                                  (dataStream as DataStreamField)
-                                    ?.end_content ?? 0
-                                }
-                                hasNextEpisode={hasNextEpisode}
-                                onWatchCredit={watchCredit}
-                                onPlayNext={skipToNext}
-                              />
-                            )}
+                            {shouldShowWatchAndSkipCredit &&
+                              !previewHandled && (
+                                <WatchAndSkipCredit
+                                  endContent={
+                                    (dataStream as DataStreamField)
+                                      ?.end_content ?? 0
+                                  }
+                                  hasNextEpisode={hasNextEpisode}
+                                  onWatchCredit={watchCredit}
+                                  onPlayNext={skipToNext}
+                                />
+                              )}
                             {shouldShowNextRecommend && !previewHandled && (
                               <NextRecommend isExpanded={isExpanded ?? false} />
                             )}

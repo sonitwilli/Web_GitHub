@@ -80,7 +80,7 @@ export default function NotificationItem({ data, onShowDetail }: Props) {
         </h3>
         <div className="relative">
           <p
-            className={`text-sm line-clamp-2 break-all ${
+            className={`text-sm line-clamp-2 break-words overflow-wrap-anywhere ${
               data.status === 'unread' ? 'text-white' : 'text-spanish-gray'
             }`}
           >

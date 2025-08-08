@@ -53,7 +53,7 @@ const ConfirmDialog = forwardRef<ConfirmDialogRef, ConfirmDialogProps>(
       contentClassName,
       bodyContentClassName,
       open: propOpen,
-      submitClass = 'bg-gradient-to-r from-portland-orange to-lust',
+      submitClass = 'fpl-bg',
       cancelClass = 'bg-charleston-green text-spanish-gray',
       onSubmit,
       onCancel,

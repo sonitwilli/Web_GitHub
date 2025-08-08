@@ -17,6 +17,7 @@ const EpisodeListButton = dynamic(() => import('../core/EpisodeListButton'), {
 const FullScreen = dynamic(() => import('../core/FullScreen'), { ssr: false });
 const LiveButton = dynamic(() => import('../core/LiveButton'), { ssr: false });
 const PlayPause = dynamic(() => import('../core/PlayPause'), { ssr: false });
+const Resume = dynamic(() => import('../core/Resume'), { ssr: false });
 const Report = dynamic(() => import('../core/Report'), { ssr: false });
 const Resolution = dynamic(() => import('../core/Resolution'), { ssr: false });
 const RewindForward = dynamic(() => import('../core/RewindForward'), {
@@ -37,7 +38,13 @@ const NextEpispode = dynamic(() => import('../core/NextEpisode'), {
   ssr: false,
 });
 export default function PlayerControlBar() {
-  const { isPlaySuccess, dataChannel } = usePlayerPageContext();
+  const {
+    isPlaySuccess,
+    dataChannel,
+    isEndVideo,
+    videoDuration,
+    videoCurrentTime,
+  } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
   return (
@@ -59,9 +66,17 @@ export default function PlayerControlBar() {
         {/* Others */}
         <div className="w-full flex items-center">
           {/* Left: play, rewind, volumes,... */}
-          <div className="flex items-center justify-center gap-[16px] tablet:gap-[24px]">
+          <div className="flex items-center justify-center gap-4 tablet:gap-6">
             {width >= 768 && <LiveButton />}
-            {width >= 768 && <PlayPause />}
+            {width >= 768 &&
+              (isEndVideo &&
+              typeof videoCurrentTime === 'number' &&
+              typeof videoDuration === 'number' &&
+              videoCurrentTime >= videoDuration ? (
+                <Resume />
+              ) : (
+                <PlayPause />
+              ))}
             {width >= 768 && <RewindForward />}
             <NextEpispode />
             <Volume />

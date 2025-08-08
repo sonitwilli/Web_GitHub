@@ -54,6 +54,11 @@
   transform: unset;
 }
 
+.c-control-button-resume .c-control-hover-text {
+  left: 0 !important;
+  transform: unset;
+}
+
 /* channel */
 .player-wrapper-channel .c-control-button-live,
 .player-wrapper-event .c-control-button-live,
@@ -63,6 +68,7 @@
 
 /* timeshift */
 .player-wrapper-timeshift .c-control-button-playpause,
+.player-wrapper-timeshift .c-control-button-resume,
 .player-wrapper-timeshift .c-control-button-rewind,
 .player-wrapper-timeshift .c-control-button-forward,
 .player-wrapper-timeshift .c-control-button-duration {
@@ -133,6 +139,7 @@
 
 /* vod */
 .player-wrapper-vod .c-control-button-playpause,
+.player-wrapper-vod .c-control-button-resume,
 .player-wrapper-vod .c-control-button-rewind,
 .player-wrapper-vod .c-control-button-forward,
 .player-wrapper-vod .c-control-button-duration,
@@ -192,6 +199,7 @@
 
 /* playlist */
 .player-wrapper-playlist .c-control-button-playpause,
+.player-wrapper-playlist .c-control-button-resume,
 .player-wrapper-playlist .c-control-button-rewind,
 .player-wrapper-playlist .c-control-button-forward,
 .player-wrapper-playlist .c-control-button-duration,

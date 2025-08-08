@@ -75,9 +75,31 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
-  const { streamType, isEndVideo, dataChannel, dataPlaylist, previewHandled } =
-    usePlayerPageContext();
-  const { vodId } = useVodPageContext();
+  const {
+    streamType,
+    isEndVideo,
+    dataChannel,
+    dataPlaylist,
+    previewHandled,
+    dataStream,
+    videoCurrentTime,
+  } = usePlayerPageContext();
+  const { isFinalEpisode, vodId } = useVodPageContext();
+
+  // Check if has end_content
+  const hasEndContent = useMemo(() => {
+    const dataStreamField = dataStream as { end_content?: number };
+    return dataStreamField?.end_content && dataStreamField.end_content > 0;
+  }, [dataStream]);
+
+  // Check if current time has reached end_content
+  const hasReachedEndContent = useMemo(() => {
+    const dataStreamField = dataStream as { end_content?: number };
+    const endContent = dataStreamField?.end_content;
+    const currentTime = videoCurrentTime ?? 0;
+
+    return endContent && currentTime >= endContent;
+  }, [dataStream, videoCurrentTime]);
 
   // Reset cancelled state when URL changes (new episode)
   useEffect(() => {
@@ -182,12 +204,12 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     if (dataChannel) {
       fetchNextVideos();
     }
-  }, [vodId, dataChannel, dataPlaylist, streamType]);
+  }, [dataChannel, dataPlaylist, streamType, dataStream, vodId]);
 
   useEffect(() => {
     const shouldShow =
       (streamType === 'vod' || streamType === 'playlist') &&
-      (isEndVideo ?? 0) > 0 &&
+      (hasReachedEndContent || (isEndVideo ?? 0) > 0) &&
       recommendData &&
       recommendData.title &&
       (recommendData.id || recommendData._id) &&
@@ -207,6 +229,9 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     isCancelled,
     isVisible,
     previewHandled,
+    isFinalEpisode,
+    hasEndContent,
+    hasReachedEndContent,
   ]);
 
   // Auto redirect countdown
@@ -227,12 +252,31 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, countdown, recommendData, isCancelled]);
 
-  // Reset cancelled state when video resets
+  // Reset cancelled state when video resets or when video is still playing
   useEffect(() => {
     if ((isEndVideo ?? 0) === 0) {
       setIsCancelled(false);
     }
   }, [isEndVideo]);
+
+  // Reset cancelled state when video ends (isEndVideo > 0)
+  useEffect(() => {
+    if ((isEndVideo ?? 0) > 0) {
+      setIsCancelled(false);
+    }
+  }, [isEndVideo]);
+
+  // Reset cancelled state when video is still playing and hasn't reached end_content
+  useEffect(() => {
+    const dataStreamField = dataStream as { end_content?: number };
+    const endContent = dataStreamField?.end_content;
+    const currentTime = videoCurrentTime ?? 0;
+
+    // If video is still playing and hasn't reached end_content, reset cancelled state
+    if (endContent && currentTime < endContent) {
+      setIsCancelled(false);
+    }
+  }, [dataStream, videoCurrentTime]);
 
   // Helper functions
   const generateRecommendLink = (data: NextRecommendData): string => {

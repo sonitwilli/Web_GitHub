@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { TbCheck } from 'react-icons/tb';
 import { MdOutlineLock } from 'react-icons/md';
 import { MdOutlineGroup } from 'react-icons/md';
@@ -54,6 +55,29 @@ interface IModalFillCodeRef {
 }
 
 const fallbackAvatar = '/images/default-avatar.png';
+
+// Portal component để render modal vào body
+const ModalPortal = ({
+  children,
+  isMobileOrTablet,
+}: {
+  children: React.ReactNode;
+  isMobileOrTablet: boolean;
+}) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  if (isMobileOrTablet) {
+    return createPortal(children, document.body);
+  }
+
+  return <>{children}</>;
+};
 
 export default function UserDropdownMenu({
   profiles,
@@ -302,6 +326,10 @@ export default function UserDropdownMenu({
     return width <= 1280;
   }, [width]);
 
+  const isMobileOrTablet = useMemo(() => {
+    return width <= 1024; // Bao gồm cả mobile và tablet
+  }, [width]);
+
   return (
     <div className="relative group">
       {/* Avatar Button */}
@@ -314,7 +342,7 @@ export default function UserDropdownMenu({
           if (!disableDropdown) setIsOpen(false);
         }}
         onClick={() => {
-          if (isTablet) {
+          if (isMobileOrTablet) {
             if (!disableDropdown) {
               setIsOpen(true);
               onOpenDropdown?.();
@@ -440,29 +468,31 @@ export default function UserDropdownMenu({
         </div>
       )}
       {showPinModal && selectedProfile && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
-          <div className="bg-eerie-black rounded-[16px] p-4 tablet:p-8 relative max-w-[calc(100vw-32px)] tablet:max-w-[460px]">
-            <button
-              className="absolute top-4 right-4 text-white-smoke cursor-pointer"
-              onClick={handleCancelPinModal}
-            >
-              <IoCloseOutline size={28} />
-            </button>
-            <PinModal
-              ref={profilePinModalRef}
-              avatarUrl={selectedProfile.avatar_url || ''}
-              defaultValue={pin.split('')}
-              title={pinModalTitle}
-              subTitle={subTitle}
-              loading={false}
-              type={pinModalType}
-              profile={selectedProfile}
-              onConfirm={handleConfirmPin}
-              onForget={handleForgetPin}
-              onCancel={handleCancelPinModal}
-            />
+        <ModalPortal isMobileOrTablet={isMobileOrTablet}>
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999]">
+            <div className="bg-eerie-black rounded-[16px] p-4 tablet:p-8 relative max-w-[calc(100vw-32px)] tablet:max-w-[460px]">
+              <button
+                className="absolute top-4 right-4 text-white-smoke cursor-pointer"
+                onClick={handleCancelPinModal}
+              >
+                <IoCloseOutline size={28} />
+              </button>
+              <PinModal
+                ref={profilePinModalRef}
+                avatarUrl={selectedProfile.avatar_url || ''}
+                defaultValue={pin.split('')}
+                title={pinModalTitle}
+                subTitle={subTitle}
+                loading={false}
+                type={pinModalType}
+                profile={selectedProfile}
+                onConfirm={handleConfirmPin}
+                onForget={handleForgetPin}
+                onCancel={handleCancelPinModal}
+              />
+            </div>
           </div>
-        </div>
+        </ModalPortal>
       )}
       <ConfirmModal
         modalContent={modalContent}

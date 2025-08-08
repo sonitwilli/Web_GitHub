@@ -107,23 +107,23 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
 
         {/* Content Container */}
         <div
-          className={`flex flex-col items-start p-0 gap-2 tablet:gap-3 xl:gap-8 h-auto xl:h-[232px] flex-none order-1 flex-grow z-[1] w-full xl:w-[calc(100%-416px)]`}
+          className={`flex flex-col items-start p-0 gap-2 tablet:gap-3 xl:gap-8 h-auto xl:h-[232px] flex-none order-1 flex-grow z-[1] w-full xl:w-auto xl:flex-1 min-w-0`}
         >
           {/* Info Section */}
           <div
-            className={`flex flex-col items-start p-0 gap-2 tablet:gap-3 xl:gap-4 w-full h-auto xl:h-[152px] flex-none order-0 self-stretch`}
+            className={`flex flex-col items-start p-0 gap-2 tablet:gap-3 xl:gap-4 w-full h-auto xl:h-[152px] flex-none order-0 self-stretch min-w-0`}
           >
             {/* Title */}
-            <div className="flex justify-between w-full">
+            <div className="flex justify-between w-full min-w-0">
               <h2
-                className={`flex-1 h-auto font-semibold text-[18px] tablet:text-[22px] xl:text-[28px] leading-[130%] tracking-[0.02em] text-white overflow-hidden text-ellipsis whitespace-nowrap tablet:pr-2 xl:pr-4`}
+                className={`flex-1 h-auto font-semibold text-[18px] tablet:text-[22px] xl:text-[28px] leading-[130%] tracking-[0.02em] text-white overflow-hidden text-ellipsis whitespace-nowrap min-w-0`}
               >
                 {recommendData.title_vie || recommendData.title}
               </h2>
 
               {/* Close Button */}
               <button
-                className={`w-7 h-7 flex items-center justify-center cursor-pointer`}
+                className={`w-7 h-7 flex items-center justify-center cursor-pointer flex-shrink-0 ml-2`}
                 onClick={onClose}
                 aria-label="Đóng khuyến nghị"
               >
@@ -132,26 +132,30 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
             </div>
 
             {/* Meta Data */}
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap w-full min-w-0">
               {recommendData.detail?.priority_tag && (
-                <span className="px-2 py-1 bg-fpl rounded text-white-smoke text-sm tablet:text-base font-medium">
+                <span className="px-2 py-1 bg-fpl rounded text-white-smoke text-sm tablet:text-base font-medium flex-shrink-0">
                   {recommendData.detail.priority_tag}
                 </span>
               )}
               {recommendData.detail?.priority_tag &&
                 recommendData.detail?.meta_data &&
                 recommendData.detail.meta_data.length > 0 && (
-                  <span className="text-spanish-gray font-medium">•</span>
+                  <span className="text-spanish-gray font-medium flex-shrink-0">
+                    •
+                  </span>
                 )}
               {recommendData.detail?.meta_data?.map(
                 (item: string, idx: number) => (
                   <React.Fragment key={idx}>
-                    <span className="text-spanish-gray font-medium text-[12px] tablet:text-sm xl:text-base leading-[130%]">
+                    <span className="text-spanish-gray font-medium text-[12px] tablet:text-sm xl:text-base leading-[130%] flex-shrink-0">
                       {item}
                     </span>
                     {idx <
                       (recommendData.detail?.meta_data?.length || 0) - 1 && (
-                      <span className="text-spanish-gray font-medium">•</span>
+                      <span className="text-spanish-gray font-medium flex-shrink-0">
+                        •
+                      </span>
                     )}
                   </React.Fragment>
                 ),
@@ -160,7 +164,7 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
 
             {/* Description */}
             <p
-              className={`overflow-hidden text-ellipsis font-normal text-[12px] tablet:text-sm xl:text-base leading-[130%] tracking-[0.02em] text-white-smoke flex-none order-2 self-stretch line-clamp-2 xl:line-clamp-3`}
+              className={`overflow-hidden text-ellipsis font-normal text-[12px] tablet:text-sm xl:text-base leading-[130%] tracking-[0.02em] text-white-smoke flex-none order-2 self-stretch line-clamp-2 xl:line-clamp-3 w-full min-w-0`}
             >
               {recommendData.detail?.description}
             </p>
@@ -168,13 +172,13 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
 
           {/* Buttons Section */}
           <div
-            className={`flex flex-row items-center p-0 gap-3 tablet:gap-4 w-full tablet:w-auto h-auto flex-none order-1`}
+            className={`flex flex-row items-center p-0 gap-3 tablet:gap-4 w-full h-auto flex-none order-1 min-w-0`}
           >
             {hasTrailer ? (
               <>
                 {/* Watch Now Button - No animation when trailer exists */}
                 <button
-                  className={`flex items-center justify-center cursor-pointer px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 gap-2 w-[120px] tablet:w-[140px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-gradient-to-r from-fpl to-red-600 hover:from-fpl-dark hover:to-red-700 transition-all ${styles.focusRing}`}
+                  className={`flex items-center justify-center cursor-pointer px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 gap-2 w-[120px] tablet:w-[140px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-gradient-to-r from-fpl to-red-600 hover:from-fpl-dark hover:to-red-700 transition-all ${styles.focusRing} flex-shrink-0`}
                   onClick={onWatchNow}
                   aria-label="Xem ngay"
                 >
@@ -188,7 +192,7 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
 
                 {/* Trailer Button - Only countdown text, no color animation */}
                 <button
-                  className={`relative cursor-pointer flex items-center justify-center px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 gap-2 w-[140px] tablet:w-[160px] xl:w-[197px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-charleston-green/80 hover:bg-charleston-green transition-all overflow-hidden ${styles.focusRing}`}
+                  className={`relative cursor-pointer flex items-center justify-center px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 gap-2 w-[140px] tablet:w-[160px] xl:w-[197px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-charleston-green/80 hover:bg-charleston-green transition-all overflow-hidden ${styles.focusRing} flex-shrink-0`}
                   onClick={onWatchTrailer}
                   aria-label="Phát trailer"
                 >
@@ -205,7 +209,7 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
             ) : (
               /* Single Watch Now Button - With countdown color animation and auto-redirect */
               <button
-                className={`relative cursor-pointer flex items-center justify-center px-4 tablet:px-5 xl:px-6 py-2 xl:py-3 gap-2 w-[120px] tablet:w-[140px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-charleston-green-08 hover:bg-charleston-green transition-colors duration-200 overflow-hidden ${styles.focusRing} ${styles.button}`}
+                className={`relative cursor-pointer flex items-center justify-center px-4 tablet:px-5 xl:px-6 py-2 xl:py-3 gap-2 w-[120px] tablet:w-[140px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] bg-charleston-green-08 hover:bg-charleston-green transition-colors duration-200 overflow-hidden ${styles.focusRing} ${styles.button} flex-shrink-0`}
                 onClick={onWatchNow}
                 aria-label="Xem ngay"
                 type="button"

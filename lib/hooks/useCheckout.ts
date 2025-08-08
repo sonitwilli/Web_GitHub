@@ -297,6 +297,7 @@ export function useCheckout({
           query: {
             method: currentGateway,
             status_code: response.status,
+            transId: response.data.msg_data?.trans_id,
           },
         });
       }
@@ -384,6 +385,7 @@ export function useCheckout({
         query: {
           method: currentGateway,
           status_code: 1,
+          transId: response.data.msg_data?.trans_id,
         },
       });
     }
