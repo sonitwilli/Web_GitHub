@@ -156,7 +156,10 @@ export function VodPageContextProvider({ children }: Props) {
   }, [dataChannel?.app_id]);
   useEffect(() => {
     if (vodId) {
-      getChapter();
+      const tk = localStorage.getItem('token');
+      if (tk) {
+        getChapter();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [vodId]);

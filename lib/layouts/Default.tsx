@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import SideTagButton from '@/lib/components/buttons/SideTagButton';
 import { useNetwork } from '@/lib/components/contexts';
 import { NetworkError } from '@/lib/components/error';
-import { getUserAgent } from '../utils/methods';
+// import { getUserAgent } from '../utils/methods';
 const Viewport = dynamic(() => import('../components/debug/Viewport'), {
   ssr: false,
 });
@@ -51,24 +51,24 @@ export default function DefaultLayout({ children }: Props) {
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   // Chỉ hiện ở Mobile và Tablet
-  const isMobileOrTablet = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    const userAgentInfo = getUserAgent();
-    const deviceType = userAgentInfo.device?.type;
-    const osName = userAgentInfo.os?.name?.toLowerCase();
+  // const isMobileOrTablet = useMemo(() => {
+  //   if (typeof window === 'undefined') return false;
+  //   const userAgentInfo = getUserAgent();
+  //   const deviceType = userAgentInfo.device?.type;
+  //   const osName = userAgentInfo.os?.name?.toLowerCase();
 
-    // Check device type first
-    if (deviceType === 'mobile' || deviceType === 'tablet') {
-      return true;
-    }
+  //   // Check device type first
+  //   if (deviceType === 'mobile' || deviceType === 'tablet') {
+  //     return true;
+  //   }
 
-    // Fallback check for iOS/Android OS on desktop (for testing)
-    if (osName === 'ios' || osName === 'android') {
-      return true;
-    }
+  //   // Fallback check for iOS/Android OS on desktop (for testing)
+  //   if (osName === 'ios' || osName === 'android') {
+  //     return true;
+  //   }
 
-    return false;
-  }, []);
+  //   return false;
+  // }, []);
 
   useEffect(() => {
     if (notiData && notiData.length > 0) {

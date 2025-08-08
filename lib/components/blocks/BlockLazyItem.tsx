@@ -4,7 +4,7 @@ import { useInView } from 'react-intersection-observer';
 import { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import BlockPlaceholder from './BlockPlaceholder';
-import { TopBannerAds, BottomBannerAds } from '@/lib/components/ads';
+import { TopBannerAds } from '@/lib/components/ads';
 import { useRouter } from 'next/router';
 const PageBlockItem = dynamic(() => import('./PageBlockItem'), { ssr: false });
 interface Props {
@@ -22,7 +22,6 @@ export default function BlockLazyItem({
   useContainer = true,
   onBlockEmpty,
   isFirstBlock = false,
-  isLastBlock = false,
 }: Props) {
   const { ref, inView } = useInView({
     threshold: 0.3,
@@ -96,7 +95,6 @@ export default function BlockLazyItem({
               <BlockPlaceholder block={block} />
             </>
           )}
-          {isLastBlock && !shouldHideAds && <BottomBannerAds />}
         </>
       ) : (
         <div className="h-[200px]"></div>

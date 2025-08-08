@@ -12,6 +12,7 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import useStorage from '@/lib/hooks/useStorage';
 
 function VodPageContent() {
   return (
@@ -22,6 +23,7 @@ function VodPageContent() {
 }
 
 export default function VodPage() {
+  useStorage();
   const router = useRouter();
   const [fetchHistoryDone, setFetchHistoryDone] = useState(false);
   const dispatch = useDispatch();
@@ -94,10 +96,15 @@ export default function VodPage() {
 
   useEffect(() => {
     if (router?.isReady) {
-      if (router?.pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
-        fetchPlaylistHistory();
+      const tk = localStorage.getItem('token');
+      if (tk) {
+        if (router?.pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
+          fetchPlaylistHistory();
+        } else {
+          fetchHistory();
+        }
       } else {
-        fetchHistory();
+        setFetchHistoryDone(true);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

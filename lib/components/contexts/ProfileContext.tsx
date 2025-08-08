@@ -269,7 +269,7 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
       if (data?.status === '1') {
         setProfilesList(data?.data?.profiles || []);
         setProfilesMetaData(data?.data?.meta_data || null);
-      } else if(data?.status === '401') {
+      } else if (data?.status === '401') {
         setProfileError(DEFAULT_ERROR_MSG);
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       } else {
@@ -279,14 +279,14 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
       const errMsg = checkError({ error });
       setProfileError(errMsg);
       console.log('error', error);
-      
-      if(error instanceof AxiosError && error.response?.status === 401) {
+
+      if (error instanceof AxiosError && error.response?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       }
     } finally {
       setProfileLoading(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Check password
@@ -422,11 +422,12 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
   const handleLoginSuccess = useCallback(
     async ({ profile = {} as Profile } = {}) => {
       saveProfile({ profile });
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      await router.push("/")
-      router.reload()
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // await router.push('/');
+      // router.reload()
+      window.location.href = '/';
     },
-    [router],
+    [],
   );
 
   // Refetch helpers

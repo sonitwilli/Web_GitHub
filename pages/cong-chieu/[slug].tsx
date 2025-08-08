@@ -4,8 +4,10 @@ import DefaultLayout from '@/lib/layouts/Default';
 import { GetServerSideProps } from 'next';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
+import useStorage from '@/lib/hooks/useStorage';
 
 const PremiereContentPage = () => {
+  useStorage();
   return (
     <DefaultLayout>
       <EventComponent type="premier" />
@@ -23,11 +25,12 @@ export default function PremierePage() {
 
 export const getServerSideProps = (async (context) => {
   const { slug } = context.params as { slug: string };
-  
+
   const seoProps = await createSeoPropsFromMeta({
     pageId: slug,
     fallbackTitle: 'FPT Play - Công Chiếu | Phim Mới Ra Rạp',
-    fallbackDescription: 'Xem những bộ phim mới nhất đang công chiếu trên FPT Play - Cập nhật liên tục các tác phẩm điện ảnh hot nhất.',
+    fallbackDescription:
+      'Xem những bộ phim mới nhất đang công chiếu trên FPT Play - Cập nhật liên tục các tác phẩm điện ảnh hot nhất.',
     pathPrefix: '/cong-chieu',
   });
 

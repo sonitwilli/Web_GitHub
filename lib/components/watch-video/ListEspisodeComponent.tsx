@@ -321,7 +321,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
       {/* DANH SÁCH VIDEO */}
       <div
         ref={listRef}
-        className={`flex flex-col gap-2 overflow-auto ${
+        className={`flex flex-col  overflow-auto ${
           styles.espisode_content
         } w-full ${position === 'bottom' ? 'h-[500px]' : 'h-full'}`}
       >

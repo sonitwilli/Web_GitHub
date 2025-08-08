@@ -4,8 +4,10 @@ import DefaultLayout from '@/lib/layouts/Default';
 import { GetServerSideProps } from 'next';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
+import useStorage from '@/lib/hooks/useStorage';
 
 const EventContentPage = () => {
+  useStorage();
   return (
     <DefaultLayout>
       <EventComponent type="event" />
@@ -23,11 +25,12 @@ export default function EventPage() {
 
 export const getServerSideProps = (async (context) => {
   const { slug } = context.params as { slug: string };
-  
+
   const seoProps = await createSeoPropsFromMeta({
     pageId: slug,
     fallbackTitle: 'FPT Play - Sự Kiện | Tin Tức & Hoạt Động Mới Nhất',
-    fallbackDescription: 'Cập nhật các sự kiện, tin tức và hoạt động mới nhất trên FPT Play - Nền tảng giải trí hàng đầu Việt Nam.',
+    fallbackDescription:
+      'Cập nhật các sự kiện, tin tức và hoạt động mới nhất trên FPT Play - Nền tảng giải trí hàng đầu Việt Nam.',
     pathPrefix: '/su-kien',
   });
 

@@ -1,5 +1,7 @@
 import { BlockItemType } from '@/lib/api/blocks';
 import BlockLazyItem from './BlockLazyItem';
+import { useRouter } from 'next/router';
+import { BottomBannerAds } from '@/lib/components/ads';
 import React, {
   useEffect,
   useRef,
@@ -21,10 +23,9 @@ export default function PageBlocks({
 }: Props) {
   const [emptyBlocks, setEmptyBlocks] = useState<Set<number>>(new Set());
   const [firstBlockIndex, setFirstBlockIndex] = useState<number>(1);
-  const [lastBlockIndex, setLastBlockIndex] = useState<number>(() =>
-    blocks ? blocks.length - 1 : 0,
-  );
   const totalBlocksRef = useRef<number>(0);
+  const router = useRouter();
+  const [shouldHideAds, setShouldHideAds] = useState(false);
 
   const handleBlockEmpty = useCallback(
     (blockIndex: number, isEmpty: boolean) => {
@@ -45,7 +46,6 @@ export default function PageBlocks({
   useEffect(() => {
     setEmptyBlocks(new Set());
     setFirstBlockIndex(1); // Reset về index 1 ban đầu
-    setLastBlockIndex(blocks ? blocks.length - 1 : 0); // Reset về index cuối ban đầu
   }, [keywordSearch, blocks]);
 
   // Tự động cập nhật firstBlockIndex khi block hiện tại empty
@@ -70,23 +70,6 @@ export default function PageBlocks({
     }
   }, [emptyBlocks, blocks, firstBlockIndex]);
 
-  // Tự động cập nhật lastBlockIndex khi block hiện tại empty
-  useEffect(() => {
-    if (!blocks?.length) return;
-    // Tìm block cuối cùng không empty, bắt đầu từ blocks.length - 1
-    let newLastBlockIndex = blocks.length - 1;
-
-    while (newLastBlockIndex >= 0 && emptyBlocks.has(newLastBlockIndex)) {
-      newLastBlockIndex--;
-    }
-
-    // Chỉ cập nhật nếu có thay đổi và vẫn trong phạm vi blocks
-
-    if (newLastBlockIndex !== lastBlockIndex && newLastBlockIndex >= 0) {
-      setLastBlockIndex(newLastBlockIndex);
-    }
-  }, [emptyBlocks, blocks, lastBlockIndex]);
-
   // Check if all blocks are empty - separate effect to avoid conflicts
   useEffect(() => {
     if (blocks && blocks.length > 0 && keywordSearch && onAllBlocksEmpty) {
@@ -96,25 +79,60 @@ export default function PageBlocks({
     }
   }, [emptyBlocks, blocks, keywordSearch, onAllBlocksEmpty]);
 
+  useEffect(() => {
+    const checkAppName = () => {
+      if (typeof window !== 'undefined') {
+        const appName = localStorage.getItem('app_name');
+        const hideAdsApps = ['Truyền hình', 'Học tập', 'Thiếu nhi'];
+        setShouldHideAds(hideAdsApps.includes(appName || ''));
+      }
+    };
+
+    // Initial check when router is ready
+    if (router.isReady) {
+      checkAppName();
+    }
+
+    // Listen for router events to detect when app_name might change
+    const handleRouteComplete = () => {
+      // Add a small delay to ensure app_name is set in localStorage
+      setTimeout(checkAppName, 50);
+    };
+
+    if (router.isReady) {
+      router.events.on('routeChangeComplete', handleRouteComplete);
+    }
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteComplete);
+    };
+  }, [router.isReady, router.events]);
+
   const blockItems = useMemo(() => {
     if (!blocks?.length) return null;
 
-    return blocks.map((block, index) => (
-      <BlockLazyItem
-        key={`${block.id || index}-${keywordSearch || 'no-search'}`}
-        block={block}
-        keywordSearch={keywordSearch}
-        onBlockEmpty={(isEmpty: boolean) => handleBlockEmpty(index, isEmpty)}
-        isFirstBlock={index === firstBlockIndex}
-        isLastBlock={index === lastBlockIndex}
-      />
-    ));
+    return (
+      <div>
+        {blocks.map((block, index) => (
+          <BlockLazyItem
+            key={`${block.id || index}-${keywordSearch || 'no-search'}`}
+            block={block}
+            keywordSearch={keywordSearch}
+            onBlockEmpty={(isEmpty: boolean) =>
+              handleBlockEmpty(index, isEmpty)
+            }
+            isFirstBlock={index === firstBlockIndex}
+          />
+        ))}
+        {!shouldHideAds && <BottomBannerAds />}
+      </div>
+    );
   }, [
     blocks,
     keywordSearch,
     handleBlockEmpty,
     firstBlockIndex,
-    lastBlockIndex,
+    shouldHideAds
   ]);
 
   if (typeof blocks === 'undefined' || !blocks?.length) {

@@ -52,6 +52,8 @@ import {
   getPlaylistRealDetail,
   PlayListDetailResponseType,
 } from '@/lib/api/playlist';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 export interface PlayerModalType {
   content?: ModalContent;
@@ -242,7 +244,27 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [playerName, setPlayerName] = useState<PLAYER_NAME_TYPE>('hls');
   const modalActions = useModalActions();
   const [dataChannel, setDataChannel] = useState<ChannelDetailType>();
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.DATA_CHANNEL,
+          value: JSON.stringify(dataChannel || {}),
+        },
+      ],
+    });
+  }, [dataChannel]);
   const [dataStream, setDataStream] = useState<StreamItemType>();
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.DATA_STREAM,
+          value: JSON.stringify(dataStream || {}),
+        },
+      ],
+    });
+  }, [dataStream]);
   const [fetchChannelCompleted, setFetchChannelCompleted] = useState(false);
   const [showLoginPlayer, setShowLoginPlayer] = useState(false);
   const [loginManifestUrl, setLoginManifestUrl] = useState('');

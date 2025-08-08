@@ -5,27 +5,15 @@ import { SOURCE_PROVIDER } from '@/lib/constant/texts';
 import { useRequirePurchase } from '@/lib/hooks/useRequirePurchase';
 import ConfirmDialog from '@/lib/components/modal/ModalConfirm';
 import { useAppSelector } from '@/lib/store';
-import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 
 export default function RequirePurchaseVod() {
   const { messageConfigs } = useAppSelector((s) => s.app);
-  const { requirePurchaseData, dataChannel, videoHeight } =
-    usePlayerPageContext();
+  const { requirePurchaseData, dataChannel } = usePlayerPageContext();
   const { planData, handleGetPlan, openModal, setOpenModal } =
     useRequirePurchase();
 
-  const { viewportType } = useScreenSize();
-
   return (
-    <div
-      className="RequirePurchaseVod w-full relative rounded-[16px] overflow-hidden"
-      style={{
-        height:
-          viewportType === VIEWPORT_TYPE.DESKTOP
-            ? `${videoHeight && videoHeight > 0 ? videoHeight : ''}px`
-            : '',
-      }}
-    >
+    <div className="RequirePurchaseVod w-full h-full relative rounded-[16px] overflow-hidden">
       <div className="mx-auto relative w-fit h-full">
         {dataChannel?.image?.landscape ||
         dataChannel?.image?.landscape_title ? (

@@ -1,6 +1,23 @@
 {
     "versions": [
         {
+            "version": "8.0.19",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Màn hình mua gói] Lỗi UI label 'Đang sử dụng' và thanh menu",
+                "[WEB][MultiProfile] Lỗi đang hiển thị avatar khi chọn vào Tạo/Chỉnh sửa hồ sơ",
+                "[Web] Lỗi hiển thị toast thông báo 'Đã có kết nối mạng' / 'Mất kết nối mạng' ở responsive mobile",
+                "[WEB][MultiProfile] Lỗi không điều hướng về trang chủ sau khi chuyển đổi hồ sơ thành công (cả profile thường và profile trẻ em)",
+                "[WEB][ProfileKID] Lỗi không hiển thị popup chặn đối với nội dung VOD/Truyền hình/Sự kiện (profile thường) khi sử dụng hồ sơ trẻ em",
+                "[WEB][Tổng quan] Lỗi hiển thị thiếu frame Trẻ em đối với tài khoản trẻ em ở Liên kết Quản lý hồ sơ(Tổng quan)",
+                "[WEB][PlayerVOD] Icon Next: Lỗi không hiển thị icon nextchapter ở playerbar đối với nội dung VOD bộ tập khác cuối",
+                "[WEB][Sự kiện] Lỗi màu label thời gian phát ở detail page",
+                "[WEB][Sự kiện] Lỗi popup Thông báo thời gian bắt đầu không nằm trên banner mua gói",
+                "[WEB][Sự kiện] Không vuốt lên xuống được trang detail sự kiện ở mode mobile",
+                "[WEB][Player_VOD] Lỗi vỡ UI thông báo mua gói/thuê phim đối với VOD có gói/Galaxy Play/TVOD"
+            ]
+        },         
+        {
             "version": "8.0.18",
             "date": "Dự kiến",
             "content": [

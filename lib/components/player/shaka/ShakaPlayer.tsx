@@ -439,7 +439,11 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           onEnded={handleEnd}
           onPause={handlePaused}
         />
-        <div className="ads-instream absolute w-full h-full top-0 left-0"></div>
+        <div
+          className={`ads-instream absolute w-full h-full top-0 left-0 overflow-hidden ${
+            isFullscreen ? 'rounded-none' : 'rounded-[16px]'
+          }`}
+        ></div>
         <PlayerControlBar />
       </div>
     </>
