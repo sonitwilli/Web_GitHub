@@ -26,7 +26,7 @@ import {
   ShakaErrorType,
 } from '../components/player/shaka/ShakaPlayer';
 import { useAdsPlayer } from './useAdsPlayer';
-import { getBandwidth, getStreamProfiles } from '../utils/playerTracking';
+import { trackPlayerChange } from '../utils/playerTracking';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -196,8 +196,7 @@ export default function usePlayer() {
   };
 
   const handlePlaying = () => {
-    getStreamProfiles();
-    getBandwidth();
+    trackPlayerChange();
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
     console.log('--- PLAYER VIDEO PLAY SUCCESS', {
       count: retryCountRef.current,
@@ -260,7 +259,6 @@ export default function usePlayer() {
       clearTimeout(retryGetStreamTimeoutRef.current);
       retryGetStreamTimeoutRef.current = null;
     }
-
     sessionStorage.removeItem(PLAYER_IS_RETRYING);
 
     // Set state để báo hiệu rằng tất cả thao tác đã hoàn thành
@@ -344,6 +342,7 @@ export default function usePlayer() {
       details: detail?.category as unknown as ErrorDetails,
       error: new Error(detail?.message),
     };
+    console.log('--- PLAYER convertShakaError', detail);
     handleAddError({ error: hlsError });
   };
 
@@ -526,6 +525,9 @@ export default function usePlayer() {
   };
 
   const handleIntervalCheckErrors = () => {
+    console.log('--- PLAYER handleIntervalCheckErrors', {
+      checkErrorInterRef: checkErrorInterRef?.current,
+    });
     // chạy sau khi load source
     if (!checkErrorInterRef?.current) {
       // @ts-ignore

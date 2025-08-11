@@ -194,7 +194,10 @@ export default function PlayerWrapper({ children, eventId }: Props) {
 
   // Logic mở rộng khi bật/tắt livechat
   useEffect(() => {
-    if (fetchChannelCompleted && streamType === 'event') {
+    if (
+      fetchChannelCompleted &&
+      (streamType === 'event' || streamType === 'premiere')
+    ) {
       const lastTimesShowChatStatus = localStorage.getItem(SHOW_REAL_TIME_CHAT);
       dispatch(setIsOpenLiveChat(lastTimesShowChatStatus === '1'));
       const dataChannelComment =

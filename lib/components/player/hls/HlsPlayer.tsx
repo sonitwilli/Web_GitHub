@@ -10,12 +10,18 @@ import Hls from 'hls.js';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 import { useDrmPlayer } from '@/lib/hooks/useDrmPlayer';
-import { VIDEO_CURRENT_TIME, VIDEO_ID } from '@/lib/constant/texts';
+import { VIDEO_ID } from '@/lib/constant/texts';
 import PlayerTopMask from '../core/PlayerTopMask';
 import dynamic from 'next/dynamic';
 import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import styles from '../core/Text.module.css';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
+import {
+  removePlayerSessionStorage,
+  trackPlayerChange,
+} from '@/lib/utils/playerTracking';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -34,7 +40,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 }) => {
   useLayoutEffect(() => {
     if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem(VIDEO_CURRENT_TIME);
+      removePlayerSessionStorage();
     }
   }, []);
   const { handleAddError, handleIntervalCheckErrors } = usePlayer();
@@ -127,6 +133,46 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
           }
         }
       });
+      hls.on(Hls.Events.LEVEL_SWITCHED, () => {
+        trackPlayerChange();
+      });
+      hls.on(Hls.Events.AUDIO_TRACK_SWITCHING, () => {
+        trackPlayerChange();
+      });
+      hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, () => {
+        trackPlayerChange();
+      });
+      const fragDownloadTimes = new Map();
+      hls.on(Hls.Events.FRAG_LOADING, (event, data) => {
+        fragDownloadTimes.set(data.frag.sn, performance.now());
+      });
+      hls.on(Hls.Events.FRAG_LOADED, (event, data) => {
+        console.log('data FRAG_LOADED', data);
+        const start = fragDownloadTimes.get(data.frag.sn);
+        if (start) {
+          const durationMs = performance.now() - start;
+          fragDownloadTimes.delete(data.frag.sn);
+          saveSessionStorage({
+            data: [
+              {
+                key: trackingStoreKey.BUFFER_LENGTH,
+                value: String(durationMs),
+              },
+            ],
+          });
+        }
+        const prev =
+          sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED) || 0;
+        const size = data?.frag?.stats?.loaded;
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+              value: String(parseInt(prev as string) + size),
+            },
+          ],
+        });
+      });
     } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
       videoRef.current.src = url;
       videoRef.current.addEventListener('loadedmetadata', () => {
@@ -186,6 +232,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
   useEffect(() => {
     return () => {
       destroyHls();
+      removePlayerSessionStorage();
     };
   }, []);
 

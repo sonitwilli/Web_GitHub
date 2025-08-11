@@ -16,14 +16,14 @@ const saveSessionStorage = ({ data }: { data?: DataType[] } = {}) => {
   } catch {}
 };
 
-const removeSessionStorage = ({ data }: { data?: DataType[] } = {}) => {
+const removeSessionStorage = ({ data }: { data?: string[] } = {}) => {
   if (typeof sessionStorage === 'undefined' || !data?.length) {
     return;
   }
   try {
     for (const item of data) {
-      if (item.key) {
-        sessionStorage.removeItem(item.key);
+      if (item) {
+        sessionStorage.removeItem(item);
       }
     }
   } catch {}

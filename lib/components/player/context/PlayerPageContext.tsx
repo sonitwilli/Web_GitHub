@@ -265,6 +265,27 @@ export function PlayerPageContextProvider({ children }: Props) {
       ],
     });
   }, [dataStream]);
+  useEffect(() => {
+    if (
+      dataChannel?.verimatrix !== true &&
+      dataChannel?.verimatrix != '1' &&
+      dataChannel?.drm !== true &&
+      dataChannel?.drm != '1'
+    ) {
+      saveSessionStorage({
+        data: [{ key: trackingStoreKey.DRM_PARTNER, value: '' }],
+      });
+    } else {
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.DRM_PARTNER,
+            value: dataStream?.merchant === 'fptplay' ? 'SIGMA' : 'CASTLAB',
+          },
+        ],
+      });
+    }
+  }, [dataStream, dataChannel]);
   const [fetchChannelCompleted, setFetchChannelCompleted] = useState(false);
   const [showLoginPlayer, setShowLoginPlayer] = useState(false);
   const [loginManifestUrl, setLoginManifestUrl] = useState('');

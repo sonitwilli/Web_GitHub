@@ -61,6 +61,8 @@ const PaymentRenewalTable: React.FC = () => {
 
   // Lưu trữ giá trị verify_token mới nhất để sử dụng bên trong async/timeout
   const verifyTokenRef = useRef<string | null>(verify_token || null);
+  const isProcessingRef = useRef<boolean>(false);
+
   useEffect(() => {
     verifyTokenRef.current = verify_token || null;
   }, [verify_token]);
@@ -253,7 +255,9 @@ const PaymentRenewalTable: React.FC = () => {
 
   // Xác nhận OTP thành công ở VerifyModalNew
   const handleVerifyOtpSuccess = async () => {
-    if (!selectedToken) return;
+    if (!selectedToken || isProcessingRef.current) return;
+
+    isProcessingRef.current = true;
 
     // Chờ tối đa 1 giây để đợi verify_token được cập nhật (nếu đang về chậm)
     let token = verifyTokenRef.current;
@@ -267,6 +271,7 @@ const PaymentRenewalTable: React.FC = () => {
         title: ERROR,
         desc: OTP_NOT_VERIFY,
       });
+      isProcessingRef.current = false;
       return;
     }
 
@@ -282,6 +287,7 @@ const PaymentRenewalTable: React.FC = () => {
           desc: msg_data?.content || SUPPORT_CONTACT,
           title: ERROR_CONNECTION,
         });
+        isProcessingRef.current = false;
         return;
       }
 
@@ -301,10 +307,13 @@ const PaymentRenewalTable: React.FC = () => {
         title: ERROR_CONNECTION,
         desc: state.error || SUPPORT_CONTACT,
       });
+    } finally {
+      isProcessingRef.current = false;
     }
   };
 
   useEffect(() => {
+    if (!verify_token) return;
     handleVerifyOtpSuccess();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verify_token]);

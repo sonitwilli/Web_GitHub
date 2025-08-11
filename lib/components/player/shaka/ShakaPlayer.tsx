@@ -25,7 +25,6 @@ import {
   BOOLEAN_TEXTS,
   HISTORY_TEXT,
   PLAYER_BOOKMARK_SECOND,
-  VIDEO_CURRENT_TIME,
   VIDEO_ID,
 } from '@/lib/constant/texts';
 import dynamic from 'next/dynamic';
@@ -33,6 +32,12 @@ import styles from '../core/Text.module.css';
 import { useRouter } from 'next/router';
 import { useVodPageContext } from '../context/VodPageContext';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
+import {
+  removePlayerSessionStorage,
+  trackPlayerChange,
+} from '@/lib/utils/playerTracking';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -61,8 +66,7 @@ type Props = {
 const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   useLayoutEffect(() => {
     if (typeof sessionStorage !== 'undefined') {
-      sessionStorage.removeItem(VIDEO_CURRENT_TIME);
-      sessionStorage.removeItem(PLAYER_BOOKMARK_SECOND);
+      removePlayerSessionStorage();
     }
   }, []);
   const { viewportType } = useScreenSize();
@@ -270,6 +274,63 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       player.configure(DRM_CONFIG);
     }
     window.shakaPlayer = player;
+    player.addEventListener('adaptation', () => {
+      trackPlayerChange();
+    });
+    player.addEventListener('trackschanged', () => {
+      trackPlayerChange();
+    });
+    player.addEventListener('texttrackvisibility', () => {
+      trackPlayerChange();
+    });
+    const fragDownloadTimes = new Map();
+    player
+      .getNetworkingEngine()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .registerRequestFilter((type: any, request: any) => {
+        if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+          fragDownloadTimes.set(request.uris[0], performance.now());
+        }
+      });
+
+    player
+      .getNetworkingEngine()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .registerResponseFilter((type: any, response: any) => {
+        if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+          const uri = response.uri || response.originalUri || null;
+          const start = fragDownloadTimes.get(uri);
+          if (start) {
+            const durationMs = performance.now() - start;
+            fragDownloadTimes.delete(uri);
+            saveSessionStorage({
+              data: [
+                {
+                  key: trackingStoreKey.BUFFER_LENGTH,
+                  value: String(durationMs),
+                },
+              ],
+            });
+          }
+          if (response?.status === 200 || response?.status === 206) {
+            const prev =
+              sessionStorage.getItem(
+                trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+              ) || 0;
+            const size = response?.headers
+              ? parseInt(response?.headers['content-length'])
+              : 0;
+            saveSessionStorage({
+              data: [
+                {
+                  key: trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+                  value: String(parseInt(prev as string) + size),
+                },
+              ],
+            });
+          }
+        }
+      });
     if (window?.shaka?.util?.EventManager) {
       window.eventManager = new window.shaka.util.EventManager();
       if (window.eventManager) {
@@ -381,6 +442,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         endPingEnc();
       }
       destroyShaka();
+      removePlayerSessionStorage();
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

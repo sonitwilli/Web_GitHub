@@ -1,6 +1,21 @@
 {
     "versions": [
         {
+            "version": "8.0.20",
+            "date": "Dự kiến",
+            "content": [
+                "[Web][Quảng cáo] Bugs quảng cáo inpage",
+                "[WEB][Login] Lỗi hiển thị thông báo 'Đăng nhập thành công' bị lệch và bị che mất mép trái của nội dung ở responsive mobile",
+                "[WEB][Notification] Lỗi vỡ UI thông báo khi có thông báo đến ở màn hình responsive mobile",
+                "[WEB][Notification] Lỗi hiển thị màn hình thông báo ở responsive mobile",
+                "[WEB][Notification] Lỗi hiển thị text ở thông báo khi ngắt dòng description",
+                "[WEB][Mua gói] Lỗi UI responsive mobile banner mua gói",
+                "[WEB][PlayerVOD] Lỗi không hiển thị icon resume sau khi nhấn btn Hủy ở màn hình next chapter/nextmovie",
+                "[WEB][PlayerVOD] Nextmovie: Lỗi hiển thị màn hình nextchapter ở VOD bộ tập cuối",
+                "[WEB][Livechat] Lỗi luôn hiện khung chat ở sự kiện công chiếu khi chưa đăng nhập/đã đăng nhập"
+            ]
+        },  
+        {
             "version": "8.0.19",
             "date": "Dự kiến",
             "content": [

@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import useClickOutside from "@/lib/hooks/useClickOutside";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import _ from "lodash";
+import useClickOutside from '@/lib/hooks/useClickOutside';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import _ from 'lodash';
 import {
   SELECTED_AUDIO_LABEL,
   SELECTED_AUDIO_LABEL_LIVE,
   SELECTED_VIDEO_QUALITY,
-} from "@/lib/constant/texts";
-import { userAgentInfo } from "@/lib/utils/ua";
-import { StreamProfile } from "@/lib/api/channel";
-import { usePlayerPageContext } from "../components/player/context/PlayerPageContext";
-import { useVodPageContext } from "../components/player/context/VodPageContext";
+} from '@/lib/constant/texts';
+import { userAgentInfo } from '@/lib/utils/ua';
+import { StreamProfile } from '@/lib/api/channel';
+import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
+import { useVodPageContext } from '../components/player/context/VodPageContext';
+import { getStreamBandwidth } from '../utils/playerTracking';
 export interface ResolutionItemType {
   language?: string;
   id?: string | number;
@@ -23,7 +24,7 @@ export interface ResolutionItemType {
   height?: number | string;
   width?: number;
   bitrate?: number;
-  type?: "hls" | "dash";
+  type?: 'hls' | 'dash';
   fps?: number;
 }
 
@@ -47,7 +48,7 @@ export default function useResolution() {
 
   const qualitiesMapWithDataChannel = useMemo(() => {
     let apiProfiles: StreamProfile[] = [];
-    if (streamType === "vod") {
+    if (streamType === 'vod') {
       apiProfiles = dataStream?.stream_profiles || [];
     } else {
       apiProfiles = dataChannel?.stream_profiles || [];
@@ -61,13 +62,13 @@ export default function useResolution() {
     // chỉ giữ lại profile có liệt kê trong stream_profiles
     const check1 = videoQualities.filter((item) => {
       const found = (apiProfiles || []).find(
-        (pr) => pr?.manifest_id == item?.height
+        (pr) => pr?.manifest_id == item?.height,
       );
       return !!found;
     });
     const check2 = check1?.map((item) => {
       const found = (apiProfiles || []).find(
-        (pr) => pr?.manifest_id == item?.height
+        (pr) => pr?.manifest_id == item?.height,
       );
       if (!found?.manifest_id) {
         return item;
@@ -84,17 +85,17 @@ export default function useResolution() {
 
   const qualitiesToShow = useMemo(() => {
     const auto: ResolutionItemType = {
-      name: "Auto",
+      name: 'Auto',
       id: dataChannel?.auto_profile,
-      height: dataChannel?.auto_profile || currentEpisode?.auto_profile || "",
+      height: dataChannel?.auto_profile || currentEpisode?.auto_profile || '',
     };
     if (!qualitiesMapWithDataChannel?.length) {
       return [auto];
     } else {
       const result = _.orderBy(
-        _.uniqBy(qualitiesMapWithDataChannel, "height"),
-        ["height"],
-        ["desc"]
+        _.uniqBy(qualitiesMapWithDataChannel, 'height'),
+        ['height'],
+        ['desc'],
       );
       return [auto].concat(result);
     }
@@ -107,6 +108,7 @@ export default function useResolution() {
       switchQuality({ h: x.height });
     }
     setOpen(false);
+    getStreamBandwidth();
   };
 
   const switchQuality = useCallback(
@@ -115,7 +117,7 @@ export default function useResolution() {
         return;
       }
       try {
-        if (playerName === "hls" && window.hlsPlayer) {
+        if (playerName === 'hls' && window.hlsPlayer) {
           const n = Number(h);
           if (isNaN(n)) {
             if (firstTime) {
@@ -128,10 +130,10 @@ export default function useResolution() {
           const qualityList = window.hlsPlayer.levels || [];
           if (qualityList?.length) {
             const matched = qualityList?.filter(
-              (x) => Number(x.height) == Number(h)
+              (x) => Number(x.height) == Number(h),
             );
             if (matched?.length) {
-              const sort = _.maxBy(matched, "bitrate");
+              const sort = _.maxBy(matched, 'bitrate');
               const index = _.findIndex(qualityList, {
                 bitrate: sort?.bitrate,
               });
@@ -144,7 +146,7 @@ export default function useResolution() {
           }
           return;
         }
-        if (playerName === "shaka" && window.shakaPlayer) {
+        if (playerName === 'shaka' && window.shakaPlayer) {
           const playlist = window?.shakaPlayer?.getVariantTracks() || [];
           const height = Number(h);
           if (isNaN(height)) {
@@ -161,20 +163,20 @@ export default function useResolution() {
             let founds =
               playlist.filter(
                 (item: any) =>
-                  item?.height === height && item?.audioCodec === "mp4a.40.2"
+                  item?.height === height && item?.audioCodec === 'mp4a.40.2',
               ) || [];
             if (founds?.length) {
               founds.sort((a: any, b: any) => b.bandwidth - a.bandwidth);
             }
             let audio: any;
-            if (streamType === "channel" || streamType === "event") {
+            if (streamType === 'channel' || streamType === 'event') {
               audio = localStorage.getItem(SELECTED_AUDIO_LABEL_LIVE);
             } else {
               audio = localStorage.getItem(SELECTED_AUDIO_LABEL);
             }
             const currentAudio = audios?.find((x) => x.language === audio);
             const matchedAudio = founds.filter(
-              (item: any) => item.language === currentAudio?.shortLanguage
+              (item: any) => item.language === currentAudio?.shortLanguage,
             );
             if (matchedAudio?.length) {
               founds = [...matchedAudio];
@@ -200,11 +202,13 @@ export default function useResolution() {
           }
         }
       } catch (error) {
-        console.log("--- ERROR SWITCH VIDEO QUALITY", error);
+        console.log('--- ERROR SWITCH VIDEO QUALITY', error);
+      } finally {
+        getStreamBandwidth();
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [qualitiesToShow]
+    [qualitiesToShow],
   );
 
   useEffect(() => {
@@ -227,6 +231,8 @@ export default function useResolution() {
       const timeout = setTimeout(() => {
         switchQuality({ h: saved, firstTime: true });
       }, 2000);
+
+      getStreamBandwidth();
 
       return () => {
         clearTimeout(timeout);
