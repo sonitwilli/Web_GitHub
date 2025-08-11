@@ -9,6 +9,7 @@ import { openLoginModal } from '@/lib/store/slices/loginSlice';
 import { checkActive } from '@/lib/utils/methods';
 import Link from 'next/link';
 import { useContext, useEffect, useMemo, useRef } from 'react';
+import { useRouter } from 'next/router';
 import { RiMenuFill } from 'react-icons/ri';
 import dynamic from 'next/dynamic';
 
@@ -20,8 +21,9 @@ interface Props {
 }
 export default function MobileMenu({ menus }: Props) {
   const toogleRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const headerCtx = useContext(HeaderContext);
-  const { activeMenu, openMobileMenu, setOpenMobileMenu } = headerCtx;
+  const { openMobileMenu, setOpenMobileMenu } = headerCtx;
   const { updateActiveMenuItem, clickLinkItem } = useMenu();
   const userInfo = useAppSelector((state) => state.user);
   const profiles = useAppSelector((state) => state.multiProfile.profiles);
@@ -34,6 +36,106 @@ export default function MobileMenu({ menus }: Props) {
     if (setOpenMobileMenu) setOpenMobileMenu(false);
   }, ['toogle_mobile_menu']);
   const dispatch = useAppDispatch();
+
+  // Clear stored active menu when navigating to home page
+  useEffect(() => {
+    if (router.pathname === '/' && typeof window !== 'undefined') {
+      sessionStorage.removeItem('lastActiveMenu');
+    }
+  }, [router.pathname]);
+
+  const activeMenu = useMemo(() => {
+    if (!router?.isReady || !menus?.length) {
+      return null;
+    }
+    const pathName = router.pathname;
+    const { id } = router.query;
+
+    // Get the last selected menu from sessionStorage
+    const getStoredActiveMenu = () => {
+      if (typeof window !== 'undefined') {
+        const stored = sessionStorage.getItem('lastActiveMenu');
+        return stored ? JSON.parse(stored) : null;
+      }
+      return null;
+    };
+
+    // Detect category from URL path for content pages
+    const getCategoryFromPath = () => {
+      // Extract the main path segment for switching
+      const pathSegment = pathName?.split('/')[1];
+
+      switch (pathSegment) {
+        case 'xem-truyen-hinh':
+          return menus.find(
+            (item) => item.id === 'channel' || item.page_id === 'channel',
+          );
+
+        case 'xem-video':
+        case 'dien-vien':
+        case 'su-kien':
+        case 'playlist':
+        case 'short-videos':
+        case 'tim-kiem':
+        default:
+          return getStoredActiveMenu();
+      }
+    };
+
+    // Check if current page is a content page (not a main menu/category page)
+    const isContentPage = () => {
+      const contentPaths = [
+        'xem-video',
+        'xem-truyen-hinh',
+        'dien-vien',
+        'su-kien',
+        'playlist',
+        'short-videos',
+        'tim-kiem',
+      ];
+      const pathSegment = pathName?.split('/')[1];
+      return (
+        contentPaths.includes(pathSegment) && !pathName?.includes('/trang/')
+      );
+    };
+
+    let found;
+
+    // Main routing logic
+    switch (true) {
+      case pathName === '/':
+        found = menus.find(
+          (item) => item.id === 'home' || item.id === 'home-kids',
+        );
+        break;
+
+      case Boolean(id && pathName?.includes('/trang/')):
+        found = menus.find((item) => item.id === id);
+        break;
+
+      case isContentPage():
+        found = getCategoryFromPath();
+        break;
+
+      default:
+        found = getStoredActiveMenu();
+        break;
+    }
+
+    // Store the active menu when appropriate
+    if (found && typeof window !== 'undefined') {
+      const shouldStore =
+        pathName === '/' ||
+        (id && pathName?.includes('/trang/')) ||
+        pathName?.includes('/xem-truyen-hinh/');
+
+      if (shouldStore) {
+        sessionStorage.setItem('lastActiveMenu', JSON.stringify(found));
+      }
+    }
+
+    return found;
+  }, [router, menus]);
   useEffect(() => {
     if (typeof document !== 'undefined') {
       if (openMobileMenu) {
@@ -69,7 +171,7 @@ export default function MobileMenu({ menus }: Props) {
       {/* Menus */}
       <div
         ref={ref}
-        className={`custom-scroll flex flex-col fixed top-[80px] bottom-[108px] xl:w-[250px] ${
+        className={`custom-scroll flex flex-col fixed top-[80px] bottom-0 xl:w-[250px] ${
           openMobileMenu
             ? 'w-[266px] tablet:w-[320px]'
             : 'w-[266px] xl:w-[250px]'
@@ -77,8 +179,7 @@ export default function MobileMenu({ menus }: Props) {
           openMobileMenu ? 'left-0' : '-left-[266px] xl:-left-[250px]'
         }`}
         style={{ 
-          height: 'calc(100vh - 80px)',
-          paddingBottom: 'max(20px, env(safe-area-inset-bottom))'
+          paddingBottom: 'max(128px, calc(108px + env(safe-area-inset-bottom)))'
         }}
         onClick={() => {
           if (setOpenMobileMenu) setOpenMobileMenu(false);
@@ -103,44 +204,56 @@ export default function MobileMenu({ menus }: Props) {
           </button>
         )}
 
-        {menus?.length &&
-          menus.map((menu, index) => (
-            <Link
-              prefetch={false}
-              key={`menu-mobile-${index}`}
-              href={`/trang/${menu.id}`}
-              className={`text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray ${
-                activeMenu?.id === menu.id ? '!text-white-smoke' : ''
-              }`}
-              onClick={(ev) =>
-                clickLinkItem({
-                  menuItem: menu,
-                  event: ev,
-                  cb: () => {
-                    updateActiveMenuItem({ menuItem: menu });
-                  },
-                })
-              }
-            >
-              {menu?.id !== 'home' &&
-              menu?.id !== 'home-kids' &&
-              menu?.logo &&
-              menu?.logo_focus &&
-              menu?.is_display_logo === '1' ? (
-                <img
-                  src={
-                    checkActive(`trang/${menu.page_id}`)
-                      ? menu.logo_focus
-                      : menu.logo
-                  }
-                  alt={menu?.name}
-                  className="h-[14px]"
-                />
-              ) : (
-                menu.name
-              )}
-            </Link>
-          ))}
+        {Array.isArray(menus) &&
+          menus?.map((menu, index) => {
+            if (menu?.id) {
+              return (
+                <Link
+                  prefetch={false}
+                  key={`menu-mobile-${index}-${menu.id}`}
+                  href={`/trang/${menu.id}`}
+                  className={`text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray ${
+                    menu.id === activeMenu?.id ? '!text-white-smoke' : ''
+                  }`}
+                  title={menu?.name}
+                  onClick={(ev) => {
+                    // Store the menu item in sessionStorage when clicked (same as Header)
+                    if (typeof window !== 'undefined') {
+                      sessionStorage.setItem(
+                        'lastActiveMenu',
+                        JSON.stringify(menu),
+                      );
+                    }
+                    clickLinkItem({
+                      menuItem: menu,
+                      event: ev,
+                      cb: () => {
+                        updateActiveMenuItem({ menuItem: menu });
+                      },
+                    });
+                  }}
+                >
+                  {menu?.id !== 'home' &&
+                  menu?.id !== 'home-kids' &&
+                  menu?.logo &&
+                  menu?.logo_focus &&
+                  menu?.is_display_logo === '1' ? (
+                    <img
+                      src={
+                        menu.id === activeMenu?.id
+                          ? menu.logo_focus
+                          : menu.logo
+                      }
+                      alt={menu?.name}
+                      className="h-[14px]"
+                    />
+                  ) : (
+                    menu.name
+                  )}
+                </Link>
+              );
+            }
+          })}
       </div>
     </div>
   );
