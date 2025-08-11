@@ -59,6 +59,12 @@ const PaymentRenewalTable: React.FC = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const { info } = useAppSelector((state) => state.user);
 
+  // Lưu trữ giá trị verify_token mới nhất để sử dụng bên trong async/timeout
+  const verifyTokenRef = useRef<string | null>(verify_token || null);
+  useEffect(() => {
+    verifyTokenRef.current = verify_token || null;
+  }, [verify_token]);
+
   // TODO: Lấy số điện thoại thực tế của user từ redux hoặc props
   const userPhone = useMemo(() => info?.user_phone, [info?.user_phone]);
 
@@ -248,19 +254,26 @@ const PaymentRenewalTable: React.FC = () => {
   // Xác nhận OTP thành công ở VerifyModalNew
   const handleVerifyOtpSuccess = async () => {
     if (!selectedToken) return;
-    // Giả lập lấy verify_token từ modal hoặc state nếu có
 
-    if (!verify_token) {
+    // Chờ tối đa 1 giây để đợi verify_token được cập nhật (nếu đang về chậm)
+    let token = verifyTokenRef.current;
+    if (!token) {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      token = verifyTokenRef.current;
+    }
+
+    if (!token) {
       showToast({
         title: ERROR,
         desc: OTP_NOT_VERIFY,
       });
       return;
     }
+
     try {
       const response = await cancelExtend({
         item: selectedToken,
-        verify_token,
+        verify_token: token,
       });
       const { status, msg_data } = response.data;
 

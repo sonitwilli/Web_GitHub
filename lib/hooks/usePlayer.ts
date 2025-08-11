@@ -26,6 +26,7 @@ import {
   ShakaErrorType,
 } from '../components/player/shaka/ShakaPlayer';
 import { useAdsPlayer } from './useAdsPlayer';
+import { getBandwidth, getStreamProfiles } from '../utils/playerTracking';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -195,6 +196,8 @@ export default function usePlayer() {
   };
 
   const handlePlaying = () => {
+    getStreamProfiles();
+    getBandwidth();
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
     console.log('--- PLAYER VIDEO PLAY SUCCESS', {
       count: retryCountRef.current,

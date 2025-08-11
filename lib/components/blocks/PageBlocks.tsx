@@ -112,7 +112,7 @@ export default function PageBlocks({
     if (!blocks?.length) return null;
 
     return (
-      <div>
+      <>
         {blocks.map((block, index) => (
           <BlockLazyItem
             key={`${block.id || index}-${keywordSearch || 'no-search'}`}
@@ -125,15 +125,9 @@ export default function PageBlocks({
           />
         ))}
         {!shouldHideAds && <BottomBannerAds />}
-      </div>
+      </>
     );
-  }, [
-    blocks,
-    keywordSearch,
-    handleBlockEmpty,
-    firstBlockIndex,
-    shouldHideAds
-  ]);
+  }, [blocks, keywordSearch, handleBlockEmpty, firstBlockIndex, shouldHideAds]);
 
   if (typeof blocks === 'undefined' || !blocks?.length) {
     return <div className="h-screen"></div>;

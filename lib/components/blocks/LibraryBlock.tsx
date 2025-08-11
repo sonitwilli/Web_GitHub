@@ -94,7 +94,7 @@ export default function LibraryBlock() {
 
   if (isLoading || isDataLoading) {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {LIBRARY_TITLE}
         </h1>
@@ -107,7 +107,7 @@ export default function LibraryBlock() {
 
   if (pageDataError && pageDataStatus !== '0') {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {LIBRARY_TITLE}
         </h1>
@@ -124,7 +124,7 @@ export default function LibraryBlock() {
     pageDataStatus === '0'
   ) {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {LIBRARY_TITLE}
         </h1>
@@ -137,7 +137,7 @@ export default function LibraryBlock() {
 
   if (filteredBlocks.length === 0 && !allBlocksError) {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-[16px]">
           {LIBRARY_TITLE}
         </h1>
@@ -150,7 +150,7 @@ export default function LibraryBlock() {
 
   if (allBlocksError || (filteredBlocks.length === 1 && isError[0])) {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         {!queryId && (
           <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {pageData?.data?.meta?.name}
@@ -173,7 +173,7 @@ export default function LibraryBlock() {
     (filteredBlocks.length === 1 && isEmpty[0])
   ) {
     return (
-      <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+      <div className="relative mt-[10px] max-w-[1200px]">
         {!queryId && (
           <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {pageData?.data?.meta?.name}
@@ -192,7 +192,7 @@ export default function LibraryBlock() {
   }
 
   return (
-    <div className="relative mt-[10px] sm:mt-[0] max-w-[1200px]">
+    <div className="relative mt-[10px] max-w-[1200px]">
       {!queryId && (
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {pageData?.data?.meta?.name}
