@@ -58,7 +58,7 @@ export default function MobileMenu({ menus }: Props) {
 
       {/* black background */}
       <div
-        className={`fixed left-0 top-[80px] w-full bg-black duration-300 ease-out ${
+        className={`fixed left-0 top-[80px] bottom-[108px] w-full bg-black duration-300 ease-out ${
           openMobileMenu
             ? 'z-1 pointer-events-auto opacity-60'
             : '-z-[1] pointer-events-none opacity-0'
@@ -69,7 +69,7 @@ export default function MobileMenu({ menus }: Props) {
       {/* Menus */}
       <div
         ref={ref}
-        className={`custom-scroll flex flex-col fixed top-[80px] xl:w-[250px] ${
+        className={`custom-scroll flex flex-col fixed top-[80px] bottom-[108px] xl:w-[250px] ${
           openMobileMenu
             ? 'w-[266px] tablet:w-[320px]'
             : 'w-[266px] xl:w-[250px]'
