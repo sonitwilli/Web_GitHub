@@ -14,7 +14,7 @@ interface Props {
 
 const ListEspisodeComponent = ({ position }: Props) => {
   const { dataChannel, dataPlaylist } = usePlayerPageContext();
-  const { currentEpisode } = useVodPageContext();
+  const { currentEpisode, openEpisodesFullscreen } = useVodPageContext();
   const { isFullscreen } = useAppSelector((s) => s.player);
 
   const dataEspisodes = useMemo(() => {
@@ -79,7 +79,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
     // Recalculate on window resize
     window.addEventListener('resize', calculateEpisodeHeight);
     return () => window.removeEventListener('resize', calculateEpisodeHeight);
-  }, [dataEspisodes, isMobile]);
+  }, [dataEspisodes, isMobile, isFullscreen, position]);
 
   // Detect mobile device
   useEffect(() => {
@@ -92,6 +92,62 @@ const ListEspisodeComponent = ({ position }: Props) => {
 
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
+
+  // Reset states when fullscreen mode changes
+  useEffect(() => {
+    // Reset manual page change flag when switching between fullscreen modes
+    setIsManualPageChange(false);
+    
+    // Force recalculation of episode height after a delay when entering fullscreen
+    if (isFullscreen && position === 'fullscreen') {
+      const timeoutId = setTimeout(() => {
+        const firstEpisodeKey = Object.keys(episodeRefs.current)[0];
+        const firstEpisodeElement = episodeRefs.current[firstEpisodeKey];
+        
+        if (firstEpisodeElement) {
+          const actualHeight = firstEpisodeElement.offsetHeight;
+          setEpisodeHeight(actualHeight);
+        }
+      }, 200); // Longer delay to ensure DOM is updated
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [isFullscreen, position]);
+
+  // Handle when fullscreen episode list becomes visible
+  useEffect(() => {
+    if (isFullscreen && position === 'fullscreen' && openEpisodesFullscreen) {
+      // Reset states and recalculate when the episode list becomes visible
+      setIsManualPageChange(false);
+      
+      const timeoutId = setTimeout(() => {
+        // Force recalculation of episode height when component becomes visible
+        const firstEpisodeKey = Object.keys(episodeRefs.current)[0];
+        const firstEpisodeElement = episodeRefs.current[firstEpisodeKey];
+        
+        if (firstEpisodeElement) {
+          const actualHeight = firstEpisodeElement.offsetHeight;
+          setEpisodeHeight(actualHeight);
+        }
+        
+        // If there's a current episode, update the pagination to show the correct page
+        if (currentEpisode && dataEspisodes.length > 0) {
+          const episodeIndex = dataEspisodes.findIndex(
+            (ep) =>
+              ep.id === currentEpisode.id ||
+              ep.real_episode_id === currentEpisode.real_episode_id,
+          );
+          
+          if (episodeIndex !== -1) {
+            const pageForEpisode = Math.floor(episodeIndex / itemsPerPage) + 1;
+            setCurrentPage(pageForEpisode);
+          }
+        }
+      }, 300); // Even longer delay for visibility transition
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [openEpisodesFullscreen, isFullscreen, position, currentEpisode, dataEspisodes, itemsPerPage]);
 
   // Auto scroll to current episode on mount
   useEffect(() => {
@@ -179,9 +235,24 @@ const ListEspisodeComponent = ({ position }: Props) => {
     const container = listRef.current;
     if (!container) return;
 
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+    // Add a small delay when in fullscreen mode to ensure DOM is ready
+    const setupScrollListener = () => {
+      container.addEventListener('scroll', handleScroll);
+    };
+
+    if (isFullscreen && position === 'fullscreen') {
+      // Delay for fullscreen mode to ensure proper DOM setup
+      const timeoutId = setTimeout(setupScrollListener, 100);
+      return () => {
+        clearTimeout(timeoutId);
+        container.removeEventListener('scroll', handleScroll);
+      };
+    } else {
+      // Immediate setup for normal mode
+      setupScrollListener();
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
+  }, [handleScroll, isFullscreen, position]);
 
   useEffect(() => {
     if (!emblaApi) return;

@@ -41,7 +41,7 @@ export default function RequirePurchaseVod() {
         <div className="absolute inset-0 bg-black/86 hidden xl:block"></div>
 
         {/* Mobile: centered content */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 md:hidden">
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center p-6 md:hidden">
           <div className="max-w-[81vw] w-full">
             <p className="font-[600] text-[16px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[8px] text-center">
               {dataChannel?.source_provider === SOURCE_PROVIDER.GALAXY_PLAY
