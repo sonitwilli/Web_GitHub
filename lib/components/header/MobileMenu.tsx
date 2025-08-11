@@ -6,7 +6,6 @@ import useMenu from '@/lib/hooks/useMenu';
 import { HeaderContext } from '@/lib/layouts/Header';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { openLoginModal } from '@/lib/store/slices/loginSlice';
-import { checkActive } from '@/lib/utils/methods';
 import Link from 'next/link';
 import { useContext, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
@@ -179,7 +178,7 @@ export default function MobileMenu({ menus }: Props) {
           openMobileMenu ? 'left-0' : '-left-[266px] xl:-left-[250px]'
         }`}
         style={{ 
-          paddingBottom: 'max(128px, calc(108px + env(safe-area-inset-bottom)))'
+          paddingBottom: 'max(calc(env(safe-area-inset-bottom)))'
         }}
         onClick={() => {
           if (setOpenMobileMenu) setOpenMobileMenu(false);

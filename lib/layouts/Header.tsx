@@ -121,6 +121,8 @@ export default function Header() {
       ACCOUNT,
       PACKAGE,
       'xem-truyen-hinh',
+      'su-kien',
+      'cong-chieu',
       'xem-video',
       'tim-kiem',
     ];

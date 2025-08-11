@@ -174,15 +174,17 @@ const WatchVideoComponent = () => {
 
     // Check if has end_content for final episode
     const dataStreamField = dataStream as DataStreamField;
-    const hasEndContent =
-      dataStreamField?.end_content && dataStreamField.end_content > 0;
-    const isFinalEpisodeWithEndContent = isFinalEpisode && hasEndContent;
+    const hasEndContent = Number(dataStreamField?.end_content ?? 0) > 0;
+    const isFinalEpisodeWithEndContent = Boolean(
+      isFinalEpisode && hasEndContent,
+    );
 
-    const result =
+    const result = Boolean(
       isSingleMovie ||
-      isFinalEpisodeOfSeries ||
-      isLastVideoOfPlaylist ||
-      isFinalEpisodeWithEndContent;
+        isFinalEpisodeOfSeries ||
+        isLastVideoOfPlaylist ||
+        isFinalEpisodeWithEndContent,
+    );
 
     return result;
   })();
@@ -193,14 +195,14 @@ const WatchVideoComponent = () => {
     if (dataChannel.episodes.length === 1) return false;
 
     const dataStreamField = dataStream as DataStreamField;
-    const hasEndContent =
-      dataStreamField?.end_content && dataStreamField.end_content > 0;
+    const hasEndContent = Number(dataStreamField?.end_content ?? 0) > 0;
 
-    const result =
+    const result = Boolean(
       dataChannel.episodes.length > 1 &&
-      !previewHandled &&
-      !isFinalEpisode &&
-      hasEndContent;
+        !previewHandled &&
+        !isFinalEpisode &&
+        hasEndContent,
+    );
 
     return result;
   })();

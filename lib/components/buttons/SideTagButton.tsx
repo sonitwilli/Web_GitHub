@@ -307,7 +307,7 @@ const SideTagButton: React.FC = () => {
         window.open(item.url, "_blank");
       }
     }
-  }, []);
+  }, [clickChatbot]);
 
   // Initialize on mount and route changes
   useEffect(() => {

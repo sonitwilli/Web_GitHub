@@ -1,8 +1,6 @@
-import { useAppSelector } from '@/lib/store';
 import { useMemo } from 'react';
 
 export default function ScrollTop() {
-  const sidetagPosition = useAppSelector((state) => state.sidetag.position);
   const width = window.innerWidth;
 
   // Calculate dynamic right position based on sidetag position
@@ -14,7 +12,7 @@ export default function ScrollTop() {
     }
 
     return {};
-  }, [sidetagPosition]);
+  }, [width]);
 
   const click = () => {
     if (typeof window !== 'undefined') {
