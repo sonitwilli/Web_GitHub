@@ -203,7 +203,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
           >
             <textarea
               name="submit-area"
-              className="w-full border-0 h-[72px] outline-none bg-eerie-black break-words overflow-y-auto resize-none text-light-gray text-base leading-[1.3] font-normal"
+              className="w-full border-0 placeholder-davys-grey h-[72px] outline-none bg-eerie-black break-words overflow-y-auto resize-none text-light-gray text-base leading-[1.3] font-normal"
               placeholder="Viết báo cáo"
               value={text}
               onChange={handleTextChange}

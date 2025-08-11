@@ -256,7 +256,7 @@ const SidebarAccount: React.FC = () => {
               </Link>
             ))
           )}
-          <div className="max-w-[150px] xl:max-w-full border-b-[2px] border-black-olive-404040 rounded-0 xl:border-b-0  flex items-center gap-4 p-4 hover:bg-eerie-black w-full xl:rounded-[10px] hover:text-white flex-shrink-0">
+          <div className="max-w-fit xl:max-w-full border-b-[2px] border-black-olive-404040 rounded-0 xl:border-b-0  flex items-center gap-4 p-4 hover:bg-eerie-black w-full xl:rounded-[10px] hover:text-white flex-shrink-0">
             <FiLogOut size={24} className="text-dark-gray hidden xl:block" />
             <button
               className="menu-item text-base font-[500] text-dark-gray transition-colors text-left w-full cursor-pointer"

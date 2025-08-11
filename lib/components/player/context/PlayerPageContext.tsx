@@ -219,6 +219,9 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [playingUrl, setPlayingUrl] = useState<string>('');
   const playingUrlRef = useRef(playingUrl);
   useEffect(() => {
+    saveSessionStorage({
+      data: [{ key: trackingStoreKey.PLAYING_URL, value: playingUrl }],
+    });
     playingUrlRef.current = playingUrl;
   }, [playingUrl]);
   const [channelNotFound, setChannelNotFound] = useState(false);

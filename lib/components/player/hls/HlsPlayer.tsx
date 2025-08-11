@@ -147,7 +147,6 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         fragDownloadTimes.set(data.frag.sn, performance.now());
       });
       hls.on(Hls.Events.FRAG_LOADED, (event, data) => {
-        console.log('data FRAG_LOADED', data);
         const start = fragDownloadTimes.get(data.frag.sn);
         if (start) {
           const durationMs = performance.now() - start;

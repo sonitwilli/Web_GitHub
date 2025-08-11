@@ -99,7 +99,7 @@ const defaultMenu: MenuItem[] = [
 export default function Header() {
   const headerContext = useContext(HeaderContext);
   const [localOpenMobileMenu] = useState(false);
-  
+
   // Use context value if available, otherwise use local state
   const openMobileMenu = headerContext?.openMobileMenu ?? localOpenMobileMenu;
   const [shouldHideHeaderAds, setShouldHideHeaderAds] = useState(false);
@@ -110,7 +110,20 @@ export default function Header() {
   const { type, id } = router.query;
   const isCategoryPage = useMemo(() => {
     // Thêm những page cần tắt hiệu ứng transparent header
-    const pages = [ACCOUNT, PACKAGE];
+    // Chổ này sẽ xử lý như sau nha chị ơi, ứng với các trang sau sẽ mặc định menu bar có background đen, e đẫ cập nhật trong doc ạ.
+    // Các trang có Menu đen gồm:
+    // - Truyền hình
+    // - Detail VOD
+    // - Tìm kiếm
+    // - Mua gói
+    // - Tài khoản & Cài đặt
+    const pages = [
+      ACCOUNT,
+      PACKAGE,
+      'xem-truyen-hinh',
+      'xem-video',
+      'tim-kiem',
+    ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
     if ((type && id) || isPageMatching || isOffline) {
