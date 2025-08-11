@@ -26,7 +26,12 @@ import {
   ShakaErrorType,
 } from '../components/player/shaka/ShakaPlayer';
 import { useAdsPlayer } from './useAdsPlayer';
-import { trackPlayerChange } from '../utils/playerTracking';
+import {
+  removePlayerSessionStorage,
+  trackPlayerChange,
+} from '../utils/playerTracking';
+import { trackingStoreKey } from '../constant/tracking';
+import { saveSessionStorage } from '../utils/storage';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -196,6 +201,19 @@ export default function usePlayer() {
   };
 
   const handlePlaying = () => {
+    const firstPlay = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
+    );
+    if (!firstPlay) {
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
+            value: new Date().getTime().toString(),
+          },
+        ],
+      });
+    }
     trackPlayerChange();
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
     console.log('--- PLAYER VIDEO PLAY SUCCESS', {
@@ -234,8 +252,18 @@ export default function usePlayer() {
     if (catchVideoInterval.current) {
       clearInterval(catchVideoInterval.current);
     }
-    const { bookmark, ...restQuery } = router.query;
-    if (bookmark !== undefined) {
+    const { bookmark, landing_page, ...restQuery } = router.query;
+    if (bookmark !== undefined || landing_page !== undefined) {
+      if (landing_page) {
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
+              value: '1',
+            },
+          ],
+        });
+      }
       router.replace(
         {
           pathname: router.pathname,
@@ -281,9 +309,29 @@ export default function usePlayer() {
     }
   };
 
+  const checkRealTimePlaying = () => {
+    if (typeof sessionStorage !== 'undefined') {
+      const cur = new Date().getTime();
+      const pre = sessionStorage.getItem(
+        trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
+      );
+      const p = pre ? Number(pre) : 0;
+      const value = Number(cur) - p;
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
+            value: Math.round(value / 1000).toString(),
+          },
+        ],
+      });
+    }
+  };
+
   const handleTimeUpdate = () => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
+      checkRealTimePlaying();
       const d = video.duration;
       const c = video.currentTime;
       sessionStorage.setItem(VIDEO_CURRENT_TIME, c as unknown as string);
@@ -557,6 +605,7 @@ export default function usePlayer() {
     sessionStorage.removeItem(VIDEO_TIME_BEFORE_ERROR);
     sessionStorage.removeItem(PLAYER_IS_RETRYING);
     sessionStorage.removeItem(PLAYER_BOOKMARK_SECOND);
+    removePlayerSessionStorage();
   };
 
   useEffect(() => {

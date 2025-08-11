@@ -251,6 +251,16 @@ export function PlayerPageContextProvider({ children }: Props) {
     saveSessionStorage({
       data: [
         {
+          key: trackingStoreKey.REQUIRE_PURCHASE_DATA,
+          value: JSON.stringify(requirePurchaseData || {}),
+        },
+      ],
+    });
+  }, [requirePurchaseData]);
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
           key: trackingStoreKey.DATA_CHANNEL,
           value: JSON.stringify(dataChannel || {}),
         },

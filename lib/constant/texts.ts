@@ -553,6 +553,7 @@ export enum SOURCE_PROVIDER {
 export const HISTORY_TEXT = {
   BOOK_MARK: 'bookmark',
   HISTORY: 'history',
+  LANDING_PAGE: 'landing_page',
 };
 
 export const BOOLEAN_TEXTS = {

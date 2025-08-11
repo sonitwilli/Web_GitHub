@@ -13,6 +13,8 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import useStorage from '@/lib/hooks/useStorage';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 function VodPageContent() {
   return (
@@ -42,6 +44,14 @@ export default function VodPage() {
       const history = await getVodHistory({
         vodId: videoId || '',
         chapterId,
+      });
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_DATA_WATCHING,
+            value: history?.data ? JSON.stringify(history?.data) : '',
+          },
+        ],
       });
       dispatch(changeHistoryData(history?.data));
       // Deeplink không có /tap-n: có check history và bookmark -
@@ -77,6 +87,15 @@ export default function VodPage() {
       const history = await getVodHistory({
         vodId: videoId || '',
         chapterId,
+      });
+
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_DATA_WATCHING,
+            value: history?.data ? JSON.stringify(history?.data) : '',
+          },
+        ],
       });
 
       if (history && history?.data?.movie_id !== videoId) {

@@ -25,6 +25,7 @@ import {
   BOOLEAN_TEXTS,
   HISTORY_TEXT,
   PLAYER_BOOKMARK_SECOND,
+  PLAYER_NAME,
   VIDEO_ID,
 } from '@/lib/constant/texts';
 import dynamic from 'next/dynamic';
@@ -65,6 +66,14 @@ type Props = {
 
 const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   useLayoutEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_NAME,
+          value: PLAYER_NAME.SHAKA,
+        },
+      ],
+    });
     if (typeof sessionStorage !== 'undefined') {
       removePlayerSessionStorage();
     }

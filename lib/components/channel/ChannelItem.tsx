@@ -91,13 +91,15 @@ export default function ChannelItem({
         />
       )}
 
-      {channel?.show_icon_timeshift === '1' && (
-        <img
-          src={`/images/timeshift/${channel?.timeshift_limit}.png`}
-          alt="timeshift"
-          className="absolute right-[6px] bottom-[6px] w-[28px] h-[28px]"
-        />
-      )}
+      {channel.timeshift_limit &&
+        ['12', '24', '48'].includes(channel.timeshift_limit) &&
+        channel?.show_icon_timeshift === '1' && (
+          <img
+            src={`/images/timeshift/${channel?.timeshift_limit}.png`}
+            alt="timeshift"
+            className="absolute right-[6px] bottom-[6px] w-[28px] h-[28px]"
+          />
+        )}
 
       {channel?.id === dataChannel?._id && (
         <img

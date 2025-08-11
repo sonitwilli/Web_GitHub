@@ -102,23 +102,27 @@ export const getBandwidth = () => {
   }
 };
 
-export const getStreamBandwidthAudio = () => {
+export const getDimension = () => {
   if (typeof window === 'undefined') {
     return;
   }
-  let bandwidth = '';
+  let d = '';
   try {
     if (window?.shakaPlayer) {
-      const activeTrack = window.shakaPlayer
-        .getVariantTracks()
-        .find((track: any) => track.active);
-      const stats = window.shakaPlayer.getStats();
-      bandwidth =
-        activeTrack?.audioBandwidth ||
-        stats?.streamBandwidth ||
-        activeTrack?.bandwidth;
+      const variantTracks = window.shakaPlayer.getVariantTracks();
+      const highestTrack = [...variantTracks]
+        .filter((t) => t.type === 'variant' && t.width && t.height)
+        .sort((a, b) => b.height - a.height || b.width - a.width)[0];
+      const activeTrack = variantTracks.find((t: any) => t.active);
+      d = `${highestTrack?.width || activeTrack?.width}x${
+        highestTrack?.height || activeTrack?.height
+      }`;
     } else if (window?.hlsPlayer) {
-      // hls không lấy được bandwidth audio
+      const levels = window.hlsPlayer.levels;
+      const highestLevel = [...levels]
+        .filter((l) => l.width && l.height)
+        .sort((a, b) => b.height - a.height || b.width - a.width)[0];
+      d = `${highestLevel?.width}x${highestLevel?.height}`;
     }
   } catch {
     //
@@ -126,34 +130,45 @@ export const getStreamBandwidthAudio = () => {
     saveSessionStorage({
       data: [
         {
-          key: trackingStoreKey.STREAM_AUDIO_BANDWIDTH,
-          value: String(bandwidth),
+          key: trackingStoreKey.PLAYER_DIMENSION,
+          value: d,
         },
       ],
     });
-    return bandwidth;
+    return d;
   }
 };
 
-export const getStreamBandwidth = () => {
+export const getPlayerActiveTrack = () => {
   if (typeof window === 'undefined') {
     return;
   }
-  let bandwidth = '';
+  let videoBandwidth = '';
+  let audioBandwidth = '';
+  let resolution = '';
+  let framerate = '';
   try {
     if (window?.shakaPlayer) {
       const activeTrack = window.shakaPlayer
         .getVariantTracks()
         .find((track: any) => track.active);
       const stats = window.shakaPlayer.getStats();
-      bandwidth =
+      videoBandwidth =
         activeTrack?.videoBandwidth ||
         stats?.streamBandwidth ||
         activeTrack?.bandwidth;
+      audioBandwidth =
+        activeTrack?.audioBandwidth ||
+        stats?.streamBandwidth ||
+        activeTrack?.bandwidth;
+      resolution = `${activeTrack.width}x${activeTrack.height}`;
+      framerate = String(activeTrack.frameRate);
     } else if (window?.hlsPlayer) {
       const levelIndex = window.hlsPlayer.currentLevel; // index in hls.levels array
       const activeLevel = window.hlsPlayer.levels[levelIndex];
-      bandwidth = String(activeLevel?.bitrate);
+      videoBandwidth = String(activeLevel?.bitrate);
+      resolution = `${activeLevel.width}x${activeLevel.height}`;
+      framerate = String(activeLevel.frameRate);
     }
   } catch {
     //
@@ -162,11 +177,27 @@ export const getStreamBandwidth = () => {
       data: [
         {
           key: trackingStoreKey.STREAM_BANDWIDTH,
-          value: String(bandwidth),
+          value: String(videoBandwidth),
+        },
+        {
+          key: trackingStoreKey.PLAYER_BITRATE,
+          value: String(videoBandwidth),
+        },
+        {
+          key: trackingStoreKey.STREAM_AUDIO_BANDWIDTH,
+          value: String(audioBandwidth),
+        },
+        {
+          key: trackingStoreKey.PLAYER_RESOLUTION,
+          value: resolution,
+        },
+        {
+          key: trackingStoreKey.PLAYER_FRAME_RATE,
+          value: framerate,
         },
       ],
     });
-    return bandwidth;
+    return videoBandwidth;
   }
 };
 
@@ -174,10 +205,10 @@ export const trackPlayerChange = () => {
   if (typeof window === 'undefined') {
     return;
   }
+  getPlayerActiveTrack();
   getStreamProfiles();
   getBandwidth();
-  getStreamBandwidthAudio();
-  getStreamBandwidth();
+  getDimension();
 };
 
 export const removePlayerSessionStorage = () => {
@@ -186,13 +217,40 @@ export const removePlayerSessionStorage = () => {
   }
   removeSessionStorage({
     data: [
+      VIDEO_CURRENT_TIME,
+      PLAYER_BOOKMARK_SECOND,
       trackingStoreKey.STREAM_BANDWIDTH,
       trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
       trackingStoreKey.STREAM_AUDIO_BANDWIDTH,
       trackingStoreKey.PLAYER_BANDWIDTH,
       trackingStoreKey.STREAM_PROFILES,
-      VIDEO_CURRENT_TIME,
-      PLAYER_BOOKMARK_SECOND,
+      trackingStoreKey.PLAYER_BITRATE,
+      trackingStoreKey.PLAYER_RESOLUTION,
+      trackingStoreKey.PLAYER_DIMENSION,
+      trackingStoreKey.PLAYER_DATA_WATCHING,
+      trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
+      trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
+      trackingStoreKey.PLAYER_IS_LANDING_PAGE,
+      trackingStoreKey.PLAYER_NAME,
     ],
   });
+};
+
+export const getPlayerParams = () => {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  return {
+    StreamProfile: sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES),
+    Bandwidth: sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH),
+    StreamBandwidthAudio: sessionStorage.getItem(
+      trackingStoreKey.STREAM_AUDIO_BANDWIDTH,
+    ),
+    StreamBandwidth: sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH),
+    BufferLength: sessionStorage.getItem(trackingStoreKey.BUFFER_LENGTH),
+    TotalByteLoaded: sessionStorage.getItem(
+      trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+    ),
+    DRMPartner: sessionStorage.getItem(trackingStoreKey.DRM_PARTNER),
+  };
 };

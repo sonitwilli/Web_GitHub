@@ -16,6 +16,7 @@ import { useEffect } from 'react';
 import { useAppDispatch } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { loadJsScript } from '@/lib/utils/methods';
+import { HISTORY_TEXT } from '@/lib/constant/texts';
 
 export const getServerSideProps = (async (context) => {
   const { id } = context.params as { id: string };
@@ -39,7 +40,7 @@ export const getServerSideProps = (async (context) => {
     }
     return {
       redirect: {
-        destination: `/xem-truyen-hinh/${defaultChannel}`,
+        destination: `/xem-truyen-hinh/${defaultChannel}?${HISTORY_TEXT.LANDING_PAGE}=1`,
         permanent: false,
       },
     };

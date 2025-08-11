@@ -11,7 +11,6 @@ import { userAgentInfo } from '@/lib/utils/ua';
 import { StreamProfile } from '@/lib/api/channel';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
-import { getStreamBandwidth } from '../utils/playerTracking';
 export interface ResolutionItemType {
   language?: string;
   id?: string | number;
@@ -108,7 +107,6 @@ export default function useResolution() {
       switchQuality({ h: x.height });
     }
     setOpen(false);
-    getStreamBandwidth();
   };
 
   const switchQuality = useCallback(
@@ -204,7 +202,6 @@ export default function useResolution() {
       } catch (error) {
         console.log('--- ERROR SWITCH VIDEO QUALITY', error);
       } finally {
-        getStreamBandwidth();
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -231,8 +228,6 @@ export default function useResolution() {
       const timeout = setTimeout(() => {
         switchQuality({ h: saved, firstTime: true });
       }, 2000);
-
-      getStreamBandwidth();
 
       return () => {
         clearTimeout(timeout);

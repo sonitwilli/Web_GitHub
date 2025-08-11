@@ -10,7 +10,7 @@ import Hls from 'hls.js';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 import { useDrmPlayer } from '@/lib/hooks/useDrmPlayer';
-import { VIDEO_ID } from '@/lib/constant/texts';
+import { PLAYER_NAME, VIDEO_ID } from '@/lib/constant/texts';
 import PlayerTopMask from '../core/PlayerTopMask';
 import dynamic from 'next/dynamic';
 import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
@@ -40,6 +40,14 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 }) => {
   useLayoutEffect(() => {
     if (typeof sessionStorage !== 'undefined') {
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_NAME,
+            value: PLAYER_NAME.HLS,
+          },
+        ],
+      });
       removePlayerSessionStorage();
     }
   }, []);
