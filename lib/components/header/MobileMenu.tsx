@@ -165,6 +165,7 @@ export default function MobileMenu({ menus }: Props) {
             ? 'z-1 pointer-events-auto opacity-60'
             : '-z-[1] pointer-events-none opacity-0'
         }`}
+        style={{ height: 'calc(100vh - 80px)' }}
       ></div>
 
       {/* Menus */}
