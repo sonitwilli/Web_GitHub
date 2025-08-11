@@ -34,6 +34,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
   ]);
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [isManualPageChange, setIsManualPageChange] = useState(false);
   const listRef = useRef<HTMLDivElement | null>(null);
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'start',
@@ -140,7 +141,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
       // Prevent scroll event from bubbling up to parent containers
       event.stopPropagation();
 
-      if (!listRef.current) return;
+      if (!listRef.current || isManualPageChange) return;
 
       const container = listRef.current;
       const containerTop = container.scrollTop;
@@ -170,7 +171,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [currentPage, totalPages, itemsPerPage, episodeHeight],
+    [currentPage, totalPages, itemsPerPage, episodeHeight, isManualPageChange],
   );
 
   // Set up scroll listener
@@ -203,12 +204,29 @@ const ListEspisodeComponent = ({ position }: Props) => {
       if (!listRef.current) return;
 
       const startIndex = (pageNumber - 1) * itemsPerPage;
-      const scrollTop = startIndex * episodeHeight;
-
-      listRef.current.scrollTo({
-        top: scrollTop,
-        behavior: 'smooth',
-      });
+      
+      // Get the actual element to scroll to for more accurate positioning
+      const targetEpisodeKey = Object.keys(episodeRefs.current)[startIndex];
+      const targetElement = episodeRefs.current[targetEpisodeKey];
+      
+      if (targetElement) {
+        // Use the actual element position for more accurate scrolling
+        const containerRect = listRef.current.getBoundingClientRect();
+        const elementRect = targetElement.getBoundingClientRect();
+        const scrollTop = listRef.current.scrollTop + (elementRect.top - containerRect.top);
+        
+        listRef.current.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth',
+        });
+      } else {
+        // Fallback to calculated position
+        const scrollTop = startIndex * episodeHeight;
+        listRef.current.scrollTo({
+          top: scrollTop,
+          behavior: 'smooth',
+        });
+      }
     },
     [itemsPerPage, episodeHeight],
   );
@@ -245,7 +263,11 @@ const ListEspisodeComponent = ({ position }: Props) => {
 
         {/* PAGINATION CONTROL */}
         {dataEspisodes?.length > 15 ? (
-          <div className="relative mb-2 xl:w-[400px] pr-[16px]">
+          <div className={`relative mb-2 pr-[16px] ${
+            isFullscreen && position === 'fullscreen' 
+              ? 'w-full' 
+              : 'xl:w-[400px]'
+          }`}>
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex gap-[24px]">
                 {Array.from({ length: totalPages }, (_, i) => {
@@ -264,8 +286,11 @@ const ListEspisodeComponent = ({ position }: Props) => {
                             : 'text-spanish-gray'
                         } ${currentPage === i + 1 ? '' : 'hover:text-fpl'}`}
                       onClick={() => {
+                        setIsManualPageChange(true);
                         setCurrentPage(i + 1);
                         scrollToSection(i + 1);
+                        // Reset manual flag after scroll completes
+                        setTimeout(() => setIsManualPageChange(false), 1000);
                       }}
                     >
                       {start}-{end}
