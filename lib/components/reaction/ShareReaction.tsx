@@ -29,7 +29,7 @@ export default function ShareReaction({ onClick, isChannel, type }: Props) {
       <IoShareSocialOutline className="text-[24px]" width={24} height={24} />
 
       {isChannel && (
-        <span className="font-[600] text-[16px] leading-[130%] tracking-[0.32px] text-white-smoke block">
+        <span className="font-[600] text-[16px] leading-[130%] tracking-[0.32px] text-white-smoke whitespace-nowrap">
           Chia sẻ
         </span>
       )}
