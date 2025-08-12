@@ -54,18 +54,18 @@ export default function SeekBar() {
   React.useEffect(() => {
     if (dataStream?.timeline_img) {
       // Fetch and parse VTT
-      axios.get(dataStream.timeline_img).then((data: any) => {
+      axios.get(dataStream.timeline_img).then((data) => {
         try {
           const items = data.data.split('\n\r');
-          const newItems: any = items[0].split('\n\n');
+          const newItems = items[0].split('\n\n');
           newItems.shift();
           const parsedCues: CueType[] = [];
-          const convertHoursToSeconds = (time: any) => {
+          const convertHoursToSeconds = (time: string[]) => {
             return parseInt(
-              String(time[0] * 3600 + time[1] * 60 + Math.floor(time[2]))
+              String(Number(time[0]) * 3600 + Number(time[1]) * 60 + Math.floor(Number(time[2])))
             );
           };
-          newItems.forEach((item: any) => {
+          newItems.forEach((item: string) => {
             const infoTrack = item.split('\n');
             if (infoTrack.length < 3) return;
             const cue: CueType = {
@@ -81,7 +81,7 @@ export default function SeekBar() {
             parsedCues.push(cue);
           });
           setCues(parsedCues);
-        } catch (err) {
+        } catch {
           setCues([]);
         }
       }).catch(() => setCues([]));

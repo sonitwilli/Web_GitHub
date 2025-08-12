@@ -56,16 +56,16 @@ export default function PlayerControlBar() {
     e.preventDefault();
     // Prevent iOS Safari magnifying glass and selection
     const target = e.target as HTMLElement;
-    (target.style as any).webkitTouchCallout = 'none';
-    (target.style as any).webkitUserSelect = 'none';
+    (target.style as CSSStyleDeclaration & { webkitTouchCallout?: string; webkitUserSelect?: string }).webkitTouchCallout = 'none';
+    (target.style as CSSStyleDeclaration & { webkitUserSelect?: string }).webkitUserSelect = 'none';
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
     preventTouchCallout(e);
     // Prevent iOS long-press behaviors
     const target = e.target as HTMLElement;
-    (target.style as any).webkitTouchCallout = 'none';
-    (target.style as any).webkitUserSelect = 'none';
+    (target.style as CSSStyleDeclaration & { webkitTouchCallout?: string; webkitUserSelect?: string }).webkitTouchCallout = 'none';
+    (target.style as CSSStyleDeclaration & { webkitUserSelect?: string }).webkitUserSelect = 'none';
   };
 
   // Attach handler to parent and delegate to buttons
