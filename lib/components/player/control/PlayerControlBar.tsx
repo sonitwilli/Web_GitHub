@@ -47,6 +47,12 @@ export default function PlayerControlBar() {
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
+  // Prevent long-press context menu on all buttons in control bar (mobile)
+  const preventContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+  };
+
+  // Attach handler to parent and delegate to buttons
   return (
     <div
       className={`absolute left-0 bottom-0 z-[2] ease-out duration-500 ${
@@ -57,6 +63,7 @@ export default function PlayerControlBar() {
           : ' w-full'
       }`}
       id="nvm_player_control"
+      onContextMenu={preventContextMenu}
     >
       <div className="px-[16px] tablet:px-[32px] pb-[16px] pt-[91px] bg-gradient-to-b from-smoky-black-0 to-smoky-black-06">
         {/* Progress */}

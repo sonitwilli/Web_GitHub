@@ -38,6 +38,8 @@ export default function NextEpispode() {
           className="w-[24px] h-[24px] tablet:w-[32px] tablet:h-[32px]"
         />
       </div>
+      {/*
+      // Info board for next episode
       {nextEpisode ? (
         <div
           className={`absolute left-1/2 bottom-[calc(100%_+_28px)] -translate-x-[188px] bg-eerie-black-09 rounded-[12px] p-[16px] ease-out duration-300 opacity-0 -z-[1] ${styles.content} pointer-events-none`}
@@ -121,6 +123,7 @@ export default function NextEpispode() {
       ) : (
         ''
       )}
+      */}
     </div>
   );
 }
