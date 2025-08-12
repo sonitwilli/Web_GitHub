@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import { playerButtonProps } from '../common/playerButtonProps';
 const ChatButton = dynamic(() => import('../core/ChatButton'), {
   ssr: false,
 });
@@ -47,26 +48,6 @@ export default function PlayerControlBar() {
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
-  // Prevent long-press context menu and iOS-specific touch behaviors on all buttons in control bar
-  const preventContextMenu = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-  };
-
-  const preventTouchCallout = (e: React.TouchEvent) => {
-    e.preventDefault();
-    // Prevent iOS Safari magnifying glass and selection
-    const target = e.target as HTMLElement;
-    (target.style as CSSStyleDeclaration & { webkitTouchCallout?: string; webkitUserSelect?: string }).webkitTouchCallout = 'none';
-    (target.style as CSSStyleDeclaration & { webkitUserSelect?: string }).webkitUserSelect = 'none';
-  };
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    preventTouchCallout(e);
-    // Prevent iOS long-press behaviors
-    const target = e.target as HTMLElement;
-    (target.style as CSSStyleDeclaration & { webkitTouchCallout?: string; webkitUserSelect?: string }).webkitTouchCallout = 'none';
-    (target.style as CSSStyleDeclaration & { webkitUserSelect?: string }).webkitUserSelect = 'none';
-  };
 
   // Attach handler to parent and delegate to buttons
   return (
@@ -79,14 +60,7 @@ export default function PlayerControlBar() {
           : ' w-full'
       }`}
       id="nvm_player_control"
-      onContextMenu={preventContextMenu}
-      onTouchStart={handleTouchStart}
-      style={{
-        WebkitTouchCallout: 'none',
-        WebkitUserSelect: 'none',
-        userSelect: 'none',
-        touchAction: 'manipulation'
-      } as React.CSSProperties}
+      {...playerButtonProps}
     >
       <div className="px-[16px] tablet:px-[32px] pb-[16px] pt-[91px] bg-gradient-to-b from-smoky-black-0 to-smoky-black-06">
         {/* Progress */}
