@@ -47,8 +47,8 @@ export default function PlayerControlBar() {
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
-  // Prevent long-press context menu on all buttons in control bar (mobile)
-  const preventContextMenu = (e: React.MouseEvent) => {
+  // Prevent long-press context menu on all buttons in control bar (mobile, Android & iOS)
+  const preventContextMenu = (e: React.SyntheticEvent) => {
     e.preventDefault();
   };
 
@@ -64,6 +64,7 @@ export default function PlayerControlBar() {
       }`}
       id="nvm_player_control"
       onContextMenu={preventContextMenu}
+      onTouchStart={preventContextMenu}
     >
       <div className="px-[16px] tablet:px-[32px] pb-[16px] pt-[91px] bg-gradient-to-b from-smoky-black-0 to-smoky-black-06">
         {/* Progress */}
