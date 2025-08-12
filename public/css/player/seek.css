@@ -79,10 +79,10 @@
 }
 @media (hover) {
   .ui-video-seek-slider .track .main:hover:before {
-    height: 8px;
+    height: 6px;
   }
   .ui-video-seek-slider .track .main:hover .inner-seek-block {
-    height: 8px;
+    height: 6px;
   }
 }
 .ui-video-seek-slider .thumb {

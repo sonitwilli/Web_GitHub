@@ -4,7 +4,8 @@ import 'react-video-seek-slider/styles.css';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { VIDEO_ID } from '@/lib/constant/texts';
 import Head from 'next/head';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
+import axios from 'axios';
 import ThumbNails from '@/lib/utils/thumbNails';
 import { userAgentInfo } from '@/lib/utils/ua';
 
@@ -42,20 +43,114 @@ export default function SeekBar() {
     }
   };
 
-  useEffect(() => {
-    const device = userAgentInfo();
-    if ((device?.isWindows || device?.isMacOS) && dataStream?.timeline_img) {
-      const seekBar = document.querySelector(
-        '.seek-bar-nvm .ui-video-seek-slider .main',
-      );
-      if (seekBar) {
-        new ThumbNails(seekBar, dataStream?.timeline_img);
-      }
+  // Thumbnail preview state
+  const [hoverTime, setHoverTime] = React.useState<number | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = React.useState<string | null>(null);
+  const [thumbCrop, setThumbCrop] = React.useState<{w:number,h:number,x:number,y:number}|null>(null);
+  const seekBarRef = React.useRef<HTMLDivElement>(null);
+
+  // Parse VTT file and get cues
+  const [cues, setCues] = React.useState<CueType[]>([]);
+  React.useEffect(() => {
+    if (dataStream?.timeline_img) {
+      // Fetch and parse VTT
+      axios.get(dataStream.timeline_img).then((data: any) => {
+        try {
+          const items = data.data.split('\n\r');
+          const newItems: any = items[0].split('\n\n');
+          newItems.shift();
+          const parsedCues: CueType[] = [];
+          const convertHoursToSeconds = (time: any) => {
+            return parseInt(
+              String(time[0] * 3600 + time[1] * 60 + Math.floor(time[2]))
+            );
+          };
+          newItems.forEach((item: any) => {
+            const infoTrack = item.split('\n');
+            if (infoTrack.length < 3) return;
+            const cue: CueType = {
+              url: infoTrack[2],
+              startTime: convertHoursToSeconds(
+                infoTrack[1].split('-->')[0].trim().split(':')
+              ),
+              endTime: convertHoursToSeconds(
+                infoTrack[1].split('-->')[1].trim().split(':')
+              ),
+              label: infoTrack[0],
+            };
+            parsedCues.push(cue);
+          });
+          setCues(parsedCues);
+        } catch (err) {
+          setCues([]);
+        }
+      }).catch(() => setCues([]));
+    } else {
+      setCues([]);
     }
   }, [dataStream?.timeline_img]);
 
+  // Parse VTT image link for cropping (xywh)
+  function parseImageLink(imgLocation: string, url: string) {
+    const hashIndex = imgLocation.indexOf('#');
+    if (hashIndex === -1) {
+      return { src: imgLocation, w: 0, h: 0, x: 0, y: 0 };
+    }
+    const src = imgLocation.substring(0, hashIndex);
+    const hashString = imgLocation.substring(hashIndex + 1);
+    if (hashString.substring(0, 5) !== 'xywh=') {
+      return {
+        src: url.replace(url.substr(url.lastIndexOf('/') + 1), src),
+        w: 0,
+        h: 0,
+        x: 0,
+        y: 0,
+      };
+    }
+    const data = hashString.substring(5).split(',');
+    return {
+      src: url.replace(url.substr(url.lastIndexOf('/') + 1), src),
+      w: parseInt(data[2]),
+      h: parseInt(data[3]),
+      x: parseInt(data[0]),
+      y: parseInt(data[1]),
+    };
+  }
+
+  // Mouse move handler for seek bar
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const seekBar = seekBarRef.current;
+    if (!seekBar || !videoDuration) return;
+    const rect = seekBar.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const percent = x / rect.width;
+    const time = percent * videoDuration;
+    setHoverTime(time);
+    // Find cue for this time
+    let found = null;
+    for (const cue of cues) {
+      if (cue.startTime && cue.endTime && cue.startTime <= time && cue.endTime >= time) {
+        found = cue;
+        break;
+      }
+    }
+    if (found?.url) {
+      const parsed = parseImageLink(found.url, dataStream?.timeline_img || '');
+      setThumbnailUrl(parsed.src);
+      setThumbCrop({w:parsed.w,h:parsed.h,x:parsed.x,y:parsed.y});
+    } else {
+      setThumbnailUrl(null);
+      setThumbCrop(null);
+    }
+  };
+  const handleMouseLeave = () => {
+    setHoverTime(null);
+    setThumbnailUrl(null);
+    setThumbCrop(null);
+  };
+
   return (
-    <div className="seek-bar-nvm">
+    <div className="seek-bar-nvm" ref={seekBarRef} onMouseMove={handleMouseMove} onMouseLeave={handleMouseLeave} style={{ position: 'relative' }}>
       <Head>
         <link rel="stylesheet" href="/css/player/seek.css" />
         <link rel="stylesheet" href="/css/player/thumbnails.css" />
@@ -68,6 +163,58 @@ export default function SeekBar() {
         secondsPrefix="0:"
         minutesPrefix="0:"
       />
+      {hoverTime !== null && thumbnailUrl && thumbCrop && (() => {
+        const seekBarWidth = seekBarRef.current?.offsetWidth || 0;
+        const thumbnailWidth = thumbCrop.w * 0.7; // Use scaled width for positioning
+        const hoverPercent = (hoverTime / (videoDuration || 1)) * 100;
+        const hoverPixels = (hoverPercent / 100) * seekBarWidth;
+        
+        // Calculate left position ensuring thumbnail stays within bounds
+        let leftPosition = hoverPixels - (thumbnailWidth / 2);
+        
+        // Ensure thumbnail doesn't go beyond left edge
+        if (leftPosition < 0) {
+          leftPosition = 0;
+        }
+        
+        // Ensure thumbnail doesn't go beyond right edge
+        if (leftPosition + thumbnailWidth > seekBarWidth) {
+          leftPosition = seekBarWidth - thumbnailWidth;
+        }
+        
+        return (
+          <div
+            className="absolute"
+            style={{ 
+              left: `${leftPosition}px`, 
+              top: -thumbCrop.h * 0.7 - 30, 
+              width: thumbCrop.w * 0.7, 
+              height: thumbCrop.h * 0.7, 
+              overflow: 'hidden', 
+              borderRadius: '6px', 
+              boxShadow: '0 2px 6px rgba(0,0,0,0.15)', 
+              border: '1px solid #eee', 
+              background: '#222' 
+            }}
+          >
+            <img
+              src={thumbnailUrl}
+              alt="thumbnail"
+              style={{
+                position: 'absolute',
+                left: -thumbCrop.x * 0.7,
+                top: -thumbCrop.y * 0.7,
+                width: undefined,
+                height: undefined,
+                maxWidth: 'none',
+                maxHeight: 'none',
+                transform: 'scale(0.7)',
+                transformOrigin: 'top left'
+              }}
+            />
+          </div>
+        );
+      })()}
     </div>
   );
 }
