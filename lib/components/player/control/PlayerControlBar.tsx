@@ -47,9 +47,25 @@ export default function PlayerControlBar() {
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
-  // Prevent long-press context menu on all buttons in control bar (mobile, Android & iOS)
+  // Prevent long-press context menu and iOS-specific touch behaviors on all buttons in control bar
   const preventContextMenu = (e: React.SyntheticEvent) => {
     e.preventDefault();
+  };
+
+  const preventTouchCallout = (e: React.TouchEvent) => {
+    e.preventDefault();
+    // Prevent iOS Safari magnifying glass and selection
+    const target = e.target as HTMLElement;
+    (target.style as any).webkitTouchCallout = 'none';
+    (target.style as any).webkitUserSelect = 'none';
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    preventTouchCallout(e);
+    // Prevent iOS long-press behaviors
+    const target = e.target as HTMLElement;
+    (target.style as any).webkitTouchCallout = 'none';
+    (target.style as any).webkitUserSelect = 'none';
   };
 
   // Attach handler to parent and delegate to buttons
@@ -64,7 +80,13 @@ export default function PlayerControlBar() {
       }`}
       id="nvm_player_control"
       onContextMenu={preventContextMenu}
-      onTouchStart={preventContextMenu}
+      onTouchStart={handleTouchStart}
+      style={{
+        WebkitTouchCallout: 'none',
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        touchAction: 'manipulation'
+      } as React.CSSProperties}
     >
       <div className="px-[16px] tablet:px-[32px] pb-[16px] pt-[91px] bg-gradient-to-b from-smoky-black-0 to-smoky-black-06">
         {/* Progress */}
