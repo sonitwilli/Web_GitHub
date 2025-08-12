@@ -15,7 +15,15 @@
   background-color: transparent;
 }
 
-@media screen and (min-width: 768px) {
+/* Mobile landscape and tablets */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+  .video::cue {
+    font-size: 24px !important;
+  }
+}
+
+/* Desktop */
+@media screen and (min-width: 1025px) {
   .video::cue {
     font-size: 37px !important;
   }
@@ -24,5 +32,32 @@
 @media screen and (min-width: 1280px) {
   .video::cue {
     width: 856px !important;
+  }
+}
+
+/* iOS Safari specific fixes */
+@supports (-webkit-touch-callout: none) {
+  /* iPhone and iPod Touch in portrait */
+  @media screen and (max-width: 414px) and (orientation: portrait) {
+    .video::cue {
+      font-size: 14px !important;
+      -webkit-text-size-adjust: 100%;
+    }
+  }
+  
+  /* iPhone and iPod Touch in landscape */
+  @media screen and (max-width: 926px) and (orientation: landscape) {
+    .video::cue {
+      font-size: 16px !important;
+      -webkit-text-size-adjust: 100%;
+    }
+  }
+  
+  /* iPad */
+  @media screen and (min-width: 768px) and (max-width: 1024px) {
+    .video::cue {
+      font-size: 20px !important;
+      -webkit-text-size-adjust: 100%;
+    }
   }
 }
