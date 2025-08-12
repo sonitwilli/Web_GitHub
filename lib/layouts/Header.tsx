@@ -125,6 +125,7 @@ export default function Header() {
       'cong-chieu',
       'xem-video',
       'tim-kiem',
+      'short-video'
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
