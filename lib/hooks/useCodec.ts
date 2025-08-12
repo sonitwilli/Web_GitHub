@@ -137,13 +137,8 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
           ? url_dash_drm_h265 || url_hls_drm_h265
           : url_dash_h265 || url_hls_h265;
         h264 = isDrm
-          ? url_dash_drm || url_hls_drm
-          : url_dash_no_drm ||
-            url_dash ||
-            url_hls ||
-            url_sub ||
-            url_clean ||
-            url;
+          ? url_dash_drm || url_hls_drm || url_dash || url_hls
+          : url_dash_no_drm || url_hls || url_sub || url_clean || url;
       }
       return {
         DOLBY_VISION_CODEC: dolby,

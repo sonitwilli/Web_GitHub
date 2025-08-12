@@ -2,6 +2,7 @@ import { MaturityRating as BaseMaturityRating } from '@/lib/api/vod';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import styles from './LimitAgeOverlay.module.css';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import { usePlayerPageContext } from '../context/PlayerPageContext';
 
 // Extend MaturityRating to allow duration
 interface MaturityRating extends BaseMaturityRating {
@@ -55,6 +56,8 @@ function getPositionStyle(
 export default function LimitAgeOverlay({
   maturityRating,
   videoRef,
+  // currentTime is not used anymore; we keep it in Props for backward compatibility
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   currentTime,
   duration,
 }: Props) {
@@ -74,6 +77,11 @@ export default function LimitAgeOverlay({
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const hideTimerRef = useRef<NodeJS.Timeout | null>(null);
   const overlayHideTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const stagesShownRef = useRef<{ s1: boolean; s2: boolean; s3: boolean }>({
+    s1: false,
+    s2: false,
+    s3: false,
+  });
 
   const { width } = useScreenSize();
   // Check if user is mobile
@@ -84,6 +92,9 @@ export default function LimitAgeOverlay({
   const isMobile = useMemo(() => {
     return width <= 768;
   }, [width]);
+
+  // Lấy thời gian phát thực tế từ context (được cập nhật trong usePlayer)
+  const { realPlaySeconds } = usePlayerPageContext();
 
   // Recursive countdown effect
   useEffect(() => {
@@ -110,22 +121,27 @@ export default function LimitAgeOverlay({
     };
   }, [visible, countdown, hideAdvisories]);
 
-  // Reset overlay when currentTime hits W1/W2/W3
+  // Reset overlay when real playing seconds crosses thresholds (W1=1s, W2, W3)
   useEffect(() => {
-    let show = false;
-    if (currentTime >= 1 && currentTime < 2) show = true;
-    if (
-      (currentTime === W2 && duration > 1200) ||
-      (currentTime === W3 && duration > 1800)
-    )
-      show = true;
-    if (show) {
+    const played = Number(realPlaySeconds) || 0;
+    let trigger = false;
+    if (!stagesShownRef.current.s1 && played >= 1) {
+      stagesShownRef.current.s1 = true;
+      trigger = true;
+    } else if (duration > 1200 && !stagesShownRef.current.s2 && played >= W2) {
+      stagesShownRef.current.s2 = true;
+      trigger = true;
+    } else if (duration > 1800 && !stagesShownRef.current.s3 && played >= W3) {
+      stagesShownRef.current.s3 = true;
+      trigger = true;
+    }
+    if (trigger) {
       setVisible(true);
       setIsHiding(false);
       setHideAdvisories(false);
       setCountdown(showDuration);
     }
-  }, [currentTime, duration, W2, W3, showDuration]);
+  }, [realPlaySeconds, duration, W2, W3, showDuration]);
 
   // Cleanup on unmount
   useEffect(() => {

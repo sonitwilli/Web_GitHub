@@ -1,6 +1,18 @@
 {
     "versions": [
         {
+            "version": "8.0.21",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Tìm kiếm] Lỗi hiển thị khi thực hiện scroll trang",
+                "[WEB][Trang chủ] Lỗi không highlight tab đã chọn ở responsive mobile",
+                "[WEB][PlayerVOD] Danh sách phát: Lỗi hiển thị description ở danh sách phát",
+                "[WEB][Navigation bar] Lỗi mất tên category trong menu hamburger",
+                "[WEB][PlayerVOD] Lỗi hiển thị ở btn Mở rộng ở player đối với VOD bộ >1 tập",
+                "[WEB][PlayerVOD] Danh sách phát: Lỗi không scroll đến đúng danh sách tập khi chọn vào tab bất kỳ ở danh sách tab"
+            ]
+        },  
+        {
             "version": "8.0.20",
             "date": "Dự kiến",
             "content": [

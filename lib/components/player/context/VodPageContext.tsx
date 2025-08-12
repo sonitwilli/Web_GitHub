@@ -16,6 +16,8 @@ import {
 import { usePlayerPageContext } from './PlayerPageContext';
 import { useRouter } from 'next/router';
 import { BlockItemResponseType } from '@/lib/api/blocks';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 type ContextType = {
   currentEpisode?: Episode;
@@ -107,6 +109,17 @@ export function VodPageContextProvider({ children }: Props) {
     );
   }, [dataChannel, routerChapterId]);
 
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.CURRENT_EPISODE,
+          value: currentEpisode ? JSON.stringify(currentEpisode || {}) : '',
+        },
+      ],
+    });
+  }, [currentEpisode]);
+
   const isFinalEpisode = useMemo(() => {
     let isFinal = false;
     const index = Number(currentEpisode?.id);
@@ -120,6 +133,16 @@ export function VodPageContextProvider({ children }: Props) {
       isFinal
     );
   }, [dataChannel, currentEpisode]);
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.IS_FINAL_EPISODE,
+          value: isFinalEpisode ? '1' : '0',
+        },
+      ],
+    });
+  }, [isFinalEpisode]);
 
   const nextEpisode = useMemo(() => {
     return dataChannel?.episodes?.find(

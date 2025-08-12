@@ -61,6 +61,7 @@ export default function usePlayer() {
     playerName,
     isVideoPaused,
     streamType,
+    setRealPlaySeconds,
     checkErrorInterRef,
     clearErrorInterRef,
   } = usePlayerPageContext();
@@ -91,6 +92,9 @@ export default function usePlayer() {
     retryCountRef.current = retryCount;
   }, [retryCount]);
   const previousCurrentTimeRef = useRef(0);
+  // Real playing time accumulators
+  const lastTimeForRealPlayRef = useRef(0);
+  const realPlaySecondsAccRef = useRef(0);
   const handleUpdateRetryTimeout = () => {
     // mỗi lần retry: 3s, 3s, 3s, 6s, 30s, 1phút, 5 phút, 10 phút, 15 phút, dừng
     switch (retryCountRef.current) {
@@ -246,6 +250,12 @@ export default function usePlayer() {
       closePlayerErrorModal();
     }
     if (setIsVideoPaused) setIsVideoPaused(false);
+    // reset tracking pointer for real play time
+    const vInit = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (vInit) {
+      lastTimeForRealPlayRef.current = vInit.currentTime || 0;
+    }
+
     if (router.query.time_shift_id) {
       if (setIsEndVideo) setIsEndVideo(0);
     }
@@ -344,11 +354,31 @@ export default function usePlayer() {
       if (c > 0) {
         sessionStorage.setItem(VIDEO_TIME_BEFORE_ERROR, c as unknown as string);
       }
+      // accumulate real play seconds only when advancing normally (avoid big jumps due to seeking)
+      const last = lastTimeForRealPlayRef.current || 0;
+      const delta = c - last;
+      if (!isVideoPaused && delta > 0 && delta < 2) {
+        realPlaySecondsAccRef.current += delta;
+        if (setRealPlaySeconds) {
+          setRealPlaySeconds(Math.floor(realPlaySecondsAccRef.current));
+        }
+      }
+      lastTimeForRealPlayRef.current = c;
     }
   };
 
   const handleEnd = () => {
     if (setIsEndVideo) setIsEndVideo(new Date().getTime());
+    const v2 = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (v2) {
+      realPlaySecondsAccRef.current = Math.max(
+        realPlaySecondsAccRef.current,
+        v2.duration || 0,
+      );
+      if (setRealPlaySeconds) {
+        setRealPlaySeconds(Math.floor(realPlaySecondsAccRef.current));
+      }
+    }
   };
 
   const handlePaused = () => {
@@ -639,6 +669,8 @@ export default function usePlayer() {
     return () => {
       console.log('--- PLAYER UNMOUNTED');
       handleClearInterval();
+      lastTimeForRealPlayRef.current = 0;
+      realPlaySecondsAccRef.current = 0;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

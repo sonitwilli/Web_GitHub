@@ -145,6 +145,7 @@ export interface ChannelDetailType extends VodDetailType {
   list_structure_id?: string[];
   title_origin?: string;
   is_tvod?: string;
+  begin_time?: string;
 }
 
 export interface Seo {

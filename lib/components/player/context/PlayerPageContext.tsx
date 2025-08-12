@@ -32,6 +32,7 @@ import {
   PLAYER_NAME_TYPE,
   PLAYER_WRAPPER_ID,
   ROUTE_PATH_NAMES,
+  TOKEN,
 } from '@/lib/constant/texts';
 import _ from 'lodash';
 import { userAgentInfo } from '@/lib/utils/ua';
@@ -146,6 +147,8 @@ type ContextType = {
   seekOffsetInSeconds?: number;
   isVideoPaused?: boolean;
   setIsVideoPaused?: (v: boolean) => void;
+  realPlaySeconds?: number;
+  setRealPlaySeconds?: (v: number) => void;
   portalTarget?: HTMLElement;
   hlsErrors?: ErrorData[];
   setHlsErrors?: (v: ErrorData[]) => void;
@@ -244,6 +247,7 @@ export function PlayerPageContextProvider({ children }: Props) {
   useEffect(() => {
     isPlaySuccessRef.current = isPlaySuccess;
   }, [isPlaySuccess]);
+  const [realPlaySeconds, setRealPlaySeconds] = useState<number>(0);
   const [playerName, setPlayerName] = useState<PLAYER_NAME_TYPE>('hls');
   const modalActions = useModalActions();
   const [dataChannel, setDataChannel] = useState<ChannelDetailType>();
@@ -303,6 +307,17 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [showLoginPlayer, setShowLoginPlayer] = useState(false);
   const [loginManifestUrl, setLoginManifestUrl] = useState('');
   const router = useRouter();
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_ROUTER_QUERY,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          value: JSON.stringify(router.query as any),
+        },
+      ],
+    });
+  }, [router.query]);
   const [modalNoticeCloseKey, setModalNoticeCloseKey] =
     useState<ModalCloseKey>('');
   const [modalNoticeSubmitKey, setModalNoticeSubmitKey] =
@@ -365,6 +380,19 @@ export function PlayerPageContextProvider({ children }: Props) {
 
     return dataPlaylist.videos.find((video) => video.id === currentVideoId);
   }, [streamType, dataPlaylist?.videos, router?.query?.slug]);
+
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.CURRENT_EPISODE,
+          value: currentPlaylistVideo
+            ? JSON.stringify(currentPlaylistVideo)
+            : '',
+        },
+      ],
+    });
+  }, [currentPlaylistVideo]);
 
   const nextPlaylistVideo = useMemo(() => {
     if (streamType !== 'playlist' || !dataPlaylist?.videos) return undefined;
@@ -433,91 +461,28 @@ export function PlayerPageContextProvider({ children }: Props) {
         isPreview = found?.is_preview === '1';
       }
       // Live/Event/Premiere: Check has preview URLs
-      else if (['channel', 'event'].includes(streamType)) {
+      if (['channel', 'event'].includes(streamType)) {
         isPreview = responseData?.enable_preview === '1';
+
+        if (localStorage && !localStorage.getItem(TOKEN)) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+        }
       }
 
       if (!isPreview) return false;
 
-      // Set dataStream with complete preview data for Player to work without additional config
-      const previewStreamData: StreamItemType = {
-        url_dash: responseData?.data?.url_dash || responseData?.url_dash,
-        url_dash_av1:
-          responseData?.data?.url_dash_av1 || responseData?.url_dash_av1,
-        url_dash_dolby_vision:
-          responseData?.data?.url_dash_dolby_vision ||
-          responseData?.url_dash_dolby_vision,
-        url_dash_h265:
-          responseData?.data?.url_dash_h265 || responseData?.url_dash_h265,
-        url_dash_h265_hdr_10:
-          responseData?.data?.url_dash_h265_hdr_10 ||
-          responseData?.url_dash_h265_hdr_10,
-        url_dash_h265_hdr_10_plus:
-          responseData?.data?.url_dash_h265_hdr_10_plus ||
-          responseData?.url_dash_h265_hdr_10_plus,
-        url_dash_h265_hlg:
-          responseData?.data?.url_dash_h265_hlg ||
-          responseData?.url_dash_h265_hlg,
-        url_dash_vp9:
-          responseData?.data?.url_dash_vp9 || responseData?.url_dash_vp9,
-        url_hls: responseData?.data?.url_hls || responseData?.url_hls,
-        url_hls_av1:
-          responseData?.data?.url_hls_av1 || responseData?.url_hls_av1,
-        url_hls_dolby_vision:
-          responseData?.data?.url_hls_dolby_vision ||
-          responseData?.url_hls_dolby_vision,
-        url_hls_h265:
-          responseData?.data?.url_hls_h265 || responseData?.url_hls_h265,
-        url_hls_h265_hdr_10:
-          responseData?.data?.url_hls_h265_hdr_10 ||
-          responseData?.url_hls_h265_hdr_10,
-        url_hls_h265_hdr_10_plus:
-          responseData?.data?.url_hls_h265_hdr_10_plus ||
-          responseData?.url_hls_h265_hdr_10_plus,
-        url_hls_h265_hlg:
-          responseData?.data?.url_hls_h265_hlg ||
-          responseData?.url_hls_h265_hlg,
-        url_hls_vp9:
-          responseData?.data?.url_hls_vp9 || responseData?.url_hls_vp9,
-
-        // All required properties for Player functionality
-        session: responseData?.data?.session || responseData?.session,
-        merchant: responseData?.data?.merchant || responseData?.merchant,
-        is_logged_in:
-          responseData?.data?.is_logged_in || responseData?.is_logged_in,
-        is_vip: responseData?.data?.is_vip || responseData?.is_vip,
-        audio: responseData?.data?.audio || responseData?.audio,
-        stream_session:
-          responseData?.data?.stream_session || responseData?.stream_session,
-        require_vip_plan:
-          responseData?.data?.require_vip_plan ||
-          responseData?.require_vip_plan,
-        ping_enable:
-          responseData?.data?.ping_enable || responseData?.ping_enable,
-        ping_enc: responseData?.data?.ping_enc || responseData?.ping_enc,
-        ping_mqtt:
-          (responseData?.data?.ping_mqtt || responseData?.ping_mqtt) === '1',
-        ping_qnet: responseData?.data?.ping_qnet || responseData?.ping_qnet,
-        ping_session:
-          responseData?.data?.ping_session || responseData?.ping_session,
-        require_active:
-          responseData?.data?.require_active || responseData?.require_active,
-        operator: responseData?.data?.operator || responseData?.operator,
-        overlay_logo:
-          responseData?.data?.overlay_logo || responseData?.overlay_logo,
-        ttl_preview:
-          responseData?.data?.ttl_preview || responseData?.ttl_preview,
-        trailer_url:
-          responseData?.data?.trailer_url || responseData?.trailer_url,
-        require_obj_msg:
-          responseData?.data?.require_obj_msg || responseData?.require_obj_msg,
-      };
+      let previewStreamData = {};
+      if (['event', 'channel'].includes(streamType)) {
+        previewStreamData = responseData?.data || {};
+      } else {
+        previewStreamData = responseData || {};
+      }
 
       setDataStream(previewStreamData);
       setPreviewHandled(true);
       return true;
     },
-    [streamType, getCurrentVodEpisode],
+    [streamType, getCurrentVodEpisode, dispatch],
   );
 
   const handleSubmitModalNotice = () => {
@@ -1247,6 +1212,8 @@ export function PlayerPageContextProvider({ children }: Props) {
         seekOffsetInSeconds,
         isVideoPaused,
         setIsVideoPaused,
+        realPlaySeconds,
+        setRealPlaySeconds,
         portalTarget,
         hlsErrors,
         setHlsErrors,

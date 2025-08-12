@@ -20,7 +20,7 @@ export default function RequirePurchase() {
         <div className="absolute inset-0 bg-black/86 xl:hidden"></div>
 
         {/* Mobile: centered content */}
-        <div className="absolute inset-0 z-10 flex flex-col items-center justify-center p-6 md:hidden">
+        <div className="absolute inset-0 z-0 flex flex-col items-center justify-center p-6 md:hidden">
           <div className="max-w-[81vw] w-full">
             <p className="font-[600] text-[16px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[8px] text-center">
               {requirePurchaseData?.require_vip_title}
@@ -41,7 +41,7 @@ export default function RequirePurchase() {
         </div>
 
         {/* Tablet: centered content with larger text */}
-        <div className="absolute inset-0 z-10 hidden md:flex xl:hidden flex-col items-center justify-center p-8">
+        <div className="absolute inset-0 z-0 hidden md:flex xl:hidden flex-col items-center justify-center p-8">
           <div className="max-w-[41vw] w-full">
             <p className="font-[600] text-[18px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[12px] text-center">
               {requirePurchaseData?.require_vip_title}
@@ -62,7 +62,7 @@ export default function RequirePurchase() {
         </div>
 
         {/* Desktop: left-aligned content */}
-        <div className="absolute z-10 top-1/2 left-[0px] 2xl:left-[66px] w-[361px] hidden xl:flex flex-col items-center -translate-y-1/2">
+        <div className="absolute z-0 top-1/2 left-[0px] 2xl:left-[66px] w-[361px] hidden xl:flex flex-col items-center -translate-y-1/2">
           <p className="font-[600] text-[24px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[16px] text-center">
             {requirePurchaseData?.require_vip_title}
           </p>

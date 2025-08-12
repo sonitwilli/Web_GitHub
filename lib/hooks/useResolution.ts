@@ -11,6 +11,7 @@ import { userAgentInfo } from '@/lib/utils/ua';
 import { StreamProfile } from '@/lib/api/channel';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
+import { saveSessionStorage } from '../utils/storage';
 export interface ResolutionItemType {
   language?: string;
   id?: string | number;
@@ -102,6 +103,14 @@ export default function useResolution() {
 
   const click = (x: ResolutionItemType) => {
     localStorage.setItem(SELECTED_VIDEO_QUALITY, x.height as string);
+    saveSessionStorage({
+      data: [
+        {
+          key: SELECTED_VIDEO_QUALITY,
+          value: x.height as string,
+        },
+      ],
+    });
     setSelectedQuality(x);
     if (x.height) {
       switchQuality({ h: x.height });

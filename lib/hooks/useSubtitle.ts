@@ -7,6 +7,7 @@ import {
 } from '@/lib/constant/texts';
 import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
+import { saveSessionStorage } from '../utils/storage';
 
 export interface SubtitleItemType {
   language?: string;
@@ -144,6 +145,14 @@ export default function useSubtitle() {
         return;
       }
       localStorage.setItem(SELECTED_SUBTITLE, s.language || '');
+      saveSessionStorage({
+        data: [
+          {
+            key: SELECTED_SUBTITLE,
+            value: s.language,
+          },
+        ],
+      });
       if (s.id === OFF_SUB) {
         setSelected(subs[0]);
         if (playerName === 'hls' && window.hlsPlayer) {

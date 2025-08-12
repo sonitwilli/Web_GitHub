@@ -2,10 +2,74 @@ import { trackingStoreKey } from '@/lib/constant/tracking';
 import { removeSessionStorage, saveSessionStorage } from '../storage';
 import {
   PLAYER_BOOKMARK_SECOND,
+  SELECTED_AUDIO_LABEL,
+  SELECTED_AUDIO_LABEL_LIVE,
+  SELECTED_SUBTITLE,
+  SELECTED_VIDEO_QUALITY,
   VIDEO_CURRENT_TIME,
+  VIDEO_ID,
 } from '@/lib/constant/texts';
+import { ChannelDetailType, StreamErrorType } from '@/lib/api/channel';
+import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+
+export const getVideoInfo = () => {
+  if (typeof sessionStorage === 'undefined') {
+    return {};
+  }
+  try {
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (!video) {
+      return {};
+    }
+    return {
+      Duration: video.duration,
+      CurrentTime: video.currentTime,
+    };
+  } catch {
+    return {};
+  }
+};
+
+export const getChapterId = () => {
+  if (typeof window === 'undefined') {
+    return '';
+  }
+  const url = window.location.href;
+  const match = url.match(/\/tap-(\d+)/);
+  if (match) {
+    return String(Number(match[1]) - 1);
+  }
+  return '0';
+};
+
+export const getContentData = () => {
+  if (typeof sessionStorage === 'undefined') {
+    return {};
+  }
+  try {
+    const c = sessionStorage.getItem(trackingStoreKey.DATA_CHANNEL);
+    const s = sessionStorage.getItem(trackingStoreKey.DATA_CHANNEL);
+    const p = sessionStorage.getItem(trackingStoreKey.REQUIRE_PURCHASE_DATA);
+    const w = sessionStorage.getItem(trackingStoreKey.PLAYER_DATA_WATCHING);
+    const e = sessionStorage.getItem(trackingStoreKey.CURRENT_EPISODE);
+    const dataChannel = (c ? JSON.parse(c) : {}) as ChannelDetailType;
+    const dataStream = (s ? JSON.parse(s) : {}) as StreamErrorType;
+    const requirePurchaseData = (p ? JSON.parse(p) : {}) as StreamErrorType;
+    const dataWatching = (w ? JSON.parse(w) : {}) as VodHistoryResponseType;
+    const currentEpisode = (e ? JSON.parse(e) : {}) as Episode;
+    return {
+      dataChannel,
+      dataStream,
+      requirePurchaseData,
+      dataWatching,
+      currentEpisode,
+    };
+  } catch {
+    return {};
+  }
+};
 export const getStreamProfiles = () => {
   if (typeof window === 'undefined') {
     return;
@@ -240,6 +304,14 @@ export const getPlayerParams = () => {
   if (typeof window === 'undefined') {
     return {};
   }
+  const {
+    dataChannel,
+    dataStream,
+    dataWatching,
+    requirePurchaseData,
+    currentEpisode,
+  } = getContentData();
+  const { Duration, CurrentTime } = getVideoInfo();
   return {
     StreamProfile: sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES),
     Bandwidth: sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH),
@@ -251,6 +323,43 @@ export const getPlayerParams = () => {
     TotalByteLoaded: sessionStorage.getItem(
       trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
     ),
+    ItemId: dataChannel?.id || dataChannel?._id,
+    ItemName:
+      dataChannel?.title ||
+      dataChannel?.title_origin ||
+      dataChannel?.name ||
+      dataChannel?.alias_name,
+    RefEpisodeID: currentEpisode?.ref_episode_id,
+    RefItemId: dataChannel?.id || dataChannel?._id,
+    ChapterID: getChapterId(),
+    // PlaylistID: currentEpisode?.id || dataChannel?.id || dataChannel?._id,
+    isLastEpisode: sessionStorage.getItem(trackingStoreKey.IS_FINAL_EPISODE),
+    TotalEpisode: String(dataChannel?.episodes?.length),
+    EpisodeID: currentEpisode?.real_episode_id,
+
     DRMPartner: sessionStorage.getItem(trackingStoreKey.DRM_PARTNER),
+    CDNName: sessionStorage.getItem(trackingStoreKey.PLAYING_URL),
+    Bitrate: sessionStorage.getItem(trackingStoreKey.PLAYER_BITRATE),
+    Resolution: sessionStorage.getItem(trackingStoreKey.PLAYER_RESOLUTION),
+    Dimension: sessionStorage.getItem(trackingStoreKey.PLAYER_DIMENSION),
+    VideoQuality: sessionStorage.getItem(SELECTED_VIDEO_QUALITY),
+    Audio:
+      sessionStorage.getItem(SELECTED_AUDIO_LABEL) ||
+      sessionStorage.getItem(SELECTED_AUDIO_LABEL_LIVE),
+    Subtitle: sessionStorage.getItem(SELECTED_SUBTITLE),
+    Url: sessionStorage.getItem(trackingStoreKey.PLAYING_URL),
+    Credit: (dataStream?.end_content || 0)?.toString(),
+    StartTime: dataWatching?.timeplayed || dataChannel?.begin_time,
+    Duration: Math.round(Duration || 0).toString(),
+    ElapsedTimePlaying: Math.round(CurrentTime || 0).toString(),
+    RealTimePlaying: sessionStorage.getItem(
+      trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
+    ),
+    isLandingPage: sessionStorage.getItem(
+      trackingStoreKey.PLAYER_IS_LANDING_PAGE,
+    ),
+    PlayerName: sessionStorage.getItem(trackingStoreKey.PLAYER_NAME),
+    BusinessPlan: requirePurchaseData?.require_vip_plan,
+    playing_session: sessionStorage.getItem(trackingStoreKey.PLAYING_SESSION),
   };
 };

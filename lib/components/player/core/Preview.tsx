@@ -30,7 +30,7 @@ import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
-export type PreviewType = 'vod' | 'live';
+export type PreviewType = 'vod' | 'live' | 'event';
 
 interface CurrentUser {
   id: string;
@@ -118,7 +118,8 @@ const Preview: React.FC<PreviewProps> = ({
 
   // Derived: hết lượt preview live
   const isLiveEnded =
-    type === 'live' && dataStream?.require_obj_msg?.available === '0';
+    (type === 'live' || type === 'event') &&
+    dataStream?.require_obj_msg?.available === '0';
 
   // Single preview state
   const [previewState, setPreviewState] = useState<
@@ -134,7 +135,7 @@ const Preview: React.FC<PreviewProps> = ({
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
       (hlsErrors && hlsErrors.length > 0) ||
-      (playerError && type === 'live') ||
+      (playerError && (type === 'live' || type === 'event')) ||
       isLiveEnded
     ) {
       setPreviewState('background');
@@ -205,7 +206,7 @@ const Preview: React.FC<PreviewProps> = ({
   useEffect(() => {
     if (
       previewState === 'background' &&
-      type === 'live' &&
+      (type === 'live' || type === 'event') &&
       dataEndedPreviewEvent?.is_ended
     ) {
       setPreviewState('banner');
@@ -216,6 +217,12 @@ const Preview: React.FC<PreviewProps> = ({
   useEffect(() => {
     setIsPopupManuallyClosed(false);
   }, [router.asPath]);
+
+  useEffect(() => {
+    if (currentStream?.require_obj_msg?.available === '0') {
+      setPreviewState('background');
+    }
+  }, [currentStream?.require_obj_msg?.available]);
 
   // --- TEXT FROM CONFIGS (preview) ---
   const previewConfig = messageConfigs?.preview || {};
@@ -329,7 +336,7 @@ const Preview: React.FC<PreviewProps> = ({
               },
             });
             setShowConfirmModal(true);
-          } else {            
+          } else {
             localStorage.setItem(
               trackingStoreKey.BACK_LINK_PLAY,
               window.location.pathname,
@@ -388,7 +395,7 @@ const Preview: React.FC<PreviewProps> = ({
   }, []);
 
   const handleExitPreview = useCallback(() => {
-    if (type === 'live') {
+    if (type === 'live' || type === 'event') {
       if (dataEndedPreviewEvent?.is_ended) {
         onExitPreviewEvent?.();
         setPreviewState('banner');
@@ -409,18 +416,26 @@ const Preview: React.FC<PreviewProps> = ({
   if (!previewState) return null;
 
   return (
-    <div className={type === 'live' ? 'preview-noti-live' : 'preview-noti-vod'}>
+    <div
+      className={
+        type === 'live' || type === 'event'
+          ? 'preview-noti-live'
+          : 'preview-noti-vod'
+      }
+    >
       {/* Popup Preview Notification */}
       {previewState === 'popup' && (
         <div
           className={`${
-            type === 'live' ? 'preview-popup-live' : 'preview-popup-vod'
+            type === 'live' || type === 'event'
+              ? 'preview-popup-live'
+              : 'preview-popup-vod'
           } absolute z-2 right-[1%] bottom-[60px] tablet:right-[4%] tablet:bottom-[72px] bg-licorice/80 rounded-lg flex items-center px-4 py-2`}
         >
           <div className="flex items-center justify-between">
             <div
               className={`${
-                type === 'live'
+                type === 'live' || type === 'event'
                   ? 'preview-popup-live__text'
                   : 'preview-popup-vod__text'
               } flex items-center tablet:w-[317px]`}
@@ -432,7 +447,7 @@ const Preview: React.FC<PreviewProps> = ({
             <button
               onClick={handlePurchaseAction}
               className={`${
-                type === 'live'
+                type === 'live' || type === 'event'
                   ? 'preview-popup-live__btn-buy'
                   : 'preview-popup-vod__btn-buy'
               } flex items-center justify-center h-10 px-4 py-[2px] mr-2 border border-white-08 rounded-lg text-white-smoke text-sm font-bold leading-9 text-center cursor-pointer transition-all duration-200 max-sm:text-xs whitespace-nowrap`}
@@ -443,7 +458,7 @@ const Preview: React.FC<PreviewProps> = ({
           </div>
           <div
             className={`${
-              type === 'live'
+              type === 'live' || type === 'event'
                 ? 'preview-popup-live__line'
                 : 'preview-popup-vod__line'
             } w-px h-9 bg-gradient-to-b from-transparent via-white to-transparent mx-2`}
@@ -453,7 +468,7 @@ const Preview: React.FC<PreviewProps> = ({
           <button
             onClick={handleClosePopup}
             className={`${
-              type === 'live'
+              type === 'live' || type === 'event'
                 ? 'preview-popup-live__close-btn'
                 : 'preview-popup-vod__close-btn'
             } flex items-center justify-center cursor-pointer w-4 h-4`}
@@ -468,7 +483,7 @@ const Preview: React.FC<PreviewProps> = ({
       {previewState === 'background' && (
         <div
           className={`${
-            type === 'live'
+            type === 'live' || type === 'event'
               ? 'preview-background-live'
               : 'preview-background-vod'
           } absolute top-0 left-0 w-full h-full z-3 flex flex-col items-center justify-center`}
@@ -482,7 +497,7 @@ const Preview: React.FC<PreviewProps> = ({
             <div className="flex flex-col items-center p-0 gap-4 w-[343px] tablet:w-[528px] h-[68px] flex-none order-0 self-stretch">
               <h2
                 className={`${
-                  type === 'live'
+                  type === 'live' || type === 'event'
                     ? 'preview-background-live__title'
                     : 'preview-background-vod__title'
                 } whitespace-nowrap tablet:whitespace-normal w-[343px] tablet:w-[421px] h-[31px] font-semibold text-[20px] tablet:text-2xl leading-[130%] text-center tracking-[0.02em] text-white-smoke flex-none order-0 flex-grow-0`}
@@ -491,7 +506,7 @@ const Preview: React.FC<PreviewProps> = ({
               </h2>
               <span
                 className={`${
-                  type === 'live'
+                  type === 'live' || type === 'event'
                     ? 'preview-background-live__description'
                     : 'preview-background-vod__description'
                 } w-[343px] tablet:w-[528px] h-[21px] font-normal text-[14px] tablet:text-base leading-[130%] text-center tracking-[0.02em] text-silver-chalice flex-none order-1 self-stretch flex-grow-0`}
@@ -500,14 +515,14 @@ const Preview: React.FC<PreviewProps> = ({
               </span>
             </div>
             <div className="flex flex-row justify-center items-start p-0 gap-4 w-[343px] tablet:w-[361px] h-12 flex-none order-1 flex-grow-0">
-              {type === 'live' &&
+              {(type === 'live' || type === 'event') &&
               currentStream?.require_obj_msg?.available &&
               parseInt(currentStream.require_obj_msg.available) > 0 ? (
                 <div className="flex items-center justify-between gap-4">
                   <button
                     onClick={handleExitPreview}
                     className={`${
-                      type === 'live'
+                      type === 'live' || type === 'event'
                         ? 'preview-background-live__exit-btn'
                         : 'preview-background-vod__exit-btn'
                     } w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-charleston-green text-light-gray text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
@@ -517,7 +532,7 @@ const Preview: React.FC<PreviewProps> = ({
                   <button
                     onClick={handlePurchaseAction}
                     className={`${
-                      type === 'live'
+                      type === 'live' || type === 'event'
                         ? 'preview-background-live__register-btn'
                         : 'preview-background-vod__register-btn'
                     }  w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
@@ -529,7 +544,7 @@ const Preview: React.FC<PreviewProps> = ({
                 <button
                   onClick={handlePurchaseAction}
                   className={`${
-                    type === 'live'
+                    type === 'live' || type === 'event'
                       ? 'preview-background-live__register-btn'
                       : 'preview-background-vod__register-btn'
                   } w-[152.5px] tablet:w-[200px] flex h-10 tablet:h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
@@ -544,7 +559,7 @@ const Preview: React.FC<PreviewProps> = ({
 
       {/* Background Banner for Live Events (only for live type) */}
       {previewState === 'banner' &&
-        type === 'live' &&
+        (type === 'live' || type === 'event') &&
         !dataStream?.trailer_url &&
         (dataChannel?.image?.landscape_title ||
           dataChannel?.image?.landscape) && (

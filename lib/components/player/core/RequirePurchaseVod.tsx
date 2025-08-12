@@ -74,7 +74,7 @@ export default function RequirePurchaseVod() {
         </div>
 
         {/* Tablet: centered content with larger text */}
-        <div className="absolute inset-0 z-10 hidden md:flex xl:hidden flex-col items-center justify-center p-8">
+        <div className="absolute inset-0 z-0 hidden md:flex xl:hidden flex-col items-center justify-center p-8">
           <div className="max-w-[50vw] w-full">
             <p className="font-[600] text-[18px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[12px] text-center">
               {dataChannel?.source_provider === SOURCE_PROVIDER.GALAXY_PLAY
@@ -107,7 +107,7 @@ export default function RequirePurchaseVod() {
         </div>
 
         {/* Desktop: centered content */}
-        <div className="absolute inset-0 z-10 hidden xl:flex flex-col items-center justify-center">
+        <div className="absolute inset-0 z-0 hidden xl:flex flex-col items-center justify-center">
           <p className="font-[600] text-[24px] leading-[130%] tracking-[0.48px] text-white-smoke mb-[16px] text-center">
             {dataChannel?.source_provider === SOURCE_PROVIDER.GALAXY_PLAY
               ? messageConfigs?.preview?.title_end_preview_by_package

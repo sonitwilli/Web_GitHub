@@ -5,6 +5,8 @@ import { watchEventDocument } from '@/lib/plugins/firebase';
 import EventView from './EventView';
 import { useDispatch } from 'react-redux';
 import { setDataEvent } from '@/lib/store/slices/playerSlice';
+import { saveSessionStorage } from '@/lib/utils/storage';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 type Props = {
   eventId?: string;
@@ -46,6 +48,17 @@ const firebasePreferredFields: (keyof FirebaseEventData)[] = [
 
 const EventContainer = ({ eventId, type }: Props) => {
   const [dataEvent, setDataEventLocal] = useState<EventDetailExtended>();
+
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.DATA_CHANNEL,
+          value: JSON.stringify(dataEvent || {}),
+        },
+      ],
+    });
+  }, [dataEvent]);
   const dispatch = useDispatch();
 
   const mergeEventData = useCallback(

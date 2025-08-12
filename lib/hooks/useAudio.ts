@@ -18,6 +18,7 @@ import {
 import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { AudioItemType } from '../components/player/core/AudioButton';
+import { saveSessionStorage } from '../utils/storage';
 
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
@@ -248,8 +249,24 @@ export default function useAudio() {
     if (a.X_NAME) {
       if (streamType === 'channel' || streamType === 'event') {
         localStorage.setItem(SELECTED_AUDIO_LABEL_LIVE, a.X_NAME || '');
+        saveSessionStorage({
+          data: [
+            {
+              key: SELECTED_AUDIO_LABEL_LIVE,
+              value: a.X_NAME,
+            },
+          ],
+        });
       } else {
         localStorage.setItem(SELECTED_AUDIO_LABEL, a.X_NAME || '');
+        saveSessionStorage({
+          data: [
+            {
+              key: SELECTED_AUDIO_LABEL,
+              value: a.X_NAME,
+            },
+          ],
+        });
       }
     }
 
