@@ -8,7 +8,6 @@ import styles from './AutoNextVideo.module.css';
 import { FaPlay } from 'react-icons/fa';
 import { RootState, useAppSelector } from '@/lib/store';
 
-// Extended interface for additional fields from NuxtJS
 interface ExtendedChannelDetailType extends ChannelDetailType {
   title_vie?: string;
   ribbon_logo?: string;
@@ -157,7 +156,7 @@ const AutoNextVideo: React.FC<AutoNextVideoProps> = ({ isExpanded }) => {
             isFullscreen ? 'w-full' : 'xl:max-w-[870px]'
           }`}
         >
-          {/* Main Title - using title_vie like NuxtJS */}
+          {/* Main Title */}
           {streamType === 'playlist' ? (
             <h2 className="w-full font-semibold text-[18px] tablet:text-[22px] xl:text-[28px] leading-[130%] tracking-[0.02em] text-white m-0 break-words line-clamp-1 tablet:line-clamp-none">
               {nextEpisode?.title}
@@ -168,7 +167,7 @@ const AutoNextVideo: React.FC<AutoNextVideoProps> = ({ isExpanded }) => {
             </h2>
           )}
 
-          {/* Next Episode Title - using nextEpiData_.title like NuxtJS */}
+          {/* Next Episode Title */}
           {streamType !== 'playlist' && (
             <h3 className="font-medium text-[12px] tablet:text-sm xl:text-base leading-[130%] tracking-[0.02em] text-white-smoke m-0 break-words line-clamp-1 tablet:line-clamp-none">
               {nextEpisode?.title}

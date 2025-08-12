@@ -39,9 +39,11 @@ const PaymentTotal: React.FC<PaymentTotalProps> = ({
     const amount = plan?.amount ?? 0;
     if (coupon) {
       return currencyFormat(amount - coupon.price / 1000, plan?.currency);
-    } else if (plan?.discount_display) {
-      return currencyFormat(plan?.discount_display, plan?.currency);
-    } else {
+    }
+    // else if (plan?.discount_display) {
+    //   return currencyFormat(plan?.discount_display, plan?.currency);
+    // }
+    else {
       return `0 ${plan?.currency}`;
     }
   };

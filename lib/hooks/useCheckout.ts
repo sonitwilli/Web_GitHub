@@ -88,7 +88,7 @@ export function useCheckout({
         display_mode: mode,
         affiliate_source: data.affiliate_source || '',
         traffic_id: data.traffic_id || '',
-        return_url: `${baseUrl}/mua-goi/dich-vu/thanh-toan/`,
+        return_url: `${baseUrl}/mua-goi/dich-vu/thanh-toan/${option.key}`,
         is_invoice_required: data?.is_invoice_required || 0,
         full_address: data?.full_address || '',
         full_name: data?.full_name || '',

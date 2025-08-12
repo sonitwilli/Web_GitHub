@@ -76,7 +76,7 @@ const ProfilePasswordModal = forwardRef<
           setPassword('');
         }}
         isCustom={true}
-        contentClassName="w-full max-w-[calc(100%-32px)] 2xl:max-w-[460px] bg-eerie-black rounded-2xl px-4 sm:px-8 py-6 sm:py-8 text-white shadow-lg"
+        contentClassName="w-full max-w-[calc(100%-32px)] sm:max-w-[460px] bg-eerie-black rounded-2xl px-4 sm:px-8 py-6 sm:py-8 text-white shadow-lg"
         overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]"
         shouldCloseOnEsc={true}
         shouldCloseOnOverlayClick={false}

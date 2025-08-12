@@ -560,7 +560,6 @@ export const checkAccountStatus = async (
   type: string,
 ): Promise<CheckAccountStatusResponse> => {
   try {
-    // Use the same logic as Nuxt - call get_package_plans API
     const response = await axiosInstance.get(
       `/payment/get_package_plans?package_type=${type}&from_source=play&is_preview=1`,
     );

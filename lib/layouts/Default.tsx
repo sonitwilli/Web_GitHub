@@ -16,6 +16,8 @@ import SideTagButton from '@/lib/components/buttons/SideTagButton';
 import { useNetwork } from '@/lib/components/contexts';
 import { NetworkError } from '@/lib/components/error';
 // import { getUserAgent } from '../utils/methods';
+import MonitorLayout from './MonitorLayout';
+
 const Viewport = dynamic(() => import('../components/debug/Viewport'), {
   ssr: false,
 });
@@ -42,7 +44,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function DefaultLayout({ children }: Props) {
+function DefaultLayoutContent({ children }: Props) {
   const router = useRouter();
   useFirebase();
   const { notiData } = useAppSelector((state) => state.firebase);
@@ -118,7 +120,12 @@ export default function DefaultLayout({ children }: Props) {
 
   return (
     <HeaderContext.Provider
-      value={{ menus, activeMenu: undefined, openMobileMenu, setOpenMobileMenu }}
+      value={{
+        menus,
+        activeMenu: undefined,
+        openMobileMenu,
+        setOpenMobileMenu,
+      }}
     >
       <Viewport />
       <Header />
@@ -156,4 +163,15 @@ export default function DefaultLayout({ children }: Props) {
       )}
     </HeaderContext.Provider>
   );
+}
+
+export default function DefaultLayout({ children }: Props) {
+  const router = useRouter();
+
+  // Use MonitorLayout for monitor pages
+  if (router.pathname.includes('/monitor')) {
+    return <MonitorLayout>{children}</MonitorLayout>;
+  }
+
+  return <DefaultLayoutContent>{children}</DefaultLayoutContent>;
 }

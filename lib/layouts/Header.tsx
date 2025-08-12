@@ -125,7 +125,7 @@ export default function Header() {
       'cong-chieu',
       'xem-video',
       'tim-kiem',
-      'short-video'
+      'short-video',
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -146,6 +146,7 @@ export default function Header() {
     const userProfileId = userInfo?.info?.profile?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo]);
+  const { adsLoaded } = useAppSelector((state) => state.app);
 
   useEffect(() => {
     saveProfile({ profile: currentProfile });
@@ -159,6 +160,10 @@ export default function Header() {
         const appName = localStorage.getItem('app_name');
         const hideAdsApps = ['Truyền hình', 'Học tập', 'Thiếu nhi'];
         setShouldHideHeaderAds(hideAdsApps.includes(appName || ''));
+        if (adsLoaded) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (window as any).InitAdsPlayBanner();
+        }
       }
     };
 
@@ -180,26 +185,38 @@ export default function Header() {
     return () => {
       router.events.off('routeChangeComplete', handleRouteComplete);
     };
-  }, [router.isReady, router.events]);
+  }, [router.isReady, router.events, adsLoaded]);
 
   const desktopMenus = useMemo(() => {
+    let result: MenuItem[] = [];
+    
     if (
       typeof localStorage !== 'undefined' &&
       localStorage.getItem(TYPE_PR) === PROFILE_TYPES.KID_PROFILE
     ) {
-      return menus;
-    }
-    if (configs?.number_item_of_menu_web && menus?.length) {
+      result = menus || [];
+    } else if (configs?.number_item_of_menu_web && menus?.length) {
       const r = menus.slice(0, Number(configs?.number_item_of_menu_web));
       if (selectedMenuMoreItem) {
-        return r.concat([selectedMenuMoreItem]);
+        result = r.concat([selectedMenuMoreItem]);
+      } else {
+        result = r;
       }
-      return r;
+    } else {
+      if (selectedMenuMoreItem) {
+        result = defaultMenu.concat([selectedMenuMoreItem]);
+      } else {
+        result = defaultMenu;
+      }
     }
-    if (selectedMenuMoreItem) {
-      return defaultMenu.concat([selectedMenuMoreItem]);
-    }
-    return defaultMenu;
+
+    // Remove duplicates based on id or page_id
+    const uniqueMenus = result.filter((menu, index, self) => {
+      const menuId = menu.id || menu.page_id;
+      return self.findIndex(m => (m.id || m.page_id) === menuId) === index;
+    });
+
+    return uniqueMenus;
   }, [configs, menus, selectedMenuMoreItem]);
 
   const desktopMenusMore = useMemo(() => {

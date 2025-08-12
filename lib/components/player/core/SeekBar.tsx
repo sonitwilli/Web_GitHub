@@ -4,10 +4,10 @@ import 'react-video-seek-slider/styles.css';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { VIDEO_ID } from '@/lib/constant/texts';
 import Head from 'next/head';
-import React, { useEffect } from 'react';
+import React from 'react';
 import axios from 'axios';
-import ThumbNails from '@/lib/utils/thumbNails';
-import { userAgentInfo } from '@/lib/utils/ua';
+// import ThumbNails from '@/lib/utils/thumbNails';
+// import { userAgentInfo } from '@/lib/utils/ua';
 
 interface ThumbnailType {
   src?: string;

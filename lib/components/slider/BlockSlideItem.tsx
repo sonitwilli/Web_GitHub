@@ -68,7 +68,7 @@ export default function BlockSlideItem({
   const [posterOverlaysReady, setPosterOverlaysReady] = useState<string[]>([]);
   // handle for poster overlays
 
-  // Logic kiểm tra từng status giống bên Nuxt
+  // Logic kiểm tra từng status
   const isNewItem = useMemo(() => {
     return (
       slide?.is_new === '1' &&
@@ -269,7 +269,7 @@ export default function BlockSlideItem({
 
             {block?.type === 'trailer' && (
               <div className="absolute right-2 bottom-1 py-0.5 px-1 bg-black/40 rounded-[6px] text-[12px] text-white-smoke font-semibold">
-                {slide?.detail?.duration_s || '30 giây'}
+                {slide?.detail?.duration_s}
               </div>
             )}
 

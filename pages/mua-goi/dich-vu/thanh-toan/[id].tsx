@@ -6,8 +6,8 @@ import {
 } from '@/lib/components/payment/PaymentResultCard';
 import DefaultLayout from '@/lib/layouts/Default';
 import {
+  PAYMENT_HUB_CONFIG,
   PAYMENT_METHODS,
-  PAYMENT_V4_METHODS,
 } from '@/lib/constant/paymentMethods';
 import { checkTransactionStatusApi } from '@/lib/api/payment';
 import { trackingPaymentObj } from './thanh-cong';
@@ -86,7 +86,7 @@ const PendingPaymentPage: React.FC = () => {
       payment_status,
       error_code,
     } = router.query;
-    if (PAYMENT_V4_METHODS.includes(id as string) && status_code === '-2') {
+    if (status_code === '-2') {
       return;
     }
 
@@ -175,14 +175,18 @@ const PendingPaymentPage: React.FC = () => {
   }, [router.isReady, router.query, redirectUrl]);
 
   // Polling logic (simulate startChecking)
-  useEffect(() => {    
+  useEffect(() => {
     if (!router.isReady || !transId) return;
     const countDownDate = Date.now() + 300000; // 5 minutes
     let timeoutReached = false;
     const methodConfig = PAYMENT_METHODS.find(
       (item) => item.key === router.query.id,
-    );    
-    const checkUrl = methodConfig?.checkTransactionUrl;
+    );
+    const paymentGatewayCode =
+      router.query.payment_gateway_code?.toString() || '';
+    const checkUrl = paymentGatewayCode
+      ? PAYMENT_HUB_CONFIG.apiCheck
+      : methodConfig?.checkTransactionUrl;
     const poll = async () => {
       const now = Date.now();
       const distance = countDownDate - now;
@@ -201,7 +205,7 @@ const PendingPaymentPage: React.FC = () => {
         try {
           const res = await checkTransactionStatusApi(checkUrl, {
             trans_id: transId || '',
-            payment_gateway_code: router.query.method as string,
+            payment_gateway_code: paymentGatewayCode,
           });
           if (res.data.msg_data) {
             if (

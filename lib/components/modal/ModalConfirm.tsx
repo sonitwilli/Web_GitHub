@@ -106,7 +106,7 @@ const ConfirmDialog = forwardRef<ConfirmDialogRef, ConfirmDialogProps>(
         id="modal-confirm"
         open={isOpen}
         onHidden={onHidden}
-        contentClassName={`max-w-[calc(400px-32px)] tablet:max-w-[400px] px-4 sm:px-8 py-6 sm:py-8 bg-eerie-black rounded-2xl text-white shadow-lg ${
+        contentClassName={`max-w-[calc(400px-32px)] tablet:w-[400px] px-4 sm:px-8 py-6 sm:py-8 bg-eerie-black rounded-2xl text-white shadow-lg ${
           contentClassName || ''
         }`}
         overlayClassName="fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]"

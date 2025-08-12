@@ -526,7 +526,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             setOtpPinCode(null);
             setWrongOtpMsg(null);
           }}
-          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] 2xl:max-w-[460px] h-[360px] sm:h-[410px] bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
+          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-[360px] sm:h-[410px] bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
           overlayClassName="fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]"
           shouldCloseOnEsc={false}
           shouldCloseOnOverlayClick={false}

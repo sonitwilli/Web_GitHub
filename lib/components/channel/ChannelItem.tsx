@@ -92,7 +92,7 @@ export default function ChannelItem({
       )}
 
       {channel.timeshift_limit &&
-        ['12', '24', '48'].includes(channel.timeshift_limit) &&
+        ['12', '24', '48', '72'].includes(channel.timeshift_limit) &&
         channel?.show_icon_timeshift === '1' && (
           <img
             src={`/images/timeshift/${channel?.timeshift_limit}.png`}

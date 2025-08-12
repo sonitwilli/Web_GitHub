@@ -113,7 +113,11 @@ export const getProfileList = async (): Promise<ProfileResponse> => {
   } catch (error) {
     console.error('Error fetching profiles:', error);
 
-    return { status: error instanceof AxiosError ? error.response?.status.toString() : '0', data: { profiles: [], meta_data: {} } };
+    return {
+      status:
+        error instanceof AxiosError ? error?.response?.status?.toString() : '0',
+      data: { profiles: [], meta_data: {} },
+    };
   }
 };
 
