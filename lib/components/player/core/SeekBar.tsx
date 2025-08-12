@@ -119,6 +119,11 @@ export default function SeekBar() {
 
   // Mouse move handler for seek bar
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Only handle preview on desktop (non-touch devices)
+    if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+      return;
+    }
+    
     const seekBar = seekBarRef.current;
     if (!seekBar || !videoDuration) return;
     const rect = seekBar.getBoundingClientRect();
