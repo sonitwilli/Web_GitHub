@@ -335,6 +335,54 @@ export function PlayerPageContextProvider({ children }: Props) {
   const checkErrorInterRef = useRef<NodeJS.Timeout>(null);
 
   const [previewHandled, setPreviewHandled] = useState(false);
+  const checkScreen = () => {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+    try {
+      let value = 'PingVOD';
+      const href = window.location.href;
+      if (previewHandled) {
+        if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
+          value = 'PingPreviewLive';
+        }
+        if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
+          value = 'PingPreview';
+        }
+        if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
+          value = 'PingPreviewShow';
+        }
+      } else {
+        if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
+          value = 'PingChannel';
+        }
+        if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
+          value = 'PingVOD';
+        }
+        if (href?.includes(ROUTE_PATH_NAMES.PREMIERE)) {
+          value = 'PingPremiere';
+        }
+        if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
+          value = 'PingLiveshow';
+        }
+      }
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_SCREEN,
+            value,
+          },
+        ],
+      });
+      return value;
+    } catch {
+      return '';
+    }
+  };
+  useEffect(() => {
+    checkScreen();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [previewHandled]);
   const [dataPlaylist, setDataPlaylist] =
     useState<PlayListDetailResponseType>();
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -464,7 +512,7 @@ export function PlayerPageContextProvider({ children }: Props) {
       if (['channel', 'event'].includes(streamType)) {
         isPreview = responseData?.enable_preview === '1';
 
-        if (localStorage && !localStorage.getItem(TOKEN)) {
+        if (localStorage && !localStorage.getItem(TOKEN) && isPreview) {
           dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
         }
       }

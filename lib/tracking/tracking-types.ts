@@ -355,6 +355,7 @@ export interface TrackingParams {
   chat_session?: string;
   is_recommend?: string;
   login_session?: string;
+  tabId?: string;
 }
 
 export interface UserParams {

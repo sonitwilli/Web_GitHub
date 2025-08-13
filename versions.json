@@ -1,6 +1,31 @@
 {
     "versions": [
         {
+            "version": "8.0.22",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Sự kiện][Truyền hình] Lỗi player bị scale hoặc zoom che blocks",
+                "[WEB][PlayerVOD] Thumbnail: Lỗi không hiển thị thumbnail khi hover vào thanh progressbar",
+                "[WEB][PlayerVOD] Lỗi hiển thị khi nhấn chọn và giữ các icon chức năng trên playerbar ở responsive mobile",
+                "[WEB][PlayerVOD] Lỗi hiển thị playerbar đối với chế độ fullscreen ở màn hình responsive mobile",
+                "[WEB][Landing Page] Lỗi header và poster của landing page short-videos",
+                "[WEB][Landing Page] Hiện page 404 khi truy cập Landing page short-videos với domain cũ",
+                "[WEB][AR_WC] Lỗi không hiển thị WC lần 2 3 đối với nội dung VOD >20p và >30p",
+                "[WEB][Player] Lỗi hiển thị thời lượng phát > tổng thời lượng của nội dung TimeshiftTV/VOD",
+                "[WEB][PlayerVOD] Nextmovie: Lỗi không scale màn hình nextmovie khi chuyển sang mode responsive",
+                "[WEB][Preview 5p]Lỗi không hiển thị preview 5 phút kênh K+",
+                "[WEB][Preview 5p][Login]Lỗi không hiển thị popup đăng nhập ở kênh K+ có set preview",
+                "[WEB][Preview VOD] Lỗi không hiển thị preview VOD normal mode/responsive mobile",
+                "[WEB][PlayerVOD] Nextmovie: Lỗi phát trailer khi nhấn vào btn Xem ngay ở màn hình nextmovie",
+                "[WEB][DetailVOD] Lỗi hiển thị sai thời lượng ở block Trailer",
+                "[Web][TrackingLog][Common] Không ghi nhận thông số user_id, user_session của log 25 khi system gửi thông tin thông báo trên góc phải màn hình",
+                "[Web][TrackingLog][Common] Ghi nhận sai thông số AppId, AppName của log 13 khi user khởi động ứng dụng",
+                "[Web][TrackingLog][Common] Ghi nhận sai thông số của log 191 khi user nhận và hiển thị pop-up trên màn hình",
+                "[WEB][Sự kiện] Lỗi vào sự kiện tiếp sóng khi chưa login",
+                "[Web][TrackingLog][Common] Ghi nhận sai thông số AppId, AppName, user_id của log 15 khi user refresh (tải lại) trang trên trình duyệt"
+            ]
+        },  
+        {
             "version": "8.0.21",
             "date": "Dự kiến",
             "content": [

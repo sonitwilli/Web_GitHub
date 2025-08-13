@@ -45,7 +45,7 @@ import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { resetBroadcastSchedule } from '@/lib/store/slices/broadcastScheduleSlice';
-import useStorage from '@/lib/hooks/useStorage';
+import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
 
 const RequirePurchase = dynamic(
   () => import('@/lib/components/player/core/RequirePurchase'),
@@ -83,7 +83,7 @@ export interface ChannelPageContextType {
 export const ChannelPageContext = createContext<ChannelPageContextType>({});
 
 function ChannelPageContent() {
-  useStorage();
+  usePlayerPageCycle();
   const { viewportType } = useScreenSize();
 
   const router = useRouter();

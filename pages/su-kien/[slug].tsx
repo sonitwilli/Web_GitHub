@@ -4,10 +4,10 @@ import DefaultLayout from '@/lib/layouts/Default';
 import { GetServerSideProps } from 'next';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
-import useStorage from '@/lib/hooks/useStorage';
+import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
 
 const EventContentPage = () => {
-  useStorage();
+  usePlayerPageCycle();
   return (
     <DefaultLayout>
       <EventComponent type="event" />

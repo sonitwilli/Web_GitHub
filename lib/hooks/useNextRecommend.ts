@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
@@ -249,7 +250,6 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
         clearTimeout(countdownRef.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isVisible, countdown, recommendData, isCancelled]);
 
   // Reset cancelled state when video resets or when video is still playing
@@ -338,11 +338,7 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     setIsCancelled(true);
     setIsVisible(false);
 
-    const hasTrailer = recommendData.is_trailer === '1';
-    const redirectUrl = hasTrailer
-      ? generateTrailerLink(recommendData)
-      : generateRecommendLink(recommendData);
-
+    const redirectUrl = generateRecommendLink(recommendData);
     router.push(redirectUrl);
   };
 

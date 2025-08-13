@@ -131,24 +131,6 @@ export default function DropdownNoti({
         setInboxList(res.data);
         setHasMore((res.paging?.page ?? 1) < (res.paging?.total_page ?? 1));
         setCurrentPage(1);
-
-        const limit = res.paging?.limit ?? 10;
-        if (res.data.length < limit && (res.paging?.total_page ?? 1) >= 2) {
-          // Fetch page 2
-          const res2 = await fetchInbox({
-            page: 2,
-            category_id:
-              selectedCategory !== 'all' ? selectedCategory : undefined,
-            status: selectedStatus !== 'all' ? selectedStatus : undefined,
-          });
-          if (res2) {
-            setInboxList((prev) => [...prev, ...res2.data]);
-            setHasMore(
-              (res2.paging?.page ?? 2) < (res2.paging?.total_page ?? 2),
-            );
-            setCurrentPage(2);
-          }
-        }
       }
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps

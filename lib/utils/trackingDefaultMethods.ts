@@ -120,6 +120,17 @@ export const getAppInfo = (params: TrackingParams) => {
 
   return result || {};
 };
+export const setAppNameAppId = (routeTo: RouteInfo, routeFrom: RouteInfo) => {
+  const appFound = checkAppNameAppId(routeTo);
+  const oldAppFound = checkAppNameAppId(routeFrom);
+  localStorage.setItem(
+    trackingStoreKey.OLD_APP_NAME,
+    oldAppFound?.appName || '',
+  );
+  localStorage.setItem(trackingStoreKey.OLD_APP_ID, oldAppFound?.appId || '');
+  localStorage.setItem(trackingStoreKey.APP_NAME, appFound?.appName || '');
+  localStorage.setItem(trackingStoreKey.APP_ID, appFound?.appId || '');
+};
 
 export const checkAppNameAppId = (route: RouteInfo) => {
   if (typeof localStorage !== 'undefined') {
@@ -165,8 +176,7 @@ export const checkAppNameAppId = (route: RouteInfo) => {
       }
       appName = found?.name || 'Xem Video';
       appId = found?.id || 'xem-video';
-      localStorage.setItem(trackingStoreKey.APP_NAME, appName);
-      localStorage.setItem(trackingStoreKey.APP_ID, appId);
+      return { appName, appId };
     }
   }
 };

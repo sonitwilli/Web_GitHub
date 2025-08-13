@@ -33,10 +33,7 @@ import styles from '../core/Text.module.css';
 import { useRouter } from 'next/router';
 import { useVodPageContext } from '../context/VodPageContext';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
-import {
-  removePlayerSessionStorage,
-  trackPlayerChange,
-} from '@/lib/utils/playerTracking';
+import { trackPlayerChange } from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
@@ -74,9 +71,6 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         },
       ],
     });
-    if (typeof sessionStorage !== 'undefined') {
-      removePlayerSessionStorage();
-    }
   }, []);
   const { viewportType } = useScreenSize();
   const vodCtx = useVodPageContext();
@@ -447,11 +441,12 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       }
     }
     return () => {
+      console.log('--- PLAYER UNMOUNTED shakaPlayer');
+
       if (dataStream?.ping_enc) {
         endPingEnc();
       }
       destroyShaka();
-      removePlayerSessionStorage();
     };
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

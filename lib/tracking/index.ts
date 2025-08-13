@@ -60,6 +60,7 @@ const tracking = async (params: TrackingParams) => {
     playing_session: params.playing_session
       ? params.playing_session
       : localStorage.getItem(trackingStoreKey.PLAYING_SESSION) || '',
+    tabId: sessionStorage.getItem('tabId') || '',
   };
 
   const isChatbot = false; // TODO: get from store

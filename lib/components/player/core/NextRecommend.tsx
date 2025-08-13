@@ -30,6 +30,9 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
   const isMobile = useMemo(() => {
     return width <= 768;
   }, [width]);
+  const isHideImg = useMemo(() => {
+    return width >= 768 && width <= 1280 && !isExpanded;
+  }, [width, isExpanded]);
   const handlePosterOverlays = useCallback((positionRibbons: string[]) => {
     setPosterOverlaysReady(positionRibbons);
   }, []);
@@ -64,7 +67,9 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
       >
         {/* Image */}
         <div
-          className={`hidden xl:block w-full xl:w-[416px] h-[120px] tablet:h-[140px] xl:h-[234px] bg-cover bg-center rounded-2xl flex-none order-0 z-0`}
+          className={`${
+            isHideImg ? 'hidden' : 'hidden xl:block'
+          } w-full xl:w-[416px] h-[120px] tablet:h-[140px] xl:h-[234px] bg-cover bg-center rounded-2xl flex-none order-0 z-0`}
         >
           <div
             className={`relative rounded-2xl ${

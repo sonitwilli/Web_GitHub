@@ -41,6 +41,7 @@ import { useBroadcastSchedule } from '@/lib/hooks/useBroadcastSchedule';
 import { useKeyboardControls } from '@/lib/hooks/useKeyboardControls';
 import { useNoAdsGuide } from '@/lib/hooks/useNoAdsGuide';
 import { PreviewType } from './Preview';
+import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -217,6 +218,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   const openPlayerErrorModal = (v: PlayerErrorType) => {
     setIsShowErrorModal(true);
     setPlayerError(v);
+    trackingShowPopupLog191();
   };
 
   const closePlayerErrorModal = () => {

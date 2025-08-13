@@ -19,6 +19,7 @@ import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { AudioItemType } from '../components/player/core/AudioButton';
 import { saveSessionStorage } from '../utils/storage';
+import { trackingStoreKey } from '../constant/tracking';
 
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
@@ -185,6 +186,17 @@ export default function useAudio() {
   }, [audios, playerName, dataChannel, streamType]);
 
   useEffect(() => {
+    if (audiosAAC) {
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_AUDIO_LIST,
+            value: JSON.stringify(audios),
+          },
+        ],
+      });
+    }
+
     if (!audiosAAC?.length || audiosAAC.length < 2 || !isMetaDataLoaded) {
       return;
     }

@@ -2,6 +2,7 @@ import tracking from '.';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { TrackingEvent, TrackingParams } from './tracking-types';
 import { getDataInfoTrackingCommon } from './getDataInfo';
+import { getPlayerParams } from '../utils/playerTracking';
 export const trackingStartApplication = () => {
   // Log13 : StartApplication
   // Log15 : RefreshPage
@@ -19,12 +20,16 @@ export const trackingStartApplication = () => {
     const params: TrackingParams = {
       ItemName: dataInfoTrackingCommon.ItemName,
       Event: 'StartApplication',
+      AppId: 'HOME',
+      AppName: 'HOME',
     };
     tracking(params);
   } else {
     const params: TrackingParams = {
       ItemName: dataInfoTrackingCommon.ItemName,
       Event: 'RefreshPage',
+      AppId: 'HOME',
+      AppName: 'HOME',
     };
     tracking(params);
   }
@@ -83,10 +88,34 @@ export const trackingLoadPageErrorLog176 = ({
   tracking(params);
 };
 
-export const trackingShowPopupLog191 = ({ ItemName }: TrackingParams) => {
+export const trackingShowPopupLog191 = ({ ItemName }: TrackingParams = {}) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  let itemId = '';
+  let itemName = ItemName || '';
+  const content = document.querySelector('.modal-content');
+  if (content) {
+    itemName = content.textContent || '';
+  }
+  const { pathname } = window.location;
+  const pages = [
+    'xem-truyen-hinh',
+    'su-kien',
+    'cong-chieu',
+    'xem-video',
+    'playlist',
+    'short-video',
+  ];
+  const isPageMatching = pages.some((keyword) => pathname.includes(keyword));
+  if (isPageMatching) {
+    const playerParams = getPlayerParams();
+    itemId = playerParams.ItemId || '';
+  }
   const params: TrackingParams = {
     Event: 'ShowPopup',
-    ItemName: ItemName,
+    ItemName: itemName,
+    ItemId: itemId,
   };
   tracking(params);
 };

@@ -13,6 +13,9 @@ import RequirePurchase from '../player/core/RequirePurchase';
 import styles from './EventCountdownTimer.module.css';
 import { AxiosError } from 'axios';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
+import { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
+import useScreenSize from '@/lib/hooks/useScreenSize';
+import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 
 type Props = {
   startTime: number;
@@ -37,7 +40,8 @@ const CountdownTimer = ({
   const [isUserAction, setIsUserAction] = useState(false);
 
   const { notiData } = useAppSelector((state) => state.firebase);
-
+  const { viewportType } = useScreenSize();
+  const { isExpanded, videoHeight } = usePlayerPageContext();
   const isSubscribedFromList = useMemo(() => {
     if (!notiData || !notiData[0]) return false;
 
@@ -130,64 +134,93 @@ const CountdownTimer = ({
   };
 
   return (
-    <div className="w-full relative xl:h-[calc(100vh-200px)] max-h-[720px] overflow-hidden">
-      {requirePurchaseData ? (
-        <RequirePurchase />
-      ) : (
-        <img
-          src={dataEvent?.image?.landscape_title}
-          alt="background"
-          className="w-full h-auto xl:h-[calc(100vh-200px)] object-cover"
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.onerror = null;
-            target.src = '/images/default-poster-horizontal.png';
+    <div
+      className={`${
+        isExpanded
+          ? ''
+          : viewportType === VIEWPORT_TYPE.DESKTOP
+          ? 'f-container'
+          : ''
+      }`}
+    >
+      <div
+        className={`h-full ${
+          isExpanded ? '' : 'xl:grid xl:grid-cols-[1fr_432px]'
+        }`}
+      >
+        <div
+          className="w-full col-span-full relative"
+          style={{
+            height:
+              viewportType === VIEWPORT_TYPE.DESKTOP
+                ? `${videoHeight && videoHeight > 0 ? videoHeight : ''}px`
+                : '',
           }}
-        />
-      )}
-      <div className="absolute z-1 left-[17px] bottom-[17px] tablet:bottom-8 tablet:left-8">
-        <div className="flex items-center justify-between gap-2 tablet:gap-4 bg-eerie-black rounded-xl p-4 w-[320px] tablet:w-[444px]">
-          <div className="flex flex-col gap-2 w-fit">
-            <p className="text-white-smoke text-[16px] font-normal leading-[130%]">
-              {timeLeft >= 3600
-                ? `Chương trình sẽ bắt đầu vào ${formatVietnamDayTimeLabelLowerCase(
-                    startTime,
-                  )}`
-                : 'Chương trình sẽ bắt đầu sau'}
-            </p>
+        >
+          <div className="relative h-full w-fit mx-auto">
+            {requirePurchaseData ? (
+              <RequirePurchase />
+            ) : (
+              <img
+                src={
+                  dataEvent?.image?.landscape_title ||
+                  '/images/default-poster-horizontal.png'
+                }
+                alt="background"
+                className="mx-auto h-full"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = '/images/default-poster-horizontal.png';
+                }}
+              />
+            )}
+            <div className="absolute z-1 left-[17px] bottom-[17px] tablet:bottom-8 tablet:left-8">
+              <div className="flex items-center justify-between gap-2 tablet:gap-4 bg-eerie-black rounded-xl p-4 w-[320px] tablet:w-[444px]">
+                <div className="flex flex-col gap-2 w-fit">
+                  <p className="text-white-smoke text-[16px] font-normal leading-[130%]">
+                    {timeLeft >= 3600
+                      ? `Chương trình sẽ bắt đầu vào ${formatVietnamDayTimeLabelLowerCase(
+                          startTime,
+                        )}`
+                      : 'Chương trình sẽ bắt đầu sau'}
+                  </p>
 
-            {timeLeft < 3600 && renderCountdown()}
-          </div>
+                  {timeLeft < 3600 && renderCountdown()}
+                </div>
 
-          <button
-            disabled={loading}
-            onClick={handleToggleSubscribe}
-            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full max-w-[154px] whitespace-nowrap h-[40px] cursor-pointer
+                <button
+                  disabled={loading}
+                  onClick={handleToggleSubscribe}
+                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full max-w-[154px] whitespace-nowrap h-[40px] cursor-pointer
               font-roboto text-[16px] font-semibold tracking-[0.02em] 
               ${
                 isSubscribed
                   ? `bg-black-olive text-white-smoke ${styles.cancelButton}`
                   : `fpl-bg text-white-smoke ${styles.orderButton}`
               }`}
-          >
-            <div className="w-[24px] h-[24px] flex items-center justify-center">
-              {loading ? (
-                <Spinner size={24} />
-              ) : (
-                <>
-                  {!isSubscribed ? (
-                    <IoNotifications className="text-[24px]" />
-                  ) : (
-                    <BiSolidBellOff
-                      style={{ transform: 'scaleX(-1)' }}
-                      className="text-[24px]"
-                    />
-                  )}
-                </>
-              )}
+                >
+                  <div className="w-[24px] h-[24px] flex items-center justify-center">
+                    {loading ? (
+                      <Spinner size={24} />
+                    ) : (
+                      <>
+                        {!isSubscribed ? (
+                          <IoNotifications className="text-[24px]" />
+                        ) : (
+                          <BiSolidBellOff
+                            style={{ transform: 'scaleX(-1)' }}
+                            className="text-[24px]"
+                          />
+                        )}
+                      </>
+                    )}
+                  </div>
+                  {isSubscribed ? 'Hủy đặt lịch' : 'Đặt lịch'}
+                </button>
+              </div>
             </div>
-            {isSubscribed ? 'Hủy đặt lịch' : 'Đặt lịch'}
-          </button>
+          </div>
         </div>
       </div>
     </div>

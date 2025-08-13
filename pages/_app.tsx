@@ -13,7 +13,7 @@ import { closeLoginModal } from '@/lib/store/slices/loginSlice';
 import { ToastProvider } from '@/lib/components/toast/ToastProvider';
 import { NetworkProvider } from '@/lib/components/contexts';
 import dynamic from 'next/dynamic';
-import { checkAppNameAppId } from '@/lib/utils/trackingDefaultMethods';
+import { setAppNameAppId } from '@/lib/utils/trackingDefaultMethods';
 import SeoHead, {
   SeoProps,
   createDefaultSeoProps,
@@ -22,6 +22,8 @@ import {
   trackingCodecDeviceInformationLog30,
   trackingStartApplication,
 } from '@/lib/tracking/trackingCommon';
+import { trackingChangeModuleLog18 } from '@/lib/tracking/trackingHome';
+import { trackingAccessLog50 } from '@/lib/tracking/trackingModule';
 
 const AppModal = dynamic(() => import('@/lib/components/modal/AppModal'), {
   ssr: false,
@@ -41,6 +43,7 @@ interface AppPropsWithSeo extends AppProps {
 
 export default function App({ Component, pageProps }: AppPropsWithSeo) {
   const [loading, setLoading] = useState(false);
+  const [routeFrom, setRouteFrom] = useState<RouteInfo | undefined>(undefined);
   const router = useRouter();
 
   // Use page-specific SEO props if available, otherwise use defaults
@@ -71,27 +74,29 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
     trackingCodecDeviceInformationLog30();
   }, []);
   useEffect(() => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let routeFrom: RouteInfo;
-    let routeTo: RouteInfo;
     const handleStart = () => {
       setLoading(true);
-      routeFrom = {
+      const newRouteFrom: RouteInfo = {
         path: router.asPath,
         params: router.query,
         hash: typeof window !== 'undefined' ? window.location.hash : '',
         full: typeof window !== 'undefined' ? window.location.href : '',
       };
+      setRouteFrom(newRouteFrom);
     };
     const handleStop = () => {
       setLoading(false);
-      routeTo = {
+      const newRouteTo: RouteInfo = {
         path: router.asPath,
         params: router.query,
         hash: typeof window !== 'undefined' ? window.location.hash : '',
         full: typeof window !== 'undefined' ? window.location.href : '',
       };
-      checkAppNameAppId(routeTo);
+      if (routeFrom) {
+        setAppNameAppId(newRouteTo, routeFrom);
+      }
+      trackingChangeModuleLog18();
+      trackingAccessLog50();
     };
 
     router.events.on('routeChangeStart', handleStart);
@@ -103,6 +108,8 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
       router.events.off('routeChangeComplete', handleStop);
       router.events.off('routeChangeError', handleStop);
     };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   function LoginModalWrapper() {

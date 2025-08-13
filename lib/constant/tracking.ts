@@ -521,6 +521,8 @@ export const trackingStoreKey = {
   APP_MODULE_LOG_57_ID: 'FplPlay_App_Module_Log_57_Id',
   APP_ID: 'app_id',
   APP_NAME: 'app_name',
+  OLD_APP_ID: 'old_app_id',
+  OLD_APP_NAME: 'old_app_name',
   CHANNEL_PLAYING_SESSION: 'channel_playing_session',
   CHANNEL_ITEM_PLAYING_SESSION: 'channel_item_playing_session',
   CHANNEL_PLAYING_DATE: 'channel_playing_date',
@@ -673,4 +675,9 @@ export const trackingStoreKey = {
   CURRENT_EPISODE: 'CURRENT_EPISODE',
   IS_FINAL_EPISODE: 'IS_FINAL_EPISODE',
   PLAYER_ROUTER_QUERY: 'PLAYER_ROUTER_QUERY',
+  PLAYER_SCREEN: 'PLAYER_SCREEN',
+  PLAYER_AUDIO_LIST: 'PLAYER_AUDIO_LIST',
+  PLAYER_SUBS_LIST: 'PLAYER_SUBS_LIST',
+  PLAYER_ACTIVE_SUB_LABEL: 'PLAYER_ACTIVE_SUB_LABEL',
+  PLAYER_ACTIVE_AUDIO_LABEL: 'PLAYER_ACTIVE_AUDIO_LABEL',
 };

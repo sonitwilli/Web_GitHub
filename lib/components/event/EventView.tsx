@@ -14,9 +14,10 @@ import PlayerEndedLive from '../player/core/PlayerEndedLive';
 import { useEffect, useMemo, useState, useRef } from 'react';
 import { VIDEO_ID } from '@/lib/constant/texts';
 import { MaturityRating } from '@/lib/api/vod';
-import { useAppSelector } from '@/lib/store';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
+import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 
 const ShareReaction = dynamic(() => import('../reaction/ShareReaction'), {
   ssr: false,
@@ -64,6 +65,9 @@ const EventView = ({ dataEvent, eventId }: Props) => {
   const { hideBar } = useDownloadBarControl();
   const isOpenLiveChat =
     useAppSelector((s) => s.player.isOpenLiveChat) || false;
+  const { timeOpenModalRequireLogin } = useAppSelector((s) => s.app);
+  const dispatch = useAppDispatch();
+  const hasSetModalTimeRef = useRef(false);
   // Handle responsive height calculation based on player-wrapper-play-success or player_wrapper DOM changes
   useEffect(() => {
     const updateHeight = () => {
@@ -297,6 +301,17 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     seekOffsetInSeconds,
   ]);
 
+  useEffect(() => {
+    if (!isPrepareLive || hasSetModalTimeRef.current) {
+      return;
+    }
+    if (isPrepareLive && !timeOpenModalRequireLogin) {
+      dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+    }
+    hasSetModalTimeRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPrepareLive]);
+
   // Extract LimitAgeOverlay rendering
   const renderLimitAgeOverlay = () =>
     isEventPremier ? (
@@ -344,7 +359,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
             </div>
           ) : requirePurchaseData && !isPrepareLive ? (
             <div
-              className="w-full col-span-full xl:px-[100px] 2xl:px-[216px]"
+              className="w-full col-span-full"
               style={{
                 height:
                   viewportType === VIEWPORT_TYPE.DESKTOP
@@ -355,7 +370,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
               <RequirePurchase />
             </div>
           ) : isPrepareLive ? (
-            <div className="w-full col-span-full xl:px-[100px] 2xl:px-[216px]">
+            <div className="w-full col-span-full">
               <CountdownTimer
                 startTime={parseInt(
                   dataEvent?.start_time || dataEvent?.begin_time || '0',

@@ -149,26 +149,24 @@ const onFetchInboxDetail = async ({
   }
 };
 
-const onFetchInboxList = async ({
-  page,
-  limit,
-  category_id,
-  status,
-}: {
+const onFetchInboxList = async (params?: {
   page?: number;
   limit?: number;
   category_id?: string;
-  status?: string;
+  status?: string; // all | unread | read
 }): Promise<AxiosResponse<onFetchInboxListResponse>> => {
   try {
-    return axiosInstance.get('/noti/inbox/list', {
-      params: {
-        page,
-        limit,
-        category_id,
-        status,
-      },
-    });
+    const page = Math.max(1, Number(params?.page ?? 1));
+    const rawLimit = Number(params?.limit ?? 10);
+    const limit = Math.min(100, Math.max(1, isNaN(rawLimit) ? 10 : rawLimit));
+
+    const query: Record<string, unknown> = { page, limit };
+    const categoryId = params?.category_id;
+    const status = params?.status;
+    if (categoryId && categoryId !== 'all') query.category_id = categoryId;
+    if (status && status !== 'all') query.status = status;
+
+    return axiosInstance.get('/noti/inbox/notices', { params: query });
   } catch {
     return {} as Promise<AxiosResponse<onFetchInboxListResponse>>;
   }

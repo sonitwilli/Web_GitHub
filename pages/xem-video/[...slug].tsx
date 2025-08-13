@@ -12,11 +12,13 @@ import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import useStorage from '@/lib/hooks/useStorage';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
 
 function VodPageContent() {
+  usePlayerPageCycle();
+
   return (
     <DefaultLayout>
       <WatchVideoComponent />
@@ -25,7 +27,6 @@ function VodPageContent() {
 }
 
 export default function VodPage() {
-  useStorage();
   const router = useRouter();
   const [fetchHistoryDone, setFetchHistoryDone] = useState(false);
   const dispatch = useDispatch();

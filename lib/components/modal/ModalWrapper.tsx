@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { IoCloseOutline } from 'react-icons/io5';
-import ModalNotice, { NoticeModalProps } from './ModalNotice';
+import { useRouter } from 'next/router';
 import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
-import ModalConfirm, { ConfirmDialogProps } from './ModalConfirm';
 
 interface ModalWrapperProps {
   id?: string;
@@ -39,28 +38,14 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   portalTarget, // Added portal target prop
 }) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setModalOpen(open);
     if (open) {
-      let ItemName = '';
-      if (React.isValidElement(children) && children.type === ModalNotice) {
-        const noticeContent = (children as React.ReactElement<NoticeModalProps>)
-          .props?.data;
-        ItemName = noticeContent?.content || '';
-      }
-      if (React.isValidElement(children) && children.type === ModalConfirm) {
-        const confirmContent = (
-          children as React.ReactElement<ConfirmDialogProps>
-        ).props?.modalContent;
-        ItemName = confirmContent?.content || '';
-      }
-      trackingShowPopupLog191({
-        ItemName: ItemName,
-      });
+      trackingShowPopupLog191();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open, router.pathname]);
 
   const handleClose = () => {
     setModalOpen(false);

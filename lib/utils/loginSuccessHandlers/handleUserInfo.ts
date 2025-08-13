@@ -1,6 +1,12 @@
 import { pushRegIdAPI } from '@/lib/api/login';
 import { loginSuccess } from './loginSuccess';
-import { NUMBER_PR, TOKEN, TYPE_LOGIN, TYPE_PR } from '@/lib/constant/texts';
+import {
+  NUMBER_PR,
+  TOKEN,
+  TYPE_LOGIN,
+  TYPE_PR,
+  USER,
+} from '@/lib/constant/texts';
 import { store } from '@/lib/store';
 import { getUserInfo } from '@/lib/api/user';
 import { fetchListProfiles } from '../multiProfiles/fetchListProfiles';
@@ -51,6 +57,7 @@ export const handleUserInfo = async (token?: string) => {
     trackingLoginSuccessLog14(res?.data);
     localStorage.setItem(NUMBER_PR, res?.data?.profile?.profile_id || '');
     localStorage.setItem(TYPE_PR, res?.data?.profile?.profile_type || '');
+    localStorage.setItem(USER, JSON.stringify(res?.data));
     setCookie(NUMBER_PR, res?.data?.profile?.profile_id || '');
     setCookie(TYPE_PR, res?.data?.profile?.profile_type || '');
     // Step 2: Lấy danh sách profiles từ API và lưu vào store

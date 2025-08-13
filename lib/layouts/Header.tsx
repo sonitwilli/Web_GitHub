@@ -189,7 +189,7 @@ export default function Header() {
 
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];
-    
+
     if (
       typeof localStorage !== 'undefined' &&
       localStorage.getItem(TYPE_PR) === PROFILE_TYPES.KID_PROFILE
@@ -213,7 +213,7 @@ export default function Header() {
     // Remove duplicates based on id or page_id
     const uniqueMenus = result.filter((menu, index, self) => {
       const menuId = menu.id || menu.page_id;
-      return self.findIndex(m => (m.id || m.page_id) === menuId) === index;
+      return self.findIndex((m) => (m.id || m.page_id) === menuId) === index;
     });
 
     return uniqueMenus;
@@ -337,9 +337,9 @@ export default function Header() {
   return (
     <>
       <header
-        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-black tablet:bg-transparent ${
-          scrollDistance > 300 || isCategoryPage ? '!bg-black' : ''
-        } ${openMobileMenu ? '!bg-black' : ''}`}
+        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
+          scrollDistance > 300 || isCategoryPage ? '!bg-smoky-black' : ''
+        } ${openMobileMenu ? '!bg-smoky-black' : ''}`}
       >
         <div className="f-container self-stretch flex items-center justify-between">
           <div className="flex items-center gap-[16px] 2xl:gap-[96px]">

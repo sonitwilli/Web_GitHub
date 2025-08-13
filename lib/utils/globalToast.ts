@@ -22,7 +22,9 @@ export const showToast = (data: ToastData) => {
   setTimeout(() => {
     if (toastHandler) {
       toastHandler(data);
-      trackingAnnouncementLog25({ ItemName: data.title + ', ' + data.desc });
+      trackingAnnouncementLog25({
+        ItemName: data.title || '' + ', ' + data.desc || '',
+      });
     } else console.warn('Toast chưa sẵn sàng!');
   }, 0);
 };

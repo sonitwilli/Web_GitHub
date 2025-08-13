@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   KEY_LANGUAGES_AUDIO_CODECS,
   SELECTED_SUBTITLE,
+  SELECTED_SUBTITLE_LABEL,
 } from '@/lib/constant/texts';
 import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
@@ -150,6 +151,10 @@ export default function useSubtitle() {
           {
             key: SELECTED_SUBTITLE,
             value: s.language,
+          },
+          {
+            key: SELECTED_SUBTITLE_LABEL,
+            value: s?.label || s?.name || s?.language,
           },
         ],
       });

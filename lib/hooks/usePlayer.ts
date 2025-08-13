@@ -32,6 +32,7 @@ import {
 } from '../utils/playerTracking';
 import { trackingStoreKey } from '../constant/tracking';
 import { saveSessionStorage } from '../utils/storage';
+import useTrackingPing from './useTrackingPing';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -87,7 +88,7 @@ export default function usePlayer() {
   const retryBackgroundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlayingHandled, setIsPlayingHandled] = useState(false);
   const [isInitAds, setIsInitAds] = useState(false);
-
+  const { handlePingPlayer } = useTrackingPing();
   useEffect(() => {
     retryCountRef.current = retryCount;
   }, [retryCount]);
@@ -305,6 +306,7 @@ export default function usePlayer() {
       setIsInitAds(true);
       handleLoadAds();
     }
+    handlePingPlayer();
   };
 
   const handleLoadedMetaData = () => {
@@ -667,7 +669,6 @@ export default function usePlayer() {
 
   useEffect(() => {
     return () => {
-      console.log('--- PLAYER UNMOUNTED');
       handleClearInterval();
       lastTimeForRealPlayRef.current = 0;
       realPlaySecondsAccRef.current = 0;

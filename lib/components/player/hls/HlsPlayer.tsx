@@ -16,10 +16,7 @@ import dynamic from 'next/dynamic';
 import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import styles from '../core/Text.module.css';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
-import {
-  removePlayerSessionStorage,
-  trackPlayerChange,
-} from '@/lib/utils/playerTracking';
+import { trackPlayerChange } from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
@@ -48,7 +45,6 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
           },
         ],
       });
-      removePlayerSessionStorage();
     }
   }, []);
   const { handleAddError, handleIntervalCheckErrors } = usePlayer();
@@ -238,8 +234,8 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 
   useEffect(() => {
     return () => {
+      console.log('--- PLAYER UNMOUNTED hlsPlayer');
       destroyHls();
-      removePlayerSessionStorage();
     };
   }, []);
 

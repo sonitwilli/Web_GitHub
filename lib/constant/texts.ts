@@ -86,6 +86,7 @@ export const CATEGORY_BLOCKS_ADS: string = 'ads';
 export const SELECTED_VIDEO_QUALITY = 'selected_video_quality';
 export const SELECTED_LIVE_QUALITY = 'selected_live_quality';
 export const SELECTED_SUBTITLE = 'selected_subtitle';
+export const SELECTED_SUBTITLE_LABEL = 'selected_subtitle_label';
 export const SELECTED_AUDIO = 'selected_audio';
 export const SELECTED_AUDIO_SHAKA = 'selected_audio';
 export const SELECTED_SUBTITLE_SHAKA = 'selected_subtitle_shaka';
@@ -101,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.21';
+export const APP_VERSION = '8.0.22';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';

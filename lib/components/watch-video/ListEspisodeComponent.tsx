@@ -97,19 +97,19 @@ const ListEspisodeComponent = ({ position }: Props) => {
   useEffect(() => {
     // Reset manual page change flag when switching between fullscreen modes
     setIsManualPageChange(false);
-    
+
     // Force recalculation of episode height after a delay when entering fullscreen
     if (isFullscreen && position === 'fullscreen') {
       const timeoutId = setTimeout(() => {
         const firstEpisodeKey = Object.keys(episodeRefs.current)[0];
         const firstEpisodeElement = episodeRefs.current[firstEpisodeKey];
-        
+
         if (firstEpisodeElement) {
           const actualHeight = firstEpisodeElement.offsetHeight;
           setEpisodeHeight(actualHeight);
         }
       }, 200); // Longer delay to ensure DOM is updated
-      
+
       return () => clearTimeout(timeoutId);
     }
   }, [isFullscreen, position]);
@@ -119,17 +119,17 @@ const ListEspisodeComponent = ({ position }: Props) => {
     if (isFullscreen && position === 'fullscreen' && openEpisodesFullscreen) {
       // Reset states and recalculate when the episode list becomes visible
       setIsManualPageChange(false);
-      
+
       const timeoutId = setTimeout(() => {
         // Force recalculation of episode height when component becomes visible
         const firstEpisodeKey = Object.keys(episodeRefs.current)[0];
         const firstEpisodeElement = episodeRefs.current[firstEpisodeKey];
-        
+
         if (firstEpisodeElement) {
           const actualHeight = firstEpisodeElement.offsetHeight;
           setEpisodeHeight(actualHeight);
         }
-        
+
         // If there's a current episode, update the pagination to show the correct page
         if (currentEpisode && dataEspisodes.length > 0) {
           const episodeIndex = dataEspisodes.findIndex(
@@ -137,17 +137,24 @@ const ListEspisodeComponent = ({ position }: Props) => {
               ep.id === currentEpisode.id ||
               ep.real_episode_id === currentEpisode.real_episode_id,
           );
-          
+
           if (episodeIndex !== -1) {
             const pageForEpisode = Math.floor(episodeIndex / itemsPerPage) + 1;
             setCurrentPage(pageForEpisode);
           }
         }
       }, 300); // Even longer delay for visibility transition
-      
+
       return () => clearTimeout(timeoutId);
     }
-  }, [openEpisodesFullscreen, isFullscreen, position, currentEpisode, dataEspisodes, itemsPerPage]);
+  }, [
+    openEpisodesFullscreen,
+    isFullscreen,
+    position,
+    currentEpisode,
+    dataEspisodes,
+    itemsPerPage,
+  ]);
 
   // Auto scroll to current episode on mount
   useEffect(() => {
@@ -275,17 +282,18 @@ const ListEspisodeComponent = ({ position }: Props) => {
       if (!listRef.current) return;
 
       const startIndex = (pageNumber - 1) * itemsPerPage;
-      
+
       // Get the actual element to scroll to for more accurate positioning
       const targetEpisodeKey = Object.keys(episodeRefs.current)[startIndex];
       const targetElement = episodeRefs.current[targetEpisodeKey];
-      
+
       if (targetElement) {
         // Use the actual element position for more accurate scrolling
         const containerRect = listRef.current.getBoundingClientRect();
         const elementRect = targetElement.getBoundingClientRect();
-        const scrollTop = listRef.current.scrollTop + (elementRect.top - containerRect.top);
-        
+        const scrollTop =
+          listRef.current.scrollTop + (elementRect.top - containerRect.top);
+
         listRef.current.scrollTo({
           top: scrollTop,
           behavior: 'smooth',
@@ -324,7 +332,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
       }`}
     >
       <div
-        className={`flex flex-col gap-[16px] xl:w-[416px] bg-eerie-black p-[16px] ${
+        className={`flex flex-col gap-[16px] xl:w-[416px] bg-eerie-black border-b border-charleston-green p-[16px] ${
           isFullscreen ? 'pl-[24px] pt-[32px] xl:w-full' : ''
         }`}
       >
@@ -334,11 +342,13 @@ const ListEspisodeComponent = ({ position }: Props) => {
 
         {/* PAGINATION CONTROL */}
         {dataEspisodes?.length > 15 ? (
-          <div className={`relative mb-2 pr-[16px] ${
-            isFullscreen && position === 'fullscreen' 
-              ? 'w-full' 
-              : 'xl:w-[400px]'
-          }`}>
+          <div
+            className={`relative mb-2 pr-[16px] ${
+              isFullscreen && position === 'fullscreen'
+                ? 'w-full'
+                : 'xl:w-[400px]'
+            }`}
+          >
             <div className="overflow-hidden" ref={emblaRef}>
               <div className="flex gap-[24px]">
                 {Array.from({ length: totalPages }, (_, i) => {
