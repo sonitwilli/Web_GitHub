@@ -50,7 +50,7 @@ const desiredOrder = [
 
 const InforVideoComponent = (props: PropsVideo) => {
   const { viewportType } = useScreenSize();
-  const { isExpanded, dataChannel, streamType } = usePlayerPageContext();
+  const { isExpanded, dataChannel, streamType, dataPlaylist } = usePlayerPageContext();
   const { dataVideo } = props;
   const { showModalShare, setShowModalShare } = useModalToggle({});
   const slide = useMemo<BlockSlideItemType>(
@@ -332,10 +332,13 @@ const InforVideoComponent = (props: PropsVideo) => {
         )}
 
         {viewportType !== VIEWPORT_TYPE.DESKTOP &&
-        dataChannel?.episodes &&
-        dataChannel?.episodes?.length > 1 ? (
+        ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+          (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) ? (
           <div className="ListEspisodeComponent mt-[48px]">
-            {Number(dataChannel?.episode_type) !== 0 && (
+            {((dataChannel?.episodes &&
+              dataChannel?.episodes?.length > 1 &&
+              Number(dataChannel?.episode_type) !== 0) ||
+              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) && (
               <ListEspisodeComponent position="bottom" />
             )}
           </div>
@@ -371,8 +374,8 @@ const InforVideoComponent = (props: PropsVideo) => {
       {viewportType === VIEWPORT_TYPE.DESKTOP && (
         <div className="w-[416px] ml-auto flex-1">
           {isExpanded &&
-            dataChannel?.episodes &&
-            dataChannel?.episodes?.length > 1 && (
+            ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) && (
               <div className="mb-[72px]">
                 <ListEspisodeComponent position="bottom" />
               </div>

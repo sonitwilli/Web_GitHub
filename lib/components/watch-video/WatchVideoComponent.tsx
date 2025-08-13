@@ -392,9 +392,10 @@ const WatchVideoComponent = () => {
                         <ListEspisodeComponent position="default" />
                       )}
                     </div>
-                  ) : dataPlaylist?.videos &&
-                    dataPlaylist?.videos?.length > 0 ? (
-                    <div className={`w-full ${isExpanded ? 'hidden' : ''}`}>
+                  ) : viewportType === VIEWPORT_TYPE.DESKTOP &&
+                    dataPlaylist?.videos &&
+                    dataPlaylist?.videos?.length > 1 ? (
+                    <div className={`w-full ${isExpanded ? 'hidden' : 'pl-[16px]'}`}>
                       <ListEspisodeComponent position="default" />
                     </div>
                   ) : (
