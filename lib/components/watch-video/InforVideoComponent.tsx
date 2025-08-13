@@ -248,6 +248,17 @@ const InforVideoComponent = (props: PropsVideo) => {
           )}
         </div>
 
+        {/* Reaction buttons */}
+        <div className="flex gap-4 items-center mb-[40px]">
+          <LikeReaction
+            isChannel
+            isActive={isLiked}
+            onClick={handleReaction}
+          />
+
+          <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
+        </div>
+
         {/* Hightligh info */}
         <div className="flex flex-col flex-wrap lg:flex-row lg:justify-between lg:items-center gap-[24px] mb-[24px]">
           <div className="flex gap-3 flex-wrap">
@@ -281,16 +292,6 @@ const InforVideoComponent = (props: PropsVideo) => {
                 totalStars={5}
               />
             </div>
-          </div>
-
-          <div className="flex gap-4 items-center">
-            <LikeReaction
-              isChannel
-              isActive={isLiked}
-              onClick={handleReaction}
-            />
-
-            <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
           </div>
         </div>
 
