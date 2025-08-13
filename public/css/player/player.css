@@ -208,6 +208,9 @@
 .player-wrapper-playlist .c-control-button-next-episode {
   display: block;
 }
+.player-wrapper-playlist.player-wrapper-fullscreen .c-control-button-episode-list {
+  display: block;
+}
 .player-wrapper-playlist.player-wrapper-final-episode
   .c-control-button-next-episode {
   display: none;

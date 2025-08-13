@@ -45,6 +45,7 @@ export default function PlayerControlBar() {
     isEndVideo,
     videoDuration,
     videoCurrentTime,
+    dataPlaylist,
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
@@ -96,7 +97,8 @@ export default function PlayerControlBar() {
             <AudioButton />
             <Resolution />
             <SpeedButton />
-            {dataChannel?.episodes && dataChannel?.episodes?.length > 1 ? (
+            {(dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+            (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ? (
               <EpisodeListButton />
             ) : (
               ''
