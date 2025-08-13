@@ -61,6 +61,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     isPlaySuccessRef,
     previewHandled,
     clearErrorInterRef,
+    streamType,
   } = usePlayerPageContext();
   const { isFullscreen } = useAppSelector((s) => s.player);
   useLayoutEffect(() => {
@@ -258,7 +259,9 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 
   return (
     <>
-      <PlayerTopMask />
+      {(streamType === 'channel' ||
+        streamType === 'event' ||
+        streamType === 'premiere') && <PlayerTopMask />}
       <div
         className="hls-video-container w-full h-full flex items-center justify-center"
         id="hls-video-container"

@@ -86,6 +86,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     streamType,
     previewHandled,
     isExpanded,
+
     clearErrorInterRef,
   } = usePlayerPageContext();
 
@@ -473,19 +474,27 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         } ${isUserInteractive ? 'shaka-user-active' : 'shaka-user-inactive'}`}
       >
         <OverlayLogo />
-        <div
-          id="player_top_mask"
-          className="opacity-0 player_mask top_mask ease-out duration-500 bg-linear-to-b from-[rgba(13,13,12,0.6)] to-[rgba(13,13,12,0.001)] h-[136px] w-full absolute top-0 left-0 z-[1]"
-        >
-          {(dataChannel?.name || selectedTimeShift?.title) && (
-            <div
-              id="player_title"
-              className="mt-[49px] mx-[32px] font-[500] leading-[150%] text-[28px] text-white line-clamp-1 max-w-1/2"
-            >
-              {selectedTimeShift?.title || dataChannel?.name}
-            </div>
-          )}
-        </div>
+        {(streamType === 'channel' ||
+          streamType === 'event' ||
+          streamType === 'premiere') && (
+          <div
+            id="player_top_mask"
+            className="opacity-0 player_mask top_mask ease-out duration-500 bg-linear-to-b from-[rgba(13,13,12,0.6)] to-[rgba(13,13,12,0.001)] h-[136px] w-full absolute top-0 left-0 z-[1]"
+          >
+            {(dataChannel?.name ||
+              selectedTimeShift?.title ||
+              dataChannel?.title) && (
+              <div
+                id="player_title"
+                className="mt-[49px] mx-[32px] font-[500] leading-[150%] text-[28px] text-white line-clamp-1 max-w-1/2"
+              >
+                {selectedTimeShift?.title ||
+                  dataChannel?.name ||
+                  dataChannel?.title}
+              </div>
+            )}
+          </div>
+        )}
         <video
           id={VIDEO_ID}
           ref={videoRef}

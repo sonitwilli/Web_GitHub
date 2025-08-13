@@ -42,6 +42,7 @@ import { useKeyboardControls } from '@/lib/hooks/useKeyboardControls';
 import { useNoAdsGuide } from '@/lib/hooks/useNoAdsGuide';
 import { PreviewType } from './Preview';
 import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
+import { EpisodeTypeEnum } from '@/lib/api/vod';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -170,7 +171,11 @@ export default function PlayerWrapper({ children, eventId }: Props) {
       return true;
     }
     if (streamType === 'vod') {
-      return dataChannel?.episodes && dataChannel?.episodes?.length > 1;
+      return (
+        (dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+        dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+        dataChannel?.episode_type === EpisodeTypeEnum.SEASON
+      );
     }
     if (streamType === 'playlist') {
       return true;
@@ -185,11 +190,17 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   useEffect(() => {
     if (fetchChannelCompleted && fetchTop10Done) {
       if (streamType === 'vod') {
-        if (!dataChannel?.episodes || dataChannel?.episodes?.length < 2) {
+        // phim bộ thì luôn show danh sách tập
+        if (dataChannel?.episode_type === EpisodeTypeEnum.SINGLE) {
           if (setIsExpanded) {
             setIsExpanded(true);
           }
         }
+        // if (!dataChannel?.episodes || dataChannel?.episodes?.length < 2) {
+        //   if (setIsExpanded) {
+        //     setIsExpanded(true);
+        //   }
+        // }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -448,14 +459,12 @@ export default function PlayerWrapper({ children, eventId }: Props) {
         {showModalLogin ? <PlayerLogin /> : ''}
 
         {/* Chỉ show danh sách tập nếu có ít nhất 2 tập */}
-        {((streamType === 'vod' &&
-          isFullscreen &&
-          dataChannel?.episodes &&
-          dataChannel?.episodes?.length > 1) ||
-          (streamType === 'playlist' &&
-            isFullscreen &&
-            dataPlaylist?.videos &&
-            dataPlaylist?.videos?.length > 1)) ? (
+        {(streamType === 'vod' || streamType === 'playlist') &&
+        isFullscreen &&
+        ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+          (dataPlaylist?.videos && dataPlaylist?.videos?.length) ||
+          dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+          dataChannel?.episode_type === EpisodeTypeEnum.SEASON) ? (
           <div className={`${openEpisodesFullscreen ? '' : 'hidden'}`}>
             <div className="fixed z-[10] top-0 right-0 w-full h-full grid grid-cols-[1fr_min(520px,100vw)] sm:grid-cols-[1fr_520px]">
               <div className="h-full  bg-gradient-to-r from-[rgba(13,13,12,0)] to-[rgba(13,13,12,1)]"></div>

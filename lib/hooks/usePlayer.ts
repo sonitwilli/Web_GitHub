@@ -63,7 +63,6 @@ export default function usePlayer() {
     isVideoPaused,
     streamType,
     setRealPlaySeconds,
-    checkErrorInterRef,
     clearErrorInterRef,
   } = usePlayerPageContext();
   const { handleLoadAds } = useAdsPlayer();
@@ -505,7 +504,7 @@ export default function usePlayer() {
       }, t * 1000);
     } else {
       console.log('--- PLAYER STOP RETRY');
-      if (checkErrorInterRef?.current) {
+      if (window.checkErrorInterRef) {
         if (clearErrorInterRef) clearErrorInterRef();
       }
     }
@@ -606,12 +605,12 @@ export default function usePlayer() {
 
   const handleIntervalCheckErrors = () => {
     console.log('--- PLAYER handleIntervalCheckErrors', {
-      checkErrorInterRef: checkErrorInterRef?.current,
+      checkErrorInterRef: window.checkErrorInterRef,
     });
     // chạy sau khi load source
-    if (!checkErrorInterRef?.current) {
+    if (!window.checkErrorInterRef) {
       // @ts-ignore
-      checkErrorInterRef.current = setInterval(() => {
+      window.checkErrorInterRef = setInterval(() => {
         // if (document?.hidden) {
         //   return;
         // }

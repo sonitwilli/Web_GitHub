@@ -382,6 +382,7 @@ export const getPlayerParams = () => {
   if (typeof window === 'undefined') {
     return {};
   }
+  trackPlayerChange();
   const {
     dataChannel,
     dataStream,

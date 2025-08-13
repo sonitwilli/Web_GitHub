@@ -3,6 +3,7 @@ import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { playerButtonProps } from '../common/playerButtonProps';
+import { EpisodeTypeEnum } from '@/lib/api/vod';
 const ChatButton = dynamic(() => import('../core/ChatButton'), {
   ssr: false,
 });
@@ -98,7 +99,9 @@ export default function PlayerControlBar() {
             <Resolution />
             <SpeedButton />
             {(dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-            (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ? (
+            (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
+            dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+            dataChannel?.episode_type === EpisodeTypeEnum.SEASON ? (
               <EpisodeListButton />
             ) : (
               ''

@@ -43,6 +43,7 @@ export default function useTrackingPing() {
       console.log('--- PLAYER UNMOUNTED useTrackingPing');
       if (pingInterval?.current) {
         clearInterval(pingInterval.current);
+        pingInterval.current = null;
       }
     };
   }, []);

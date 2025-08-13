@@ -169,11 +169,6 @@
   display: block;
 }
 
-.player-wrapper-only-one-episode.player-wrapper-fullscreen
-  .c-control-button-episode-list {
-  display: none;
-}
-
 .player-wrapper-paused #nvm_player_control {
   opacity: 1;
 }
@@ -222,6 +217,13 @@
 
 .player-wrapper-expanded #video_id {
   object-fit: contain;
+}
+
+.player-wrapper-series.player-wrapper-fullscreen .c-control-button-episode-list,
+.player-wrapper-season.player-wrapper-fullscreen .c-control-button-episode-list,
+.player-wrapper-playlist.player-wrapper-fullscreen
+  .c-control-button-episode-list {
+  display: block;
 }
 
 @media screen and (max-width: 767px) {

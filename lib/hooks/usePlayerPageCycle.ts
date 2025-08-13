@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect } from 'react';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
-import { removePlayerSessionStorage } from '../utils/playerTracking';
 import { trackingPingLog111 } from './useTrackingPing';
 
 export default function usePlayerPageCycle() {
@@ -20,7 +19,6 @@ export default function usePlayerPageCycle() {
     return () => {
       console.log('--- PLAYER UNMOUNTED usePlayerPageCycle');
       trackingPingLog111();
-      removePlayerSessionStorage();
     };
   }, []);
   return {};

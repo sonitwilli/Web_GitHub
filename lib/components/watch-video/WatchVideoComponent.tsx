@@ -384,9 +384,11 @@ const WatchVideoComponent = () => {
                       </PlayerWrapper>
                     )}
                   </div>
-                  {viewportType === VIEWPORT_TYPE.DESKTOP &&
-                  dataChannel?.episodes &&
-                  dataChannel?.episodes?.length > 1 ? (
+                  {(viewportType === VIEWPORT_TYPE.DESKTOP &&
+                    dataChannel?.episodes &&
+                    dataChannel?.episodes?.length > 1) ||
+                  dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+                  dataChannel?.episode_type === EpisodeTypeEnum.SEASON ? (
                     <div
                       className={`w-full ${
                         isExpanded ? 'hidden' : 'pl-[16px]'
@@ -396,10 +398,13 @@ const WatchVideoComponent = () => {
                         <ListEspisodeComponent position="default" />
                       )}
                     </div>
-                  ) : viewportType === VIEWPORT_TYPE.DESKTOP &&
-                    dataPlaylist?.videos &&
-                    dataPlaylist?.videos?.length > 1 ? (
-                    <div className={`w-full ${isExpanded ? 'hidden' : 'pl-[16px]'}`}>
+                  ) : dataPlaylist?.videos &&
+                    dataPlaylist?.videos?.length > 0 ? (
+                    <div
+                      className={`w-full ${
+                        isExpanded ? 'hidden' : 'pl-[16px]'
+                      }`}
+                    >
                       <ListEspisodeComponent position="default" />
                     </div>
                   ) : (

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // https://wiki.fptplay.net/display/ADV/%5BSDK-WEB%5D+Web+SDK+Quick+Start+Guide
 
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
@@ -11,7 +12,7 @@ export const useAdsPlayer = () => {
     if (typeof window.Ads !== 'undefined') {
       const t = sessionStorage.getItem(PLAYER_BOOKMARK_SECOND);
       window.Ads(window.shakaPlayer, t ? Number(t) : 0);
-      console.log('--- RUN ADS', { timeplay: t });
+      console.log('--- ADS start', { timeplay: t });
     }
   };
 
@@ -42,12 +43,16 @@ export const useAdsPlayer = () => {
   const handleLoadAds = () => {
     try {
       if (
-        (dataChannel?.enable_ads == '1' && dataStream?.enable_ads == 1) ||
-        (previewHandled && dataStream?.enable_ads == 1)
+        /*@ts-ignore*/
+        (Number(dataChannel?.enable_ads) == 1 &&
+          Number(dataStream?.enable_ads) == 1) ||
+        (previewHandled && Number(dataChannel?.enable_ads) == 1)
       ) {
         if (typeof window.Ads !== 'undefined') {
+          console.log('--- ADS RUN');
           runAds();
         } else {
+          console.log('--- ADS INIT');
           loadAdsCdns();
         }
       }

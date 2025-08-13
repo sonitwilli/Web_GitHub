@@ -30,5 +30,6 @@ declare global {
       destroy: () => void;
       openPopup: (type: string, data: any) => void;
     };
+    checkErrorInterRef: NodeJS.Timeout | null;
   }
 }

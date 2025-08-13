@@ -186,7 +186,6 @@ type ContextType = {
     channelDetailData?: ChannelDetailType;
     dataPlaylist?: PlayListDetailResponseType;
   }) => Promise<StreamItemType>;
-  checkErrorInterRef?: RefObject<NodeJS.Timeout>;
   clearErrorInterRef?: () => void;
 };
 
@@ -332,7 +331,6 @@ export function PlayerPageContextProvider({ children }: Props) {
   const isEndedLiveCountdown = useSelector(
     (state: RootState) => state.player.isEndedLiveCountdown,
   );
-  const checkErrorInterRef = useRef<NodeJS.Timeout>(null);
 
   const [previewHandled, setPreviewHandled] = useState(false);
   const checkScreen = () => {
@@ -1169,9 +1167,9 @@ export function PlayerPageContextProvider({ children }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const clearErrorInterRef = () => {
-    if (checkErrorInterRef.current) {
-      clearInterval(checkErrorInterRef.current);
-      checkErrorInterRef.current = null;
+    if (window.checkErrorInterRef) {
+      clearInterval(window.checkErrorInterRef);
+      window.checkErrorInterRef = null;
     }
   };
 
@@ -1280,7 +1278,6 @@ export function PlayerPageContextProvider({ children }: Props) {
         // @ts-ignore
         getStream,
         // @ts-ignore
-        checkErrorInterRef,
         clearErrorInterRef,
       }}
     >
