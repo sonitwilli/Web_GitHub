@@ -7,7 +7,7 @@ import { useEventConfig } from '@/lib/hooks/useEventConfig';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useAppDispatch } from '@/lib/store';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { loadJsScript } from '@/lib/utils/methods';
 import type { GetServerSideProps } from 'next';
@@ -35,6 +35,7 @@ export default function HomePage() {
 
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { isExistedAds } = useAppSelector((state) => state.app);
   useEventConfig();
 
   useEffect(() => {
@@ -50,14 +51,20 @@ export default function HomePage() {
         });
       }, 10000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [router.isReady, dispatch]);
 
   return (
     <>
       <DefaultLayout>
-        <div className="relative pt-[80px] tablet:pt-0">
+        <div
+          className={`relative ${
+            isExistedAds ? 'pt-0' : 'pt-[80px] tablet:pt-0'
+          }`}
+        >
           <div className="mb-[40px] xl:mb-0">
             {highLightBlockData?.data &&
             highLightBlockData?.data?.length > 0 ? (

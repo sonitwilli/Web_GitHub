@@ -1,6 +1,6 @@
 import { axiosInstance } from '@/lib/api/axios';
 import { AxiosError, AxiosResponse } from 'axios';
-import { DEFAULT_ERROR_MSG, ERROR_CONNECTION } from '@/lib/constant/texts';
+import { DEFAULT_ERROR_MSG, ERROR_CONNECTION, ERROR_DELETE_PROFILE } from '@/lib/constant/texts';
 import { showToast } from '@/lib/utils/globalToast';
 import { checkError } from '@/lib/utils/profile';
 import { Profile } from '@/lib/api/user';
@@ -45,7 +45,13 @@ export interface ProfileResponse {
   data?: {
     profiles: Profile[];
     meta_data: ProfileMetaData;
+    current_profile: ProfileCurrent;
   };
+}
+
+export interface ProfileCurrent {
+  is_deleted?: string;
+  redirect_profile?: string;
 }
 
 export interface AvatarGroup {
@@ -104,7 +110,7 @@ export const getProfileList = async (): Promise<ProfileResponse> => {
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   if (!token) {
-    return { status: '0', data: { profiles: [], meta_data: {} } };
+    return { status: '0', data: { profiles: [], meta_data: {}, current_profile: {} } };
   }
 
   try {
@@ -113,11 +119,7 @@ export const getProfileList = async (): Promise<ProfileResponse> => {
   } catch (error) {
     console.error('Error fetching profiles:', error);
 
-    return {
-      status:
-        error instanceof AxiosError ? error?.response?.status?.toString() : '0',
-      data: { profiles: [], meta_data: {} },
-    };
+    return { status: error instanceof AxiosError ? error.response?.status.toString() : '0', data: { profiles: [], meta_data: {}, current_profile: {} } };
   }
 };
 
@@ -217,6 +219,38 @@ export const updateProfile = async (
     throw error;
   }
 };
+
+export const deleteProfile = async (
+  profileId: string,
+  profileName: string,
+): Promise<AxiosResponse<ApiResponse>> => {
+  try {
+    const response = await axiosInstance.post(
+      "/config/profile/delete",
+      { profile_id: profileId },
+    );
+
+    if (response.data?.status === '1') {
+      showToast({
+        title: response.data?.message?.title || 'Hồ sơ đã được xóa',
+        desc: response.data?.message?.content || `Hồ sơ ${profileName} đã được xóa khỏi danh sách.`,
+      });
+    }
+
+    return response;
+  }
+  catch (error) {
+    showToast({
+      title: ERROR_DELETE_PROFILE,
+      desc: checkError({ error }),
+    });
+    console.error(
+      'Error deleting profile:',
+      error instanceof Error ? error.message : 'Unknown error',
+    );
+    throw error;
+  }
+}
 
 export const checkPassword = async ({
   password,

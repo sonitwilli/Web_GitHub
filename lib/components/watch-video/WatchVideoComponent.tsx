@@ -8,7 +8,7 @@ import InforVideoComponent from './InforVideoComponent';
 import ErrorComponent from '../error/ErrorComponent';
 import CustomImage from '../common/CustomImage';
 import { scaleImageUrl } from '@/lib/utils/methods';
-import { useAppDispatch } from '@/lib/store';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import RequirePurchaseVod from '../player/core/RequirePurchaseVod';
 import dynamic from 'next/dynamic';
@@ -90,7 +90,7 @@ const WatchVideoComponent = () => {
   const router = useRouter();
 
   const { isFinalEpisode } = useVodPageContext();
-
+  const { isExistedAds } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -208,7 +208,11 @@ const WatchVideoComponent = () => {
   })();
 
   return (
-    <div className="pt-[96px]">
+    <div
+      className={`${
+        isExistedAds ? 'pt-[16px]' : 'pt-[96px]'
+      }`}
+    >
       {channelNotFound ? (
         <div className="f-container">
           <ErrorComponent

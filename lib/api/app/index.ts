@@ -24,6 +24,14 @@ export interface MessageConfigDataType {
 
 export interface Profile {
   msg_not_support?: string;
+  action_delete?: DeleteProfile
+}
+
+export interface DeleteProfile {
+  msg_delete?: string;
+  msg_deleted?: string;
+  title_delete?: string;
+  title_deleted?: string;
 }
 
 export interface Comment {

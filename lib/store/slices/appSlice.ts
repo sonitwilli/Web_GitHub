@@ -16,6 +16,7 @@ interface appState {
   sharedSlideItem?: BlockSlideItemType;
   messageConfigs?: MessageConfigDataType;
   adsLoaded?: boolean;
+  isExistedAds?: boolean;
   tabActive?: boolean;
 }
 
@@ -31,6 +32,7 @@ const initialState: appState = {
   sharedSlideItem: undefined,
   messageConfigs: {},
   adsLoaded: false,
+  isExistedAds: false,
   tabActive: true,
 };
 
@@ -77,6 +79,9 @@ const appSlice = createSlice({
     changeAdsLoaded: (state, action: PayloadAction<boolean>) => {
       state.adsLoaded = action.payload;
     },
+    changeIsExistedAds: (state, action: PayloadAction<boolean>) => {
+      state.isExistedAds = action.payload;
+    },
     changeTabActive: (state, action: PayloadAction<boolean>) => {
       state.tabActive = action.payload;
     },
@@ -96,6 +101,7 @@ export const {
   changeSharedSlideItem,
   changeMessageConfigs,
   changeAdsLoaded,
+  changeIsExistedAds,
   changeTabActive,
 } = appSlice.actions;
 

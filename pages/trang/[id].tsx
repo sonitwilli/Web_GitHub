@@ -13,7 +13,7 @@ import { SeoProps } from '@/lib/components/seo/SeoHead';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
-import { useAppDispatch } from '@/lib/store';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { loadJsScript } from '@/lib/utils/methods';
 import { HISTORY_TEXT } from '@/lib/constant/texts';
@@ -66,7 +66,7 @@ export default function CategoryPage() {
 
   const router = useRouter();
   const dispatch = useAppDispatch();
-
+  const { isExistedAds } = useAppSelector((state) => state.app);
   useEffect(() => {
     if (router.isReady && process.env.NEXT_PUBLIC_API_ADS) {
       const timer = setTimeout(() => {
@@ -80,14 +80,20 @@ export default function CategoryPage() {
         });
       }, 10000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+      };
     }
   }, [router.isReady, dispatch]);
 
   return (
     <>
       <DefaultLayout>
-        <div className="pt-[80px] tablet:pt-0">
+        <div
+          className={`relative ${
+            isExistedAds ? 'pt-0' : 'pt-[80px] tablet:pt-0'
+          }`}
+        >
           <div className="mb-[40px] xl:mb-0">
             {highLightBlockData?.data &&
             highLightBlockData?.data?.length > 0 ? (

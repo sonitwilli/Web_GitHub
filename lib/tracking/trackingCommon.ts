@@ -132,11 +132,13 @@ export const trackingShowContentLog29 = ({
   Event,
   ItemName,
   ItemId,
+  Key,
 }: TrackingParams) => {
   const params: TrackingParams = {
     Event: Event || 'ShowSuccessfully',
     ItemName: ItemName,
     ItemId: ItemId,
+    Key: Key,
   };
   tracking(params);
 };

@@ -123,6 +123,7 @@ export default function UserDropdownMenu({
   const [isConfirmManagementCode, setIsConfirmManagementCode] = useState(false);
   const [loading, setLoading] = useState(false);
   const [subTitle, setSubTitle] = useState<string>('');
+  const [isErrorCode, setIsErrorCode] = useState<string>('');
 
   const handleConfirmPin = (pin: string) => {
     setPin(pin);
@@ -137,7 +138,19 @@ export default function UserDropdownMenu({
         pin,
       });
 
-      if (checkPinResult.error) {
+      if (checkPinResult?.defaultData?.error_code === '3') {
+        setIsErrorCode('3');
+        setModalContent({
+          title: checkPinResult?.defaultData?.message?.title || 'Hồ sơ đã bị xóa',
+          content: checkPinResult?.defaultData?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+          buttons: {
+            accept: 'Đóng',
+          },
+        });
+        setShowPinModal(false);
+        setIsConfirmModalOpen(true);
+        return;
+      } else if (checkPinResult.error) {
         profilePinModalRef.current?.setError(checkPinResult.error);
         return;
       }
@@ -146,11 +159,27 @@ export default function UserDropdownMenu({
     setLoading(false);
 
     if (updateResult?.data?.status === '0') {
-      profilePinModalRef.current?.setError(
-        updateResult?.data?.msg || DEFAULT_ERROR_MSG,
-      );
-      setIsForgotPin(false);
-      return;
+      const data = updateResult?.data;
+      if (data?.error_code === '3') {
+        setIsErrorCode('3');
+        setModalContent({
+          title: data?.message?.title || 'Hồ sơ đã bị xóa',
+          content:
+            data?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+          buttons: {
+            accept: 'Đóng',
+          },
+        });
+        setShowPinModal(false);
+        setIsConfirmModalOpen(true);
+        return;
+      } else {
+        profilePinModalRef.current?.setError(
+          updateResult?.data?.msg || DEFAULT_ERROR_MSG,
+        );
+        setIsForgotPin(false);
+        return;
+      }
     }
 
     setLoading(true);
@@ -190,9 +219,28 @@ export default function UserDropdownMenu({
     const loginResult = await loginProfile({
       profile_id: selectedProfile?.profile_id,
     });
+    if (isErrorCode === '3') {
+      setIsErrorCode('');
+      window.location.href = '/';
+      return;
+    }
     if (loginResult?.success) {
       handleLoginSuccess({ profile: loginResult?.data || {} });
       setShowPinModal(false);
+    } else if (loginResult?.defaultData?.error_code === '3') {
+      console.log('loginResult', loginResult);
+      setIsErrorCode('3');
+      setModalContent({
+        title: loginResult?.defaultData?.message?.title || 'Hồ sơ đã bị xóa',
+        content:
+          loginResult?.defaultData?.message?.content ||
+          'Hồ sơ này đã bị xóa bởi thiết bị khác',
+        buttons: {
+          accept: 'Đóng',
+        },
+      });
+      setIsConfirmModalOpen(true);
+      return;
     } else {
       showToast({
         title: HAVING_ERROR,

@@ -12,7 +12,7 @@ export const useUpdateProfile = ({
   setLoadingUpdate,
   onUpdateSuccess,
 }: UseUpdateProfileProps = {}) => {
-  const [profileData, setProfileData] = useState<Profile | null>(null);
+  const [profileData, setProfileData] = useState<ApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,9 +36,9 @@ export const useUpdateProfile = ({
           selectedProfile,
         );
         const data: ApiResponse = response.data;
+        setProfileData(data);
         if (data.status === '1') {
           localStorage.setItem('userSelected', JSON.stringify(data?.data));
-          setProfileData(data.data as Profile);
           onUpdateSuccess?.();
         } else {
           setError(data?.message?.content || null);

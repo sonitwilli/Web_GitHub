@@ -2,6 +2,8 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useMemo } from 'react';
 import ProfileList from '@/lib/components/multi-profile/ProfileList';
 import ProfileForm from '@/lib/components/multi-profile/ProfileForm';
+import ConfirmModal from '@/lib/components/modal/ModalConfirm';
+import { ProfileProvider } from '@/lib/components/contexts/ProfileContext';
 import {
   PROFILE_TYPES,
   PIN_TYPES,
@@ -21,9 +23,22 @@ const ProfileWrapper: React.FC = () => {
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [user, setUser] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [modalContent, setModalContent] = useState<{
+    title: string;
+    content: string;
+    buttons: {
+      accept: string;
+    };
+  } | null>(null);
 
   // Use the updateProfile hook
-  const { updateProfileAction, isLoading: updateLoading, error: errorUpdate } = useUpdateProfile({
+  const {
+    updateProfileAction,
+    profileData,
+    isLoading: updateLoading,
+    error: errorUpdate,
+  } = useUpdateProfile({
     setLoadingUpdate: setLoading,
     onUpdateSuccess: () => {
       if (user) {
@@ -33,6 +48,49 @@ const ProfileWrapper: React.FC = () => {
       }
     },
   });
+
+  const handleSubmitModal = () => {
+    if (profileData?.error_code === '3') {
+      router.push('/tai-khoan?tab=ho-so');
+      return;
+    }
+
+    if (profileData?.error_code === '4') {
+      window.location.href = '/';
+      return;
+    }
+  };
+
+  useEffect(() => {
+    switch (profileData?.error_code) {
+      case '3':
+        setModalContent({
+          title: profileData?.message?.title || 'Hồ sơ đã bị xóa',
+          content:
+            profileData?.message?.content ||
+            'Hồ sơ này đã bị xóa bởi thiết bị khác',
+          buttons: {
+            accept: 'Đóng',
+          },
+        });
+        setIsOpenModal(true);
+        break;
+      case '4':
+        setModalContent({
+          title: profileData?.message?.title || 'Hồ sơ đã bị xóa',
+          content:
+            profileData?.message?.content ||
+            'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+          buttons: {
+            accept: 'Xác nhận ',
+          },
+        });
+        setIsOpenModal(true);
+        break;
+      default:
+        break;
+    }
+  }, [profileData]);
 
   // Mock ProfileMixin logic for storageProfileId
   const storageProfileId = useMemo(() => {
@@ -52,7 +110,7 @@ const ProfileWrapper: React.FC = () => {
   // Computed property: userMapIndex
   const userMapIndex = useMemo(() => {
     return profiles.filter(
-      (item: Profile) => item?.profile_id === user?.profile_id
+      (item: Profile) => item?.profile_id === user?.profile_id,
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profiles]);
@@ -64,8 +122,8 @@ const ProfileWrapper: React.FC = () => {
         const storedUser = localStorage.getItem('userSelected');
         const parsedUser = storedUser ? JSON.parse(storedUser) : null;
         setUser(parsedUser);
-        if (parsedUser && userMapIndex?.length > 0) {
-          setSelectedProfile(userMapIndex[0] || null);
+        if ((parsedUser && userMapIndex?.length > 0) || parsedUser) {
+          setSelectedProfile(userMapIndex[0] || parsedUser || null);
         }
       }
     };
@@ -81,6 +139,13 @@ const ProfileWrapper: React.FC = () => {
       setUser(null);
     }
   }, []);
+
+  useEffect(() => {
+    if (selectedProfile) {
+      console.log('selectedProfile', selectedProfile);
+      
+    }
+  }, [selectedProfile]);
 
   useEffect(() => {
     if (tab === 'edit') {
@@ -150,37 +215,48 @@ const ProfileWrapper: React.FC = () => {
       setLoading(false);
     }
   };
+  
 
   return (
-    <div className="min-h-screen w-full relative">
-      {tab === 'list' && !user && (
-        <ProfileList
-          heading="Chỉnh sửa hồ sơ" // Adjust if profilesMetaData.title_update is dynamic
-          clickAdd={() => setTab('add')}
-          confirm={confirmProfileList}
-          clickProfile={(profile: Profile) => clickProfile(profile || {})}
-        />
-      )}
+    <ProfileProvider>
+      <div className="min-h-screen w-full relative">
+        {tab === 'list' && !user && (
+          <ProfileList
+            heading="Chỉnh sửa hồ sơ" // Adjust if profilesMetaData.title_update is dynamic
+            clickAdd={() => setTab('add')}
+            confirm={confirmProfileList}
+            clickProfile={(profile: Profile) => clickProfile(profile || {})}
+          />
+        )}
 
-      {(tab === 'edit' || user) && (
-        <ProfileForm
-          errorUpdate={errorUpdate}
-          title="Chỉnh sửa hồ sơ"
-          profile={selectedProfile || {}}
-          loading={loading || updateLoading}
-          onRemovePin={removePin}
-          onCancel={handleCancelBtn}
-          onConfirm={(params) => updateProfileAction(params, selectedProfile)}
-        />
-      )}
+        {(tab === 'edit' || user) && (
+          <ProfileForm
+            errorUpdate={errorUpdate}
+            title="Chỉnh sửa hồ sơ"
+            profile={selectedProfile || {}}
+            listProfiles={profiles}
+            loading={loading || updateLoading}
+            onRemovePin={removePin}
+            onCancel={handleCancelBtn}
+            onConfirm={(params) => updateProfileAction(params, selectedProfile)}
+          />
+        )}
 
-      {tab === 'add' && !user && (
-        <ProfileForm
-          title="Tạo hồ sơ"
-          onCancel={() => router.push('/tai-khoan?tab=ho-so')}
-        />
-      )}
-    </div>
+        {tab === 'add' && !user && (
+          <ProfileForm
+            listProfiles={profiles}
+            title="Tạo hồ sơ"
+            onCancel={() => router.push('/tai-khoan?tab=ho-so')}
+          />
+        )}
+      </div>
+      <ConfirmModal
+        open={isOpenModal}
+        onHidden={() => setIsOpenModal(false)}
+        onSubmit={handleSubmitModal}
+        modalContent={modalContent || {}}
+      />
+    </ProfileProvider>
   );
 };
 

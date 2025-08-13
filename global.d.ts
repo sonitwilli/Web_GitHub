@@ -22,5 +22,13 @@ declare global {
     newVodPlayer?: Hls;
     autoExpansionPlayer?: Hls;
     Ads?: any;
+    waitForSdk?: () => Promise<void>;
+    sdk?: {
+      emit: (event: string, data: any) => void;
+      getUserInfo: () => Promise<{ profile_id?: string; profileId?: string }>;
+      requestLogin: () => void;
+      destroy: () => void;
+      openPopup: (type: string, data: any) => void;
+    };
   }
 }

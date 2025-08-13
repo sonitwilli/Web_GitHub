@@ -33,6 +33,12 @@ export interface UserInfoResponseType {
   msg?: string;
   contract_number?: string;
   chatbot?: string;
+  current_profile?: profileDeleted;
+}
+
+export interface profileDeleted {
+  is_deleted?: string;
+  redirect_profile?: string;
 }
 
 export interface Profile {

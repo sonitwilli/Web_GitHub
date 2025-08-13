@@ -15,7 +15,7 @@ import useScroll from '@/lib/hooks/useScroll';
 import { IoMdCard } from 'react-icons/io';
 import DownloadApp from '../components/download/DownloadApp';
 import { checkActive } from '../utils/methods';
-import { useAppSelector } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 import useMenu from '../hooks/useMenu';
 import { ACCOUNT } from '@/lib/constant/texts';
 import { saveProfile } from '@/lib/utils/profile';
@@ -124,8 +124,10 @@ export default function Header() {
       'su-kien',
       'cong-chieu',
       'xem-video',
+      'playlist',
+      'dien-vien',
       'tim-kiem',
-      'short-video',
+      'short-videos',
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -137,6 +139,7 @@ export default function Header() {
   }, [type, id]);
   const appCtx = useContext(AppContext);
   const dispatch = useDispatch();
+  const appDispatch = useAppDispatch();
   const { configs, menus } = appCtx;
   const { selectedMenuMoreItem } = useAppSelector((state) => state.app);
 
@@ -186,6 +189,25 @@ export default function Header() {
       router.events.off('routeChangeComplete', handleRouteComplete);
     };
   }, [router.isReady, router.events, adsLoaded]);
+
+  // Listen initBanner once globally and store isExistedAds flag
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleInitBanner = () => {
+      try {
+        const ins = document.querySelector('ins[data-aplpm="105-111"]');
+        const existedAds = ins
+          ? (ins as HTMLElement).children.length > 0
+          : false;
+        appDispatch({ type: 'app/changeIsExistedAds', payload: existedAds });
+      } catch {}
+    };
+
+    document.addEventListener('initBanner', handleInitBanner);
+    return () => {
+      document.removeEventListener('initBanner', handleInitBanner);
+    };
+  }, [appDispatch]);
 
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];

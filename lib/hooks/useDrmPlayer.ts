@@ -459,6 +459,14 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
       promise
 
         .then((res: any) => {
+          if (!res || !isArray(res?.data) || res.code !== 200) {
+            trackingShowContentLog29({
+              Event: 'ShowFailed',
+              ItemName: msgErrorPing?.content as string,
+              ItemId: 'fingerprint',
+              Key: 'API',
+            });
+          }
           if (res) {
             if (retryPing > 0) retryPing = 0;
             if (isArray(res?.data)) {
@@ -502,6 +510,12 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                         setFingerPrintData(
                           res.data.actions[0] as FingerPrintDataType,
                         );
+                      trackingShowContentLog29({
+                        Event: 'ShowSuccessfully',
+                        ItemName: res.data.actions[0] as string,
+                        ItemId: 'fingerprint',
+                        Key: 'API',
+                      });
                       setTimeout(() => {
                         if (setFingerPrintData) {
                           setFingerPrintData();
@@ -509,11 +523,7 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                       }, res.data.actions[0].duration * 1000);
                     }
                   }
-                  trackingShowContentLog29({
-                    Event: 'ShowSuccessfully',
-                    ItemName: res?.msg,
-                    ItemId: query?.type,
-                  });
+
                   break;
                 case 400:
                 case 406:
@@ -525,11 +535,6 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                   });
                   if (openPlayerNoticeModal)
                     openPlayerNoticeModal(contentResult);
-                  trackingShowContentLog29({
-                    Event: 'ShowFailed',
-                    ItemName: res?.msg,
-                    ItemId: query?.type,
-                  });
                   break;
                 case 403:
                   if (!intervalPingEnc.current) {
@@ -537,11 +542,6 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                       ping();
                     }, 60 * 1000) as any;
                   }
-                  trackingShowContentLog29({
-                    Event: 'ShowFailed',
-                    ItemName: res?.msg,
-                    ItemId: query?.type,
-                  });
                   break;
               }
             } else if (isObject(res?.data)) {
@@ -560,8 +560,9 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
         .catch(async (error) => {
           trackingShowContentLog29({
             Event: 'ShowFailed',
-            ItemName: msgErrorPing?.content as string,
-            ItemId: query?.type,
+            ItemName: error.message as string,
+            ItemId: 'fingerprint',
+            Key: 'API Failed',
           });
           if (retryPing >= 4) {
             await getIp();

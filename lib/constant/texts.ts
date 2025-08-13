@@ -231,6 +231,7 @@ export const SUPPORT_VP9 = 'SUPPORT_VP9';
 export const SUPPORT_DOLBY_VISION = 'SUPPORT_DOLBY_VISION';
 export const CHECK_CODEC_COMPLETED = 'CHECK_CODEC_COMPLETED';
 export const ERROR_CONNECTION = 'Lỗi kết nối dịch vụ';
+export const ERROR_DELETE_PROFILE = 'Xóa hồ sơ không thành công';
 export const SINGOUT_DEVICE_SUCCESS = 'Đăng xuất thiết bị thành công';
 export const SINGOUT_DEVICE_ERROR = 'Đăng xuất thiết bị thất bại';
 export const SINGOUT_DEVICE_ERROR_MSG =
@@ -478,6 +479,8 @@ export const NotFoundErrors = {
   contentNotFound: 'Có thể liên kết bị hỏng hoặc trang đã bị gỡ.',
 };
 export const TOTAL_CHUNK_SIZE_LOADED = 'TOTAL_CHUNK_SIZE_LOADED';
+export const CREATE_PROFILE = 'Tạo hồ sơ';
+export const EDIT_PROFILE = 'Chỉnh sửa hồ sơ';
 export const URL_MODE = 'URL_MODE';
 export const STREAM_AUDIO_PROFILE = 'STREAM_AUDIO_PROFILE';
 export const CHATBOT_OPEN_STATUS_BEFORE_CHANGE_ROUTE =

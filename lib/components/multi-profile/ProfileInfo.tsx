@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useProfileContext } from '@/lib/components/contexts/ProfileContext'; // Đường dẫn đến ProfileContext
 import ProfileUser from '@/lib/components/multi-profile/ProfileUser'; // Component ProfileUser
+import ConfirmModal from '@/lib/components/modal/ModalConfirm';
 import NoData from '@/lib/components/empty-data/NoData'; // Component NoData
 import { GoPlus } from 'react-icons/go';
 import { useRouter } from 'next/router';
@@ -8,11 +9,16 @@ import { useDispatch } from 'react-redux';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
 import ErrorData from '@/lib/components/error/ErrorData';
 import Loading from '@/lib/components/common/Loading';
+import { setProfiles } from '@/lib/store/slices/multiProfiles';
+import { useAppSelector } from '@/lib/store';
+
+
 
 const ProfileInfo: React.FC = () => {
   const {
     profilesList,
     profileError,
+    profilesData,
     defaultProfile,
     profilesMetaData,
     refetchProfiles,
@@ -24,6 +30,7 @@ const ProfileInfo: React.FC = () => {
   const dispatch = useDispatch();
 
   const router = useRouter();
+  const { messageConfigs } = useAppSelector((state) => state.app);
 
   // Tương đương với mounted
   useEffect(() => {
@@ -31,6 +38,12 @@ const ProfileInfo: React.FC = () => {
     getListProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    console.log('profilesData', profilesData);
+    dispatch(setProfiles(profilesList));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profilesList]);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -103,6 +116,21 @@ const ProfileInfo: React.FC = () => {
             <NoData />
           </div>
         )}
+        <ConfirmModal
+          open={profilesData?.current_profile?.is_deleted === '1'}
+          onHidden={() => profilesData?.current_profile?.is_deleted !== '1'}
+          onSubmit={() => {
+            window.location.href = '/';
+            return;
+          }}
+          modalContent={{
+            title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
+            content: messageConfigs?.profile?.action_delete?.msg_deleted || 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+            buttons: {
+              accept: 'Xác nhận',
+            },
+          }}
+        />
       </div>
     </div>
   );

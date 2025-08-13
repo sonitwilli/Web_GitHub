@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useProfileAvatars } from '@/lib/hooks/useProfileAvatars';
 import { useFetchRecommendedProfile } from '@/lib/hooks/useCreateProfile';
 import { useCreateNewProfile } from '@/lib/hooks/useCreateNewProfile'; // Import the new hook
@@ -8,6 +8,9 @@ import ProfileHeading from '@/lib/components/multi-profile/ProfileHeading';
 import ProfileAvatarList from '@/lib/components/multi-profile/ProfileAvatarList';
 import PinModal from '@/lib/components/modal/ModalPin';
 import TogglerButton from '@/lib/components/common/ToggleButton';
+import ModalConfirm, {
+  ModalContent,
+} from '@/lib/components/modal/ModalConfirm';
 import { IoIosArrowDown } from 'react-icons/io';
 import { IoCloseOutline } from 'react-icons/io5';
 import { BiPencil } from 'react-icons/bi';
@@ -21,6 +24,11 @@ import { Profile } from '@/lib/api/user';
 import { Avatar } from '@/lib/api/multi-profiles';
 import Loading from '@/lib/components/common/Loading';
 import styles from './ProfileForm.module.css';
+import { useAppSelector } from '@/lib/store'; // Adjust the import path as needed
+import { CREATE_PROFILE, EDIT_PROFILE } from '@/lib/constant/texts';
+import { deleteProfile } from '@/lib/api/multi-profiles'; // Adjust the import path as needed
+import { useRouter } from 'next/router';
+import { switchProfile } from '@/lib/api/user';
 
 interface ProfileFormProps {
   errorUpdate?: string | null;
@@ -39,6 +47,7 @@ interface ProfileFormProps {
   }) => void;
   onRemovePin?: (data: { name?: string; avarta?: Avatar }) => void;
   onCreateSuccess?: () => void;
+  listProfiles?: Profile[];
 }
 
 const nameRegex =
@@ -50,6 +59,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   type = 'create',
   loading = false,
   errorUpdate,
+  listProfiles = [],
   onCancel,
   onConfirm,
   onRemovePin,
@@ -58,6 +68,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [isChild, setIsChild] = useState<boolean>(false);
   const [isAvatar, setIsAvatar] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
+  const [modalContent, setModalContent] = useState<ModalContent>({
+    title: '',
+    content: '',
+    buttons: {
+      accept: 'Xóa',
+      cancel: 'Đóng',
+    },
+  });
+  const [isOpenModal, setIsOpenModal] = useState<boolean>(false);
   const [validNameChange, setValidNameChange] = useState<boolean>(true);
   const [selectedAvatar, setSelectedAvatar] = useState<Avatar>({
     avatar_id: '',
@@ -70,6 +89,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [isRemovePin, setIsRemovePin] = useState<boolean>(false);
   const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
+  const [isErrorCode, setIsErrorCode] = useState<string | null>(null);
+  const router = useRouter();
 
   // Sử dụng hook useFetchRecommendedProfile
   const { profileData, fetchRecommendedProfile, isLoading, error } =
@@ -86,11 +107,56 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     setLoadingCreate,
   });
 
+  const { info } = useAppSelector((state) => state.user);
+  const { messageConfigs } = useAppSelector((state) => state.app);
+  const isRootProfile = useMemo(
+    () => listProfiles?.find((item) => item?.is_root === '1'),
+    [listProfiles],
+  );
+
+  const getDefailProfile = async () => {
+    try {
+      const response = await switchProfile(profile?.profile_id || '');
+      const data = await response?.data;
+      switch (data?.error_code) {
+        case '3':
+          setModalContent({
+            title: data?.message?.title || 'Hồ sơ đã bị xóa',
+            content:
+              data?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+            buttons: {
+              accept: 'Đóng',
+            },
+          });
+          setIsOpenModal(true);
+          setIsErrorCode('3');
+          break;
+        case '4':
+          setModalContent({
+            title: data?.message?.title || 'Hồ sơ đã bị xóa',
+            content:
+              data?.message?.content ||
+              'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+            buttons: {
+              accept: 'Xác nhận',
+            },
+          });
+          setIsOpenModal(true);
+          setIsErrorCode('4');
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log(error, 'error');
+    }
+  };
+
   useEffect(() => {
     const handleFetchDataRecommendProfile = async () => {
       try {
         await fetchAvatars();
-        if (title === 'Tạo hồ sơ') {
+        if (title === CREATE_PROFILE) {
           await fetchRecommendedProfile();
         }
         checkDefaultProfile();
@@ -99,20 +165,21 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       }
     };
     handleFetchDataRecommendProfile();
+    getDefailProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title, profile?.profile_id]);
 
   useEffect(() => {
     if (name !== profileData?.name) {
-      setName(profileData?.name || '');
+      setName(profileData?.name || profile?.name || '');
     }
     if (
       selectedAvatar.avatar_id !== profileData?.avatar_id ||
       selectedAvatar.avatar_url !== profileData?.avatar_url
     ) {
       setSelectedAvatar({
-        avatar_id: profileData?.avatar_id || '',
-        avatar_url: profileData?.avatar_url || '',
+        avatar_id: profileData?.avatar_id || profile?.avatar_id || '',
+        avatar_url: profileData?.avatar_url || profile?.avatar_url || '',
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,7 +214,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   }, [showAddPinModal, showEditPinModal]);
 
   const checkDefaultProfile = () => {
-    if (title === 'Chỉnh sửa hồ sơ' && profile?.name) {
+    if (title === EDIT_PROFILE && profile?.name) {
       if (name !== profile.name) {
         setName(profile.name);
       }
@@ -166,6 +233,62 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     }
   };
 
+  const handleDeleteProfile = async () => {
+    try {
+      setIsOpenModal(false);
+      if (isErrorCode === '3') {
+        router.push('/tai-khoan?tab=ho-so');
+        return;
+      }
+      if (isErrorCode === '4') {
+        window.location.href = '/';
+        return;
+      }
+      const response = await deleteProfile(
+        profile.profile_id || '',
+        profile?.name || '',
+      );
+      if (response?.data?.status === '0') {
+        switch (response?.data?.error_code) {
+          case '3':
+            setModalContent({
+              title: response?.data?.message?.title || 'Hồ sơ đã bị xóa',
+              content:
+                response?.data?.message?.content ||
+                'Hồ sơ đã bị xoá bởi thiết bị khác.',
+              buttons: {
+                accept: 'Đóng',
+              },
+            });
+            setIsOpenModal(true);
+            setIsErrorCode('3');
+            break;
+          case '4':
+            setModalContent({
+              title: response?.data?.message?.title || 'Hồ sơ đã bị xóa',
+              content:
+                response?.data?.message?.content ||
+                messageConfigs?.profile?.action_delete?.msg_deleted ||
+                'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+              buttons: {
+                accept: 'Xác nhận',
+              },
+            });
+            setIsOpenModal(true);
+            setIsErrorCode('4');
+            break;
+          default:
+            setIsErrorCode(null);
+            break;
+        }
+      } else {
+        router.push('/tai-khoan?tab=ho-so');
+      }
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+    }
+  };
+
   const handleCancel = () => {
     onCancel?.();
   };
@@ -181,7 +304,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       ...(pin && pin.length === 4 && { pin }),
       ...(isRemovePin && { pin: '' }),
     };
-    if (title === 'Tạo hồ sơ') {
+    if (title === CREATE_PROFILE) {
       createNewProfile(data);
     } else {
       onConfirm?.(data);
@@ -295,7 +418,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             )}
           </div>
           {(profile?.profile_type === PROFILE_TYPES.KID_PROFILE ||
-            title === 'Tạo hồ sơ') && (
+            title === CREATE_PROFILE) && (
             <div className="w-full mb-[24px]">
               <p className="text-silver-chalice text-base leading-[1.3] mb-2">
                 Phân loại hồ sơ
@@ -322,7 +445,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             </div>
           )}
           <div
-            className={`w-full mb-[40px] ${
+            className={`w-full mb-[24px] ${
               isChild ? 'pointer-events-none opacity-37' : ''
             }`}
           >
@@ -396,7 +519,50 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               )}
             </div>
           </div>
-          <div className="flex items-center justify-between gap-3">
+          {title === EDIT_PROFILE &&
+            info?.profile?.profile_id !== profile?.profile_id &&
+            profile?.profile_id !== info?.user_id_str && (
+              <div className="w-full mb-[24px]">
+                <div className="px-4 tablet:px-6 py-4 rounded-[12px] bg-eerie-black">
+                  <div className="flex items-center justify-between">
+                    <p className="text-white-smoke text-base leading-6 font-medium">
+                      Xóa hồ sơ
+                    </p>
+                    <button
+                      onClick={() => {
+                        setModalContent({
+                          title:
+                            messageConfigs?.profile?.action_delete
+                              ?.title_delete || 'Bạn muốn xóa hồ sơ?',
+                          content:
+                            messageConfigs?.profile?.action_delete?.msg_delete?.replace(
+                              '%s',
+                              isRootProfile?.name || '',
+                            ) ||
+                            `Hồ sơ bị xóa sẽ không thể khôi phục. Thiết bị sử dụng hồ sơ này sẽ được chuyển về hồ sơ ${isRootProfile?.name}.`,
+                          buttons: {
+                            accept: 'Xóa',
+                            cancel: 'Đóng',
+                          },
+                        });
+                        setIsOpenModal(true);
+                      }}
+                      className="cursor-pointer text-white-smoke text-base leading-6 font-medium outline-0 bg-transparent p-0 m-0"
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          <ModalConfirm
+            modalContent={modalContent}
+            open={isOpenModal}
+            onSubmit={handleDeleteProfile}
+            onCancel={() => setIsOpenModal(false)}
+            onHidden={() => setIsOpenModal(false)}
+          />
+          <div className="flex items-center justify-between gap-3 pt-4">
             <ProfileButton
               variant="dark"
               width="full"
@@ -409,9 +575,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             <ProfileButton
               width="full"
               className={`${
-                !validNameChange
-                  ? styles.disabledButton
-                  : styles.enabledButton
+                !validNameChange ? styles.disabledButton : styles.enabledButton
               }`}
               disabled={
                 !validNameChange ||

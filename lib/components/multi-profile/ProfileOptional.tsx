@@ -4,9 +4,11 @@ import { MdHistory } from 'react-icons/md';
 import { HiOutlineChevronRight } from 'react-icons/hi';
 import { checkPassword } from '@/lib/api/multi-profiles';
 import ModalFillManagementCode from '@/lib/components/modal/ModalFillCode';
+import ConfirmModal, { ModalContent } from '@/lib/components/modal/ModalConfirm';
 import ModalManagementCodeNotice from '@/lib/components/modal/ModalManagementCode';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
+import { switchProfile } from '@/lib/api/user';
 import { setOtpType } from '@/lib/store/slices/otpSlice';
 import ForgetPasswordModalProfile, {
   ForgetPasswordModalProfileRef,
@@ -44,6 +46,9 @@ const ProfileOptional: React.FC = () => {
     useState<boolean>(false);
   const [isConfirmManagementCode, setIsConfirmManagementCode] =
     useState<boolean>(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState<boolean>(false);
+  const [modalContent, setModalContent] = useState<ModalContent | null>(null);
+  const [isErrorCode, setIsErrorCode] = useState<string>('');
 
   const modalFillManagementCodeRef = useRef<{
     error?: string;
@@ -72,6 +77,13 @@ const ProfileOptional: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    if (selectedProfile?.profile_id) {
+      getDefailProfile();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProfile?.profile_id]);
+
   const handleDataRoute = () => {
     dispatch(
       setSideBarLeft({
@@ -92,6 +104,41 @@ const ProfileOptional: React.FC = () => {
     }
   };
 
+  const getDefailProfile = async () => {
+    try {
+      const response = await switchProfile(selectedProfile?.profile_id || '');
+      const data = await response?.data;
+      switch (data?.error_code) {
+        case '3':
+          setModalContent({
+            title: data?.message?.title || 'Hồ sơ đã bị xóa',
+            content: data?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+            buttons: {
+              accept: 'Đóng',
+            },
+          });
+          setIsConfirmModalOpen(true);
+          setIsErrorCode('3');
+          break;
+        case '4':
+          setModalContent({
+            title: data?.message?.title || 'Hồ sơ đã bị xóa',
+            content: data?.message?.content || 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+            buttons: {
+              accept: 'Xác nhận',
+            },
+          });
+          setIsConfirmModalOpen(true);
+          setIsErrorCode('4');
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.log(error, 'error');
+    }
+  };
+
   const confirmManagementCode = async (pw: string) => {
     setLoading(true);
     const result = await checkPassword({ password: pw, version: 1 });
@@ -106,6 +153,18 @@ const ProfileOptional: React.FC = () => {
           result.error || DEFAULT_ERROR_MSG,
         );
       }
+    }
+  };
+
+  const handleConfirmModal = () => {
+    if (isErrorCode === '3') {
+      router.push('/tai-khoan?tab=ho-so');
+      return
+    }
+
+    if (isErrorCode === '4') {
+      window.location.href = '/';
+      return;
     }
   };
 
@@ -267,6 +326,14 @@ const ProfileOptional: React.FC = () => {
           <ForgetPasswordModalProfile
             ref={forgotPasswordModalRef}
             Restep={() => router.push('/tai-khoan/multi-profiles?is-setting=1')}
+          />
+          <ConfirmModal
+            modalContent={modalContent || {}}
+            onHidden={() => {
+              setIsConfirmModalOpen(false);
+            }}
+            onSubmit={handleConfirmModal}
+            open={isConfirmModalOpen}
           />
         </>
       )}
