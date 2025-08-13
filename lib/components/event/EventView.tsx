@@ -460,18 +460,23 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                     </h3>
                   </div>
                 )}
-                <div className="text-[20px] tablet:text-[32px] font-semibold leading-[130%] mb-6 line-clamp-1 overflow-hidden text-ellipsis">
+
+                <div className="text-[20px] tablet:text-[32px] font-semibold leading-[130%] mb-[16px] xl:mb-[24px] line-clamp-1 overflow-hidden text-ellipsis">
                   {dataEvent?.title}
                 </div>
+
+                <div className="mb-[32px] xl:mb-[40px]">
+                <ShareReaction
+                isChannel
+                onClick={() => setShowModalShare(true)}
+                />
+                </div>
+
                 <div className="text-[20px] font-semibold">
                   <EventLiveStatus dataEvent={dataEvent} />
                 </div>
               </div>
 
-              <ShareReaction
-                isChannel
-                onClick={() => setShowModalShare(true)}
-              />
             </div>
           </div>
 
