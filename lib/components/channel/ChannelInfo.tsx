@@ -15,13 +15,13 @@ export default function ChannelInfo() {
   return (
     <div>
       {selectedTimeShift?.title && (
-        <div className="mb-[24px] max-w-full line-clamp-2 font-[600] text-[32px] leading-[130%] tracking-[0.64px] text-white-smoke">
+        <div className="max-w-full line-clamp-2 font-[600] text-[32px] leading-[130%] tracking-[0.64px] text-white-smoke">
           {selectedTimeShift?.title}
         </div>
       )}
 
-      <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-[16px]">
-        <div className="flex items-center gap-[8px]">
+      <div className="flex flex-col">
+        <div className="flex items-center gap-[8px] mb-[24px]">
           <div className="bg-white-smoke rounded-full w-[40px] h-[40px] tablet:w-[48px] tablet:h-[48px] flex items-center justify-center px-[7px]">
             <img
               src={dataChannel?.original_logo}
@@ -34,6 +34,7 @@ export default function ChannelInfo() {
           </h3>
         </div>
 
+        <div>
         <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
 
         {/* Modal share */}
@@ -45,6 +46,7 @@ export default function ChannelInfo() {
             dataChannel={dataChannel}
           />
         )}
+        </div>
       </div>
     </div>
   );

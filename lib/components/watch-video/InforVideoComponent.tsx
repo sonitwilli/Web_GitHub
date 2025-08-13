@@ -237,7 +237,7 @@ const InforVideoComponent = (props: PropsVideo) => {
   return (
     <div className="InforVideoComponent xl:flex">
       <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
-        <div className="mb-[24px]">
+        <div className="mb-[16px] xl:mb-[24px]">
           <h1 className="text-white-smoke text-[24px] tablet:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
             {dataVideo?.title}
           </h1>
@@ -249,7 +249,7 @@ const InforVideoComponent = (props: PropsVideo) => {
         </div>
 
         {/* Reaction buttons */}
-        <div className="flex gap-4 items-center mb-[40px]">
+        <div className="flex gap-4 items-center mb-[32px] xl:mb-[40px]">
           <LikeReaction
             isChannel
             isActive={isLiked}
