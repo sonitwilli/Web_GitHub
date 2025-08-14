@@ -492,6 +492,7 @@ export function PlayerPageContextProvider({ children }: Props) {
   // Helper function to handle preview error for 406 case only
   const handlePreviewError = useCallback(
     (
+      status: number,
       response: AxiosError<StreamErrorType>['response'],
       channelDetailData?: ChannelDetailType,
     ) => {
@@ -510,7 +511,12 @@ export function PlayerPageContextProvider({ children }: Props) {
       if (['channel', 'event'].includes(streamType)) {
         isPreview = responseData?.enable_preview === '1';
 
-        if (localStorage && !localStorage.getItem(TOKEN) && isPreview) {
+        if (
+          localStorage &&
+          !localStorage.getItem(TOKEN) &&
+          isPreview &&
+          status === 401
+        ) {
           dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
         }
       }
@@ -816,6 +822,7 @@ export function PlayerPageContextProvider({ children }: Props) {
           // Check preview first for both 401 and 406 cases
           if (status === 401 || status === 406) {
             const previewHandled = handlePreviewError(
+              status,
               response,
               channelDetailData,
             );

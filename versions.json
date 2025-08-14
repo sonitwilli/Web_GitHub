@@ -1,6 +1,22 @@
 {
     "versions": [
         {
+            "version": "8.0.23",
+            "date": "Dự kiến",
+            "content": [
+                "[Web V5] Cập nhật vị trí button Chia sẻ, Theo dõi",
+                "[iOS][Livechat][Comment] Lỗi OS12 không mở được web_view livechat/ comment",
+                "[Web][TrackingLog][Common] Không ghi nhận thông sốItemId, Key của log 29 khi tín hiệu content hiển thị thành công trên màn hình",
+                "[WEB][Sự kiện] Không hiển thị tên sự kiện",
+                "[Web][Quảng cáo] Bugs quảng cáo InstreamVOD",
+                "[WEB][MultiProfile] Lỗi hiển thị popup nhập mã quản lý sai kích thước",
+                "[WEB][MultiProfile] Lỗi vẫn hiển thị trang chủ của nội dung của profile người lớn khi chuyển đổi sang profile trẻ em",
+                "[WEB][Sự kiện] Lỗi vào sự kiện công chiếu chưa tới giờ phát khi chưa login",
+                "[WEB][Sự kiện] Lỗi vào sự kiện trực tiếp chưa tới giờ phát khi chưa login",
+                "[WEB][Truyền hình] Lỗi hiện dup popup Đăng nhập tài khoản khi vào kênh truyền hình khi chưa login"
+            ]
+        },  
+        {
             "version": "8.0.22",
             "date": "Dự kiến",
             "content": [

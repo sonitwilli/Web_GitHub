@@ -16,7 +16,10 @@ import dynamic from 'next/dynamic';
 import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import styles from '../core/Text.module.css';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
-import { trackPlayerChange } from '@/lib/utils/playerTracking';
+import {
+  removePlayerSessionStorageWhenRender,
+  trackPlayerChange,
+} from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
@@ -37,6 +40,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 }) => {
   useLayoutEffect(() => {
     if (typeof sessionStorage !== 'undefined') {
+      removePlayerSessionStorageWhenRender();
       saveSessionStorage({
         data: [
           {
@@ -60,7 +64,6 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     setPlayingUrl,
     isPlaySuccessRef,
     previewHandled,
-    clearErrorInterRef,
     streamType,
   } = usePlayerPageContext();
   const { isFullscreen } = useAppSelector((s) => s.player);
@@ -131,9 +134,6 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         if (data?.fatal) {
           handleAddError({ error: data });
           if (!showLoginPlayer) {
-            if (clearErrorInterRef) {
-              clearErrorInterRef();
-            }
             handleIntervalCheckErrors();
           }
         }

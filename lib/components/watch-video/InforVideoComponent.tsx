@@ -16,6 +16,7 @@ import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import ListEspisodeComponent from './ListEspisodeComponent';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import Categories from './Categories';
+import { EpisodeTypeEnum } from '@/lib/api/vod';
 
 const RatingStar = dynamic(() => import('./RatingStart'), {
   ssr: false,
@@ -50,7 +51,8 @@ const desiredOrder = [
 
 const InforVideoComponent = (props: PropsVideo) => {
   const { viewportType } = useScreenSize();
-  const { isExpanded, dataChannel, streamType, dataPlaylist } = usePlayerPageContext();
+  const { isExpanded, dataChannel, streamType, dataPlaylist } =
+    usePlayerPageContext();
   const { dataVideo } = props;
   const { showModalShare, setShowModalShare } = useModalToggle({});
   const slide = useMemo<BlockSlideItemType>(
@@ -239,7 +241,7 @@ const InforVideoComponent = (props: PropsVideo) => {
       <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
         <div className="mb-[16px] xl:mb-[24px]">
           <h1 className="text-white-smoke text-[24px] tablet:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
-            {dataVideo?.title}
+            {dataVideo?.title_vie}
           </h1>
           {dataVideo?.title_origin && (
             <h2 className="text-white-smoke text-[14px] tablet:text-[16px] xl:text-[18px] font-[500] leading-[130%] line-clamp-2 mt-[8px]">
@@ -250,11 +252,7 @@ const InforVideoComponent = (props: PropsVideo) => {
 
         {/* Reaction buttons */}
         <div className="flex gap-4 items-center mb-[32px] xl:mb-[40px]">
-          <LikeReaction
-            isChannel
-            isActive={isLiked}
-            onClick={handleReaction}
-          />
+          <LikeReaction isChannel isActive={isLiked} onClick={handleReaction} />
 
           <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
         </div>
@@ -332,16 +330,17 @@ const InforVideoComponent = (props: PropsVideo) => {
           ''
         )}
 
-        {viewportType !== VIEWPORT_TYPE.DESKTOP &&
-        ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-          (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) ? (
+        {(viewportType !== VIEWPORT_TYPE.DESKTOP &&
+          dataChannel?.episodes &&
+          dataChannel?.episodes?.length > 1) ||
+        (viewportType !== VIEWPORT_TYPE.DESKTOP &&
+          dataPlaylist?.videos &&
+          dataPlaylist?.videos?.length > 1) ||
+        (viewportType !== VIEWPORT_TYPE.DESKTOP &&
+          (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+            dataChannel?.episode_type === EpisodeTypeEnum.SEASON)) ? (
           <div className="ListEspisodeComponent mt-[48px]">
-            {((dataChannel?.episodes &&
-              dataChannel?.episodes?.length > 1 &&
-              Number(dataChannel?.episode_type) !== 0) ||
-              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) && (
-              <ListEspisodeComponent position="bottom" />
-            )}
+            <ListEspisodeComponent position="bottom" />
           </div>
         ) : (
           ''
@@ -376,7 +375,9 @@ const InforVideoComponent = (props: PropsVideo) => {
         <div className="w-[416px] ml-auto flex-1">
           {isExpanded &&
             ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1)) && (
+              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
+              dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+              dataChannel?.episode_type === EpisodeTypeEnum.SEASON) && (
               <div className="mb-[72px]">
                 <ListEspisodeComponent position="bottom" />
               </div>

@@ -63,6 +63,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
   const [liveChatHeight, setLiveChatHeight] = useState<string>('');
   const hasScrolledToTopRef = useRef(false);
   const { hideBar } = useDownloadBarControl();
+  const { isExistedAds } = useAppSelector((state) => state.app);
   const isOpenLiveChat =
     useAppSelector((s) => s.player.isOpenLiveChat) || false;
   const { timeOpenModalRequireLogin } = useAppSelector((s) => s.app);
@@ -331,7 +332,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   return (
     <>
-      <div className={` mt-20 ${isExpanded ? '' : 'chat-container'}`}>
+      <div className={`${isExistedAds ? 'mt-4' : 'mt-20'} ${isExpanded ? '' : 'chat-container'}`}>
         <div
           className={`${
             isExpanded

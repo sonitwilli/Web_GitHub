@@ -128,6 +128,7 @@ export default function PlayerError() {
             <span className="text-right text-white leading-[130%] tracking-[0.32px]">
               {dataChannel?.name ||
                 dataChannel?.title ||
+                dataChannel?.title_vie ||
                 dataChannel?.title_origin}
             </span>
           </div>

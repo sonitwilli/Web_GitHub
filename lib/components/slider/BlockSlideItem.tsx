@@ -150,7 +150,7 @@ export default function BlockSlideItem({
   const slideLink = useMemo(() => {
     if (block?.type === 'trailer') {
       return `/xem-video/${viToEn(
-        dataChannel?.title || dataChannel?.title_origin || '',
+        dataChannel?.title || dataChannel?.title_vie || dataChannel?.title_origin || '',
       )}-${dataChannel?.id}/tap-${Number(slide?.id_trailer) + 1}`;
     }
     return createLink({ data: slide || {}, type: block?.type || '' }) || '/';

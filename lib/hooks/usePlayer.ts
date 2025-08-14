@@ -306,6 +306,7 @@ export default function usePlayer() {
       handleLoadAds();
     }
     handlePingPlayer();
+    if (clearErrorInterRef) clearErrorInterRef();
   };
 
   const handleLoadedMetaData = () => {
@@ -614,6 +615,9 @@ export default function usePlayer() {
         // if (document?.hidden) {
         //   return;
         // }
+        console.log('--- PLAYER handleIntervalCheckErrors START', {
+          checkErrorInterRef: window.checkErrorInterRef,
+        });
         const currentTime = sessionStorage.getItem(VIDEO_CURRENT_TIME)
           ? Number(sessionStorage.getItem(VIDEO_CURRENT_TIME))
           : 0;

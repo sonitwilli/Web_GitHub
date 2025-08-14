@@ -14,6 +14,8 @@ import {
 } from '@/lib/constant/texts';
 import { ChannelDetailType, StreamErrorType } from '@/lib/api/channel';
 import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
+import { SubtitleItemType } from '@/lib/hooks/useSubtitle';
+import { AudioItemType } from '@/lib/components/player/core/AudioButton';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getPlayerSub = () => {
@@ -251,6 +253,11 @@ export const getPlayerActiveTrack = () => {
   };
   let activeTrack: any = {};
   let activeAudioLabel = '';
+  const s = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_SUB_OBJECT);
+  const a = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_OBJECT);
+  const selectedSubParsed = (s ? JSON.parse(s) : {}) as SubtitleItemType;
+  const selectedAudioParsed = (a ? JSON.parse(a) : {}) as AudioItemType;
+
   try {
     if (window?.shakaPlayer) {
       activeTrack = window.shakaPlayer
@@ -322,7 +329,13 @@ export const getPlayerActiveTrack = () => {
         },
       ],
     });
-    return { videoBandwidth, resolutionObject, activeTrack };
+    return {
+      videoBandwidth,
+      resolutionObject,
+      activeTrack,
+      selectedSubParsed,
+      selectedAudioParsed,
+    };
   }
 };
 
@@ -337,6 +350,18 @@ export const trackPlayerChange = () => {
   getPlayerSub();
 };
 
+export const removePlayerSessionStorageWhenRender = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  removeSessionStorage({
+    data: [
+      trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+      trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
+      trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
+    ],
+  });
+};
 export const removePlayerSessionStorage = () => {
   if (typeof window === 'undefined') {
     return;
@@ -383,6 +408,8 @@ export const getPlayerParams = () => {
     return {};
   }
   trackPlayerChange();
+  const { selectedAudioParsed, selectedSubParsed } =
+    getPlayerActiveTrack() || {};
   const {
     dataChannel,
     dataStream,
@@ -412,6 +439,7 @@ export const getPlayerParams = () => {
     ItemId: dataChannel?.id || dataChannel?._id || '',
     ItemName:
       dataChannel?.title ||
+      dataChannel?.title_vie ||
       dataChannel?.title_origin ||
       dataChannel?.name ||
       dataChannel?.alias_name ||
@@ -437,11 +465,12 @@ export const getPlayerParams = () => {
       String(getPlayerActiveTrack()?.resolutionObject?.height) ||
       '',
     Audio:
+      selectedAudioParsed?.X_LABEL ||
       sessionStorage.getItem(SELECTED_AUDIO_LABEL) ||
       sessionStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) ||
       sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL) ||
       '',
-    Subtitle: sub || getPlayerSub() || '',
+    Subtitle: selectedSubParsed?.label || sub || getPlayerSub() || '',
     Url: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
     Credit: (dataStream?.end_content || 0)?.toString() || '',
     StartTime: dataWatching?.timeplayed || dataChannel?.begin_time || '',

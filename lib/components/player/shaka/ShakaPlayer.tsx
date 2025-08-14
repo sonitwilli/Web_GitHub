@@ -33,7 +33,10 @@ import styles from '../core/Text.module.css';
 import { useRouter } from 'next/router';
 import { useVodPageContext } from '../context/VodPageContext';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
-import { trackPlayerChange } from '@/lib/utils/playerTracking';
+import {
+  removePlayerSessionStorageWhenRender,
+  trackPlayerChange,
+} from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
@@ -63,14 +66,17 @@ type Props = {
 
 const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   useLayoutEffect(() => {
-    saveSessionStorage({
-      data: [
-        {
-          key: trackingStoreKey.PLAYER_NAME,
-          value: PLAYER_NAME.SHAKA,
-        },
-      ],
-    });
+    if (typeof sessionStorage !== 'undefined') {
+      removePlayerSessionStorageWhenRender();
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_NAME,
+            value: PLAYER_NAME.SHAKA,
+          },
+        ],
+      });
+    }
   }, []);
   const { viewportType } = useScreenSize();
   const vodCtx = useVodPageContext();
@@ -351,9 +357,6 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
             convertShakaError({
               allErrors: error,
             });
-            if (clearErrorInterRef) {
-              clearErrorInterRef();
-            }
             handleIntervalCheckErrors();
           },
         );

@@ -9,6 +9,7 @@ import {
 import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { saveSessionStorage } from '../utils/storage';
+import { trackingStoreKey } from '../constant/tracking';
 
 export interface SubtitleItemType {
   language?: string;
@@ -34,6 +35,17 @@ export default function useSubtitle() {
   const { playerName, isMetaDataLoaded } = usePlayerPageContext();
   const [selected, setSelected] = useState<SubtitleItemType>();
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_ACTIVE_SUB_OBJECT,
+          value: JSON.stringify(selected),
+        },
+      ],
+    });
+  }, [selected]);
 
   const getSubs = useCallback(() => {
     if (playerName === 'hls' && window.hlsPlayer) {

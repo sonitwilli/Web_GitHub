@@ -43,7 +43,7 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
 
   return (
     <div
-      className={`no-ads-guide absolute z-2 opacity-80 flex flex-row justify-center items-center pr-8 gap-6 rounded-xl max-w-[498px] h-16 bottom-[100px] right-4 md:right-8 md:w-[498px] ${
+      className={`no-ads-guide absolute z-2 opacity-80 flex flex-row justify-center items-center pr-8 gap-6 rounded-xl max-w-[498px] h-16 right-[1%] bottom-[60px] tablet:right-[4%] tablet:bottom-[72px] tablet:w-[498px] ${
         !noAdsData.background_color ? styles.maskNoAds : ''
       }`}
       style={{
@@ -54,7 +54,7 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
     >
       {/* Main Content Frame */}
       <div className="flex flex-row items-center gap-4 w-full max-w-[359px] h-16 overflow-hidden rounded-xl">
-        <div className="flex-none order-0 flex-grow-0 w-[80px] md:w-[111px] h-fit relative">
+        <div className="flex-none order-0 flex-grow-0 w-[80px] tablet:w-[111px] h-fit relative">
           <img
             src={noAdsData.image}
             alt="No Ads"
@@ -68,19 +68,19 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
 
         {/* Description Section  */}
         <div className="flex-none order-1 flex-grow-0 w-full max-w-[232px] line-clamp-3 text-ellipsis overflow-hidden">
-          <p className="text-white flex items-center w-full h-full font-medium text-xs md:text-sm leading-[100%]">
+          <p className="text-white flex items-center w-full h-full font-medium text-xs tablet:text-sm leading-[100%]">
             {noAdsData.text}
           </p>
         </div>
       </div>
 
       {/* Button Section */}
-      <div className="flex-none order-1 flex-grow-0 w-[70px] md:w-[83px] h-[34px]">
+      <div className="flex-none order-1 flex-grow-0 w-[70px] tablet:w-[83px] h-[34px]">
         <button
           onClick={handleBuyPackage}
-          className="cursor-pointer flex flex-row justify-center items-center w-full h-[34px] bg-white-01 border border-white-06 rounded-lg text-white-087 text-center hover:bg-white-02 transition-colors px-2 md:px-4 py-2 box-border"
+          className="cursor-pointer flex flex-row justify-center items-center w-full h-[34px] bg-white-01 border border-white-06 rounded-lg text-white-087 text-center hover:bg-white-02 transition-colors px-2 tablet:px-4 py-2 box-border"
         >
-          <span className="whitespace-nowrap font-medium text-xs md:text-sm leading-[130%]">
+          <span className="whitespace-nowrap font-medium text-xs tablet:text-sm leading-[130%]">
             {noAdsData.btn}
           </span>
         </button>

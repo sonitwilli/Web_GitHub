@@ -138,7 +138,7 @@ export default function usePageApi({ currentId }: { currentId?: string }) {
     let pageId = '';
     if (router.pathname === '/' && !isKid) {
       pageId = 'home';
-    } else if (id) {
+    } else if (id && !isKid) {
       pageId = id as string;
     } else {
       pageId = 'home-kids';

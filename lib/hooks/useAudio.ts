@@ -254,7 +254,7 @@ export default function useAudio() {
         }
       }
     }
-  }, [audiosAAC, streamType, playerName, isMetaDataLoaded]);
+  }, [audiosAAC, streamType, playerName, isMetaDataLoaded, audios]);
 
   const clickAudio = (a: AudioItemType) => {
     setSelectedAudio(a);
@@ -297,6 +297,17 @@ export default function useAudio() {
   const containerRef = useClickOutside<HTMLDivElement>(() => {
     setOpen(false);
   });
+
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_ACTIVE_AUDIO_OBJECT,
+          value: JSON.stringify(selectedAudio),
+        },
+      ],
+    });
+  }, [selectedAudio]);
 
   return {
     playerName,

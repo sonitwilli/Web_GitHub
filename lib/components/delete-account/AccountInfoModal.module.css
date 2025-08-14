@@ -1,0 +1,17 @@
+/* Scroll bar styling for AccountInfoModal */
+.scrollBar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.scrollBar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollBar::-webkit-scrollbar-thumb {
+  background: #959595;
+  border-radius: 30px;
+}
+
+.scrollBar::-webkit-scrollbar-thumb:hover {
+  background: #b0b0b0;
+}

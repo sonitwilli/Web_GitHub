@@ -144,6 +144,7 @@ export interface ChannelDetailType extends VodDetailType {
   link_videos?: [];
   list_structure_id?: string[];
   title_origin?: string;
+  title_vie?: string;
   is_tvod?: string;
   begin_time?: string;
 }
