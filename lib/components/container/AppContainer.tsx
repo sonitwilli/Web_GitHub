@@ -91,8 +91,14 @@ export default function AppContainer({ children }: Props) {
       dispatch(changeConfigs(res?.data?.data || {}));
       setCookie(
         BLOCK_PAGE_SIZE,
-        res?.data?.data?.number_item_of_page_tv || '31',
+        res?.data?.data?.number_item_of_page || '31',
       );
+      if (res?.data && res?.data?.data && res.data.data.expire_welcome) {
+        setCookie('expire_welcome', res.data.data.expire_welcome, {
+          path: '/',
+          maxAge: 3600 * 24 * 7,
+        });
+      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       trackingErrorLog17({
@@ -176,6 +182,7 @@ export default function AppContainer({ children }: Props) {
   }, []);
 
   useEffect(() => {
+    console.log('--- APP: ', '10:20-14:08');
     const handleRouteChange = (url: string) => {
       if (!errorCodeResult) {
         dispatch(closeLoginModal());

@@ -436,7 +436,7 @@ export default function UserDropdownMenu({
             if (!disableDropdown) setIsOpen(false);
           }}
         >
-          <div className="relative bg-sm rounded-[16px] shadow-lg py-2 tablet:py-4 bg-eerie-black">
+          <div className="relative bg-sm rounded-[16px] shadow-lg py-2 tablet:py-4 bg-eerie-black border-1 border-charleston-green">
             <ul className="text-sm text-white">
               {profiles.map((profile) => (
                 <li

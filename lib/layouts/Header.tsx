@@ -209,6 +209,30 @@ export default function Header() {
     };
   }, [appDispatch]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleScroll = () => {
+      const isAtTop = window.scrollY <= 0;
+      if (isAtTop) {
+        try {
+          const ins = document.querySelector('ins[data-aplpm="105-111"]');
+          const existedAds = ins
+            ? (ins as HTMLElement).children.length > 0
+            : false;
+          appDispatch({ type: 'app/changeIsExistedAds', payload: existedAds });
+        } catch {
+          appDispatch({ type: 'app/changeIsExistedAds', payload: false });
+        }
+      } else {
+        appDispatch({ type: 'app/changeIsExistedAds', payload: false });
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [appDispatch]);
+
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];
 

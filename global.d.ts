@@ -31,5 +31,6 @@ declare global {
       openPopup: (type: string, data: any) => void;
     };
     checkErrorInterRef: NodeJS.Timeout | null;
+    safariCheckErrorInterRef: NodeJS.Timeout | null;
   }
 }

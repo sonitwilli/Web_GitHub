@@ -15,7 +15,7 @@ const DownloadApp = () => {
       {download_config && (
         <div
           className={`${styles.dropdown} 
-          hidden absolute left-1/2 -translate-x-1/2 top-[calc(100%+28px)] bg-eerie-black rounded-[20px] p-[32px] flex-col w-[284px] items-center opacity-0 z-[-1] shadow-2xs`}
+          hidden border-1 border-charleston-green absolute left-1/2 -translate-x-1/2 top-[calc(100%+28px)] bg-eerie-black rounded-[20px] p-[32px] flex-col w-[284px] items-center opacity-0 z-[-1] shadow-2xs`}
         >
           {download_config?.title && (
             <p className="mb-[8px] font-[600] text-[18px] text-white-smoke text-center">

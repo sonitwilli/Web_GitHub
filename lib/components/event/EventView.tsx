@@ -332,7 +332,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   return (
     <>
-      <div className={`${isExistedAds ? 'mt-4' : 'mt-20'} ${isExpanded ? '' : 'chat-container'}`}>
+      <div className={`${isExistedAds ? 'mt-4' : 'mt-[96px]'} ${isExpanded ? '' : 'chat-container'}`}>
         <div
           className={`${
             isExpanded

@@ -37,7 +37,7 @@ export const renderHeaderRow = (
             />
             {/* "Đang sử dụng" label */}
             {pkg.lbl_state && (
-              <div className="absolute w-[70%] top-0 left-1/2 -translate-x-1/2 z-1 bg-white text-black text-sm font-[400] px-2 py-1 rounded-b-xl transform text-center shadow-[0_1px_1px_0px_rgba(0,0,0,0.25)]">
+              <div className="absolute w-[70%] top-0 left-1/2 -translate-x-1/2 z-1 bg-white text-black text-[min(2.5vw,_0.75rem)] md:text-xs xl:text-sm font-[400] px-2 py-1 rounded-b-xl transform text-center shadow-[0_1px_1px_0px_rgba(0,0,0,0.25)] whitespace-nowrap overflow-hidden">
                 {pkg.lbl_state}
               </div>
             )}

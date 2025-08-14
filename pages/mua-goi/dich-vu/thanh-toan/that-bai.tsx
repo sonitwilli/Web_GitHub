@@ -94,6 +94,7 @@ const PaymentFailPage: React.FC = () => {
             ? `${numberWithCommas(text.coupon?.discount_amount || 0)} đ`
             : null,
       },
+      { label: 'Mã giao dịch', value: text.transId as string | null },
     ]);
   }, [router.isReady, router.query]);
 

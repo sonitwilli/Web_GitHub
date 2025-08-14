@@ -33,6 +33,7 @@ import {
 import { trackingStoreKey } from '../constant/tracking';
 import { saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
+import { UAParser } from 'ua-parser-js';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -307,6 +308,8 @@ export default function usePlayer() {
     }
     handlePingPlayer();
     if (clearErrorInterRef) clearErrorInterRef();
+    clearIntervalErrorSafari();
+    checkSafariError();
   };
 
   const handleLoadedMetaData = () => {
@@ -416,8 +419,15 @@ export default function usePlayer() {
     detailErrors?: ShakaErrorDetailType;
   }) => {
     const detail = allErrors?.detail || detailErrors || {};
+    let code = detail?.code as unknown as ErrorTypes;
+    if (detail?.data?.length) {
+      if (detail?.data[1] === 403) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        code = 403 as any;
+      }
+    }
     const hlsError: ErrorData = {
-      type: detail?.code as unknown as ErrorTypes,
+      type: code || (detail?.code as unknown as ErrorTypes),
       fatal: true,
       details: detail?.category as unknown as ErrorDetails,
       error: new Error(detail?.message),
@@ -451,6 +461,8 @@ export default function usePlayer() {
               clearErrorInterRef();
             }
             handleIntervalCheckErrors();
+            clearIntervalErrorSafari();
+            checkSafariError();
           });
       }
     } catch {}
@@ -635,6 +647,52 @@ export default function usePlayer() {
     }
   };
 
+  const handleIntervalCheckErrorsSafari = () => {
+    console.log('--- PLAYER handleIntervalCheckErrorsSafari', {
+      safariCheckErrorInterRef: window.safariCheckErrorInterRef,
+    });
+    if (!window.safariCheckErrorInterRef) {
+      window.safariCheckErrorInterRef = setInterval(() => {
+        console.log('--- PLAYER handleIntervalCheckErrors START', {
+          safariCheckErrorInterRef: window.safariCheckErrorInterRef,
+          checkErrorInterRef: window.checkErrorInterRef,
+        });
+        if (window.checkErrorInterRef) {
+          return;
+        }
+        const currentTime = sessionStorage.getItem(VIDEO_CURRENT_TIME)
+          ? Number(sessionStorage.getItem(VIDEO_CURRENT_TIME))
+          : 0;
+        const isError = isErrorCurrentTime();
+        if (isError) {
+          clearIntervalErrorSafari();
+          checkVideoCodec();
+        } else {
+          retryCountRef.current = 0;
+          setRetryCount(0);
+        }
+        previousCurrentTimeRef.current = currentTime;
+      }, 20000);
+    }
+  };
+
+  const checkSafariError = () => {
+    try {
+      const parser = new UAParser(navigator.userAgent);
+      const browser = parser.getBrowser().name;
+      if (browser?.toUpperCase()?.includes('SAFARI')) {
+        handleIntervalCheckErrorsSafari();
+      }
+    } catch {}
+  };
+
+  const clearIntervalErrorSafari = () => {
+    if (window.safariCheckErrorInterRef) {
+      clearInterval(window.safariCheckErrorInterRef);
+      window.safariCheckErrorInterRef = null;
+    }
+  };
+
   const handleBeforeUnload = () => {
     sessionStorage.removeItem(VIDEO_CURRENT_TIME);
     sessionStorage.removeItem(VIDEO_TIME_BEFORE_ERROR);
@@ -719,5 +777,8 @@ export default function usePlayer() {
     convertShakaError,
     isPlayingHandled,
     setIsPlayingHandled,
+    handleIntervalCheckErrorsSafari,
+    checkSafariError,
+    clearIntervalErrorSafari,
   };
 }

@@ -60,8 +60,8 @@ export const useFetchRecommendBlock = ({
       }
 
       while (
-        (currentConfig?.number_item_of_page_tv &&
-          aIndex < +currentConfig?.number_item_of_page_tv &&
+        (currentConfig?.number_item_of_page &&
+          aIndex < +currentConfig?.number_item_of_page &&
           aIndex < result.length) ||
         bIndex < recommendData.length
       ) {

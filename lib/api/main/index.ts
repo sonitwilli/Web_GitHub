@@ -42,7 +42,6 @@ export interface ConfigDataType {
   redirect_text_vn?: string;
   updated?: string;
   icon_app?: string;
-  number_item_of_page_tv?: string;
   life_time_cache_prevent_dolby_vision?: string;
   maturity_rating?: MaturityRating;
   review_google_macs?: string[];

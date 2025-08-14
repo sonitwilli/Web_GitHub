@@ -211,7 +211,7 @@ export default function PageBlockItem({
             </div>
           )}
           {blockData?.data &&
-            blockData?.data?.length > Number(configs?.number_item_of_page_tv) &&
+            blockData?.data?.length > Number(configs?.number_item_of_page) &&
             !isVideoWatchPage && <ShowMore href={linkMore} variant="link" />}
         </div>
         <div className={`${useContainer ? 'f-slider-container' : ''}`}>
@@ -256,7 +256,7 @@ export default function PageBlockItem({
           </div>
         )}
         {blockData?.data &&
-          blockData?.data?.length > Number(configs?.number_item_of_page_tv) &&
+          blockData?.data?.length > Number(configs?.number_item_of_page) &&
           !isVideoWatchPage && <ShowMore href={linkMore} variant="link" />}
       </div>
       <div className={`${useContainer ? 'f-container' : ''}`}>
