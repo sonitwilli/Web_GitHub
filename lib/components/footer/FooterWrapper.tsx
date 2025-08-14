@@ -164,12 +164,6 @@ export default function FooterWrapper() {
               className="text-spanish-gray tracking-[0.32px] text-[16px] leading-[130%] space-y-2"
               dangerouslySetInnerHTML={{
                 __html: footerData.texts.company_info.html
-                  .split(' ')
-                  .reduce((acc: string, word: string, index: number) => {
-                    if (index === 0) return word;
-                    if (index % 25 === 0) return acc + '<br/>' + word;
-                    return acc + ' ' + word;
-                  }, '')
               }}
             />
         </div>
