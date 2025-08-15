@@ -122,7 +122,7 @@ const SportItem: FC<SportItemProps> = ({
   return (
     <div
       ref={sportItemRef}
-      className={`mr-3 flex flex-col justify-between ${
+      className={` flex flex-col justify-between ${
         pageType === 'sport'
           ? 'h-[500px] bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black rounded-lg'
           : ''

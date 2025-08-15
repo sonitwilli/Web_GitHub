@@ -80,7 +80,7 @@ const TodayTableLeagueResult: FC<TodayTableLeagueResultProps> = ({
       {Object.entries(matchesByLeague).map(([leagueName, leagueData]) => (
         <div
           key={leagueName}
-          className={`mr-3 flex flex-col justify-between ${
+          className={`flex flex-col justify-between ${
             pageType === 'sport'
               ? 'h-[500px] bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black rounded-lg'
               : ''
