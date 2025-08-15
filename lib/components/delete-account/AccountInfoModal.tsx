@@ -15,75 +15,130 @@ interface Props {
   onContinue: () => void;
 }
 
-const AccountInfoModal = forwardRef<AccountInfoModalRef, Props>(
-  ({ onContinue }, ref) => {
-    const [open, setOpen] = useState(false);
-    const user = useSelector((state: RootState) => state.user.info);
-    const [activePackages, setActivePackages] = useState<PackageItem[]>([]);
+export default forwardRef<AccountInfoModalRef, Props>(function AccountInfoModal(
+  { onContinue },
+  ref,
+) {
+  const [open, setOpen] = useState(false);
+  const user = useSelector((state: RootState) => state.user.info);
+  const [activePackages, setActivePackages] = useState<PackageItem[]>([]);
 
-    useImperativeHandle(ref, () => ({
-      open: () => {
-        setOpen(true);
-      },
-      close: () => {
-        setOpen(false);
-      },
-      setPackages: (packages: PackageItem[], extras: PackageItem[]) => {
-        // Combine packages and extras into one array
-        setActivePackages([...packages, ...extras]);
-      },
-    }));
+  useImperativeHandle(ref, () => ({
+    open: () => {
+      setOpen(true);
+    },
+    close: () => {
+      setOpen(false);
+    },
+    setPackages: (packages: PackageItem[], extras: PackageItem[]) => {
+      // Combine packages and extras into one array
+      setActivePackages([...packages, ...extras]);
+    },
+  }));
 
-    return (
-      <ModalWrapper
-        id="delete-account-info-modal"
-        open={open}
-        onHidden={() => setOpen(false)}
-        shouldCloseOnEsc={false}
-        shouldCloseOnOverlayClick={false}
-        contentClassName="w-full max-w-[600px] bg-eerie-black rounded-[16px] p-8 text-white-smoke"
-        overlayClassName="fixed inset-0 flex justify-center items-center z-[9999]"
+  const handleContinue = () => {
+    setOpen(false);
+    onContinue();
+  };
+
+  return (
+    <ModalWrapper
+      id="account-info-modal"
+      open={open}
+      onHidden={() => setOpen(false)}
+      shouldCloseOnEsc={false}
+      shouldCloseOnOverlayClick={false}
+      contentClassName="w-full max-w-[343px] tablet:max-w-[568px] bg-eerie-black rounded-[12px] tablet:rounded-[16px]"
+      overlayClassName="fixed inset-0 flex justify-center items-center z-[9999] p-4"
+    >
+      {/* Mobile: 343x454, Tablet/PC: 568x578 */}
+      <div
+        className={`flex flex-col justify-center items-center p-4 tablet:p-8 gap-8 max-h-full overflow-y-auto ${styles.scrollBar}`}
       >
-        <div className={`max-h-[70vh] overflow-y-auto ${styles.scrollBar}`}>
-          <h3 className="text-center text-[20px] sm:text-[24px] font-semibold mb-[20px] text-white-smoke">
+        {/* Header Section */}
+        <div className="flex flex-col items-center gap-4 w-full max-w-[311px] tablet:max-w-[388px]">
+          {/* Title */}
+          <h2 className="text-white-smoke font-semibold text-[20px] tablet:text-[24px] leading-[130%] tracking-[0.02em] text-center">
             Thông tin tài khoản
-          </h3>
-          <div className="text-center text-silver-chalice mb-8">
+          </h2>
+
+          {/* Description */}
+          <p className="text-spanish-gray font-normal text-[16px] leading-[130%] tracking-[0.02em] text-center w-full">
             Vui lòng kiểm tra thông tin tài khoản của quý khách trước khi thao
             tác
+          </p>
+        </div>
+
+        {/* Content Section */}
+        <div className="flex flex-col gap-4 w-full max-w-[311px] tablet:max-w-[504px]">
+          {/* Account Info Row */}
+          <div className="flex flex-row justify-between items-center gap-2 tablet:gap-3 tablet:justify-start">
+            <span className="text-silver-chalice font-normal text-[16px] leading-[130%] tracking-[0.02em] w-[120px] tablet:w-[160px] flex-shrink-0">
+              Tài khoản
+            </span>
+            <span className="text-white-smoke font-medium text-[16px] leading-[130%] tracking-[0.02em] text-right tablet:text-left">
+              {user?.user_phone || '-'}
+            </span>
           </div>
+
+          {/* Divider */}
+          <div className="w-full h-px border-t border-black-olive-404040"></div>
+
+          {/* User ID Row */}
+          <div className="flex flex-row justify-between items-center gap-2 tablet:gap-3 tablet:justify-start">
+            <span className="text-silver-chalice font-normal text-[16px] leading-[130%] tracking-[0.02em] w-[120px] tablet:w-[160px] flex-shrink-0">
+              Số ID
+            </span>
+            <span className="text-white-smoke font-medium text-[16px] leading-[130%] tracking-[0.02em] text-right tablet:text-left">
+              {user?.user_id_str || '-'}
+            </span>
+          </div>
+
+          {/* Divider */}
+          <div className="w-full h-px border-t border-black-olive-404040"></div>
+
+          {/* Services Section */}
           <div
-            className={`rounded-lg bg-white-007 p-4 text-silver-chalice ${
-              activePackages && activePackages.length > 2
-                ? `max-h-[300px] overflow-y-auto ${styles.scrollBar}`
-                : ''
-            }`}
+            className={`flex ${
+              !activePackages || activePackages.length === 0
+                ? 'flex-row justify-between items-center gap-2 tablet:gap-3 tablet:justify-start'
+                : 'flex-col'
+            } tablet:flex-row tablet:items-start gap-3 tablet:gap-3`}
           >
-            <div className="py-[17px] border-b border-black-olive">
-              Tài khoản:{' '}
-              <span className="text-white-smoke font-medium">
-                {user?.user_phone || '-'}
+            <span className="w-[120px] tablet:w-[160px] text-silver-chalice font-normal text-[16px] leading-[130%] tracking-[0.02em]  flex-shrink-0">
+              Dịch vụ đã mua
+            </span>
+
+            {!activePackages || activePackages.length === 0 ? (
+              <span className="text-white-smoke font-medium text-[16px] leading-[130%] tracking-[0.02em] text-right tablet:text-left">
+                Không có
               </span>
-            </div>
-            <div className="py-[17px] border-b border-black-olive">
-              Số ID:{' '}
-              <span className="text-white-smoke font-medium">
-                {user?.user_id_str || '-'}
-              </span>
-            </div>
-            <div className="mt-2 flex">
-              <div className="shrink-0 mr-2">Dịch vụ đã mua:</div>
+            ) : (
               <div className="flex-1">
-                {activePackages && activePackages.length ? (
-                  <div>
+                {activePackages && activePackages.length > 0 ? (
+                  <div
+                    className={`rounded-[12px] bg-white-007 p-4 text-silver-chalice ${
+                      activePackages.length > 1
+                        ? `min-h-[79px]  max-h-[160px] tablet:max-h-[208px] overflow-y-auto ${styles.scrollBar}`
+                        : ''
+                    }`}
+                  >
                     {activePackages.map((item: PackageItem, index: number) => (
-                      <div key={index} className="mb-2">
-                        <div className="text-white-smoke font-medium">
+                      <div key={index} className={`${index > 0 ? 'mt-4' : ''}`}>
+                        <div className="text-white-smoke font-medium text-[16px] leading-[130%] tracking-[0.02em]">
                           {item?.plan_name}
                         </div>
-                        <div className="flex items-center justify-between text-silver-chalice mt-2 pb-2 border-b border-black-olive">
-                          <div>Có thời hạn đến</div>
-                          <div>
+                        <div
+                          className={`flex items-center justify-between text-silver-chalice mt-2 pb-2  ${
+                            index === activePackages.length - 1
+                              ? 'border-b-0'
+                              : 'border-b border-black-olive'
+                          }`}
+                        >
+                          <div className="text-[14px] tablet:text-[16px] leading-[130%] tracking-[0.02em]">
+                            Có thời hạn đến
+                          </div>
+                          <div className="text-[14px] tablet:text-[16px] leading-[130%] tracking-[0.02em]">
                             {
                               (item?.expired_date ||
                                 item?.next_date ||
@@ -95,23 +150,25 @@ const AccountInfoModal = forwardRef<AccountInfoModalRef, Props>(
                     ))}
                   </div>
                 ) : (
-                  <div className="text-white-smoke">-</div>
+                  <div className="rounded-[12px] bg-white-007 p-4 text-white-smoke">
+                    -
+                  </div>
                 )}
               </div>
-            </div>
+            )}
           </div>
+        </div>
+
+        {/* Button Section */}
+        <div className="flex flex-row items-center gap-4 w-full max-w-[311px] tablet:max-w-[504px]">
           <button
-            className="block w-full max-w-[240px] h-12 rounded-lg font-medium text-base mx-auto mt-10 bg-gradient-to-r from-portland-orange to-lust text-white-smoke"
-            onClick={onContinue}
+            onClick={handleContinue}
+            className="cursor-pointer flex flex-row justify-center items-center px-4 tablet:px-6 py-2 tablet:py-3 gap-2 w-full h-[40px] tablet:h-[47px] bg-gradient-to-r from-portland-orange to-lust rounded-[40px] text-white-smoke font-semibold text-[16px] leading-[130%] tracking-[0.02em]"
           >
             Tiếp tục
           </button>
         </div>
-      </ModalWrapper>
-    );
-  },
-);
-
-AccountInfoModal.displayName = 'AccountInfoModal';
-
-export default AccountInfoModal;
+      </div>
+    </ModalWrapper>
+  );
+});

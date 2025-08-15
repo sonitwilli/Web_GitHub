@@ -1,6 +1,10 @@
 import { axiosInstance } from '@/lib/api/axios';
 import { AxiosError, AxiosResponse } from 'axios';
-import { DEFAULT_ERROR_MSG, ERROR_CONNECTION, ERROR_DELETE_PROFILE } from '@/lib/constant/texts';
+import {
+  DEFAULT_ERROR_MSG,
+  ERROR_CONNECTION,
+  ERROR_DELETE_PROFILE,
+} from '@/lib/constant/texts';
 import { showToast } from '@/lib/utils/globalToast';
 import { checkError } from '@/lib/utils/profile';
 import { Profile } from '@/lib/api/user';
@@ -110,7 +114,10 @@ export const getProfileList = async (): Promise<ProfileResponse> => {
     typeof window !== 'undefined' ? localStorage.getItem('token') : null;
 
   if (!token) {
-    return { status: '0', data: { profiles: [], meta_data: {}, current_profile: {} } };
+    return {
+      status: '0',
+      data: { profiles: [], meta_data: {}, current_profile: {} },
+    };
   }
 
   try {
@@ -119,7 +126,11 @@ export const getProfileList = async (): Promise<ProfileResponse> => {
   } catch (error) {
     console.error('Error fetching profiles:', error);
 
-    return { status: error instanceof AxiosError ? error.response?.status.toString() : '0', data: { profiles: [], meta_data: {}, current_profile: {} } };
+    return {
+      status:
+        error instanceof AxiosError ? error.response?.status.toString() : '0',
+      data: { profiles: [], meta_data: {}, current_profile: {} },
+    };
   }
 };
 
@@ -190,6 +201,7 @@ export const updateProfile = async (
     avatar_url?: string;
     profile_type?: string;
     pin?: string;
+    type?: string;
   },
   selectedProfile: Profile | null,
 ): Promise<AxiosResponse<ApiResponse>> => {
@@ -199,7 +211,7 @@ export const updateProfile = async (
       { ...params },
     );
 
-    if (response.data?.status === '1') {
+    if (response.data?.status === '1' && params.type !== 'access') {
       showToast({
         title: 'Hồ sơ đã được cập nhật',
         desc: response.data?.msg || '',
@@ -225,21 +237,21 @@ export const deleteProfile = async (
   profileName: string,
 ): Promise<AxiosResponse<ApiResponse>> => {
   try {
-    const response = await axiosInstance.post(
-      "/config/profile/delete",
-      { profile_id: profileId },
-    );
+    const response = await axiosInstance.post('/config/profile/delete', {
+      profile_id: profileId,
+    });
 
     if (response.data?.status === '1') {
       showToast({
         title: response.data?.message?.title || 'Hồ sơ đã được xóa',
-        desc: response.data?.message?.content || `Hồ sơ ${profileName} đã được xóa khỏi danh sách.`,
+        desc:
+          response.data?.message?.content ||
+          `Hồ sơ ${profileName} đã được xóa khỏi danh sách.`,
       });
     }
 
     return response;
-  }
-  catch (error) {
+  } catch (error) {
     showToast({
       title: ERROR_DELETE_PROFILE,
       desc: checkError({ error }),
@@ -250,7 +262,7 @@ export const deleteProfile = async (
     );
     throw error;
   }
-}
+};
 
 export const checkPassword = async ({
   password,
@@ -281,6 +293,26 @@ export const checkPassword = async ({
     return {
       success: false,
       error: error instanceof Error ? error.message : DEFAULT_ERROR_MSG,
+    };
+  }
+};
+
+// Verify profile name uniqueness/validity
+export const verifyProfileName = async (params: {
+  name?: string;
+  display_name?: string;
+  nick_name?: string;
+}): Promise<ApiResponse> => {
+  try {
+    const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
+      'config/profile/verify_name',
+      params,
+    );
+    return response.data;
+  } catch (error) {
+    return {
+      status: '0',
+      msg: error instanceof Error ? error.message : DEFAULT_ERROR_MSG,
     };
   }
 };

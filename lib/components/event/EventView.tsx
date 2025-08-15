@@ -63,6 +63,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
   const hasScrolledToTopRef = useRef(false);
   const { hideBar } = useDownloadBarControl();
   const { isHeaderAdsClosed } = useAppSelector((state) => state.app);
+  const [adsExist, setAdsExist] = useState(false);
   const isOpenLiveChat =
     useAppSelector((s) => s.player.isOpenLiveChat) || false;
 
@@ -316,13 +317,27 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   const { viewportType } = useScreenSize();
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleInitBanner = () => {
+      try {
+        const ins = document.querySelector('ins[data-aplpm="105-111"]');
+        const existedAds = ins
+          ? (ins as HTMLElement).children.length > 0
+          : false;
+          setAdsExist(existedAds);
+      } catch {}
+    };
+
+    document.addEventListener('initBanner', handleInitBanner);
+    return () => {
+      document.removeEventListener('initBanner', handleInitBanner);
+    };
+  }, []);
+
   return (
     <>
-      <div
-        className={`${
-          isHeaderAdsClosed || isHeaderAdsClosed === null ? 'mt-[96px]' : 'mt-4'
-        } ${isExpanded ? '' : 'chat-container'}`}
-      >
+      <div className={`${(isHeaderAdsClosed || isHeaderAdsClosed === null || !adsExist) ? 'mt-[96px]' : 'mt-4'} ${isExpanded ? '' : 'chat-container'}`}>
         <div
           className={`${
             isExpanded

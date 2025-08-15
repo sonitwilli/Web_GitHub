@@ -271,8 +271,13 @@ export default function usePlayer() {
         },
       ],
     });
-    const { bookmark, landing_page, ...restQuery } = router.query;
-    if (bookmark !== undefined || landing_page !== undefined) {
+    const { bookmark, landing_page, is_from_chatbot, ...restQuery } =
+      router.query;
+    if (
+      bookmark !== undefined ||
+      landing_page !== undefined ||
+      is_from_chatbot !== undefined
+    ) {
       if (landing_page) {
         saveSessionStorage({
           data: [
@@ -314,7 +319,6 @@ export default function usePlayer() {
       setIsInitAds(true);
       handleLoadAds();
     }
-    handlePingPlayer();
     if (clearErrorInterRef) clearErrorInterRef();
     clearIntervalErrorSafari();
     checkSafariError();
@@ -353,6 +357,8 @@ export default function usePlayer() {
 
   const handleTimeUpdate = () => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    handlePingPlayer();
+
     if (video) {
       checkRealTimePlaying();
       const d = video.duration;

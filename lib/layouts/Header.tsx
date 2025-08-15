@@ -5,7 +5,11 @@ import { useRouter } from 'next/router';
 import { MenuItem } from '@/lib/api/menu';
 import Link from 'next/link';
 import Notification from '@/lib/components/notification';
-import { PACKAGE, PROFILE_TYPES, TYPE_PR } from '@/lib/constant/texts';
+import {
+  PACKAGE,
+  PROFILE_TYPES,
+  TYPE_PR,
+} from '@/lib/constant/texts';
 import MenuMore from '@/lib/components/header/MenuMore';
 import MobileMenu from '@/lib/components/header/MobileMenu';
 import { AppContext } from '@/lib/components/container/AppContainer';
@@ -138,6 +142,7 @@ export default function Header() {
     return false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, id]);
+
   const appCtx = useContext(AppContext);
   const dispatch = useDispatch();
   const appDispatch = useAppDispatch();
@@ -150,8 +155,7 @@ export default function Header() {
     const userProfileId = userInfo?.info?.profile?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo]);
-  const { adsLoaded } = useAppSelector((state) => state.app);
-  const { isExistedAds } = useAppSelector((state) => state.app);
+  const { adsLoaded, isExistedAds } = useAppSelector((state) => state.app);
 
   // Load Ads script globally (moved from pages/index.tsx)
   useEffect(() => {
@@ -184,17 +188,21 @@ export default function Header() {
         const appName = localStorage.getItem('app_name');
         const hideAdsApps = ['Truyền hình', 'Học tập', 'Thiếu nhi'];
         setShouldHideHeaderAds(hideAdsApps.includes(appName || ''));
-        if (adsLoaded) {
+
+        if (adsLoaded && isExistedAds) {
           // Initialize ads safely with retries in case the global is not ready yet
           let attempts = 0;
-          const tryInitAds = () => {
+          const tryInitAds = async () => {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const initFn = (window as any)?.InitAdsPlayBanner;
             if (typeof initFn === 'function') {
               try {
-                console.log('initAds');
+                console.log('initAds', document.querySelectorAll('.adsplay-placement'));
 
-                initFn();
+                await initFn();
+
+                console.log('initAds done', document.querySelectorAll('.adsplay-placement'));
+                
               } catch {}
             } else if (attempts < 10) {
               attempts += 1;
@@ -224,7 +232,7 @@ export default function Header() {
     return () => {
       router.events.off('routeChangeComplete', handleRouteComplete);
     };
-  }, [router.isReady, router.events, adsLoaded]);
+  }, [router.isReady, router.events, adsLoaded, isExistedAds]);
 
   // Listen initBanner once globally and store isExistedAds flag
   useEffect(() => {
@@ -271,10 +279,9 @@ export default function Header() {
 
   // Auto open header ads when an ad placement exists
   useEffect(() => {
-    if (isExistedAds) {
-      appDispatch({ type: 'app/changeIsHeaderAdsClosed', payload: false });
-    }
-  }, [isExistedAds, appDispatch]);
+    appDispatch({ type: 'app/changeIsHeaderAdsClosed', payload: false });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];

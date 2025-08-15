@@ -68,7 +68,7 @@ export interface NotFoundMessage {
   code?: string;
 }
 
-type StreamType =
+export type StreamType =
   | 'channel'
   | 'event'
   | 'vod'
@@ -415,6 +415,17 @@ export function PlayerPageContextProvider({ children }: Props) {
     }
     return 'channel';
   }, [router]);
+
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_STREAM_TYPE,
+          value: streamType,
+        },
+      ],
+    });
+  }, [streamType]);
   const dispatch = useAppDispatch();
 
   // Playlist auto next logic
@@ -895,6 +906,14 @@ export function PlayerPageContextProvider({ children }: Props) {
       ) {
         const slug = (router?.query?.slug as string) || ('' as string);
         const premiereId = slug?.split('-').pop();
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_EVENT_ID,
+              value: premiereId,
+            },
+          ],
+        });
         if (premiereId) {
           const channelRes = await getEventDetail({
             eventId: premiereId || '',

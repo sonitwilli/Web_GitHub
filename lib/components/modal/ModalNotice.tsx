@@ -39,6 +39,7 @@ export interface NoticeModalProps {
   isCustom?: boolean;
   deleteData?: (type?: string) => Promise<AxiosResponse<PageDataResponseType>>; // Thêm prop deleteData
   reloadData?: () => void; // Thêm prop reloadData
+  ModalContentClass?: string;
 }
 
 export interface NoticeModalRef {
@@ -121,6 +122,7 @@ const NoticeModal = forwardRef<NoticeModalRef, NoticeModalProps>(
       isCustom = false,
       deleteData, // Nhận prop deleteData
       reloadData, // Nhận prop reloadData
+      ModalContentClass = '',
     },
     ref,
   ) => {
@@ -489,7 +491,7 @@ const NoticeModal = forwardRef<NoticeModalRef, NoticeModalProps>(
             {standardNoticeContent.title}
           </h4>
           <div
-            className="text-center mb-[32px] modal-content"
+            className={`text-center mb-[32px] modal-content ${ModalContentClass}`}
             dangerouslySetInnerHTML={{ __html: standardNoticeContent.content }}
           />
           {state.error && (

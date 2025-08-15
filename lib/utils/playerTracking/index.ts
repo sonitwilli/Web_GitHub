@@ -16,6 +16,7 @@ import { ChannelDetailType, StreamErrorType } from '@/lib/api/channel';
 import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
 import { SubtitleItemType } from '@/lib/hooks/useSubtitle';
 import { AudioItemType } from '@/lib/components/player/core/AudioButton';
+import { StreamType } from '@/lib/components/player/context/PlayerPageContext';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getPlayerSub = () => {
@@ -400,6 +401,35 @@ export const removePlayerSessionStorage = () => {
   });
 };
 
+export const getItemInfo = () => {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  try {
+    const streamType = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_STREAM_TYPE,
+    ) as StreamType;
+    const eventId =
+      (sessionStorage.getItem(trackingStoreKey.PLAYER_EVENT_ID) as string) ||
+      '';
+    const { dataChannel } = getContentData();
+    let ItemId = dataChannel?.id || dataChannel?._id || '';
+    const ItemName =
+      dataChannel?.title ||
+      dataChannel?.title_vie ||
+      dataChannel?.title_origin ||
+      dataChannel?.name ||
+      dataChannel?.alias_name ||
+      '';
+    if (streamType === 'event') {
+      ItemId = eventId;
+    }
+    return { ItemId, ItemName };
+  } catch {
+    return {};
+  }
+};
+
 export const getPlayerParams = () => {
   if (typeof window === 'undefined') {
     return {};
@@ -407,6 +437,7 @@ export const getPlayerParams = () => {
   trackPlayerChange();
   const { selectedAudioParsed, selectedSubParsed } =
     getPlayerActiveTrack() || {};
+  const { Duration } = getVideoInfo();
   const {
     dataChannel,
     dataStream,
@@ -419,27 +450,46 @@ export const getPlayerParams = () => {
     /*@ts-ignore*/
     sub = KEY_LANGUAGES_AUDIO_CODECS[s] || sub;
   }
+  const realDuration =
+    Duration || sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || 0;
+
+  const { ItemId, ItemName } = getItemInfo();
   return {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
-    Bandwidth: sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH) || '',
+    Bandwidth:
+      String(
+        Math.round(
+          Number(sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH)),
+        ),
+      ) || '',
     StreamBandwidthAudio:
-      sessionStorage.getItem(trackingStoreKey.STREAM_AUDIO_BANDWIDTH || '') ||
-      '',
+      String(
+        Math.round(
+          Number(
+            sessionStorage.getItem(
+              trackingStoreKey.STREAM_AUDIO_BANDWIDTH || '',
+            ),
+          ),
+        ),
+      ) || '',
     StreamBandwidth:
-      sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH) || '',
-    BufferLength: sessionStorage.getItem(trackingStoreKey.BUFFER_LENGTH) || '',
+      String(
+        Math.round(
+          Number(sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH)),
+        ),
+      ) || '',
+    BufferLength:
+      String(
+        Math.round(
+          Number(sessionStorage.getItem(trackingStoreKey.BUFFER_LENGTH)),
+        ),
+      ) || '',
     TotalByteLoaded:
       sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED || '') ||
       '',
-    ItemId: dataChannel?.id || dataChannel?._id || '',
-    ItemName:
-      dataChannel?.title ||
-      dataChannel?.title_vie ||
-      dataChannel?.title_origin ||
-      dataChannel?.name ||
-      dataChannel?.alias_name ||
-      '',
+    ItemId: ItemId || '',
+    ItemName: ItemName || '',
     RefEpisodeID: currentEpisode?.ref_episode_id || '',
     RefItemId: dataChannel?.id || dataChannel?._id || '',
     ChapterID: getChapterId() || '',
@@ -470,10 +520,7 @@ export const getPlayerParams = () => {
     Url: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
     Credit: (dataStream?.end_content || 0)?.toString() || '',
     StartTime: dataWatching?.timeplayed || dataChannel?.begin_time || '',
-    Duration:
-      Math.round(
-        Number(sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || '0'),
-      ).toString() || '',
+    Duration: Math.round(Number(realDuration)).toString() || '',
     ElapsedTimePlaying:
       Math.round(
         Number(sessionStorage.getItem(VIDEO_CURRENT_TIME || 0)),

@@ -155,7 +155,7 @@ export default function UserDropdownMenu({
         return;
       }
     }
-    const updateResult = await updateProfile({ pin }, selectedProfile);
+    const updateResult = await updateProfile({ pin, type: pinModalType }, selectedProfile);
     setLoading(false);
 
     if (updateResult?.data?.status === '0') {

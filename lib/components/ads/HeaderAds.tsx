@@ -25,7 +25,7 @@ const HeaderAds: React.FC = () => {
   const isScrolling = !isPathInRouteNames && scrollDistance > 0;
 
   // Hide when ads not loaded or explicitly closed. Treat null as closed by default
-  if (!adsLoaded || isHeaderAdsClosed !== false) return null;
+  if (!adsLoaded || (isHeaderAdsClosed === null || isHeaderAdsClosed)) return null;
 
   return (
     <div

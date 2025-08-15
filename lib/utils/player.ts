@@ -269,6 +269,7 @@ const parseHlsManifest = async ({ manifestUrl }: { manifestUrl: string }) => {
       width: item?.attributes?.RESOLUTION?.width,
       bitrate: item?.attributes?.BANDWIDTH,
       type: MANIFEST_TYPE.HLS,
+      fps: item?.attributes['FRAME-RATE'],
     }));
     // filter audio codecs
     const audioList: AudioItemType[] = [];

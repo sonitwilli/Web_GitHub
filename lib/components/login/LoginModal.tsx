@@ -124,6 +124,11 @@ export default function LoginModal({ visible, onClose }: Props) {
     return width <= 768;
   }, [width]);
 
+  const isDeleteAccount = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.location.pathname.includes('/xoa-tai-khoan');
+  }, []);
+
   if (!visible) return null;
 
   return (
@@ -168,15 +173,17 @@ export default function LoginModal({ visible, onClose }: Props) {
         {/* Header controls */}
         {!isHidden && (
           <>
-            <button
-              className="absolute top-4 tablet:top-8 right-4 tablet:right-8 text-white text-2xl"
-              onClick={handleClose}
-            >
-              <IoCloseCircle
-                size={isMobile ? 24 : 32}
-                className="text-white-06 hover:text-white-08 cursor-pointer"
-              />
-            </button>
+            {!isDeleteAccount && (
+              <button
+                className="absolute top-4 tablet:top-8 right-4 tablet:right-8 text-white text-2xl"
+                onClick={handleClose}
+              >
+                <IoCloseCircle
+                  size={isMobile ? 24 : 32}
+                  className="text-white-06 hover:text-white-08 cursor-pointer"
+                />
+              </button>
+            )}
 
             {showBack && (
               <button

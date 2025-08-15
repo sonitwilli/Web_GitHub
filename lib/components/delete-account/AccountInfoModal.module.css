@@ -1,17 +1,57 @@
 /* Scroll bar styling for AccountInfoModal */
 .scrollBar::-webkit-scrollbar {
-  width: 4px;
+  width: 14px;
 }
 
 .scrollBar::-webkit-scrollbar-track {
   background: transparent;
+  border-radius: 10px;
 }
 
 .scrollBar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  border: 4px solid rgba(0, 0, 0, 0);
+  background-clip: padding-box;
+}
+
+.scrollBar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+  background-clip: padding-box;
+}
+
+.policyContent p {
+  margin-bottom: 16px !important;
+}
+
+.policyContent p:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Account Info Modal specific styles */
+.accountInfoModal {
+  font-family: 'Roboto', sans-serif;
+}
+
+/* Custom scrollbar for services container */
+.servicesContainer {
+  position: relative;
+}
+
+.servicesContainer::-webkit-scrollbar {
+  width: 4px;
+}
+
+.servicesContainer::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 30px;
+}
+
+.servicesContainer::-webkit-scrollbar-thumb {
   background: #959595;
   border-radius: 30px;
 }
 
-.scrollBar::-webkit-scrollbar-thumb:hover {
+.servicesContainer::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0;
 }

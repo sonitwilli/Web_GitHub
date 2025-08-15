@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 //
 import { useDispatch, useSelector } from 'react-redux';
 import NoticeModal, {
@@ -17,12 +24,21 @@ import AccountInfoModal, {
 import { RootState } from '@/lib/store';
 import { openLoginModal } from '@/lib/store/slices/loginSlice';
 import { showToast } from '@/lib/utils/globalToast';
-import { TITLE_SEND_OTP_FAIL, DEFAULT_ERROR_MSG } from '@/lib/constant/texts';
+import {
+  TITLE_SEND_OTP_FAIL,
+  DEFAULT_ERROR_MSG,
+  TOKEN,
+  USER,
+} from '@/lib/constant/texts';
 // import tracking from '@/lib/tracking';
 import { useDeleteAccount } from '@/lib/hooks/account/useDeleteAccount';
 import { useRouter } from 'next/router';
 import LogoFPTPlayLogin from '@/lib/components/svg/LogoFPTPlayLogin';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import { AppContext } from '@/lib/components/container/AppContainer';
+import { scaleImageUrl } from '@/lib/utils/methods';
+import styles from '@/lib/components/login/LoginModal.module.css';
+import { AxiosError } from 'axios';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
@@ -35,30 +51,53 @@ export default function DeleteAccountPage() {
   const accountInfoRef = useRef<AccountInfoModalRef>(null);
 
   const [, setResendOtp] = useState(false);
-
-  const isLogged = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    return !!localStorage.getItem('token');
-  }, []);
+  const { configs } = useContext(AppContext);
+  const [backgroundImage, setBackgroundImage] = useState('');
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [imageError, setImageError] = useState(false);
 
   const { width } = useScreenSize();
+  const isTablet = useMemo(() => {
+    return width <= 1280;
+  }, [width]);
+
   const isMobile = useMemo(() => {
     return width <= 768;
   }, [width]);
 
+  // --- Effects ---
   useEffect(() => {
-    if (!isLogged) {
-      // Open global login modal wired in _app via Redux
-      dispatch(openLoginModal());
-    } else {
-      checkDeleteAccount();
+    if (configs?.image?.bg_signin_signup_tv) {
+      const url = scaleImageUrl({
+        imageUrl: configs.image.bg_signin_signup_tv,
+        width: isTablet ? width : 1080,
+      });
+      if (url) {
+        setBackgroundImage(url as string);
+        setImageLoaded(false);
+        setImageError(false);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogged]);
+  }, [isTablet, configs, width]);
+
+  // Preload background image
+  useEffect(() => {
+    if (backgroundImage && !isTablet && !isMobile) {
+      const img = new Image();
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => setImageError(true);
+      img.src = backgroundImage;
+    } else if (backgroundImage && (isTablet || isMobile)) {
+      // For mobile/tablet, we load the image directly in img tag
+      setImageLoaded(true);
+    }
+  }, [backgroundImage, isTablet, isMobile]);
+
+  const isLogged = useSelector((state: RootState) => !!state.user.info);
 
   const { checkStatus, validate, sendOtp, doDisable } = useDeleteAccount();
 
-  const checkDeleteAccount = async () => {
+  const checkDeleteAccount = useCallback(async () => {
     const { status, packages, extras, content, message } = await checkStatus();
 
     if (status === 200 || status === 302) {
@@ -73,10 +112,10 @@ export default function DeleteAccountPage() {
         title: 'Thông báo',
         content: message || DEFAULT_ERROR_MSG,
         action: 'home',
-        buttonContent: 'Đã hiểu',
+        buttonContent: 'Thoát',
       });
     }
-  };
+  }, [checkStatus, accountInfoRef]);
 
   const sendOtpDeleteAccount = async () => {
     try {
@@ -190,7 +229,14 @@ export default function DeleteAccountPage() {
   }) => {
     try {
       const result = await doDisable(verify_token);
+
+      // Close all modals first to prevent overlay issues
+      verifyModalRef.current?.closeModal?.();
+      policyModalRef.current?.close();
+      accountInfoRef.current?.close();
+
       if (result?.status === '1' || result?.status === 1) {
+        // Success case - account deleted successfully
         // await tracking({
         //   Event: 'DeactivateSuccess',
         //   Screen: 'DeactivateAccount',
@@ -200,36 +246,124 @@ export default function DeleteAccountPage() {
         //   AppId: 'MEGAHOME',
         //   AppName: 'MEGAHOME',
         // } as never);
-        // logout and show notice
+
+        // Logout user properly using the logout hook
+
+        // Show success notice and redirect to home
         noticeModalRef.current?.openModal({
-          title: 'Thông báo',
-          content: result?.msg || 'Xoá tài khoản thành công',
+          title: result?.data?.title || 'Thông báo',
+          content:
+            result?.msg ||
+            'Xóa tài khoản thành công. Cảm ơn bạn đã sử dụng dịch vụ.',
           action: 'home',
-          buttonContent: 'Đã hiểu',
+          buttonContent: 'Thoát',
         });
+
+        // Clear user data and logout
+        if (typeof window !== 'undefined') {
+          localStorage.removeItem(TOKEN);
+          localStorage.removeItem(USER);
+          sessionStorage.clear();
+        }
       } else {
+        // Error case - show error and use reload action like Nuxt
         noticeModalRef.current?.openModal({
-          title: 'Thông báo',
+          title: result?.data?.title || 'Thông báo',
           content: result?.msg || DEFAULT_ERROR_MSG,
           action: 'reload',
           buttonContent: 'Thử lại',
         });
       }
-    } catch {
+    } catch (error) {
+      let errorMsg = DEFAULT_ERROR_MSG;
+      let title = 'Thông báo';
+      if (error instanceof AxiosError) {
+        title = error.response?.data?.title || 'Thông báo';
+        errorMsg = error.response?.data?.msg || DEFAULT_ERROR_MSG;
+      }
+      // Exception case - close all modals and show error
+      verifyModalRef.current?.closeModal?.();
+      policyModalRef.current?.close();
+      accountInfoRef.current?.close();
+
       noticeModalRef.current?.openModal({
-        title: 'Thông báo',
-        content: DEFAULT_ERROR_MSG,
+        title,
+        content: errorMsg,
         action: 'reload',
         buttonContent: 'Thử lại',
       });
     }
   };
 
+  useEffect(() => {
+    if (!isLogged || !localStorage.getItem(TOKEN)) {
+      dispatch(openLoginModal());
+    } else {
+      checkDeleteAccount();
+    }
+  }, [checkDeleteAccount, dispatch, isLogged]);
+
+  if (!isLogged) {
+    return null;
+  }
+
   return (
     <div
       id="delete-account-page"
       className="min-h-[60vh] flex flex-col items-center py-10"
     >
+      {/* Background image (after loaded) */}
+      <div className="absolute inset-0 z-[1] opacity-100">
+        {/* Mask overlay */}
+        <div
+          className={`absolute inset-0 z-[2] bg-cover ${
+            isTablet || isMobile ? styles.bgMaskMobile : styles.bgMask
+          }`}
+        />
+        {/* Background image */}
+        {isTablet || isMobile ? (
+          <div className="absolute inset-0 z-[1] opacity-100">
+            <img
+              src={`${
+                isMobile ? '/images/mobile-mask.png' : '/images/mask-tablet.png'
+              }`}
+              alt="shadow"
+              className="absolute inset-0 z-[1] top-[10px] left-0 w-full h-auto object-cover"
+              loading="lazy"
+            />
+            {backgroundImage && (
+              <img
+                src={backgroundImage}
+                alt="background"
+                className={`w-full h-auto object-fill transition-opacity duration-300 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
+                loading="lazy"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageError(true)}
+              />
+            )}
+            {/* Fallback background color when image fails to load */}
+            {(imageError || !backgroundImage) && (
+              <div className="absolute inset-0 bg-gradient-to-b from-gray-900 to-black" />
+            )}
+          </div>
+        ) : (
+          <>
+            {backgroundImage && imageLoaded && !imageError && (
+              <div
+                className="absolute inset-0 z-[1] bg-cover bg-top max-md:bg-bottom opacity-100 transition-opacity duration-300"
+                style={{ backgroundImage: `url(${backgroundImage})` }}
+              />
+            )}
+            {/* Fallback background when image fails to load or is loading */}
+            {(!backgroundImage || !imageLoaded || imageError) && (
+              <div className="absolute inset-0 z-[1] bg-gradient-to-b from-gray-900 to-black opacity-100" />
+            )}
+          </>
+        )}
+      </div>
+
       <div className="mb-8 flex flex-col items-center">
         <button
           onClick={() => {
@@ -264,8 +398,16 @@ export default function DeleteAccountPage() {
         ref={verifyModalRef}
         onDoDeleteAccountNewFlow={doDeleteAccountNewFlow}
         onResend={() => setResendOtp(false)}
+        overlayClass="fixed inset-0 bg-transparent flex justify-center items-center z-[9999] p-4"
+        isCustom={false}
+        contentClass="bg-eerie-black!"
       />
-      <NoticeModal ref={noticeModalRef} />
+
+      <NoticeModal
+        ref={noticeModalRef}
+        contentClass="w-full max-w-md bg-eerie-black rounded-[16px] p-[32px] text-white shadow-lg"
+        ModalContentClass="text-spanish-gray text-[16px] leading-[130%] tracking-[0.02em] font-normal"
+      />
     </div>
   );
 }

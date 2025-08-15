@@ -37,6 +37,7 @@ export interface VerifyContent {
 interface VerifyModalNewProps {
   resendOtp?: boolean;
   contentClass?: string;
+  overlayClass?: string;
   customUi?: {
     dialogClass?: string;
     hideHeaderClose?: boolean;
@@ -46,6 +47,7 @@ interface VerifyModalNewProps {
   onHandleDeleteMethods?: () => void;
   openManagementCodeModal?: () => void;
   onDoDeleteAccountNewFlow?: (data: { verify_token: string }) => void;
+  isCustom?: boolean;
 }
 
 interface ModalManagementCodeRef {
@@ -59,17 +61,20 @@ export interface VerifyModalNewRef {
   verifyContent?: VerifyContent;
   phone?: string;
   handleCountDownResend?: (options?: { seconds?: number }) => void;
+  overlayClass?: string;
 }
 
 const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
   (
     {
       contentClass = '',
+      overlayClass = '',
       onResend,
       onHandleCancelMethods,
       onHandleDeleteMethods,
       onDoDeleteAccountNewFlow,
       openManagementCodeModal,
+      isCustom = false,
     },
     ref,
   ) => {
@@ -483,7 +488,21 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             await doConfirmOtpForgetManagementCode(params);
             break;
           case 'do_confirm_otp_delete_account_new_flow':
-            await doConfirmOtpDeleteAccountNewFlow(params);
+            const userPhone = currentUser?.user_phone || '';
+            setPhone(userPhone);
+
+            // Create new params with the correct phone
+            const deleteAccountParams: VerifyOtpParams = {
+              phone: userPhone,
+              otpCode: otpPinCode || form.verify_input,
+              countryCode: 'VN',
+              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+              pushRegId: null,
+            };
+
+            if (userPhone) {
+              await doConfirmOtpDeleteAccountNewFlow(deleteAccountParams);
+            }
             break;
           case 'do_resend_otp_delete_account_new_flow':
             await doResendOtpDeleteAccountNewFlow(resendParams);
@@ -520,14 +539,17 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
         <ModalWrapper
           id="verify-modal"
           open={isOpen}
-          isCustom={true}
+          isCustom={isCustom}
           onHidden={() => {
             setIsOpen(false);
             setOtpPinCode(null);
             setWrongOtpMsg(null);
           }}
           contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-[360px] sm:h-[410px] bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
-          overlayClassName="fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]"
+          overlayClassName={
+            overlayClass ||
+            `fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]`
+          }
           shouldCloseOnEsc={false}
           shouldCloseOnOverlayClick={false}
         >

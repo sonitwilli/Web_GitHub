@@ -34,6 +34,9 @@ export interface SendOtpNewFlowResponse {
 export interface DisableAccountResponse {
   status?: string | number;
   msg?: string;
+  data?: {
+    title?: string;
+  };
 }
 
 export const getDeleteAccountStatus = async (): Promise<

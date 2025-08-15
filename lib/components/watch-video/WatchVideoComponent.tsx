@@ -93,6 +93,7 @@ const WatchVideoComponent = () => {
   const { isHeaderAdsClosed } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const videoRef = useRef<HTMLVideoElement | null>(null);
+  const [adsExist, setAdsExist] = useState(false);
 
   // State for warning data - only set once when first data arrives
   const [warningData, setWarningData] = useState<WarningData[]>([]);
@@ -207,10 +208,28 @@ const WatchVideoComponent = () => {
     return result;
   })();
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleInitBanner = () => {
+      try {
+        const ins = document.querySelector('ins[data-aplpm="105-111"]');
+        const existedAds = ins
+          ? (ins as HTMLElement).children.length > 0
+          : false;
+        setAdsExist(existedAds);
+      } catch {}
+    };
+
+    document.addEventListener('initBanner', handleInitBanner);
+    return () => {
+      document.removeEventListener('initBanner', handleInitBanner);
+    };
+  }, []);
+
   return (
     <div
       className={`${
-        isHeaderAdsClosed || isHeaderAdsClosed === null
+        isHeaderAdsClosed || isHeaderAdsClosed === null || !adsExist
           ? 'pt-[96px]'
           : 'pt-[16px]'
       }`}
@@ -389,8 +408,9 @@ const WatchVideoComponent = () => {
                   {(viewportType === VIEWPORT_TYPE.DESKTOP &&
                     dataChannel?.episodes &&
                     dataChannel?.episodes?.length > 1) ||
-                  dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-                  dataChannel?.episode_type === EpisodeTypeEnum.SEASON ? (
+                  (viewportType === VIEWPORT_TYPE.DESKTOP &&
+                    (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+                      dataChannel?.episode_type === EpisodeTypeEnum.SEASON)) ? (
                     <div
                       className={`w-full ${
                         isExpanded ? 'hidden' : 'pl-[16px]'

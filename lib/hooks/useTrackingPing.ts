@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import tracking from '../tracking';
 import { getPlayerParams, trackPlayerChange } from '../utils/playerTracking';
 import { VIDEO_ID } from '../constant/texts';
+import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 
 const pingTime = 60000;
 
@@ -14,7 +15,6 @@ export const trackingPingLog111 = async () => {
     }
     trackPlayerChange();
     const playerParams = getPlayerParams();
-    console.log('--- TRACKING playerParams', { playerParams });
     /*@ts-ignore*/
     return await tracking({
       LogId: '111',
@@ -25,17 +25,30 @@ export const trackingPingLog111 = async () => {
 };
 
 export default function useTrackingPing() {
+  const { isPlaySuccessRef } = usePlayerPageContext();
   const pingInterval = useRef<NodeJS.Timeout | null>(null);
-
+  const lastPingTime = useRef(0);
+  const isFirstPingDone = useRef(false);
   const handlePingPlayer = () => {
-    if (!pingInterval?.current) {
+    if (!isPlaySuccessRef?.current) {
+      return;
+    }
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (!video || video.paused) {
+      return;
+    }
+    if (!isFirstPingDone?.current) {
+      isFirstPingDone.current = true;
       trackingPingLog111();
-      pingInterval.current = setInterval(() => {
-        const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-        if (video && !video.paused) {
-          trackingPingLog111();
-        }
-      }, pingTime);
+    }
+
+    const currentTime = new Date().getTime();
+    const e = currentTime - lastPingTime.current;
+    if (e >= pingTime) {
+      if (lastPingTime.current > 0) {
+        trackingPingLog111();
+      }
+      lastPingTime.current = currentTime;
     }
   };
 

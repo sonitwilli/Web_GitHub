@@ -398,7 +398,7 @@ const getBlockSortData = async ({
   page_id?: string;
 }): Promise<AxiosResponse<BlockItemResponseType>> => {
   const queries = {
-    block_type: block.block_type,
+    block_type: block.type,
     custom_data: block.custom_data ? decodeURIComponent(block.custom_data) : '',
     watching_version: 'v1',
     handle_event: 1,
@@ -407,7 +407,7 @@ const getBlockSortData = async ({
     page_id: page_id || '',
   };
 
-  return axiosInstance.get(`/athena/block/${block.block_type}/${block?.id}`, {
+  return axiosInstance.get(`/athena/block/${block.type}/${block?.id}`, {
     params: queries,
     timeout: 1000,
   });
