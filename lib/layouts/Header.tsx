@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 import useScroll from '@/lib/hooks/useScroll';
 import { IoMdCard } from 'react-icons/io';
 import DownloadApp from '../components/download/DownloadApp';
-import { checkActive } from '../utils/methods';
+import { checkActive, loadJsScript } from '../utils/methods';
 import { useAppDispatch, useAppSelector } from '../store';
 import useMenu from '../hooks/useMenu';
 import { ACCOUNT } from '@/lib/constant/texts';
@@ -128,6 +128,7 @@ export default function Header() {
       'dien-vien',
       'tim-kiem',
       'short-videos',
+      'thong-tin'
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -150,6 +151,26 @@ export default function Header() {
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo]);
   const { adsLoaded } = useAppSelector((state) => state.app);
+  const { isExistedAds } = useAppSelector((state) => state.app);
+
+  // Load Ads script globally (moved from pages/index.tsx)
+  useEffect(() => {
+    if (router.isReady && process.env.NEXT_PUBLIC_API_ADS) {
+      const timer = setTimeout(() => {
+        loadJsScript({
+          src: process.env.NEXT_PUBLIC_API_ADS!,
+          id: 'ads-script',
+          cb: () => {
+            appDispatch({ type: 'app/changeAdsLoaded', payload: true });
+          },
+        });
+      }, 10000);
+
+      return () => {
+        clearTimeout(timer);
+      };
+    }
+  }, [router.isReady, appDispatch]);
 
   useEffect(() => {
     saveProfile({ profile: currentProfile });
@@ -164,8 +185,23 @@ export default function Header() {
         const hideAdsApps = ['Truyền hình', 'Học tập', 'Thiếu nhi'];
         setShouldHideHeaderAds(hideAdsApps.includes(appName || ''));
         if (adsLoaded) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (window as any).InitAdsPlayBanner();
+          // Initialize ads safely with retries in case the global is not ready yet
+          let attempts = 0;
+          const tryInitAds = () => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const initFn = (window as any)?.InitAdsPlayBanner;
+            if (typeof initFn === 'function') {
+              try {
+                console.log('initAds');
+
+                initFn();
+              } catch {}
+            } else if (attempts < 10) {
+              attempts += 1;
+              setTimeout(tryInitAds, 300);
+            }
+          };
+          tryInitAds();
         }
       }
     };
@@ -232,6 +268,13 @@ export default function Header() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, [appDispatch]);
+
+  // Auto open header ads when an ad placement exists
+  useEffect(() => {
+    if (isExistedAds) {
+      appDispatch({ type: 'app/changeIsHeaderAdsClosed', payload: false });
+    }
+  }, [isExistedAds, appDispatch]);
 
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];
@@ -328,13 +371,15 @@ export default function Header() {
     // Check if current page is a content page (not a main menu/category page)
     const isContentPage = () => {
       const contentPaths = [
-        'xem-video',
         'xem-truyen-hinh',
-        'dien-vien',
         'su-kien',
+        'cong-chieu',
+        'xem-video',
         'playlist',
-        'short-videos',
+        'dien-vien',
         'tim-kiem',
+        'short-videos',
+        'thong-tin'
       ];
       const pathSegment = pathName?.split('/')[1];
       return (

@@ -40,6 +40,9 @@ import FingerPrintAPI from './FingerPrintAPI';
 import { useBroadcastSchedule } from '@/lib/hooks/useBroadcastSchedule';
 import { useKeyboardControls } from '@/lib/hooks/useKeyboardControls';
 import { useNoAdsGuide } from '@/lib/hooks/useNoAdsGuide';
+import { useAutoNextVideo } from '@/lib/hooks/useAutoNextVideo';
+import { useNextRecommend } from '@/lib/hooks/useNextRecommend';
+import { useSkipIntro } from '@/lib/hooks/useSkipIntro';
 import { PreviewType } from './Preview';
 import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
@@ -126,6 +129,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     setPlayingUrl,
     isLastPlaylistVideo,
     dataPlaylist,
+    showModalNotice,
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
   const {
@@ -154,10 +158,28 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   const [showBroadcastSchedule, setShowBroadcastSchedule] = useState(false);
   const [isUserInactive, setIsUserInactive] = useState(false);
 
+  // Get states from other hooks for blocking UI detection
+  const { isVisible: isAutoNextVisible } = useAutoNextVideo();
+  const { isVisible: isNextRecommendVisible } = useNextRecommend();
+  const { isVisible: isSkipIntroVisible } = useSkipIntro(
+    dataStream?.start_content ? Number(dataStream.start_content) : 0,
+    dataStream?.intro_from ? Number(dataStream.intro_from) : 0,
+  );
+
   const { showNoAdsGuide, setShowNoAdsGuide } = useNoAdsGuide({
     enableAds: !!dataStream?.enable_ads,
-    noAdsBuyPackageInstream: !!dataStream?.noads_buy_package_instream,
+    noAdsBuyPackageInstream:
+      dataStream?.noads_buy_package_instream as StreamItemType,
     isVideoPaused,
+    isPreviewMode: previewHandled,
+    isSkipIntroVisible,
+    isNextEpisodeGuideVisible: isAutoNextVisible || isNextRecommendVisible, // Next episode/recommend guides
+    isUsageGuideVisible: !!showModalNotice, // Player notice modal (usage guide, warnings, etc.)
+    isWarningVisible: !!playerError || isShowErrorModal, // Player error modal
+    isLogoAnimationAdsVisible: !!showFingerPrintClient, // Fingerprint client overlay
+    isWatchCreditVisible: false, // TODO: Connect to watch credit state
+    isStreamTvcVisible: !!showBroadcastSchedule, // Broadcast schedule overlay
+    isContentWarningVisible: controlPopupType !== null || !!showModalLogin, // Mobile control popups or login modal
   });
 
   // Lấy channelId từ dataChannel

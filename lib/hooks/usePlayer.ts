@@ -263,6 +263,14 @@ export default function usePlayer() {
     if (catchVideoInterval.current) {
       clearInterval(catchVideoInterval.current);
     }
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
+          value: '0',
+        },
+      ],
+    });
     const { bookmark, landing_page, ...restQuery } = router.query;
     if (bookmark !== undefined || landing_page !== undefined) {
       if (landing_page) {
@@ -330,7 +338,7 @@ export default function usePlayer() {
       const pre = sessionStorage.getItem(
         trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
       );
-      const p = pre ? Number(pre) : 0;
+      const p = pre ? Number(pre) : cur;
       const value = Number(cur) - p;
       saveSessionStorage({
         data: [
@@ -348,6 +356,14 @@ export default function usePlayer() {
     if (video) {
       checkRealTimePlaying();
       const d = video.duration;
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_DURATION,
+            value: String(d),
+          },
+        ],
+      });
       const c = video.currentTime;
       sessionStorage.setItem(VIDEO_CURRENT_TIME, c as unknown as string);
       if (setVideoCurrentTime) {
@@ -653,7 +669,7 @@ export default function usePlayer() {
     });
     if (!window.safariCheckErrorInterRef) {
       window.safariCheckErrorInterRef = setInterval(() => {
-        console.log('--- PLAYER handleIntervalCheckErrors START', {
+        console.log('--- PLAYER handleIntervalCheckErrorsSafari START', {
           safariCheckErrorInterRef: window.safariCheckErrorInterRef,
           checkErrorInterRef: window.checkErrorInterRef,
         });

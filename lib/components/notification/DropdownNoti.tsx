@@ -105,7 +105,7 @@ export default function DropdownNoti({
 
         if (res) {
           setInboxList((prev) => (append ? [...prev, ...res.data] : res.data));
-          setHasMore((res.paging?.page ?? 1) < (res.paging?.total_page ?? 1));
+          setHasMore(res.data.length >= 10);
           setCurrentPage(page);
         }
       } finally {
@@ -129,7 +129,7 @@ export default function DropdownNoti({
 
       if (res) {
         setInboxList(res.data);
-        setHasMore((res.paging?.page ?? 1) < (res.paging?.total_page ?? 1));
+        setHasMore(res.data.length >= 10);
         setCurrentPage(1);
       }
     })();

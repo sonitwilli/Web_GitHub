@@ -84,13 +84,15 @@ export default function MobileMenu({ menus }: Props) {
     // Check if current page is a content page (not a main menu/category page)
     const isContentPage = () => {
       const contentPaths = [
-        'xem-video',
         'xem-truyen-hinh',
-        'dien-vien',
         'su-kien',
+        'cong-chieu',
+        'xem-video',
         'playlist',
-        'short-videos',
+        'dien-vien',
         'tim-kiem',
+        'short-videos',
+        'thong-tin'
       ];
       const pathSegment = pathName?.split('/')[1];
       return (

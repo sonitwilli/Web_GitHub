@@ -92,7 +92,7 @@ export default function Report() {
             },
           }}
           dataPost={{
-            video_id: dataChannel?._id || '',
+            video_id: dataChannel?._id || dataChannel?.id || '',
             chapter_id: '0',
             ref_id: dataChannel?.ref_id || '',
             chapter_ref_id: '0',

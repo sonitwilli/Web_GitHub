@@ -5,11 +5,7 @@ import DefaultLayout from '@/lib/layouts/Default';
 import EmblaTopSlider from '@/lib/components/slider/embla/top-slider/EmblaTopSlider';
 import { useEventConfig } from '@/lib/hooks/useEventConfig';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
-import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from '@/lib/store';
-import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
-import { loadJsScript } from '@/lib/utils/methods';
+import { useAppSelector } from '@/lib/store';
 import type { GetServerSideProps } from 'next';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
 
@@ -33,29 +29,8 @@ export default function HomePage() {
     blocksSortedRecommendNotHighlight,
   } = usePageApi({});
 
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   const { isExistedAds } = useAppSelector((state) => state.app);
   useEventConfig();
-
-  useEffect(() => {
-    if (router.isReady && process.env.NEXT_PUBLIC_API_ADS) {
-      const timer = setTimeout(() => {
-        loadJsScript({
-          src: process.env.NEXT_PUBLIC_API_ADS!,
-          id: 'ads-script',
-          cb: () => {
-            // Lưu vào store khi script load thành công
-            dispatch(changeAdsLoaded(true));
-          },
-        });
-      }, 10000);
-
-      return () => {
-        clearTimeout(timer);
-      };
-    }
-  }, [router.isReady, dispatch]);
 
   return (
     <>

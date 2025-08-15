@@ -90,7 +90,7 @@ const WatchVideoComponent = () => {
   const router = useRouter();
 
   const { isFinalEpisode } = useVodPageContext();
-  const { isExistedAds } = useAppSelector((state) => state.app);
+  const { isHeaderAdsClosed } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const videoRef = useRef<HTMLVideoElement | null>(null);
 
@@ -210,7 +210,9 @@ const WatchVideoComponent = () => {
   return (
     <div
       className={`${
-        isExistedAds ? 'pt-[16px]' : 'pt-[96px]'
+        isHeaderAdsClosed || isHeaderAdsClosed === null
+          ? 'pt-[96px]'
+          : 'pt-[16px]'
       }`}
     >
       {channelNotFound ? (

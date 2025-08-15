@@ -47,6 +47,32 @@ export function useBroadcastSchedule(
   const lastEndVideoTimeRef = useRef<number>(0);
   const hasHandledQuery = useRef(false);
 
+  // Check if item is currently live
+  const isItemLive = useCallback((item: ScheduleItem) => {
+    const now = Math.floor(Date.now() / 1000);
+    return now >= Number(item.start_time) && now < Number(item.end_time);
+  }, []);
+
+  // Find item by schedule ID
+  const findItemById = useCallback(
+    (scheduleId: string) => {
+      return (
+        scheduleList.find((i) => i.id === scheduleId) ||
+        allTimeShiftItems.find((i) => i.id === scheduleId)
+      );
+    },
+    [scheduleList, allTimeShiftItems],
+  );
+
+  // Clear timeshift from URL
+  const clearTimeshiftFromUrl = useCallback(() => {
+    const q = router.query;
+    if (q) {
+      delete q.time_shift_id;
+    }
+    router.replace({ query: { ...q } }, undefined, { shallow: true });
+  }, [router]);
+
   // Get context from PlayerPageContext
   const {
     isEndVideo,
@@ -65,6 +91,34 @@ export function useBroadcastSchedule(
     }, 60000);
     return () => clearInterval(interval);
   }, [dispatch]);
+
+  // Auto detect if current timeshift program becomes live and switch to live
+  useEffect(() => {
+    if (!activeScheduleId) return;
+
+    const item = findItemById(activeScheduleId);
+    if (!item) return;
+
+    // Check if current timeshift item is now live
+    if (isItemLive(item)) {
+      // Clear timeshift and switch to live
+      dispatch(setActiveScheduleId(''));
+      onScheduleSelect?.('');
+      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+      if (setIsPlaySuccess) setIsPlaySuccess(false);
+      clearTimeshiftFromUrl();
+    }
+  }, [
+    currentTime,
+    activeScheduleId,
+    findItemById,
+    isItemLive,
+    dispatch,
+    onScheduleSelect,
+    setFromTimeshiftToLive,
+    setIsPlaySuccess,
+    clearTimeshiftFromUrl,
+  ]);
 
   // Fetch schedule
   const fetchBroadcastSchedule = useCallback(
@@ -135,31 +189,30 @@ export function useBroadcastSchedule(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fetchAllTimeShiftItems, channelId, router?.query?.id, dispatch]);
 
-  // Check if item is currently live
-  const isItemLive = useCallback((item: ScheduleItem) => {
-    const now = Math.floor(Date.now() / 1000);
-    return now >= Number(item.start_time) && now < Number(item.end_time);
-  }, []);
+  // Check for live program when schedule data is loaded
+  useEffect(() => {
+    if (!activeScheduleId || !allTimeShiftItems.length) return;
 
-  // Find item by schedule ID
-  const findItemById = useCallback(
-    (scheduleId: string) => {
-      return (
-        scheduleList.find((i) => i.id === scheduleId) ||
-        allTimeShiftItems.find((i) => i.id === scheduleId)
-      );
-    },
-    [scheduleList, allTimeShiftItems],
-  );
-
-  // Clear timeshift from URL
-  const clearTimeshiftFromUrl = useCallback(() => {
-    const q = router.query;
-    if (q) {
-      delete q.time_shift_id;
+    const item = findItemById(activeScheduleId);
+    if (item && isItemLive(item)) {
+      // Clear timeshift and switch to live
+      dispatch(setActiveScheduleId(''));
+      onScheduleSelect?.('');
+      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+      if (setIsPlaySuccess) setIsPlaySuccess(false);
+      clearTimeshiftFromUrl();
     }
-    router.replace({ query: { ...q } }, undefined, { shallow: true });
-  }, [router]);
+  }, [
+    allTimeShiftItems,
+    activeScheduleId,
+    findItemById,
+    isItemLive,
+    dispatch,
+    onScheduleSelect,
+    setFromTimeshiftToLive,
+    setIsPlaySuccess,
+    clearTimeshiftFromUrl,
+  ]);
 
   // Reset all stores when channel changes
   useEffect(() => {
@@ -390,13 +443,33 @@ export function useBroadcastSchedule(
       urlScheduleId !== activeScheduleId
     ) {
       hasHandledQuery.current = true;
-      handleTimeShiftSelect(urlScheduleId);
+
+      // Check if this schedule is currently live before setting timeshift
+      const item = findItemById(urlScheduleId);
+      if (item && isItemLive(item)) {
+        // Clear URL and switch to live
+        clearTimeshiftFromUrl();
+        dispatch(setActiveScheduleId(''));
+        onScheduleSelect?.('');
+        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+        if (setIsPlaySuccess) setIsPlaySuccess(false);
+      } else {
+        // Proceed with timeshift as normal
+        handleTimeShiftSelect(urlScheduleId);
+      }
     }
   }, [
     router.isReady,
     router.query?.time_shift_id,
     activeScheduleId,
     handleTimeShiftSelect,
+    findItemById,
+    isItemLive,
+    clearTimeshiftFromUrl,
+    dispatch,
+    onScheduleSelect,
+    setFromTimeshiftToLive,
+    setIsPlaySuccess,
   ]);
 
   // Setter functions

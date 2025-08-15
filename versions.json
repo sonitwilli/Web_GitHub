@@ -1,6 +1,25 @@
 {
     "versions": [
         {
+            "version": "8.0.24",
+            "date": "Dự kiến",
+            "content": [
+                "[All platforms] Điều chỉnh các mục liên quan điều khoản, chính sách",
+                "[Web V5] Update Footer lấy động từ API",
+                "[Nâng cấp All] Luật điện ảnh: Tính năng xoá Profile",
+                "[Web V5] Tích hợp chatbot AI vào web, support mobile",
+                "[WEB][Landing page] Landing Page khi đến expired time không điều hướng đến Trang chủ",
+                "[WEB][Mua gói] Responsive mobile label 'Đang sử dụng' che tên gói",
+                "[WEB][Truyền hình] Lỗi play chương trình Live nhưng hiện playback của timeshift sau khi reconnect internet",
+                "[WEB][Sự kiện] Lỗi hiện popup Đăng nhập tài khoản đối với sự kiện trực tiếp chưa tới giờ phát không bắt login",
+                "[WEB][PreviewVOD] Lỗi vẫn play preview khi đã hiển thị màn hình thông báo Đăng ký",
+                "[WEB][V5][Guide mua gói] Lỗi hiển thị guide mua gói trùng với button Bỏ qua giới thiệu",
+                "[WEB][Sự kiện] Lỗi hiện popup Đăng nhập tài khoản đối với sự kiện công chiếu chưa tới giờ phát không bắt login",
+                "[WEB][V5][Guide mua gói] Lỗi không giới hạn số lần hiển thị guide mua gói trong 1 ngày trên 1 device",
+                "[WEB][Sự kiện] Lỗi luôn play từ đầu sự kiện công chiếu"
+            ]
+        },  
+        {
             "version": "8.0.23",
             "date": "Dự kiến",
             "content": [

@@ -131,13 +131,15 @@ const Preview: React.FC<PreviewProps> = ({
 
   // Main effect to control preview state
   useEffect(() => {
-    if (
+    // Only show background overlay if player is NOT successfully playing
+    const shouldShowBackground =
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
       (hlsErrors && hlsErrors.length > 0) ||
       (playerError && (type === 'live' || type === 'event')) ||
-      isLiveEnded
-    ) {
+      isLiveEnded;
+
+    if (shouldShowBackground) {
       setPreviewState('background');
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
       // Reset manual close state when preview ends

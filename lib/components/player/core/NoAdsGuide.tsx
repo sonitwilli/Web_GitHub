@@ -56,7 +56,7 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
       <div className="flex flex-row items-center gap-4 w-full max-w-[359px] h-16 overflow-hidden rounded-xl">
         <div className="flex-none order-0 flex-grow-0 w-[80px] tablet:w-[111px] h-fit relative">
           <img
-            src={noAdsData.image}
+            src={noAdsData.image || '/images/default-poster-vertical.jpg'}
             alt="No Ads"
             className="w-full object-contain"
             onError={(e) =>
@@ -67,9 +67,9 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
         </div>
 
         {/* Description Section  */}
-        <div className="flex-none order-1 flex-grow-0 w-full max-w-[232px] line-clamp-3 text-ellipsis overflow-hidden">
+        <div className="flex-none order-1 flex-grow-0 w-full max-w-[232px] line-clamp-2 text-ellipsis overflow-hidden">
           <p className="text-white flex items-center w-full h-full font-medium text-xs tablet:text-sm leading-[100%]">
-            {noAdsData.text}
+            {noAdsData.text || ''}
           </p>
         </div>
       </div>
@@ -81,7 +81,7 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
           className="cursor-pointer flex flex-row justify-center items-center w-full h-[34px] bg-white-01 border border-white-06 rounded-lg text-white-087 text-center hover:bg-white-02 transition-colors px-2 tablet:px-4 py-2 box-border"
         >
           <span className="whitespace-nowrap font-medium text-xs tablet:text-sm leading-[130%]">
-            {noAdsData.btn}
+            {noAdsData.btn || 'Đăng ký'}
           </span>
         </button>
       </div>

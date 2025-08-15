@@ -320,10 +320,6 @@ export const getPlayerActiveTrack = () => {
           value: framerate,
         },
         {
-          key: trackingStoreKey.PLAYER_FRAME_RATE,
-          value: framerate,
-        },
-        {
           key: trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL,
           value: activeAudioLabel,
         },
@@ -359,6 +355,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
       trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
+      trackingStoreKey.PLAYER_DURATION,
     ],
   });
 };
@@ -417,7 +414,6 @@ export const getPlayerParams = () => {
     requirePurchaseData,
     currentEpisode,
   } = getContentData();
-  const { Duration, CurrentTime } = getVideoInfo();
   let sub = sessionStorage.getItem(SELECTED_SUBTITLE_LABEL);
   if (sub) {
     /*@ts-ignore*/
@@ -474,8 +470,14 @@ export const getPlayerParams = () => {
     Url: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
     Credit: (dataStream?.end_content || 0)?.toString() || '',
     StartTime: dataWatching?.timeplayed || dataChannel?.begin_time || '',
-    Duration: Math.round(Duration || 0).toString() || '',
-    ElapsedTimePlaying: Math.round(CurrentTime || 0).toString() || '',
+    Duration:
+      Math.round(
+        Number(sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || '0'),
+      ).toString() || '',
+    ElapsedTimePlaying:
+      Math.round(
+        Number(sessionStorage.getItem(VIDEO_CURRENT_TIME || 0)),
+      ).toString() || '',
     RealTimePlaying:
       sessionStorage.getItem(trackingStoreKey.PLAYER_REAL_TIME_PLAYING || '') ||
       '',
@@ -489,5 +491,11 @@ export const getPlayerParams = () => {
       '',
     Screen: sessionStorage.getItem(trackingStoreKey.PLAYER_SCREEN) || '',
     AppSource: dataChannel?.app_id || '',
+    FrameRate:
+      String(
+        Math.round(
+          Number(sessionStorage.getItem(trackingStoreKey.PLAYER_FRAME_RATE)),
+        ),
+      ) || '',
   };
 };

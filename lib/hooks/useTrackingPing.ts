@@ -14,6 +14,7 @@ export const trackingPingLog111 = async () => {
     }
     trackPlayerChange();
     const playerParams = getPlayerParams();
+    console.log('--- TRACKING playerParams', { playerParams });
     /*@ts-ignore*/
     return await tracking({
       LogId: '111',

@@ -41,7 +41,7 @@ const LogoutPage: React.FC = () => {
           // Try logout but don't let any error propagate
           try {
             await logout(logoutState);
-          } catch (error) {
+          } catch {
             // Completely suppress the error - don't even log it
             // The useLogout hook will handle cleanup and redirect
           }
@@ -49,7 +49,7 @@ const LogoutPage: React.FC = () => {
 
         // Execute logout immediately without delay
         await performLogout();
-      } catch (error) {
+      } catch {
         // Final catch-all to prevent any error from reaching the error boundary
         // If anything fails, just redirect to home
         try {

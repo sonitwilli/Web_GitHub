@@ -87,6 +87,7 @@ export interface StreamItemType {
     deep_link?: string;
     background_color?: string;
   };
+  noads_instream_freq?: string;
 }
 
 export interface Resolution {

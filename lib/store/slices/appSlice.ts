@@ -18,6 +18,7 @@ interface appState {
   adsLoaded?: boolean;
   isExistedAds?: boolean;
   tabActive?: boolean;
+  isHeaderAdsClosed?: boolean | null;
 }
 
 const initialState: appState = {
@@ -34,6 +35,7 @@ const initialState: appState = {
   adsLoaded: false,
   isExistedAds: false,
   tabActive: true,
+  isHeaderAdsClosed: null,
 };
 
 const appSlice = createSlice({
@@ -85,6 +87,9 @@ const appSlice = createSlice({
     changeTabActive: (state, action: PayloadAction<boolean>) => {
       state.tabActive = action.payload;
     },
+    changeIsHeaderAdsClosed: (state, action: PayloadAction<boolean>) => {
+      state.isHeaderAdsClosed = action.payload;
+    },
   },
 });
 
@@ -103,6 +108,7 @@ export const {
   changeAdsLoaded,
   changeIsExistedAds,
   changeTabActive,
+  changeIsHeaderAdsClosed,
 } = appSlice.actions;
 
 // Export reducer

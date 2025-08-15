@@ -84,6 +84,7 @@ export interface ConfigDataType {
   };
   preview?: Preview;
   mqtt?: MQTTConfigType;
+  noads_instream_freq?: string;
 }
 
 export interface MQTTConfigType {
