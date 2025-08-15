@@ -13,12 +13,12 @@ export const convertTimeStandardVN = () => {
     }
 
     if (format.includes('dd')) {
-      const temp = 'ngày ' + date.date().toString().padStart(2, '0');
+      const temp = date.date().toString().padStart(2, '0');
       stringDate = stringDate.replace('dd', temp);
     }
 
     if (format.includes('MM')) {
-      const temp = 'tháng ' + (date.month() + 1).toString().padStart(2, '0');
+      const temp = (date.month() + 1).toString().padStart(2, '0');
       stringDate = stringDate.replace('MM', temp);
     }
 

@@ -194,7 +194,7 @@ const SportItem: FC<SportItemProps> = ({
               data?.league?.ranking?.length > 0 && (
                 <div className={isCollapsed ? '' : 'h-[80%]'}>
                   {data?.league.is_stage === '0' && (
-                    <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2 h-14">
+                    <div className="bg-charleston-green rounded-t-lg p-4 flex justify-between items-center h-[56px]">
                       <div className="font-medium text-sm text-white cursor-pointer">
                         {data?.league.right_name || getMetaData?.name}
                       </div>

@@ -24,7 +24,7 @@ const TableResult: FC<TableResultProps> = ({
   return (
     <div className="w-full box-border">
       {data.id === 'round_name' ? (
-        <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2">
+        <div className="bg-charleston-green rounded-t-lg p-4 flex justify-between items-center h-[56px]">
           {data.round_name && (
             <div className="text-white font-medium text-sm">
               {data.round_name}

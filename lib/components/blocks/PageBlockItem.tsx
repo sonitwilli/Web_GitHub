@@ -10,6 +10,7 @@ import { SPORT_SIDEBYSIDE } from '@/lib/constant/texts';
 import { AppContext } from '../container/AppContainer';
 import EmblaBlockSlider from '@/lib/components/slider/embla/block-slider/EmblaBlockSlider';
 import BlockHorizontalWithTitle from '@/lib/components/blocks/BlockHorizontalWithTitle';
+import TodayTableLeagueResult from '@/lib/components/sport/TodayTableLeagueResult';
 import SportSideBySide from '@/lib/components/sport/SportSideBySide';
 import ShowMore from '../buttons/ShowMore';
 import { useAppSelector } from '@/lib/store';
@@ -173,6 +174,18 @@ export default function PageBlockItem({
   }
 
   if (block?.block_type === SPORT_SIDEBYSIDE?.[0]) {
+    // Check if we're on the main sport page by checking the query id
+    const isMainSportPage = router.query.id === 'sport';
+
+    // Check if there are today matches (TodayTableLeagueResult will render null if none)
+    const hasTodayMatches = blockData?.data && Array.isArray(blockData.data) && blockData.data.some((item: any) => {
+      return item?.league?.matches && item.league.matches.some((match: any) => {
+        // get today's date in YYYY-MM-DD format
+        const today = new Date().toISOString().split('T')[0];
+        return match.match_date === today;
+      });
+    });
+
     return (
       <div
         className={`${
@@ -180,7 +193,25 @@ export default function PageBlockItem({
         } flex items-center justify-between mb-[24px]`}
       >
         <div className="w-full">
-          <SportSideBySide data={block} blockData={blockData} />
+          {isMainSportPage ? (
+            hasTodayMatches ? (
+              <div className='flex flex-col flex-1'>
+                <div className="py-3 font-semibold text-2xl text-white">Lịch đấu hôm nay</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="rounded-b-lg">
+                    <TodayTableLeagueResult
+                      blockData={blockData}
+                      height=""
+                      pageType={block?.id}
+                    />
+                  </div>
+                </div>
+              </div>
+            ) : null
+          ) : (
+            // On league pages, show full SportSideBySide
+            <SportSideBySide data={block} blockData={blockData} />
+          )}
         </div>
       </div>
     );
