@@ -85,7 +85,7 @@ const League: React.FC<Props> = ({
                 {data?.home.score &&
                 !isLive &&
                 parseInt(data?.is_finished as string) ? (
-                  <span className="bg-white text-dark-purple text-base font-bold px-2 py-1 rounded w-[54px] h-[24px] leading-[1.1]">
+                  <span className="bg-white text-dark-purple text-base font-bold px-2 py-1 rounded w-[70px] h-[24px] leading-[1.1]">
                     {data?.home.score} - {data?.away?.score}
                   </span>
                 ) : isLive ? (
@@ -115,7 +115,7 @@ const League: React.FC<Props> = ({
             <div className="text-sm font-semibold min-w-[55px]">
               {data?.away?.short_name}
             </div>
-            {data?.highlight_id &&
+            {/* {data?.highlight_id &&
               data?.type &&
               !parseInt(data?.is_finished as string) && (
                 <div className="w-[14%] pl-4 absolute right-[35px]">
@@ -138,7 +138,7 @@ const League: React.FC<Props> = ({
                     </svg>
                   </Link>
                 </div>
-              )}
+              )} */}
           </div>
         </div>
       ) : (
