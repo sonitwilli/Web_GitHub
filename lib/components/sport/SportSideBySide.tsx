@@ -204,10 +204,7 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
   // Determine grid layout based on selected tab
-  const isTatCaTab = tagSelect === 'tat-ca';
-  const gridClass = isTatCaTab 
-    ? 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full' 
-    : 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3';
+  const gridClass = 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full';
 
   return (
     <div id="sport-side-by-side" className="relative w-full justify-center">
