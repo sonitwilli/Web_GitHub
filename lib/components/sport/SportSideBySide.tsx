@@ -5,8 +5,10 @@ import {
   BlockSlideItemType,
   BlockItemResponseType,
   BlockItemType,
+  Match,
 } from '@/lib/api/blocks';
 import SportItem from './SportItem';
+import TodayTableLeagueResult from './TodayTableLeagueResult';
 import { useRouter } from 'next/router';
 import { SPORT, SPORT_SIDEBYSIDE } from '@/lib/constant/texts';
 import { useTableDetailData } from '@/lib/hooks/useTableDetailData';
@@ -37,6 +39,43 @@ interface SportSideBySideProps {
   showAllMatches?: boolean;
   onAddHashToLocation?: (id: string) => void;
 }
+
+// Utility function to get today's date in YYYY-MM-DD format
+const getTodayDate = (): string => {
+  const today = new Date();
+  return today.toISOString().split('T')[0];
+};
+
+// Utility function to filter today's matches from all data
+const getTodayMatches = (dataDetail: any): Match[] => {
+  if (!dataDetail?.list_items || !Array.isArray(dataDetail.list_items)) {
+    return [];
+  }
+
+  const today = getTodayDate();
+  const todayMatches: Match[] = [];
+
+  dataDetail.list_items.forEach((item: BlockSlideItemType) => {
+    if (item?.league?.matches && Array.isArray(item.league.matches)) {
+      item.league.matches.forEach((match: Match) => {
+        if (match.match_date === today) {
+          // Add league info to the match for display
+          const matchWithLeague = {
+            ...match,
+            league: {
+              ...item.league!,
+              name: item.league!.name || 'Unknown League',
+              image: item.league!.image || '',
+            },
+          };
+          todayMatches.push(matchWithLeague);
+        }
+      });
+    }
+  });
+
+  return todayMatches;
+};
 
 const SportSideBySide: FC<SportSideBySideProps> = ({
   data,
@@ -86,8 +125,12 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
     error,
   } = useTableDetailData(memoizedData, tagSelect); // Truyền tagSelect
   const sportItemRef = useRef<HTMLDivElement>(null);
+  const todayMatchesRef = useRef<HTMLDivElement>(null);
 
   const [height, setHeight] = useState<string>('');
+
+  // Get today's matches
+  const todayMatches = useMemo(() => getTodayMatches(dataDetail), [dataDetail]);
 
   // Đồng bộ tagSelect với query parameter tab
   useEffect(() => {
@@ -163,15 +206,14 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
 
   // Xử lý chiều cao (tương tự handleHeight)
   useEffect(() => {
-    if (!sportItemRef.current) {
+    const refToUse = sportItemRef.current || todayMatchesRef.current;
+    if (!refToUse) {
       setHeight(''); // Reset chiều cao nếu không cần
       return;
     }
     const isSport = router.asPath.includes('/sport');
     if (!isSport) {
-      const size = (
-        sportItemRef.current as HTMLDivElement
-      ).getBoundingClientRect();
+      const size = refToUse.getBoundingClientRect();
       setHeight(`${size.height}px`);
     }
   }, [data?.type, dataDetail?.id, router.asPath]);
@@ -230,6 +272,28 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
           ))}
         </ul>
       </div>
+      
+      {/* Today's Matches Table */}
+      {todayMatches.length > 0 && (
+        <div className="mb-6">
+          <div className="flex justify-between mb-3">
+            <h2 className="text-2xl font-semibold text-white">
+              Lịch đấu hôm nay
+            </h2>
+          </div>
+                    <div className={gridClass}>
+            <div className="rounded-b-lg" ref={todayMatchesRef}>
+              <TodayTableLeagueResult
+                blockData={blockData}
+                height={height}
+                pageType={dataDetail?.id}
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+        
       {Array.isArray(dataDetail?.list_items) &&
         dataDetail?.list_items?.length > 0 &&
         dataDetail?.type === 'table_highlight' && (
@@ -237,14 +301,6 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
             <h2 className="text-2xl font-semibold text-white">
               {dataDetail?.name}
             </h2>
-            {dataDetail?.list_items?.length >= 3 && (
-              <Link
-                href={`/trang/${dataDetail?.id}/lich-thi-dau`}
-                className="text-white mt-2 mr-2 hover:underline"
-              >
-                Lịch thi đấu
-              </Link>
-            )}
           </div>
         )}
       
