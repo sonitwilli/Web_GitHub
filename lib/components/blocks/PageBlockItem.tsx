@@ -19,6 +19,7 @@ import NewVodDetail from '../slider/embla/new-vod-detail-slider/NewVodDetail';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useRouter } from 'next/router';
+import { Match } from '@/lib/api/blocks';
 
 interface Props {
   block?: BlockItemType;
@@ -178,8 +179,8 @@ export default function PageBlockItem({
     const isMainSportPage = router.query.id === 'sport';
 
     // Check if there are today matches (TodayTableLeagueResult will render null if none)
-    const hasTodayMatches = blockData?.data && Array.isArray(blockData.data) && blockData.data.some((item: any) => {
-      return item?.league?.matches && item.league.matches.some((match: any) => {
+    const hasTodayMatches = blockData?.data && Array.isArray(blockData.data) && blockData.data.some((item: BlockSlideItemType) => {
+      return item?.league?.matches && item.league.matches.some((match: Match) => {
         // get today's date in YYYY-MM-DD format
         const today = new Date().toISOString().split('T')[0];
         return match.match_date === today;

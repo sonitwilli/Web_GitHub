@@ -1,5 +1,5 @@
 // components/SportSideBySide.tsx
-import { FC, useEffect, useState, useCallback, useMemo, useRef } from 'react';
+import { FC, useEffect, useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import {
   BlockSlideItemType,
@@ -47,7 +47,7 @@ const getTodayDate = (): string => {
 };
 
 // Utility function to filter today's matches from all data
-const getTodayMatches = (dataDetail: any): Match[] => {
+const getTodayMatches = (dataDetail: HighlightBlock | null): Match[] => {
   if (!dataDetail?.list_items || !Array.isArray(dataDetail.list_items)) {
     return [];
   }

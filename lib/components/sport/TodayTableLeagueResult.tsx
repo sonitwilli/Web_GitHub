@@ -5,6 +5,7 @@ import {
   BlockItemResponseType,
 } from '@/lib/api/blocks';
 import LeagueDetail from '@/lib/components/sport/League';
+import { League } from '@/lib/api/blocks';
 
 interface TodayTableLeagueResultProps {
   blockData?: BlockItemResponseType;
@@ -19,13 +20,13 @@ const getTodayDate = (): string => {
 };
 
 // Utility function to filter today's matches from all data and group by league
-const getTodayMatchesByLeague = (blockData: BlockItemResponseType): Record<string, { matches: Match[], league: any }> => {
+const getTodayMatchesByLeague = (blockData: BlockItemResponseType): Record<string, { matches: Match[], league: League }> => {
   if (!blockData?.data || !Array.isArray(blockData.data)) {
     return {};
   }
 
   const today = getTodayDate();
-  const matchesByLeague: Record<string, { matches: Match[], league: any }> = {};
+  const matchesByLeague: Record<string, { matches: Match[], league: League }> = {};
 
   blockData.data.forEach((item: BlockSlideItemType) => {
     if (item?.league?.matches && Array.isArray(item.league.matches)) {
@@ -64,7 +65,7 @@ const TodayTableLeagueResult: FC<TodayTableLeagueResultProps> = ({
   height = '',
   pageType = '',
 }) => {
-  const today = getTodayDate();
+  // const today = getTodayDate(); // Unused variable removed
   
   // Get today's matches grouped by league
   const matchesByLeague = useMemo(() => getTodayMatchesByLeague(blockData || {}), [blockData]);
