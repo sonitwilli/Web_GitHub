@@ -224,7 +224,7 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
         <div className="tabs inline-block mb-4">
           <ul className="flex flex-wrap text-lg pl-0 list-none">
             {groupDataMenu.map((tag, index) => (
-              <li key={index} className="mr-3">
+              <li key={index} className="">
                 <p
                   className={`cursor-pointer py-2 ${
                     tagSelect === tag?.date ||
@@ -248,15 +248,15 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   // Determine grid layout based on selected tab
   const isTatCaTab = tagSelect === 'tat-ca';
   const gridClass = isTatCaTab 
-    ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4' 
-    : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4';
+    ? 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full' 
+    : 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3';
 
   return (
-    <div id="sport-side-by-side" className="relative">
+    <div id="sport-side-by-side" className="relative w-full justify-center">
       <div className="tabs inline-block mb-4">
         <ul className="flex flex-wrap text-lg pl-0 list-none">
           {groupDataMenu.map((tag, index) => (
-            <li key={index} className="mr-3">
+            <li key={index} className="">
               <p
                 className={`cursor-pointer py-2 ${
                   tagSelect === tag?.date ||
@@ -272,26 +272,6 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
           ))}
         </ul>
       </div>
-      
-      {/* Today's Matches Table */}
-      {todayMatches.length > 0 && (
-        <div className="mb-6">
-          <div className="flex justify-between mb-3">
-            <h2 className="text-2xl font-semibold text-white">
-              Lịch đấu hôm nay
-            </h2>
-          </div>
-                    <div className={gridClass}>
-            <div className="rounded-b-lg" ref={todayMatchesRef}>
-              <TodayTableLeagueResult
-                blockData={blockData}
-                height={height}
-                pageType={dataDetail?.id}
-              />
-            </div>
-          </div>
-        </div>
-      )}
 
         
       {Array.isArray(dataDetail?.list_items) &&
