@@ -91,6 +91,10 @@ export function useKeyboardControls() {
   const handleSeek = useCallback((video: HTMLVideoElement, seconds: number) => {
     const newTime = Math.max(video.currentTime + seconds, 0);
     video.currentTime = newTime;
+
+    if (video.paused) {
+      video.play().catch(() => {});
+    }
   }, []);
 
   const handleNavigation = useCallback(
