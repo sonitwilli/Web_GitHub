@@ -187,6 +187,8 @@ type ContextType = {
     dataPlaylist?: PlayListDetailResponseType;
   }) => Promise<StreamItemType>;
   clearErrorInterRef?: () => void;
+  errorFairPlay?: boolean;
+  setErrorFairPlay?: (v: boolean) => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -384,6 +386,7 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [dataPlaylist, setDataPlaylist] =
     useState<PlayListDetailResponseType>();
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [errorFairPlay, setErrorFairPlay] = useState(false);
 
   const portalTarget = useMemo(() => {
     if (isFullscreen) {
@@ -1305,6 +1308,8 @@ export function PlayerPageContextProvider({ children }: Props) {
         getStream,
         // @ts-ignore
         clearErrorInterRef,
+        errorFairPlay,
+        setErrorFairPlay,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">
@@ -1326,6 +1331,7 @@ export function PlayerPageContextProvider({ children }: Props) {
         bodyContentClassName="!text-[16px] !text-spanish-gray !leading-[130%] tracking-[0.32px]"
         onAfterClose={onAfterCloseModalNotice}
         onAfterOpen={onAfterOpenModalNotice}
+        portalTarget={portalTarget}
       />
     </PlayerPageContext.Provider>
   );

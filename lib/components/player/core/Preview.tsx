@@ -94,7 +94,7 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isEndVideo, hlsErrors, dataStream, dataChannel } =
+  const { isEndVideo, hlsErrors, dataStream, dataChannel, errorFairPlay} =
     usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
@@ -136,6 +136,7 @@ const Preview: React.FC<PreviewProps> = ({
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
       (hlsErrors && hlsErrors.length > 0) ||
+      (errorFairPlay) || 
       (playerError && (type === 'live' || type === 'event')) ||
       isLiveEnded;
 
@@ -157,6 +158,7 @@ const Preview: React.FC<PreviewProps> = ({
     isPreviewEnded,
     isEndVideo,
     hlsErrors,
+    errorFairPlay,
     playerError,
     type,
     isLiveEnded,
@@ -495,14 +497,14 @@ const Preview: React.FC<PreviewProps> = ({
             backgroundSize: 'cover',
           }}
         >
-          <div className="flex flex-col justify-center items-center p-0 gap-8 absolute w-[343px] tablet:w-[528px] h-[148px] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="flex flex-col items-center p-0 gap-4 w-[343px] tablet:w-[528px] h-[68px] flex-none order-0 self-stretch">
+          <div className="flex flex-col justify-center items-center p-0 gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div className="flex flex-col items-center p-0 gap-4 h-[68px] flex-none order-0 self-stretch">
               <h2
                 className={`${
                   type === 'live' || type === 'event'
                     ? 'preview-background-live__title'
                     : 'preview-background-vod__title'
-                } whitespace-nowrap tablet:whitespace-normal w-[343px] tablet:w-[421px] h-[31px] font-semibold text-[20px] tablet:text-2xl leading-[130%] text-center tracking-[0.02em] text-white-smoke flex-none order-0 flex-grow-0`}
+                } whitespace-nowrap tablet:whitespace-normal font-semibold text-[20px] tablet:text-2xl leading-[130%] text-center tracking-[0.02em] text-white-smoke flex-none order-0 flex-grow-0`}
               >
                 {backgroundTitle}
               </h2>
@@ -511,7 +513,7 @@ const Preview: React.FC<PreviewProps> = ({
                   type === 'live' || type === 'event'
                     ? 'preview-background-live__description'
                     : 'preview-background-vod__description'
-                } w-[343px] tablet:w-[528px] h-[21px] font-normal text-[14px] tablet:text-base leading-[130%] text-center tracking-[0.02em] text-silver-chalice flex-none order-1 self-stretch flex-grow-0`}
+                } font-normal text-[14px] tablet:text-base leading-[130%] text-center tracking-[0.02em] text-silver-chalice flex-none order-1 self-stretch flex-grow-0`}
               >
                 {backgroundDescription}
               </span>

@@ -35,6 +35,8 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
     isHboGo,
     isQNet,
     isTDM,
+    setErrorFairPlay,
+    errorFairPlay,
   } = usePlayerPageContext();
   const router = useRouter();
   const playerWrapperCtx = useContext(PlayerWrapperContext);
@@ -219,14 +221,27 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           );
 
           if (cb) cb();
+
+          if (errorFairPlay) {
+            if (setErrorFairPlay) setErrorFairPlay(false);
+          }
         })
 
         .catch((e: any) => {
           console.log('GET DRMTODAY ERRORS: ', e);
+          if (setErrorFairPlay) setErrorFairPlay(true);
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataChannel, dataStream, info, isQNet, isHboGo],
+    [
+      dataChannel,
+      dataStream,
+      info,
+      isQNet,
+      isHboGo,
+      errorFairPlay,
+      setErrorFairPlay,
+    ],
   );
   const initFairPlaySigma = useCallback(
     ({ cb }: { cb?: () => void }) => {
@@ -342,13 +357,25 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
             });
 
           if (cb) cb();
+          if (errorFairPlay) {
+            if (setErrorFairPlay) setErrorFairPlay(false);
+          }
         })
         .catch((err) => {
           console.log('ERRORS_SIGMA: ', err.message);
+          if (setErrorFairPlay) setErrorFairPlay(true);
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataChannel, dataStream, info, isHboGo, isQNet],
+    [
+      dataChannel,
+      dataStream,
+      info,
+      isHboGo,
+      isQNet,
+      errorFairPlay,
+      setErrorFairPlay,
+    ],
   );
 
   const [tokenPingQNet, setTokenPingQNet] = useState('');
