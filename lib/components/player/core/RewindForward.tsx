@@ -17,6 +17,9 @@ export default function RewindForward({ type }: Props) {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
       if (video) {
         video.currentTime = Math.max(video.currentTime - 10, 0);
+        if (video.paused) {
+          video.play().catch(() => {});
+        }
       }
     } catch {}
   };
@@ -25,6 +28,9 @@ export default function RewindForward({ type }: Props) {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
       if (video) {
         video.currentTime = Math.max(video.currentTime + 10, 0);
+        if (video.paused) {
+          video.play().catch(() => {});
+        }
       }
     } catch {}
   };
@@ -42,6 +48,7 @@ export default function RewindForward({ type }: Props) {
       }
     }
   };
+
   return (
     <>
       <div
