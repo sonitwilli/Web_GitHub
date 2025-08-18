@@ -70,8 +70,8 @@ export default function PlayerControlBar() {
         {/* Others */}
         <div className="w-full flex items-center">
           {/* Left: play, rewind, volumes,... */}
-          <div className="flex items-center justify-center gap-4 tablet:gap-6">
-            {width >= 768 && <LiveButton />}
+          <div className="flex items-center justify-center gap-1 tablet:gap-6">
+            <LiveButton />
             {width >= 768 &&
               (isEndVideo &&
               typeof videoCurrentTime === 'number' &&
