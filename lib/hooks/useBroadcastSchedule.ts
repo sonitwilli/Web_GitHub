@@ -368,7 +368,11 @@ export function useBroadcastSchedule(
     (item: ScheduleItem) => {
       const nowTime = currentTime * 1000;
       const end = Number(item.end_time) * 1000;
-      const replayWindowStart = nowTime - 24 * 60 * 60 * 1000; // 24 hours ago
+
+      // Use timeshift_limit from dataChannel to determine replay window
+      // Default to 24 hours if timeshift_limit is not available
+      const timeshiftLimitHours = dataChannel?.timeshift_limit || 24;
+      const replayWindowStart = nowTime - timeshiftLimitHours * 60 * 60 * 1000;
 
       const isReplayable = end >= replayWindowStart && end < nowTime;
       const isTimeshiftDisabled = dataChannel?.timeshift === 0;

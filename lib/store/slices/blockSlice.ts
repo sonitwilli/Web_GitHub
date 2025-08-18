@@ -5,12 +5,14 @@ interface BlockState {
   hoveredSlide?: BlockSlideItemType;
   hoveredBlock?: BlockItemType;
   timeStartBlockPlayer?: number;
+  pageBlocks?: BlockItemType[];
 }
 
 const initialState: BlockState = {
   hoveredSlide: undefined,
   hoveredBlock: undefined,
   timeStartBlockPlayer: undefined,
+  pageBlocks: [],
 };
 
 const blockSlice = createSlice({
@@ -20,9 +22,13 @@ const blockSlice = createSlice({
     changeTimeStartBlockPlayer: (state, action: PayloadAction<number>) => {
       state.timeStartBlockPlayer = action.payload;
     },
+    changePageBlocks: (state, action: PayloadAction<BlockItemType[]>) => {
+      state.pageBlocks = action.payload;
+    },
   },
 });
 
-export const { changeTimeStartBlockPlayer } = blockSlice.actions;
+export const { changeTimeStartBlockPlayer, changePageBlocks } =
+  blockSlice.actions;
 
 export default blockSlice.reducer;

@@ -29,6 +29,7 @@ const ProfileWrapper: React.FC = () => {
     content: string;
     buttons: {
       accept: string;
+      cancel?: string;
     };
   } | null>(null);
 
@@ -59,6 +60,11 @@ const ProfileWrapper: React.FC = () => {
       window.location.href = '/';
       return;
     }
+
+    if (profileData?.error_code === '5') {
+      router.reload();
+      return;
+    }
   };
 
   useEffect(() => {
@@ -83,6 +89,17 @@ const ProfileWrapper: React.FC = () => {
             'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
           buttons: {
             accept: 'Xác nhận ',
+          },
+        });
+        setIsOpenModal(true);
+        break;
+      case '5':
+        setModalContent({
+          title: profileData?.message?.title || 'Hồ sơ đã thay đổi',
+          content: profileData?.message?.content || 'Thông tin của hồ sơ này đã bị thay đổi trước đó. Bạn có thể cập nhật lại dữ liệu mới để tiếp tục chỉnh sửa.',
+          buttons: {
+            accept: 'Cập nhật',
+            cancel: 'Đóng',
           },
         });
         setIsOpenModal(true);
@@ -139,13 +156,6 @@ const ProfileWrapper: React.FC = () => {
       setUser(null);
     }
   }, []);
-
-  useEffect(() => {
-    if (selectedProfile) {
-      console.log('selectedProfile', selectedProfile);
-      
-    }
-  }, [selectedProfile]);
 
   useEffect(() => {
     if (tab === 'edit') {

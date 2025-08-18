@@ -5,6 +5,7 @@ const env = require('dotenv').config({
   path: path.join(__dirname, '/env/.env.' + process.env.ENVIRONMENT),
 });
 
+// eslint-disable-next-line @typescript-eslint/no-require-imports
 const withPWA = require('next-pwa');
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -28,6 +29,11 @@ const baseConfig: NextConfig = {
         hostname: 'fplchat.fptplay.vn',
       },
     ],
+  },
+  compiler: {
+    removeConsole:
+      process.env.NEXT_PUBLIC_ENVIRONMENT === 'production' &&
+      process.env.NODE_ENV !== 'development',
   },
 };
 

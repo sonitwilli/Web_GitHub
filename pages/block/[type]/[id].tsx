@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { useVodFetcher } from '@/lib/hooks/useVodFetcher';
@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
+import { changePageBlocks } from '@/lib/store/slices/blockSlice';
 
 export const getServerSideProps = (async (context) => {
   const { type, id } = context.params as { type: string; id: string };
@@ -64,7 +65,12 @@ const BlockDetailPage: React.FC = () => {
   const blockLoadingRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { adsLoaded } = useAppSelector((state) => state.app);
+  const { isHeaderAdsClosed } = useAppSelector((state) => state.app);
+  useLayoutEffect(() => {
+    dispatch(changePageBlocks([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const tagId = router.query.id
     ? (router.query.id as string).split('-').pop() || ''
     : '';
@@ -78,6 +84,7 @@ const BlockDetailPage: React.FC = () => {
 
   const { vods, metaBlock, isLoading, isFullList, fetchNextPage } =
     useVodFetcher(block);
+  const [adsExist, setAdsExist] = useState(false);
 
   // Memoized onScroll handler
   const onScroll = () => {
@@ -108,6 +115,24 @@ const BlockDetailPage: React.FC = () => {
     }
   }, [router.isReady, dispatch]);
 
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const handleInitBanner = () => {
+      try {
+        const ins = document.querySelector('ins[data-aplpm="105-111"]');
+        const existedAds = ins
+          ? (ins as HTMLElement).children.length > 0
+          : false;
+        setAdsExist(existedAds);
+      } catch {}
+    };
+
+    document.addEventListener('initBanner', handleInitBanner);
+    return () => {
+      document.removeEventListener('initBanner', handleInitBanner);
+    };
+  }, []);
+
   // Memoized throttled onScroll
   const throttledOnScroll = throttle(onScroll, 1000);
 
@@ -127,27 +152,23 @@ const BlockDetailPage: React.FC = () => {
   return (
     <DefaultLayout>
       <div className="mb-5">
-        <div className="f-container mx-auto max-w-7xl">
-          {adsLoaded && (
-            <div className="ads_masthead_banner">
-              <ins
-                className="adsplay-placement adsplay-placement-relative"
-                data-aplpm="105-111"
-          />
-          <ins
-            className="adsplay-placement adsplay-placement-top-fixed"
-                data-aplpm="1911010302-"
-              />
-            </div>
-          )}
-        </div>
-        <div className={`mx-auto w-full bg-smoky-black min-h-screen ${router.query.type !== 'short_vod' ? 'f-container' : ''}`}>
+        <div
+          className={`mx-auto w-full bg-smoky-black min-h-screen ${
+            router.query.type !== 'short_vod' ? 'f-container' : ''
+          }`}
+        >
           {router.query.type === 'short_vod' && <ShortVideoContent />}
-          
+
           {router.query.type !== 'short_vod' && (
             <>
               {/* Title */}
-              <div className="flex justify-start items-center mb-[16px] lg:mb-[40px] mt-[120px] lg:mt-[186px]">
+              <div
+                className={`flex justify-start items-center mb-[16px] lg:mb-[40px] ${
+                  isHeaderAdsClosed || isHeaderAdsClosed === null || !adsExist
+                    ? 'mt-[120px] lg:mt-[184px]'
+                    : 'mt-[104px]'
+                }`}
+              >
                 {metaBlock?.name && (
                   <h1 className="text-left text-white font-bold text-[40px] leading-[130%] tracking-[2%] capitalize">
                     {metaBlock.name}
@@ -177,7 +198,7 @@ const BlockDetailPage: React.FC = () => {
               </div>
             </>
           )}
-          
+
           <div className="ads_overlay_balloon_banner">
             <ins
               data-aplpm="11320103-11320203"

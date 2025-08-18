@@ -103,24 +103,10 @@ const BroadcastSchedule: FC<Props> = ({
   }, [currentDate]);
 
   const nowTime = currentTime * 1000;
-  const replayWindowStart = nowTime - 24 * 60 * 60 * 1000;
-
-  const blockedItemId = useMemo(() => {
-    const validReplayables = scheduleList
-      .map((item) => ({ ...item, endMs: Number(item.end_time) * 1000 }))
-      .filter(
-        (item) => item.endMs >= replayWindowStart && item.endMs < nowTime,
-      ); // trong 24h & đã kết thúc
-
-    if (!validReplayables.length) return undefined;
-
-    return validReplayables.reduce((closest, item) => {
-      const diff = Math.abs(item.endMs - replayWindowStart);
-      return !closest || diff < Math.abs(closest.endMs - replayWindowStart)
-        ? item
-        : closest;
-    }, null as (typeof validReplayables)[0] | null)?.id;
-  }, [scheduleList, replayWindowStart, nowTime]);
+  // Use timeshift_limit from dataChannel to determine replay window
+  // Default to 24 hours if timeshift_limit is not available
+  const timeshiftLimitHours = dataChannel?.timeshift_limit || 24;
+  const replayWindowStart = nowTime - timeshiftLimitHours * 60 * 60 * 1000;
 
   const renderSchedule = () => {
     targetItemRef.current = null;
@@ -140,11 +126,9 @@ const BroadcastSchedule: FC<Props> = ({
       const isPast = nowTime >= end;
 
       const isReplayable = isPast && end >= replayWindowStart;
-      const isBlocked = selectedDate !== todayKey && item.id === blockedItemId;
       const isTimeshiftDisabled = dataChannel?.timeshift === 0;
 
       const isClickable =
-        !isBlocked &&
         (isLive || isReplayable) &&
         !(isPast && isReplayable && isTimeshiftDisabled);
 

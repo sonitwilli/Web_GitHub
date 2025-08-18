@@ -5,6 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { onDevicesLimitResponse } from '@/lib/api/login';
 import { LOGOUT_CONFIRM_MESSAGE } from '@/lib/constant/texts';
 import styles from './DeviceLimitModal.module.css';
+import router from 'next/router';
 
 interface Props {
   isOpen: boolean;
@@ -46,14 +47,16 @@ export default function DeviceLimitModal({
     deviceLimitData?.data?.sub_description || LOGOUT_CONFIRM_MESSAGE;
   const contentText = deviceLimitData?.data?.description;
   const titleText = deviceLimitData?.data?.title;
+  const isQuickLogin = router.pathname.includes('/tv');
 
   const processedDevices = useMemo(
     () =>
       devices.map((device) => ({
         ...device,
-        disabled: !!device.is_whitelist || !!device.is_current,
+        disabled:
+          !!device.is_whitelist || (isQuickLogin && !!device.is_current),
       })),
-    [devices],
+    [devices, isQuickLogin],
   );
 
   const onSubmit = ({ selected }: { selected: string[] }) => {

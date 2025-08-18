@@ -2,6 +2,8 @@ import { useState, useCallback } from 'react';
 import { updateProfile, ApiResponse } from '@/lib/api/multi-profiles'; // Adjust path based on your fileGeekyCoder file structure
 import { Profile } from '@/lib/api/user';
 import { AxiosResponse } from 'axios';
+import { trackingModifyProfileLog103 } from '../tracking/trackingProfile';
+import { PROFILE_TYPES } from '../constant/texts';
 
 interface UseUpdateProfileProps {
   setLoadingUpdate?: (value: boolean) => void;
@@ -38,6 +40,13 @@ export const useUpdateProfile = ({
         const data: ApiResponse = response.data;
         setProfileData(data);
         if (data.status === '1') {
+          trackingModifyProfileLog103({
+            Screen: 'ModifiedProfile',
+            Event: 'ModifiedProfile',
+            ItemId: selectedProfile?.profile_id || '',
+            ItemName: selectedProfile?.name || '',
+            Status: selectedProfile?.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+          });
           localStorage.setItem('userSelected', JSON.stringify(data?.data));
           onUpdateSuccess?.();
         } else {

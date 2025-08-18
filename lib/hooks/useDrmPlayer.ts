@@ -20,6 +20,7 @@ import {
   usePlayerPageContext,
 } from '../components/player/context/PlayerPageContext';
 import { trackingShowContentLog29 } from '../tracking/trackingCommon';
+import { checkShakaResponseFilter } from '../utils/player';
 
 type Props = {
   eventId?: string;
@@ -107,6 +108,9 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           }
           const rawLicenseBase64 = wrapped.license;
           response.data = Uint8ArrayUtils.fromBase64(rawLicenseBase64);
+        }
+        if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
+          checkShakaResponseFilter({ response });
         }
       } else {
         // TODO: add tracking

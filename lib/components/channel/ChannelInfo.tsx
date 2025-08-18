@@ -15,7 +15,7 @@ export default function ChannelInfo() {
   return (
     <div>
       {selectedTimeShift?.title && (
-        <div className="max-w-full line-clamp-2 font-[600] text-[32px] leading-[130%] tracking-[0.64px] text-white-smoke">
+        <div className="max-w-full line-clamp-2 font-[600] text-[32px] leading-[130%] tracking-[0.64px] text-white-smoke mb-4">
           {selectedTimeShift?.title}
         </div>
       )}
@@ -35,17 +35,17 @@ export default function ChannelInfo() {
         </div>
 
         <div>
-        <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
+          <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
 
-        {/* Modal share */}
-        {showModalShare && (
-          <ModalShare
-            open={showModalShare}
-            onClose={() => setShowModalShare(false)}
-            isChannel
-            dataChannel={dataChannel}
-          />
-        )}
+          {/* Modal share */}
+          {showModalShare && (
+            <ModalShare
+              open={showModalShare}
+              onClose={() => setShowModalShare(false)}
+              isChannel
+              dataChannel={dataChannel}
+            />
+          )}
         </div>
       </div>
     </div>

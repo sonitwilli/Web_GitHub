@@ -32,6 +32,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
     nextMin,
     isShowLiveLabel,
   } = useEvent({ slide, block });
+
   const { viewportType } = useScreenSize();
   const {
     isStartPlayTrailer,
@@ -61,7 +62,11 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
   }, [slide]);
 
   const slideLink = useMemo(() => {
-    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
+    const result = `${createLink({
+      data: slide || {},
+      type: block?.type || '',
+    })}?block_index=0`;
+    return result || '/';
   }, [slide, block]);
 
   const isValidCountdown = useMemo(() => {

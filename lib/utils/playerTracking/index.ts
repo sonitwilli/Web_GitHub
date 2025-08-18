@@ -88,7 +88,7 @@ export const getContentData = () => {
   }
   try {
     const c = sessionStorage.getItem(trackingStoreKey.DATA_CHANNEL);
-    const s = sessionStorage.getItem(trackingStoreKey.DATA_CHANNEL);
+    const s = sessionStorage.getItem(trackingStoreKey.DATA_STREAM);
     const p = sessionStorage.getItem(trackingStoreKey.REQUIRE_PURCHASE_DATA);
     const w = sessionStorage.getItem(trackingStoreKey.PLAYER_DATA_WATCHING);
     const e = sessionStorage.getItem(trackingStoreKey.CURRENT_EPISODE);
@@ -187,7 +187,7 @@ export const getBandwidth = () => {
       const bandwidthMbps = bandwidthBps.toFixed(2);
       bandwidth = bandwidthMbps;
     } else if (window?.hlsPlayer) {
-      bandwidth = window.hlsPlayer.bandwidthEstimate.toFixed(2);
+      bandwidth = window.hlsPlayer.bandwidthEstimate.toFixed(2); // bit per second
     }
   } catch {
     //
@@ -362,6 +362,15 @@ export const removePlayerSessionStorageWhenRender = () => {
     ],
   });
 };
+
+export const removePlayerSessionStorageWhenUnMount = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  removeSessionStorage({
+    data: [trackingStoreKey.BLOCK_INDEX],
+  });
+};
 export const removePlayerSessionStorage = () => {
   if (typeof window === 'undefined') {
     return;
@@ -399,6 +408,9 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.PLAYER_SUBS_LIST,
       trackingStoreKey.PLAYER_ACTIVE_SUB_LABEL,
       trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL,
+      trackingStoreKey.PLAYER_VOD_ID,
+      trackingStoreKey.PLAYER_TRACKING_STATE,
+      trackingStoreKey.BLOCK_INDEX,
     ],
   });
 };
@@ -456,31 +468,24 @@ export const getPlayerParams = () => {
     Duration || sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || 0;
 
   const { ItemId, ItemName } = getItemInfo();
+  const bwBitPerS = Number(
+    sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH),
+  );
+  const bwMbps = bwBitPerS / 1024 / 1024;
+  const audioBwBitPerS = Number(
+    sessionStorage.getItem(trackingStoreKey.STREAM_AUDIO_BANDWIDTH),
+  );
+  const audioBwMbps = audioBwBitPerS / 1024 / 1024;
+  const streamBwBitPerS = Number(
+    sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH),
+  );
+  const streamBwMbps = streamBwBitPerS / 1024 / 1024;
   return {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
-    Bandwidth:
-      String(
-        Math.round(
-          Number(sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH)),
-        ),
-      ) || '',
-    StreamBandwidthAudio:
-      String(
-        Math.round(
-          Number(
-            sessionStorage.getItem(
-              trackingStoreKey.STREAM_AUDIO_BANDWIDTH || '',
-            ),
-          ),
-        ),
-      ) || '',
-    StreamBandwidth:
-      String(
-        Math.round(
-          Number(sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH)),
-        ),
-      ) || '',
+    Bandwidth: String(Math.round(bwMbps)) || '',
+    StreamBandwidthAudio: String(Math.round(audioBwMbps)) || '',
+    StreamBandwidth: String(Math.round(streamBwMbps)) || '',
     BufferLength:
       String(
         Math.round(
@@ -494,6 +499,8 @@ export const getPlayerParams = () => {
     ItemName: ItemName || '',
     RefEpisodeID: currentEpisode?.ref_episode_id || '',
     RefItemId: dataChannel?.id || dataChannel?._id || '',
+    PlaylistID:
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '' || '',
     ChapterID: getChapterId() || '',
     isLastEpisode:
       sessionStorage.getItem(trackingStoreKey.IS_FINAL_EPISODE) || '',
@@ -531,8 +538,7 @@ export const getPlayerParams = () => {
       sessionStorage.getItem(trackingStoreKey.PLAYER_REAL_TIME_PLAYING || '') ||
       '',
     isLandingPage:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_IS_LANDING_PAGE || '') ||
-      '',
+      sessionStorage.getItem(trackingStoreKey.PLAYER_IS_LANDING_PAGE) || '1',
     PlayerName: sessionStorage.getItem(trackingStoreKey.PLAYER_NAME) || '',
     BusinessPlan: requirePurchaseData?.require_vip_plan || '',
     playing_session:
@@ -546,10 +552,12 @@ export const getPlayerParams = () => {
           Number(sessionStorage.getItem(trackingStoreKey.PLAYER_FRAME_RATE)),
         ),
       ) || '',
+    BlockPosition: sessionStorage.getItem(trackingStoreKey.BLOCK_INDEX) || '',
   };
 };
 
 export const trackingStartBuffering = async () => {
+  // Log112: Buffering
   if (typeof window === 'undefined') {
     return {};
   }
@@ -592,7 +600,7 @@ export const trackingEndBuffering = async () => {
     const current = new Date().getTime();
     const e = current - Number(startTime);
     const pParams = getPlayerParams();
-    console.log('--- TRACKING trackingEndBuffering', new Date().toISOString(), {
+    console.log('--- TRACKING EndBuffering', new Date().toISOString(), {
       pParams,
     });
     await tracking({

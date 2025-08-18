@@ -12,6 +12,7 @@ import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
 import { AppContext } from '../container/AppContainer';
 import { useRouter } from 'next/router';
 import { BlockPlayerTypes } from '@/lib/components/player/hls/BlockPlayer';
+import useBlock from '@/lib/hooks/useBlock';
 const BlockPlayer = dynamic(
   () => import('@/lib/components/player/hls/BlockPlayer'),
   {
@@ -35,11 +36,18 @@ export default function BlockHoverItem({}: Props) {
   } = appCtx;
   const router = useRouter();
   const { isMutedTrailerPlayer } = useAppSelector((s) => s.app);
-
+  const { blockIndex } = useBlock({ block });
   const dispatch = useAppDispatch();
   const slideLink = useMemo(() => {
-    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
-  }, [slide, block]);
+    const result = createLink({
+      data: slide || {},
+      type: block?.type || '',
+    });
+    if (blockIndex > -1) {
+      return `${result}?block_index=${blockIndex}`;
+    }
+    return result || '/';
+  }, [slide, block, blockIndex]);
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const vodDetailHighlight = useMemo(() => {

@@ -89,6 +89,17 @@ export function VodPageContextProvider({ children }: Props) {
     } catch {}
   }, [router]);
 
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_VOD_ID,
+          value: vodId,
+        },
+      ],
+    });
+  }, [vodId]);
+
   const routerChapterId = useMemo(() => {
     try {
       let chapterId = '0';

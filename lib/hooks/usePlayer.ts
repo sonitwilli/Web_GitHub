@@ -28,6 +28,7 @@ import {
 import { useAdsPlayer } from './useAdsPlayer';
 import {
   removePlayerSessionStorage,
+  removePlayerSessionStorageWhenUnMount,
   trackingEndBuffering,
   trackPlayerChange,
 } from '../utils/playerTracking';
@@ -268,23 +269,39 @@ export default function usePlayer() {
       data: [
         {
           key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
-          value: '0',
+          value: '1',
         },
       ],
     });
-    const { bookmark, landing_page, is_from_chatbot, ...restQuery } =
-      router.query;
+    const {
+      bookmark,
+      landing_page,
+      is_from_chatbot,
+      block_index,
+      ...restQuery
+    } = router.query;
     if (
       bookmark !== undefined ||
       landing_page !== undefined ||
-      is_from_chatbot !== undefined
+      is_from_chatbot !== undefined ||
+      block_index
     ) {
       if (landing_page) {
         saveSessionStorage({
           data: [
             {
               key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
-              value: '1',
+              value: '0',
+            },
+          ],
+        });
+      }
+      if (block_index) {
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.BLOCK_INDEX,
+              value: block_index as string,
             },
           ],
         });
@@ -772,6 +789,7 @@ export default function usePlayer() {
     }
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
+      removePlayerSessionStorageWhenUnMount();
       window.removeEventListener('beforeunload', handleBeforeUnload);
       setRetryCount(0);
       retryCountRef.current = 0;

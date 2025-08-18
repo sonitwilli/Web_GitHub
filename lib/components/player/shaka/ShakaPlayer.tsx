@@ -40,7 +40,10 @@ import {
 } from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
-import { getRemainingBufferedTime } from '@/lib/utils/player';
+import {
+  checkShakaResponseFilter,
+  getRemainingBufferedTime,
+} from '@/lib/utils/player';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -336,23 +339,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
               ],
             });
           }
-          if (response?.status === 200 || response?.status === 206) {
-            const prev =
-              sessionStorage.getItem(
-                trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
-              ) || 0;
-            const size = response?.headers
-              ? parseInt(response?.headers['content-length'])
-              : 0;
-            saveSessionStorage({
-              data: [
-                {
-                  key: trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
-                  value: String(parseInt(prev as string) + size),
-                },
-              ],
-            });
-          }
+          checkShakaResponseFilter({ response });
         }
       });
     if (window?.shaka?.util?.EventManager) {

@@ -3,6 +3,8 @@ import { useEffect, useRef } from 'react';
 import tracking from '../tracking';
 import { getPlayerParams, trackPlayerChange } from '../utils/playerTracking';
 import { VIDEO_ID } from '../constant/texts';
+import { saveSessionStorage } from '../utils/storage';
+import { trackingStoreKey } from '../constant/tracking';
 
 const pingTime = 60000;
 
@@ -38,7 +40,20 @@ export default function useTrackingPing() {
     }
     if (!isFirstPingDone?.current) {
       isFirstPingDone.current = true;
-      trackingPingLog111();
+      const trackingState = sessionStorage.getItem(
+        trackingStoreKey.PLAYER_TRACKING_STATE,
+      );
+      if (trackingState !== 'start') {
+        trackingPingLog111();
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_TRACKING_STATE,
+              value: 'start',
+            },
+          ],
+        });
+      }
     }
 
     if (!pingInterval?.current) {

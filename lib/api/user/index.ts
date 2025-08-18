@@ -58,6 +58,8 @@ export interface Profile {
   display_name?: string;
   nickname?: string;
   pin?: string;
+  allow_edit_nickname?: string;
+  msg_warning_edit_nickname?: string;
 }
 
 interface dataResponseCheckPass {

@@ -179,23 +179,29 @@ export default function PageBlockItem({
     const isMainSportPage = router.query.id === 'sport';
 
     // Check if there are today matches (TodayTableLeagueResult will render null if none)
-    const hasTodayMatches = blockData?.data && Array.isArray(blockData.data) && blockData.data.some((item: BlockSlideItemType) => {
-      return item?.league?.matches && item.league.matches.some((match: Match) => {
-        // get today's date in YYYY-MM-DD format
-        const today = new Date().toISOString().split('T')[0];
-        return match.match_date === today;
+    const hasTodayMatches =
+      blockData?.data &&
+      Array.isArray(blockData.data) &&
+      blockData.data.some((item: BlockSlideItemType) => {
+        return (
+          item?.league?.matches &&
+          item.league.matches.some((match: Match) => {
+            // get today's date in YYYY-MM-DD format
+            const today = new Date().toISOString().split('T')[0];
+            return match.match_date === today;
+          })
+        );
       });
-    });
 
     return (
-      <div
-        className={`${useContainer ? 'f-container' : ''} mb-[24px]`}
-      >
+      <div className={`${useContainer ? 'f-container' : ''} mb-[24px]`}>
         <div className="w-full">
           {isMainSportPage ? (
             hasTodayMatches ? (
-              <div className='flex flex-col flex-1'>
-                <div className="py-3 font-semibold text-2xl text-white">Lịch đấu hôm nay</div>
+              <div className="flex flex-col flex-1">
+                <div className="py-3 font-semibold text-2xl text-white">
+                  Lịch đấu hôm nay
+                </div>
                 <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
                   <div className="rounded-b-lg">
                     <TodayTableLeagueResult

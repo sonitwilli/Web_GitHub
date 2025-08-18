@@ -301,7 +301,7 @@ export const checkPassword = async ({
 export const verifyProfileName = async (params: {
   name?: string;
   display_name?: string;
-  nick_name?: string;
+  nickname?: string;
 }): Promise<ApiResponse> => {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(

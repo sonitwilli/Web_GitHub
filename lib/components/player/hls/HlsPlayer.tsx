@@ -182,6 +182,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         const prev =
           sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED) || 0;
         const size = data?.frag?.stats?.loaded;
+        // https://github.com/video-dev/hls.js/blob/master/docs/API.md#loader
         saveSessionStorage({
           data: [
             {

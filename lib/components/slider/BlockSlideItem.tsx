@@ -28,6 +28,7 @@ import PosterOverlay from '../overlays/PosterOverlays';
 import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
 import { NewVodContext } from './embla/new-vod-detail-slider/NewVodDetail';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+import useBlock from '@/lib/hooks/useBlock';
 
 const VodProgress = dynamic(() => import('../vod/VodProgress'), {
   ssr: false,
@@ -48,6 +49,7 @@ export default function BlockSlideItem({
   styleTitle = 'mt-[8px] mb-0 line-clamp-2 w-full text-[16px] font-[500] px-[4px]',
   metaBlock,
 }: Props) {
+  const { blockIndex } = useBlock({ block });
   const { dataChannel } = usePlayerPageContext();
   const newVodCtx = useContext(NewVodContext);
   const appCtx = useContext(AppContext);
@@ -149,12 +151,32 @@ export default function BlockSlideItem({
   }, [block, metaBlock]);
   const slideLink = useMemo(() => {
     if (block?.type === 'trailer') {
+      if (blockIndex > -1) {
+        return `/xem-video/${viToEn(
+          dataChannel?.title ||
+            dataChannel?.title_vie ||
+            dataChannel?.title_origin ||
+            '',
+        )}-${dataChannel?.id}/tap-${
+          Number(slide?.id_trailer) + 1
+        }?block_index=${blockIndex}`;
+      }
       return `/xem-video/${viToEn(
-        dataChannel?.title || dataChannel?.title_vie || dataChannel?.title_origin || '',
+        dataChannel?.title ||
+          dataChannel?.title_vie ||
+          dataChannel?.title_origin ||
+          '',
       )}-${dataChannel?.id}/tap-${Number(slide?.id_trailer) + 1}`;
     }
-    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
-  }, [slide, block, dataChannel]);
+    const result = createLink({
+      data: slide || {},
+      type: block?.type || '',
+    });
+    if (blockIndex > -1) {
+      return `${result}?block_index=${blockIndex}`;
+    }
+    return result || '/';
+  }, [slide, block, dataChannel, blockIndex]);
 
   const linearGradient = useMemo(() => {
     if (!slide?.bg_color || block?.block_type !== 'numeric_rank') {

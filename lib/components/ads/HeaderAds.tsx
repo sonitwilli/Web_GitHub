@@ -22,10 +22,10 @@ const HeaderAds: React.FC = () => {
   const isPathInRouteNames = Object.values(ROUTE_PATH_NAMES).some((segment) =>
     currentPath.includes(segment),
   );
-  const isScrolling = !isPathInRouteNames && scrollDistance > 0;
+  const isScrolling = !isPathInRouteNames && !currentPath.includes('block') && scrollDistance > 0;
 
   // Hide when ads not loaded or explicitly closed. Treat null as closed by default
-  if (!adsLoaded || (isHeaderAdsClosed === null || isHeaderAdsClosed)) return null;
+  if (!adsLoaded || (isHeaderAdsClosed === null || isHeaderAdsClosed) || isPathInRouteNames) return null;
 
   return (
     <div

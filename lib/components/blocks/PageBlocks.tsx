@@ -9,6 +9,8 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import { useAppDispatch } from '@/lib/store';
+import { changePageBlocks } from '@/lib/store/slices/blockSlice';
 
 interface Props {
   blocks?: BlockItemType[];
@@ -21,11 +23,16 @@ export default function PageBlocks({
   keywordSearch,
   onAllBlocksEmpty,
 }: Props) {
+  const dispatch = useAppDispatch();
   const [emptyBlocks, setEmptyBlocks] = useState<Set<number>>(new Set());
   const [firstBlockIndex, setFirstBlockIndex] = useState<number>(1);
   const totalBlocksRef = useRef<number>(0);
   const router = useRouter();
   const [shouldHideAds, setShouldHideAds] = useState(false);
+
+  useEffect(() => {
+    dispatch(changePageBlocks(blocks || []));
+  }, [blocks, dispatch]);
 
   const handleBlockEmpty = useCallback(
     (blockIndex: number, isEmpty: boolean) => {

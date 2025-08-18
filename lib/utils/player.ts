@@ -16,6 +16,8 @@ import {
   RUNNING_MANIFEST_TYPE,
   VIDEO_ID,
 } from '../constant/texts';
+import { trackingStoreKey } from '../constant/tracking';
+import { saveSessionStorage } from './storage';
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 const list: {
@@ -596,6 +598,27 @@ function getRemainingBufferedTime() {
     return 0;
   }
 }
+
+const checkShakaResponseFilter = ({ response }: { response?: any }) => {
+  try {
+    if (response?.status === 200 || response?.status === 206) {
+      const prev =
+        sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED) || 0;
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Length
+      const size = response?.headers
+        ? parseInt(response?.headers['content-length'])
+        : 0;
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED,
+            value: String(parseInt(prev as string) + size),
+          },
+        ],
+      });
+    }
+  } catch {}
+};
 export {
   getRemainingBufferedTime,
   supportedVideoCodecs,
@@ -604,4 +627,5 @@ export {
   parseManifest,
   generateAudioText,
   getCodecName,
+  checkShakaResponseFilter,
 };

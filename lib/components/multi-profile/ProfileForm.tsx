@@ -30,6 +30,7 @@ import { deleteProfile } from '@/lib/api/multi-profiles'; // Adjust the import p
 import { useRouter } from 'next/router';
 import { switchProfile } from '@/lib/api/user';
 import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
+import { trackingModifyProfileLog103 } from '@/lib/tracking/trackingProfile';
 
 interface ProfileFormProps {
   errorUpdate?: string | null;
@@ -74,6 +75,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [displayName, setDisplayName] = useState<string>('');
   const [nickname, setNickname] = useState<string>('');
   const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
+  const [msgWarningEditNickname, setMsgWarningEditNickname] =
+    useState<string>('');
   const [modalContent, setModalContent] = useState<ModalContent>({
     title: '',
     content: '',
@@ -99,9 +102,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [nicknameErrors, setNicknameErrors] = useState<string[]>([]);
   const [isValidatingNickname, setIsValidatingNickname] =
     useState<boolean>(false);
+  const [nicknameChangeCount, setNicknameChangeCount] = useState<number>(0);
+  const [initialNickname, setInitialNickname] = useState<string>('');
   const [displayNameErrors, setDisplayNameErrors] = useState<string[]>([]);
   const [isValidatingDisplayName, setIsValidatingDisplayName] =
     useState<boolean>(false);
+  const [displayNameChangeCount, setDisplayNameChangeCount] =
+    useState<number>(0);
+  const [initialDisplayName, setInitialDisplayName] = useState<string>('');
   const router = useRouter();
 
   // Sử dụng hook useFetchRecommendedProfile
@@ -130,6 +138,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     try {
       const response = await switchProfile(profile?.profile_id || '');
       const data = await response?.data;
+      if (data?.status === '1') {
+        setNickname(data?.data?.nickname || '');
+        if (data?.data?.allow_edit_nickname === '1') {
+          setMsgWarningEditNickname('');
+        } else if (data?.data?.allow_edit_nickname === '0') {
+          setIsEditingNickname(true);
+          setMsgWarningEditNickname(
+            data?.data?.msg_warning_edit_nickname || '',
+          );
+        }
+        return;
+      }
       switch (data?.error_code) {
         case '3':
           setModalContent({
@@ -187,7 +207,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     }
     // Initialize display name and nickname when profileData changes
     if (!displayName) {
-      setDisplayName(profileData?.display_name || profile?.display_name || '');
+      const initDisplayName =
+        profileData?.display_name || profile?.display_name || '';
+      setDisplayName(initDisplayName);
+      setInitialDisplayName(initDisplayName);
     }
     if (!nickname) {
       const base = profileData?.nickname || profile?.nickname || '';
@@ -196,6 +219,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         .replace(/[^a-z0-9]+/g, '')
         .slice(0, 24);
       setNickname(nick);
+      localStorage.setItem('initialNickname', nick);
+      setInitialNickname(nick);
     }
     if (
       selectedAvatar.avatar_id !== profileData?.avatar_id ||
@@ -211,31 +236,41 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   useEffect(() => {
     if (!isEditingNickname) return;
+
     setIsValidatingNickname(false);
-    const timer = setTimeout(() => {
-      (async () => {
-        setIsValidatingNickname(true);
-        const errs = await validateNickname(nickname);
-        setNicknameErrors(errs.slice(0, 1));
-        setIsValidatingNickname(false);
-      })();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [nickname, isEditingNickname]);
+
+    // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi nickname khác giá trị ban đầu
+    if (nicknameChangeCount >= 1 && nickname !== initialNickname) {
+      const timer = setTimeout(() => {
+        (async () => {
+          setIsValidatingNickname(true);
+          const errs = await validateNickname(nickname);
+          setNicknameErrors(errs.slice(0, 1));
+          setIsValidatingNickname(false);
+        })();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [nickname, isEditingNickname, nicknameChangeCount, initialNickname]);
 
   useEffect(() => {
     if (!displayName) return;
+
     setIsValidatingDisplayName(false);
-    const timer = setTimeout(() => {
-      (async () => {
-        setIsValidatingDisplayName(true);
-        const errs = await validateDisplayName(displayName);
-        setDisplayNameErrors(errs.slice(0, 1));
-        setIsValidatingDisplayName(false);
-      })();
-    }, 1000);
-    return () => clearTimeout(timer);
-  }, [displayName]);
+
+    // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi displayName khác giá trị ban đầu
+    if (displayNameChangeCount >= 1 && displayName !== initialDisplayName) {
+      const timer = setTimeout(() => {
+        (async () => {
+          setIsValidatingDisplayName(true);
+          const errs = await validateDisplayName(displayName);
+          setDisplayNameErrors(errs.slice(0, 1));
+          setIsValidatingDisplayName(false);
+        })();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [displayName, displayNameChangeCount, initialDisplayName]);
 
   useEffect(() => {
     // console.log('isError', isError);
@@ -334,6 +369,13 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             break;
         }
       } else {
+        trackingModifyProfileLog103({
+          Screen: 'RemovedProfile',
+          Event: 'RemovedProfile',
+          ItemId: profile.profile_id || '',
+          ItemName: profile.name || '',
+          Status: profile?.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+        });
         router.push('/tai-khoan?tab=ho-so');
       }
     } catch (error) {
@@ -394,6 +436,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     const len = v.length;
     const allowed = /^[a-z0-9._]+$/.test(lower);
 
+    if (v === localStorage.getItem('initialNickname')) {
+      return [];
+    }
+
     // Priority 1
     if (!(len >= 2 && len <= 15) || !allowed || v === '') {
       return [
@@ -408,7 +454,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     }
 
     // Priority 3
-    if (/__|\.\./.test(v)) {
+    if (/__|\.\.|_.|._/.test(v)) {
       return [
         'Biệt danh không thể chứa liên tiếp nhiều dấu gạch dưới, dấu chấm.',
       ];
@@ -416,7 +462,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
     // Remote validation
     try {
-      const apiRes = await verifyProfileName({ nick_name: v });
+      const apiRes = await verifyProfileName({ nickname: v });
       if (apiRes?.status === '1') {
         return [];
       }
@@ -430,28 +476,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   };
 
   const handleConfirm = async () => {
-    // Validate display name on submit
-    setIsValidatingDisplayName(true);
-    const displayNameValidationErrors = await validateDisplayName(displayName);
-    setIsValidatingDisplayName(false);
-    if (displayNameValidationErrors.length > 0) {
-      setDisplayNameErrors(displayNameValidationErrors.slice(0, 1));
-      return;
-    }
-    setDisplayNameErrors([]);
-
-    if (title === EDIT_PROFILE) {
-      // Validate nickname on submit
-      setIsValidatingNickname(true);
-      const nicknameValidationErrors = await validateNickname(nickname);
-      setIsValidatingNickname(false);
-      if (nicknameValidationErrors.length > 0) {
-        setNicknameErrors(nicknameValidationErrors.slice(0, 1));
-        return;
-      }
-      setNicknameErrors([]);
-    }
-
     const data: {
       name: string;
       avatar_id: string;
@@ -472,7 +496,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       ...(isRemovePin && { pin: '' }),
     };
 
-    if (title === EDIT_PROFILE) {
+    if (title === EDIT_PROFILE && nickname !== localStorage.getItem('initialNickname')) {
       data.nickname = nickname.trim() || '';
     }
 
@@ -610,14 +634,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 value={displayName}
                 onChange={(e) => {
                   setDisplayName(e.target.value);
+                  setDisplayNameChangeCount((prev) => prev + 1);
                   if (displayNameErrors.length) setDisplayNameErrors([]);
-                }}
-                onBlur={async () => {
-                  if (!displayName) return;
-                  setIsValidatingDisplayName(true);
-                  const errs = await validateDisplayName(displayName);
-                  setDisplayNameErrors(errs.slice(0, 1));
-                  setIsValidatingDisplayName(false);
                 }}
                 maxLength={15}
                 className={`border ${
@@ -647,6 +665,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
                 Biệt danh
               </p>
+              {msgWarningEditNickname && (
+                <p className="text-silver-chalice text-base leading-[1.3] mb-2">
+                  {msgWarningEditNickname}
+                </p>
+              )}
               {!isEditingNickname ? (
                 <div className="flex items-center gap-2 text-silver-chalice text-base leading-[1.3]">
                   <span>@{nickname}</span>
@@ -654,40 +677,37 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     type="button"
                     aria-label="Chỉnh sửa biệt danh"
                     className="inline-flex items-center text-white-smoke hover:text-fpl"
-                    onClick={() => setIsEditingNickname(true)}
+                    onClick={() => {
+                      setIsEditingNickname(true);
+                      setNicknameChangeCount(0);
+                      setInitialNickname(nickname);
+                    }}
                   >
                     <BiPencil className="ml-1" fontSize={16} />
                   </button>
                 </div>
               ) : (
                 <div className="relative">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-silver-chalice">
+                  <span className={`absolute left-4 top-1/2 -translate-y-1/2 ${msgWarningEditNickname ? 'text-black-olive-404040' : 'text-silver-chalice'}`}>
                     @
                   </span>
                   <input
                     type="text"
                     value={nickname}
+                    disabled={!!msgWarningEditNickname}
                     onChange={(e) => {
                       setNickname(e.target.value);
+                      setNicknameChangeCount((prev) => prev + 1);
                       if (nicknameErrors.length) setNicknameErrors([]);
-                    }}
-                    onBlur={async () => {
-                      setIsValidatingNickname(true);
-                      const errs = await validateNickname(nickname);
-                      if (errs.length > 0) {
-                        setNicknameErrors(errs.slice(0, 1));
-                        setIsEditingNickname(true);
-                      } else {
-                        setIsEditingNickname(false);
-                      }
-                      setIsValidatingNickname(false);
                     }}
                     maxLength={24}
                     className={`border ${
                       nicknameErrors.length
                         ? 'border-scarlet focus:border-scarlet'
+                        : msgWarningEditNickname
+                        ? 'border-charleston-green focus:border-charleston-green cursor-not-allowed'
                         : 'border-black-olive-404040 focus:border-gray'
-                    } w-full py-[18px] pl-8 pr-12 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
+                    } w-full py-[18px] pl-8 pr-12 rounded-[104px] bg-[rgba(0,0,0,0.05)] ${msgWarningEditNickname ? 'text-black-olive-404040' : 'text-white-smoke'} text-base leading-6 outline-none`}
                   />
                   {isValidatingNickname && (
                     <div className="absolute right-4 top-1/2 -translate-y-1/2">

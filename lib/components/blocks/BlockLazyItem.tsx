@@ -31,7 +31,7 @@ export default function BlockLazyItem({
   const [isEmpty, setIsEmpty] = useState(false);
   const [isFetchAllCompleted, setIsFetchAllCompleted] = useState(false);
   const [shouldHideAds, setShouldHideAds] = useState(false);
-  const router = useRouter();   
+  const router = useRouter();
 
   useEffect(() => {
     setIsEmpty(false);
