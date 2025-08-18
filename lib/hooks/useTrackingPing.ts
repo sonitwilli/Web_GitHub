@@ -3,7 +3,6 @@ import { useEffect, useRef } from 'react';
 import tracking from '../tracking';
 import { getPlayerParams, trackPlayerChange } from '../utils/playerTracking';
 import { VIDEO_ID } from '../constant/texts';
-import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 
 const pingTime = 60000;
 
@@ -15,24 +14,24 @@ export const trackingPingLog111 = async () => {
     }
     trackPlayerChange();
     const playerParams = getPlayerParams();
+    console.log('--- TRACKING trackingPingLog111', new Date().toISOString(), {
+      playerParams,
+    });
     /*@ts-ignore*/
     return await tracking({
       LogId: '111',
       Event: 'Ping',
       ...playerParams,
+      BufferLength: '',
     });
   } catch {}
 };
 
 export default function useTrackingPing() {
-  const { isPlaySuccessRef } = usePlayerPageContext();
   const pingInterval = useRef<NodeJS.Timeout | null>(null);
-  const lastPingTime = useRef(0);
+  // const lastPingTime = useRef(0);
   const isFirstPingDone = useRef(false);
   const handlePingPlayer = () => {
-    if (!isPlaySuccessRef?.current) {
-      return;
-    }
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (!video || video.paused) {
       return;
@@ -42,13 +41,19 @@ export default function useTrackingPing() {
       trackingPingLog111();
     }
 
-    const currentTime = new Date().getTime();
-    const e = currentTime - lastPingTime.current;
-    if (e >= pingTime) {
-      if (lastPingTime.current > 0) {
+    if (!pingInterval?.current) {
+      pingInterval.current = setInterval(() => {
+        // const currentTime = new Date().getTime();
+        // const e = currentTime - lastPingTime.current;
+        // console.log({ e, currentTime, lastPingTime: lastPingTime.current });
+        // if (e >= pingTime) {
+        //   if (lastPingTime.current > 0) {
+
+        //   }
+        //   lastPingTime.current = currentTime;
+        // }
         trackingPingLog111();
-      }
-      lastPingTime.current = currentTime;
+      }, pingTime);
     }
   };
 

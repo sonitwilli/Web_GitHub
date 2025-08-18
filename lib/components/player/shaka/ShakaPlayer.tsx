@@ -35,10 +35,12 @@ import { useVodPageContext } from '../context/VodPageContext';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import {
   removePlayerSessionStorageWhenRender,
+  trackingStartBuffering,
   trackPlayerChange,
 } from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { getRemainingBufferedTime } from '@/lib/utils/player';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -300,6 +302,18 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       .registerRequestFilter((type: any, request: any) => {
         if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
           fragDownloadTimes.set(request.uris[0], performance.now());
+          const remaining = getRemainingBufferedTime();
+          if (remaining === 0) {
+            trackingStartBuffering();
+            saveSessionStorage({
+              data: [
+                {
+                  key: trackingStoreKey.PLAYER_START_BUFFER_TIME,
+                  value: new Date().getTime().toString(),
+                },
+              ],
+            });
+          }
         }
       });
 

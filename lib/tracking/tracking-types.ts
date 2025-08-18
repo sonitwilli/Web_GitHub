@@ -109,7 +109,8 @@ export type TrackingScreen =
   | 'Success'
   | 'PageLogin'
   | 'CancelOTP'
-  | 'LimitDevice';
+  | 'LimitDevice'
+  | 'Buffering';
 
 export type TrackingEvent =
   | 'SignupSuccess'
@@ -234,7 +235,8 @@ export type TrackingEvent =
   | 'LoadHighlightItem'
   | 'EnterChatBot'
   | 'Request'
-  | 'Feedback';
+  | 'Feedback'
+  | 'Buffering';
 
 export interface TrackingParams {
   platform?: string;

@@ -208,9 +208,14 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   }, [dataChannel, dataPlaylist, streamType, dataStream, vodId]);
 
   useEffect(() => {
+    // For VODs: Only show for final episodes (isFinalEpisode = true)
+    const shouldShowForVod =
+      streamType === 'vod' &&
+      isFinalEpisode && // Only show for final episode
+      (hasReachedEndContent || (isEndVideo ?? 0) > 0);
+
     const shouldShow =
-      (streamType === 'vod' || streamType === 'playlist') &&
-      (hasReachedEndContent || (isEndVideo ?? 0) > 0) &&
+      shouldShowForVod &&
       recommendData &&
       recommendData.title &&
       (recommendData.id || recommendData._id) &&
@@ -233,6 +238,8 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     isFinalEpisode,
     hasEndContent,
     hasReachedEndContent,
+    dataPlaylist,
+    router?.query?.slug,
   ]);
 
   // Auto redirect countdown

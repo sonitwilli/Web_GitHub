@@ -1,6 +1,27 @@
 {
     "versions": [
         {
+            "version": "8.0.25",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Xóa tài khoản] Lỗi hiển thị trang 404 khi truy cập deeplink Xóa tài khoản",
+                "[WEB][Thể thao] Lỗi hiển thị ở block Lịch đấu, kết quả, bảng xếp hạng trên trình duyệt safari",
+                "[WEB][Thể Thao] Lỗi hiển thị thiếu Bảng xếp hạng ở tab Tất cả ở block Lịch thi đấu, kết quả, BXH",
+                "[WEB][Thể thao] Lỗi hiển thị đối với tỉ số có 2 chữ số ở tab kết quả",
+                "[WEB][Notification] Lỗi không hiển thị thông báo ở hộp thư khi thực hiện báo cáo sự cố ở player",
+                "[Web][V5][Highlight RCM] Lỗi sai path athena",
+                "[WEB][MultiProfile] Lỗi hiển thị thông báo Hồ sơ cập nhật thành công khi chuyển qua hồ sơ có mã PIN",
+                "[WEB][V5][Guide mua gói] Lỗi hiển thị guide mua gói trùng với button Bỏ qua giới thiệu",
+                "[WEB][Truyền hình] Không play timeshift khi nhấn F5",
+                "[WEB][PlayerVOD] Nextchapter: Lỗi không chuyển đến tập tiếp theo mà chuyển đến phim khác khi autonext tập",
+                "[WEB][PlayerVOD] Lỗi tự động chuyển sang VOD phim khác khi play hết trailer",
+                "[IOS][Comment] Lỗi layout bình luận dài hơn 4 dòng ở Shorts/ VOD",
+                "[WEB][Comment] Lỗi không hiển thị lại thanh filter khi thực hiện scroll up/down",
+                "[IOS][Comment] Lỗi không scroll được comment ở OS26",
+                "[WEB][V5][Guide mua gói] Lỗi chưa giới hạn maxlength cho nội dung mô tả của guide"
+            ]
+        },  
+        {
             "version": "8.0.24",
             "date": "Dự kiến",
             "content": [

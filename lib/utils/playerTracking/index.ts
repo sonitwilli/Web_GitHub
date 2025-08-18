@@ -17,6 +17,7 @@ import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
 import { SubtitleItemType } from '@/lib/hooks/useSubtitle';
 import { AudioItemType } from '@/lib/components/player/core/AudioButton';
 import { StreamType } from '@/lib/components/player/context/PlayerPageContext';
+import tracking from '@/lib/tracking';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getPlayerSub = () => {
@@ -357,6 +358,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
       trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
       trackingStoreKey.PLAYER_DURATION,
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
     ],
   });
 };
@@ -545,4 +547,65 @@ export const getPlayerParams = () => {
         ),
       ) || '',
   };
+};
+
+export const trackingStartBuffering = async () => {
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  // start
+  try {
+    const startTime = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
+    );
+    if (startTime) {
+      return;
+    }
+    const pParams = getPlayerParams();
+    console.log('--- TRACKING StartBuffering', new Date().toISOString(), {
+      pParams,
+    });
+    return await tracking({
+      LogId: '112',
+      /*@ts-ignore*/
+      Screen: 'Buffering',
+      Event: 'StartBuffering',
+      ...pParams,
+      BufferLength: '0',
+    });
+  } catch {}
+};
+
+export const trackingEndBuffering = async () => {
+  // Log112: Buffering
+  if (typeof window === 'undefined') {
+    return {};
+  }
+  // start
+  try {
+    const startTime = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
+    );
+    if (!startTime) {
+      return;
+    }
+    const current = new Date().getTime();
+    const e = current - Number(startTime);
+    const pParams = getPlayerParams();
+    console.log('--- TRACKING trackingEndBuffering', new Date().toISOString(), {
+      pParams,
+    });
+    await tracking({
+      LogId: '112',
+      /*@ts-ignore*/
+      Screen: 'Buffering',
+      Event: 'EndBuffering',
+      ...pParams,
+      BufferLength: String(Math.round(e / 1000)),
+    });
+    removeSessionStorage({
+      data: [trackingStoreKey.PLAYER_START_BUFFER_TIME],
+    });
+    return;
+  } catch {}
 };

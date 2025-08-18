@@ -23,6 +23,9 @@ interface UseNoAdsGuideProps {
   isWatchCreditVisible?: boolean; // Watch credit button
   isStreamTvcVisible?: boolean; // Stream TVC ads
   isContentWarningVisible?: boolean; // Content warning (WC)
+  isLimitAgeOverlayVisible?: boolean; // LimitAgeOverlay at BR position
+  isWatchAndSkipCreditVisible?: boolean; // WatchAndSkipCredit component
+  isSituationWarningVisible?: boolean; // SituationWarning component
 }
 
 interface UseNoAdsGuideReturn {
@@ -36,7 +39,6 @@ interface UseNoAdsGuideReturn {
 
 // Constants
 const STORAGE_KEY_PREFIX = 'noads_guide_count_';
-const AUTO_HIDE_DELAY = 5000;
 
 // Utility functions
 const formatDateKey = (date: Date): string => {
@@ -65,6 +67,9 @@ export const useNoAdsGuide = ({
   isWatchCreditVisible = false,
   isStreamTvcVisible = false,
   isContentWarningVisible = false,
+  isLimitAgeOverlayVisible = false,
+  isWatchAndSkipCreditVisible = false,
+  isSituationWarningVisible = false,
 }: UseNoAdsGuideProps): UseNoAdsGuideReturn => {
   const router = useRouter();
   const { configs } = useAppSelector((state) => state.app);
@@ -184,7 +189,10 @@ export const useNoAdsGuide = ({
       isLogoAnimationAdsVisible ||
       isWatchCreditVisible ||
       isStreamTvcVisible ||
-      isContentWarningVisible;
+      isContentWarningVisible ||
+      isLimitAgeOverlayVisible ||
+      isWatchAndSkipCreditVisible ||
+      isSituationWarningVisible;
 
     return hasBlocking;
   }, [
@@ -198,6 +206,9 @@ export const useNoAdsGuide = ({
     isWatchCreditVisible,
     isStreamTvcVisible,
     isContentWarningVisible,
+    isLimitAgeOverlayVisible,
+    isWatchAndSkipCreditVisible,
+    isSituationWarningVisible,
   ]);
 
   // Clear interval
@@ -239,9 +250,9 @@ export const useNoAdsGuide = ({
         setHadSessionAdsTracking(true);
       } else if (hadSessionAdsTracking) {
         // Ads tracking stopped, check if can show guide
-        handleCount();
         if (canShowGuide()) {
-          // Track count and show guide
+          // Only count when guide is actually shown
+          handleCount();
           setShowNoAdsGuide(true);
         }
         setHadSessionAdsTracking(false);
@@ -271,9 +282,9 @@ export const useNoAdsGuide = ({
         clearMonitoringInterval();
       }
 
-      setTimeout(() => {
-        setShowNoAdsGuide(false);
-      }, AUTO_HIDE_DELAY);
+      // setTimeout(() => {
+      //   setShowNoAdsGuide(false);
+      // }, AUTO_HIDE_DELAY);
     }
   }, [showNoAdsGuide, clearMonitoringInterval]);
 

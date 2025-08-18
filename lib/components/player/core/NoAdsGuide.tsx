@@ -43,7 +43,7 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
 
   return (
     <div
-      className={`no-ads-guide absolute z-2 opacity-80 flex flex-row justify-center items-center pr-8 gap-6 rounded-xl max-w-[498px] h-16 right-[1%] bottom-[60px] tablet:right-[4%] tablet:bottom-[72px] tablet:w-[498px] ${
+      className={`no-ads-guide absolute z-2 opacity-80 flex flex-row justify-center items-center pr-6 gap-6 rounded-xl max-w-fit h-16 right-[1%] bottom-[60px] tablet:right-[4%] tablet:bottom-[72px] ${
         !noAdsData.background_color ? styles.maskNoAds : ''
       }`}
       style={{
@@ -52,9 +52,10 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
           : '',
       }}
     >
-      {/* Main Content Frame */}
-      <div className="flex flex-row items-center gap-4 w-full max-w-[359px] h-16 overflow-hidden rounded-xl">
-        <div className="flex-none order-0 flex-grow-0 w-[80px] tablet:w-[111px] h-fit relative">
+      {/* Main Content Layout */}
+      <div className="flex flex-row items-center gap-3 w-full max-w-[450px] h-16 overflow-hidden rounded-xl">
+        {/* Image Section - Fixed width */}
+        <div className="flex-shrink-0 w-[80px] tablet:w-[111px] h-fit relative">
           <img
             src={noAdsData.image || '/images/default-poster-vertical.jpg'}
             alt="No Ads"
@@ -66,24 +67,24 @@ const NoAds: React.FC<NoAdsProps> = ({ data, onClose, visible = false }) => {
           />
         </div>
 
-        {/* Description Section  */}
-        <div className="flex-none order-1 flex-grow-0 w-full max-w-[232px] line-clamp-2 text-ellipsis overflow-hidden">
-          <p className="text-white flex items-center w-full h-full font-medium text-xs tablet:text-sm leading-[100%]">
+        {/* Description Section - Flexible width */}
+        <div className="flex-1 min-w-0 h-fit">
+          <p className="text-white line-clamp-2 text-ellipsis overflow-hidden font-medium text-xs tablet:text-sm leading-[120%]">
             {noAdsData.text || ''}
           </p>
         </div>
-      </div>
 
-      {/* Button Section */}
-      <div className="flex-none order-1 flex-grow-0 w-[70px] tablet:w-[83px] h-[34px]">
-        <button
-          onClick={handleBuyPackage}
-          className="cursor-pointer flex flex-row justify-center items-center w-full h-[34px] bg-white-01 border border-white-06 rounded-lg text-white-087 text-center hover:bg-white-02 transition-colors px-2 tablet:px-4 py-2 box-border"
-        >
-          <span className="whitespace-nowrap font-medium text-xs tablet:text-sm leading-[130%]">
-            {noAdsData.btn || 'Đăng ký'}
-          </span>
-        </button>
+        {/* Button Section - Auto width with min */}
+        <div className="flex-shrink-0 min-w-[70px] h-[34px]">
+          <button
+            onClick={handleBuyPackage}
+            className="cursor-pointer flex flex-row justify-center items-center w-full h-[34px] bg-white-01 border border-white-06 rounded-lg text-white-087 text-center hover:bg-white-02 transition-colors px-2 tablet:px-4 py-2 box-border"
+          >
+            <span className="whitespace-nowrap font-medium text-xs tablet:text-sm leading-[130%] text-center">
+              {noAdsData.btn || 'Đăng ký'}
+            </span>
+          </button>
+        </div>
       </div>
     </div>
   );

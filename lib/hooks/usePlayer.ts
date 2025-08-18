@@ -28,6 +28,7 @@ import {
 import { useAdsPlayer } from './useAdsPlayer';
 import {
   removePlayerSessionStorage,
+  trackingEndBuffering,
   trackPlayerChange,
 } from '../utils/playerTracking';
 import { trackingStoreKey } from '../constant/tracking';
@@ -205,7 +206,7 @@ export default function usePlayer() {
     }
   };
 
-  const handlePlaying = () => {
+  const handlePlaying = async () => {
     const firstPlay = sessionStorage.getItem(
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
     );
@@ -322,6 +323,13 @@ export default function usePlayer() {
     if (clearErrorInterRef) clearErrorInterRef();
     clearIntervalErrorSafari();
     checkSafariError();
+    const startBufferTime = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
+    );
+    if (startBufferTime) {
+      trackingEndBuffering();
+    }
+    handlePingPlayer();
   };
 
   const handleLoadedMetaData = () => {
@@ -357,7 +365,6 @@ export default function usePlayer() {
 
   const handleTimeUpdate = () => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-    handlePingPlayer();
 
     if (video) {
       checkRealTimePlaying();

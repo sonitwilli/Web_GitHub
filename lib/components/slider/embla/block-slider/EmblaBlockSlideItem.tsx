@@ -32,7 +32,8 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
       block.block_type === 'new_vod_detail' ||
       block.type === 'group_channel' ||
       block.type === 'app_category' ||
-      block?.type === 'vod_related'
+      block?.type === 'vod_related' ||
+      block?.type === 'recommend'
     )
       return false;
     return block?.block_type !== 'auto_expansion';

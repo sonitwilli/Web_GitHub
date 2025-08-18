@@ -18,10 +18,12 @@ import styles from '../core/Text.module.css';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import {
   removePlayerSessionStorageWhenRender,
+  trackingStartBuffering,
   trackPlayerChange,
 } from '@/lib/utils/playerTracking';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { getRemainingBufferedTime } from '@/lib/utils/player';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -150,6 +152,18 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       const fragDownloadTimes = new Map();
       hls.on(Hls.Events.FRAG_LOADING, (event, data) => {
         fragDownloadTimes.set(data.frag.sn, performance.now());
+        const remaining = getRemainingBufferedTime();
+        if (remaining === 0) {
+          trackingStartBuffering();
+          saveSessionStorage({
+            data: [
+              {
+                key: trackingStoreKey.PLAYER_START_BUFFER_TIME,
+                value: new Date().getTime().toString(),
+              },
+            ],
+          });
+        }
       });
       hls.on(Hls.Events.FRAG_LOADED, (event, data) => {
         const start = fragDownloadTimes.get(data.frag.sn);

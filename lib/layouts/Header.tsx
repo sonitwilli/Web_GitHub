@@ -9,6 +9,7 @@ import {
   PACKAGE,
   PROFILE_TYPES,
   TYPE_PR,
+  ROUTE_PATH_NAMES,
 } from '@/lib/constant/texts';
 import MenuMore from '@/lib/components/header/MenuMore';
 import MobileMenu from '@/lib/components/header/MobileMenu';
@@ -132,7 +133,7 @@ export default function Header() {
       'dien-vien',
       'tim-kiem',
       'short-videos',
-      'thong-tin'
+      'thong-tin',
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -155,7 +156,7 @@ export default function Header() {
     const userProfileId = userInfo?.info?.profile?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo]);
-  const { adsLoaded, isExistedAds } = useAppSelector((state) => state.app);
+  const { adsLoaded } = useAppSelector((state) => state.app);
 
   // Load Ads script globally (moved from pages/index.tsx)
   useEffect(() => {
@@ -189,7 +190,7 @@ export default function Header() {
         const hideAdsApps = ['Truyền hình', 'Học tập', 'Thiếu nhi'];
         setShouldHideHeaderAds(hideAdsApps.includes(appName || ''));
 
-        if (adsLoaded && isExistedAds) {
+        if (adsLoaded) {
           // Initialize ads safely with retries in case the global is not ready yet
           let attempts = 0;
           const tryInitAds = async () => {
@@ -197,11 +198,9 @@ export default function Header() {
             const initFn = (window as any)?.InitAdsPlayBanner;
             if (typeof initFn === 'function') {
               try {
-                console.log('initAds', document.querySelectorAll('.adsplay-placement'));
-
-                await initFn();
-
-                console.log('initAds done', document.querySelectorAll('.adsplay-placement'));
+                setTimeout(() => {
+                  initFn();
+                }, 1000)
                 
               } catch {}
             } else if (attempts < 10) {
@@ -232,17 +231,37 @@ export default function Header() {
     return () => {
       router.events.off('routeChangeComplete', handleRouteComplete);
     };
-  }, [router.isReady, router.events, adsLoaded, isExistedAds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.isReady, router.events, adsLoaded]);
 
   // Listen initBanner once globally and store isExistedAds flag
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleInitBanner = () => {
       try {
-        const ins = document.querySelector('ins[data-aplpm="105-111"]');
-        const existedAds = ins
-          ? (ins as HTMLElement).children.length > 0
-          : false;
+        const currentPath = window.location.pathname;
+        const isPathInRouteNames = Object.values(ROUTE_PATH_NAMES).some(
+          (segment) => currentPath.includes(segment),
+        );
+
+        let existedAds = false;
+
+        if (isPathInRouteNames) {
+          // For pages with routes in ROUTE_PATH_NAMES, only check ins[data-aplpm="105-111"]
+          const ins = document.querySelector('.ads_masthead_banner');
+          existedAds = ins ? true : false;
+        } else {
+          // For other pages, check if TopBannerAds and BottomBannerAds components exist
+          const topBannerAds = document.querySelector('.ads_top_banner');
+          const bottomBannerAds = document.querySelector('.ads_bottom_banner');
+
+          if (topBannerAds || bottomBannerAds) {
+            // If components exist, then check the ins element
+            const ins = document.querySelector('ins[data-aplpm="105-111"]');
+            existedAds = ins ? true : false;
+          }
+        }
+
         appDispatch({ type: 'app/changeIsExistedAds', payload: existedAds });
       } catch {}
     };
@@ -386,7 +405,7 @@ export default function Header() {
         'dien-vien',
         'tim-kiem',
         'short-videos',
-        'thong-tin'
+        'thong-tin',
       ];
       const pathSegment = pathName?.split('/')[1];
       return (

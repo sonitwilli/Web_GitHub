@@ -21,7 +21,7 @@ import {
   PROFILE_DEFAULT_AVATAR,
 } from '@/lib/constant/texts';
 import { Profile } from '@/lib/api/user';
-import { Avatar } from '@/lib/api/multi-profiles';
+import { Avatar, verifyProfileName } from '@/lib/api/multi-profiles';
 import Loading from '@/lib/components/common/Loading';
 import styles from './ProfileForm.module.css';
 import { useAppSelector } from '@/lib/store'; // Adjust the import path as needed
@@ -29,6 +29,7 @@ import { CREATE_PROFILE, EDIT_PROFILE } from '@/lib/constant/texts';
 import { deleteProfile } from '@/lib/api/multi-profiles'; // Adjust the import path as needed
 import { useRouter } from 'next/router';
 import { switchProfile } from '@/lib/api/user';
+import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
 
 interface ProfileFormProps {
   errorUpdate?: string | null;
@@ -42,6 +43,8 @@ interface ProfileFormProps {
     name: string;
     avatar_id: string;
     avatar_url: string;
+    display_name: string;
+    nickname?: string;
     profile_type: string;
     pin?: string;
   }) => void;
@@ -68,6 +71,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [isChild, setIsChild] = useState<boolean>(false);
   const [isAvatar, setIsAvatar] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
+  const [displayName, setDisplayName] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('');
+  const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
   const [modalContent, setModalContent] = useState<ModalContent>({
     title: '',
     content: '',
@@ -90,6 +96,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isErrorCode, setIsErrorCode] = useState<string | null>(null);
+  const [nicknameErrors, setNicknameErrors] = useState<string[]>([]);
+  const [isValidatingNickname, setIsValidatingNickname] =
+    useState<boolean>(false);
+  const [displayNameErrors, setDisplayNameErrors] = useState<string[]>([]);
+  const [isValidatingDisplayName, setIsValidatingDisplayName] =
+    useState<boolean>(false);
   const router = useRouter();
 
   // Sử dụng hook useFetchRecommendedProfile
@@ -173,6 +185,18 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     if (name !== profileData?.name) {
       setName(profileData?.name || profile?.name || '');
     }
+    // Initialize display name and nickname when profileData changes
+    if (!displayName) {
+      setDisplayName(profileData?.display_name || profile?.display_name || '');
+    }
+    if (!nickname) {
+      const base = profileData?.nickname || profile?.nickname || '';
+      const nick = removeVietnameseTones(base)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '')
+        .slice(0, 24);
+      setNickname(nick);
+    }
     if (
       selectedAvatar.avatar_id !== profileData?.avatar_id ||
       selectedAvatar.avatar_url !== profileData?.avatar_url
@@ -184,6 +208,34 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData]);
+
+  useEffect(() => {
+    if (!isEditingNickname) return;
+    setIsValidatingNickname(false);
+    const timer = setTimeout(() => {
+      (async () => {
+        setIsValidatingNickname(true);
+        const errs = await validateNickname(nickname);
+        setNicknameErrors(errs.slice(0, 1));
+        setIsValidatingNickname(false);
+      })();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [nickname, isEditingNickname]);
+
+  useEffect(() => {
+    if (!displayName) return;
+    setIsValidatingDisplayName(false);
+    const timer = setTimeout(() => {
+      (async () => {
+        setIsValidatingDisplayName(true);
+        const errs = await validateDisplayName(displayName);
+        setDisplayNameErrors(errs.slice(0, 1));
+        setIsValidatingDisplayName(false);
+      })();
+    }, 1000);
+    return () => clearTimeout(timer);
+  }, [displayName]);
 
   useEffect(() => {
     // console.log('isError', isError);
@@ -293,17 +345,137 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     onCancel?.();
   };
 
-  const handleConfirm = () => {
-    const data = {
+  const validateDisplayName = async (value: string): Promise<string[]> => {
+    const v = (value || '').trim();
+    const len = v.length;
+
+    // Check if contains only numbers, letters (including Vietnamese characters) and spaces
+    const allowed =
+      /^[a-zA-Z0-9ÀÁÂÃÈÉÊẾÌĨÍÒÓÔÕÙÚĂĐŨƠàáâãèéêếìĩíòóôõùúăđũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\s]+$/.test(
+        v,
+      );
+
+    // Priority 1: Length and allowed characters
+    if (!(len >= 2 && len <= 15) || !allowed || v === '') {
+      console.log('Length and allowed characters', v);
+
+      return [
+        'Tên hiển thị không hợp lệ. Tên hiển thị bao gồm từ 2 đến 15 ký tự (a-z, 0-9)',
+      ];
+    }
+
+    // Priority 2: Cannot start or end with space
+    if (/^\s|\s$/.test(value)) {
+      console.log('Cannot start or end with space', v);
+
+      return [
+        'Tên hiển thị không hợp lệ. Tên hiển thị bao gồm từ 2 đến 15 ký tự (a-z, 0-9)',
+      ];
+    }
+
+    // Remote validation
+    try {
+      const apiRes = await verifyProfileName({ display_name: v });
+      if (apiRes?.status === '1') {
+        return [];
+      }
+      return [
+        apiRes?.message?.content ||
+          'Tên hiển thị không hợp lệ. Vui lòng chọn tên hiển thị khác.',
+      ];
+    } catch {
+      return ['Không thể xác thực tên hiển thị. Vui lòng thử lại.'];
+    }
+  };
+
+  const validateNickname = async (value: string): Promise<string[]> => {
+    const v = (value || '').trim();
+    const lower = v.toLowerCase();
+    const len = v.length;
+    const allowed = /^[a-z0-9._]+$/.test(lower);
+
+    // Priority 1
+    if (!(len >= 2 && len <= 15) || !allowed || v === '') {
+      return [
+        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, 0-9, dấu gạch dưới _ , dấu chấm .)',
+      ];
+    }
+    // Priority 2
+    if (/^[_\.]|[_\.]$/.test(v)) {
+      return [
+        'Biệt danh không bắt đầu hoặc kết thúc bằng dấu gạch dưới, dấu chấm.',
+      ];
+    }
+
+    // Priority 3
+    if (/__|\.\./.test(v)) {
+      return [
+        'Biệt danh không thể chứa liên tiếp nhiều dấu gạch dưới, dấu chấm.',
+      ];
+    }
+
+    // Remote validation
+    try {
+      const apiRes = await verifyProfileName({ nick_name: v });
+      if (apiRes?.status === '1') {
+        return [];
+      }
+      return [
+        apiRes?.message?.content ||
+          'Biệt danh không hợp lệ. Vui lòng chọn biệt danh khác.',
+      ];
+    } catch {
+      return ['Không thể xác thực biệt danh. Vui lòng thử lại.'];
+    }
+  };
+
+  const handleConfirm = async () => {
+    // Validate display name on submit
+    setIsValidatingDisplayName(true);
+    const displayNameValidationErrors = await validateDisplayName(displayName);
+    setIsValidatingDisplayName(false);
+    if (displayNameValidationErrors.length > 0) {
+      setDisplayNameErrors(displayNameValidationErrors.slice(0, 1));
+      return;
+    }
+    setDisplayNameErrors([]);
+
+    if (title === EDIT_PROFILE) {
+      // Validate nickname on submit
+      setIsValidatingNickname(true);
+      const nicknameValidationErrors = await validateNickname(nickname);
+      setIsValidatingNickname(false);
+      if (nicknameValidationErrors.length > 0) {
+        setNicknameErrors(nicknameValidationErrors.slice(0, 1));
+        return;
+      }
+      setNicknameErrors([]);
+    }
+
+    const data: {
+      name: string;
+      avatar_id: string;
+      avatar_url: string;
+      display_name: string;
+      profile_type: string;
+      pin?: string;
+      nickname?: string;
+    } = {
       name: name.trim() || '',
       avatar_id: selectedAvatar.avatar_id || '',
       avatar_url: selectedAvatar.avatar_url || '',
+      display_name: displayName.trim() || '',
       profile_type: isChild
         ? PROFILE_TYPES.KID_PROFILE
         : PROFILE_TYPES.MASTER_PROFILE,
       ...(pin && pin.length === 4 && { pin }),
       ...(isRemovePin && { pin: '' }),
     };
+
+    if (title === EDIT_PROFILE) {
+      data.nickname = nickname.trim() || '';
+    }
+
     if (title === CREATE_PROFILE) {
       createNewProfile(data);
     } else {
@@ -385,8 +557,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
 
           <div className="w-full mb-[24px]">
-            <p className="text-silver-chalice text-base leading-[1.3] mb-2">
+            <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
               Tên hồ sơ
+              <span className="text-base leading-[1.3] font-normal text-silver-chalice mt-2 inline-block">
+                Dùng để phân biệt các hồ sơ trong cùng tài khoản và hiển thị
+                trong giao diện chọn hồ sơ. Ví dụ: “Bố”, “Mẹ”, “Bé Na”,...
+              </span>
             </p>
             <input
               type="text"
@@ -417,6 +593,118 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </div>
             )}
           </div>
+
+          {/* Display Name */}
+          <div className="w-full mb-[24px]">
+            <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
+              Tên hiển thị
+            </p>
+            <p className="text-silver-chalice text-base leading-[1.3] mb-2">
+              Dùng để hiển thị công khai khi tham gia các hoạt động cộng đồng
+              trên FPT Play như bình luận, trò chuyện trực tiếp và các hoạt động
+              khác.
+            </p>
+            <div className="relative">
+              <input
+                type="text"
+                value={displayName}
+                onChange={(e) => {
+                  setDisplayName(e.target.value);
+                  if (displayNameErrors.length) setDisplayNameErrors([]);
+                }}
+                onBlur={async () => {
+                  if (!displayName) return;
+                  setIsValidatingDisplayName(true);
+                  const errs = await validateDisplayName(displayName);
+                  setDisplayNameErrors(errs.slice(0, 1));
+                  setIsValidatingDisplayName(false);
+                }}
+                maxLength={15}
+                className={`border ${
+                  displayNameErrors.length
+                    ? 'border-scarlet focus:border-scarlet'
+                    : 'border-black-olive-404040 focus:border-gray'
+                } w-full py-[18px] pl-6 pr-12 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none overflow-hidden whitespace-nowrap text-ellipsis`}
+              />
+              {isValidatingDisplayName && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-white-smoke border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            {displayNameErrors.length > 0 && (
+              <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
+                {displayNameErrors.map((msg, idx) => (
+                  <div key={`display-name-err-${idx}`}>{msg}</div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Nickname */}
+          {title === EDIT_PROFILE && (
+            <div className="w-full mb-[24px]">
+              <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
+                Biệt danh
+              </p>
+              {!isEditingNickname ? (
+                <div className="flex items-center gap-2 text-silver-chalice text-base leading-[1.3]">
+                  <span>@{nickname}</span>
+                  <button
+                    type="button"
+                    aria-label="Chỉnh sửa biệt danh"
+                    className="inline-flex items-center text-white-smoke hover:text-fpl"
+                    onClick={() => setIsEditingNickname(true)}
+                  >
+                    <BiPencil className="ml-1" fontSize={16} />
+                  </button>
+                </div>
+              ) : (
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-silver-chalice">
+                    @
+                  </span>
+                  <input
+                    type="text"
+                    value={nickname}
+                    onChange={(e) => {
+                      setNickname(e.target.value);
+                      if (nicknameErrors.length) setNicknameErrors([]);
+                    }}
+                    onBlur={async () => {
+                      setIsValidatingNickname(true);
+                      const errs = await validateNickname(nickname);
+                      if (errs.length > 0) {
+                        setNicknameErrors(errs.slice(0, 1));
+                        setIsEditingNickname(true);
+                      } else {
+                        setIsEditingNickname(false);
+                      }
+                      setIsValidatingNickname(false);
+                    }}
+                    maxLength={24}
+                    className={`border ${
+                      nicknameErrors.length
+                        ? 'border-scarlet focus:border-scarlet'
+                        : 'border-black-olive-404040 focus:border-gray'
+                    } w-full py-[18px] pl-8 pr-12 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
+                  />
+                  {isValidatingNickname && (
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                      <div className="w-4 h-4 border-2 border-white-smoke border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                  )}
+                </div>
+              )}
+              {nicknameErrors.length > 0 && (
+                <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
+                  {nicknameErrors.map((msg, idx) => (
+                    <div key={`nick-err-${idx}`}>{msg}</div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {(profile?.profile_type === PROFILE_TYPES.KID_PROFILE ||
             title === CREATE_PROFILE) && (
             <div className="w-full mb-[24px]">

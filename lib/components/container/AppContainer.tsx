@@ -89,10 +89,7 @@ export default function AppContainer({ children }: Props) {
       const res = await getConfigs();
       setConfigs(res?.data?.data || {});
       dispatch(changeConfigs(res?.data?.data || {}));
-      setCookie(
-        BLOCK_PAGE_SIZE,
-        res?.data?.data?.number_item_of_page || '31',
-      );
+      setCookie(BLOCK_PAGE_SIZE, res?.data?.data?.number_item_of_page || '31');
       if (res?.data && res?.data?.data && res.data.data.expire_welcome) {
         setCookie('expire_welcome', res.data.data.expire_welcome, {
           path: '/',
@@ -182,7 +179,7 @@ export default function AppContainer({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    console.log('--- APP: ', '10:20-14:08');
+    console.log('--- APP: ', '19:20-15:08');
     const handleRouteChange = (url: string) => {
       if (!errorCodeResult) {
         dispatch(closeLoginModal());

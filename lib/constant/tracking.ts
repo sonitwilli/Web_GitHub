@@ -129,6 +129,7 @@ export const TRACKING_LOG_ID: Record<TrackingEvent, number> = {
   EnterChatBot: 530,
   Request: 531,
   Feedback: 532,
+  Buffering: 112,
 };
 
 export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
@@ -255,6 +256,7 @@ export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
   EnterChatBot: 'CHATBOT',
   Request: 'CHATBOT',
   Feedback: 'CHATBOT',
+  Buffering: 'dynamic',
 };
 
 export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
@@ -381,6 +383,7 @@ export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
   EnterChatBot: 'CHATBOT',
   Request: 'CHATBOT',
   Feedback: 'CHATBOT',
+  Buffering: 'dynamic',
 };
 
 export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
@@ -507,6 +510,7 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   EnterChatBot: '',
   Request: '',
   Feedback: '',
+  Buffering: '',
 };
 
 export const TRACKING_URL = 'https://logs-ott.fbox.fpt.vn/topics/web-ott';
@@ -685,4 +689,5 @@ export const trackingStoreKey = {
   PLAYER_DURATION: 'PLAYER_DURATION',
   PLAYER_STREAM_TYPE: 'PLAYER_STREAM_TYPE',
   PLAYER_EVENT_ID: 'PLAYER_EVENT_ID',
+  PLAYER_START_BUFFER_TIME: 'PLAYER_START_BUFFER_TIME',
 };

@@ -43,6 +43,8 @@ import { useNoAdsGuide } from '@/lib/hooks/useNoAdsGuide';
 import { useAutoNextVideo } from '@/lib/hooks/useAutoNextVideo';
 import { useNextRecommend } from '@/lib/hooks/useNextRecommend';
 import { useSkipIntro } from '@/lib/hooks/useSkipIntro';
+import { useWatchAndSkipCredit } from '@/lib/hooks/useWatchAndSkipCredit';
+import { isSituationWarningVisible } from '@/lib/hooks/useSituationWarningVisibility';
 import { PreviewType } from './Preview';
 import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
@@ -107,7 +109,9 @@ export interface PlayerWrapperContextType {
 }
 
 export const PlayerWrapperContext = createContext<
-  PlayerWrapperContextType & { setShowBroadcastSchedule?: (v: boolean) => void }
+  PlayerWrapperContextType & {
+    setShowBroadcastSchedule?: (v: boolean) => void;
+  }
 >({});
 
 export default function PlayerWrapper({ children, eventId }: Props) {
@@ -166,6 +170,22 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     dataStream?.intro_from ? Number(dataStream.intro_from) : 0,
   );
 
+  // Detect WatchAndSkipCredit visibility
+  const hasNextEpisode =
+    dataChannel?.episodes && dataChannel.episodes.length > 1;
+  const { isVisible: isWatchAndSkipCreditVisible } = useWatchAndSkipCredit(
+    dataStream?.end_content ? Number(dataStream.end_content) : 0,
+    hasNextEpisode,
+    () => {},
+  );
+
+  // Detect LimitAgeOverlay visibility
+  const isLimitAgeOverlayVisible = useMemo(() => {
+    return dataChannel?.maturity_rating?.position === 'BR';
+  }, [dataChannel?.maturity_rating]);
+
+  // No need for hook - use global variable directly
+
   const { showNoAdsGuide, setShowNoAdsGuide } = useNoAdsGuide({
     enableAds: !!dataStream?.enable_ads,
     noAdsBuyPackageInstream:
@@ -180,6 +200,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     isWatchCreditVisible: false, // TODO: Connect to watch credit state
     isStreamTvcVisible: !!showBroadcastSchedule, // Broadcast schedule overlay
     isContentWarningVisible: controlPopupType !== null || !!showModalLogin, // Mobile control popups or login modal
+    isLimitAgeOverlayVisible, // LimitAgeOverlay at BR position
+    isWatchAndSkipCreditVisible, // WatchAndSkipCredit component visibility
+    isSituationWarningVisible, // SituationWarning component visibility
   });
 
   // Lấy channelId từ dataChannel

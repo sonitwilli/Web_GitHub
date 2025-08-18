@@ -21,6 +21,7 @@ import { useAutoNextVideo } from '@/lib/hooks/useAutoNextVideo';
 import { useWatchAndSkipCredit } from '@/lib/hooks/useWatchAndSkipCredit';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useRouter } from 'next/router';
+import { setSituationWarningVisible } from '@/lib/hooks/useSituationWarningVisibility';
 
 // Raw warning data from server (with string timestamps)
 interface RawWarningData {
@@ -374,7 +375,12 @@ const WatchVideoComponent = () => {
                               duration={videoDuration ?? 0}
                             />
                             {warningData && warningData.length > 0 && (
-                              <SituationWarning warningData={warningData} />
+                              <SituationWarning
+                                warningData={warningData}
+                                onHandleShowSituationWarning={
+                                  setSituationWarningVisible
+                                }
+                              />
                             )}
                             {skipIntroVisible && (
                               <SkipIntro

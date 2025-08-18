@@ -55,6 +55,8 @@ export interface Profile {
   status_onboarding?: string;
   status_code?: number;
   msg_warning_switch?: string;
+  display_name?: string;
+  nickname?: string;
   pin?: string;
 }
 

@@ -14,6 +14,7 @@ import {
   MANUAL_PARSED_MANIFEST,
   PLAYER_NAME,
   RUNNING_MANIFEST_TYPE,
+  VIDEO_ID,
 } from '../constant/texts';
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -569,7 +570,34 @@ const getCodecName = ({ originalCodec }: { originalCodec: string }) => {
     return codecName;
   }
 };
+
+function getRemainingBufferedTime() {
+  try {
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (!video || !video.buffered || video.buffered.length === 0) {
+      return 0;
+    }
+
+    const currentTime = video.currentTime;
+    let remaining = 0;
+
+    for (let i = 0; i < video.buffered.length; i++) {
+      const start = video.buffered.start(i);
+      const end = video.buffered.end(i);
+
+      if (currentTime >= start && currentTime <= end) {
+        remaining = end - currentTime;
+        break;
+      }
+    }
+
+    return remaining;
+  } catch {
+    return 0;
+  }
+}
 export {
+  getRemainingBufferedTime,
   supportedVideoCodecs,
   parseHlsManifest,
   parseDashManifest,

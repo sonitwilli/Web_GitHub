@@ -38,7 +38,7 @@ const HeaderAds: React.FC = () => {
         <button
           type="button"
           aria-label="Đóng quảng cáo"
-          className="absolute cursor-pointer top-4 right-4 z-10 text-white/80 hover:text-white focus:outline-none"
+          className="absolute cursor-pointer top-4 right-4 z-1 text-white/80 hover:text-white focus:outline-none"
           onClick={() => dispatch(changeIsHeaderAdsClosed(true))}
         >
           <IoIosCloseCircleOutline size={24} />

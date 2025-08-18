@@ -24,6 +24,7 @@ export const useCreateNewProfile = ({
       name: string;
       avatar_id: string;
       avatar_url: string;
+      display_name: string;
       profile_type: string;
       pin?: string;
     }) => {
