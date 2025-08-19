@@ -496,6 +496,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           ref={videoRef}
           playsInline
           muted
+          controls={false}
+          webkit-playsinline="true"
           poster="/images/default-poster-horizontal.png"
           className={`w-full h-auto max-h-full block aspect-video ${
             !isFullscreen && !isExpanded ? 'xl:rounded-[16px]' : ''
