@@ -286,6 +286,8 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
           ref={videoRef}
           playsInline
           muted
+          controls={false}
+          webkit-playsinline="true"
           poster="/images/default-poster-horizontal.png"
           className={`w-full h-auto max-h-full ${
             !isFullscreen && !isExpanded ? 'xl:rounded-[16px]' : ''
