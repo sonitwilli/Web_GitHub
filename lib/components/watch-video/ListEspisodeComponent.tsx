@@ -47,6 +47,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
   const [nextBtnEnabled, setNextBtnEnabled] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const episodeRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const deviceWidth = window.innerWidth;
 
   const itemsPerPage = 15;
   const totalPages = useMemo(() => {
@@ -84,7 +85,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
   // Detect mobile device
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth <= 768);
+      setIsMobile(deviceWidth <= 768);
     };
 
     checkIsMobile();
@@ -273,8 +274,19 @@ const ListEspisodeComponent = ({ position }: Props) => {
     emblaApi.on('reInit', onSelect);
   }, [emblaApi]);
 
-  const scrollPrev = () => emblaApi?.scrollPrev();
-  const scrollNext = () => emblaApi?.scrollNext();
+  const scrollPrev = () => {
+    if (!emblaApi) return;
+    emblaApi.scrollTo(Math.max(emblaApi.selectedScrollSnap() - 3, 0));
+  };
+  const scrollNext = () => {
+    if (!emblaApi) return;
+    emblaApi.scrollTo(
+      Math.min(
+        emblaApi.selectedScrollSnap() + 3,
+        emblaApi.scrollSnapList().length - 1,
+      ),
+    );
+  };
 
   // Scroll to specific section when tab is clicked
   const scrollToSection = useCallback(
@@ -332,9 +344,19 @@ const ListEspisodeComponent = ({ position }: Props) => {
       }`}
     >
       <div
-        className={`flex flex-col gap-[16px] xl:w-[416px] bg-eerie-black border-b border-charleston-green p-[16px] ${
-          isFullscreen ? 'pl-[24px] pt-[32px] xl:w-full' : ''
+        className={`flex flex-col gap-[16px] bg-eerie-black border-b border-charleston-green p-[24px] ${
+          isMobile
+        ? `pl-[24px] pt-[32px]`
+        : isFullscreen
+        ? `pt-[32px] md:w-[520px]`
+        : 'xl:w-[416px]'
         }`}
+        style={isMobile ? 
+          (isFullscreen 
+            ? { width: deviceWidth } 
+            : { width: deviceWidth - 32 }
+          ) 
+          : undefined}
       >
         <span className="text-[16px] font-[500] tablet:font-[600] tablet:text-[18px]">
           Danh sách phát
@@ -343,14 +365,14 @@ const ListEspisodeComponent = ({ position }: Props) => {
         {/* PAGINATION CONTROL */}
         {dataEspisodes?.length > 15 ? (
           <div
-            className={`relative mb-2 pr-[16px] ${
+            className={`relative mb-2 pr-[32px] ${
               isFullscreen && position === 'fullscreen'
                 ? 'w-full'
-                : 'xl:w-[400px]'
+                : 'xl:w-[376px]'
             }`}
           >
             <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-[24px]">
+              <div className="flex gap-[16px] md:gap-[24px] ">
                 {Array.from({ length: totalPages }, (_, i) => {
                   const start = i * itemsPerPage + 1;
                   const end = Math.min(
@@ -403,7 +425,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
             {nextBtnEnabled && (
               <button
                 onClick={scrollNext}
-                className="flex justify-end absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer w-[46px]"
+                className="flex justify-end absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
                 style={{
                   background:
                     'linear-gradient(to right, rgba(27, 26, 25, 0) 0%, rgba(27, 26, 25, 0.8) 50%, rgba(27, 26, 25, 1) 100%)',
