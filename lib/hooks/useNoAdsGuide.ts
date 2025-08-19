@@ -39,6 +39,7 @@ interface UseNoAdsGuideReturn {
 
 // Constants
 const STORAGE_KEY_PREFIX = 'noads_guide_count_';
+const AUTO_HIDE_DELAY = 5000;
 
 // Utility functions
 const formatDateKey = (date: Date): string => {
@@ -282,9 +283,9 @@ export const useNoAdsGuide = ({
         clearMonitoringInterval();
       }
 
-      // setTimeout(() => {
-      //   setShowNoAdsGuide(false);
-      // }, AUTO_HIDE_DELAY);
+      setTimeout(() => {
+        setShowNoAdsGuide(false);
+      }, AUTO_HIDE_DELAY);
     }
   }, [showNoAdsGuide, clearMonitoringInterval]);
 

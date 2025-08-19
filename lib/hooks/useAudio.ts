@@ -185,8 +185,39 @@ export default function useAudio() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audios, playerName, dataChannel, streamType]);
 
+  function filterAudioTracks(audioList: any) {
+    try {
+      const seen = new Map();
+      const result = [];
+      for (const track of audioList) {
+        const key = `${track.X_CODEC}_${track.X_LANGUAGE}_${track.X_CHANNEL}`;
+        if (!seen.has(key)) {
+          // Lưu track đầu tiên làm chuẩn
+          seen.set(key, track);
+          result.push(track);
+        } else {
+          const reference = seen.get(key);
+          const bitrateDiff = Math.abs(track.X_BITRATE - reference.X_BITRATE);
+          // Nếu lệch bitrate >= 1000 thì giữ lại track này
+          if (bitrateDiff >= 1000) {
+            result.push(track);
+          }
+        }
+      }
+
+      return result;
+    } catch {
+      return [];
+    }
+  }
+
+  const filterdAudios = useMemo(() => {
+    const filteredList = filterAudioTracks(audiosAAC);
+    return filteredList;
+  }, [audiosAAC]);
+
   useEffect(() => {
-    if (audiosAAC) {
+    if (filterdAudios) {
       saveSessionStorage({
         data: [
           {
@@ -197,17 +228,22 @@ export default function useAudio() {
       });
     }
 
-    if (!audiosAAC?.length || audiosAAC.length < 2 || !isMetaDataLoaded) {
+    if (
+      !filterdAudios?.length ||
+      filterdAudios.length < 2 ||
+      !isMetaDataLoaded
+    ) {
       return;
     }
-    const found = audiosAAC?.find((x, index) => {
+
+    const found = filterdAudios?.find((x, index) => {
       let saved = '';
       if (streamType === 'channel' || streamType === 'event') {
         saved = localStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) || '';
       } else {
         saved = localStorage.getItem(SELECTED_AUDIO_LABEL) || '';
       }
-      const matched = audiosAAC?.find((y) => y.X_NAME === saved);
+      const matched = filterdAudios?.find((y) => y.X_NAME === saved);
       if (matched) {
         return x.X_NAME === matched.X_NAME;
       } else {
@@ -254,7 +290,14 @@ export default function useAudio() {
         }
       }
     }
-  }, [audiosAAC, streamType, playerName, isMetaDataLoaded, audios]);
+  }, [
+    audiosAAC,
+    streamType,
+    playerName,
+    isMetaDataLoaded,
+    audios,
+    filterdAudios,
+  ]);
 
   const clickAudio = (a: AudioItemType) => {
     setSelectedAudio(a);
@@ -325,5 +368,6 @@ export default function useAudio() {
     audiosAAC,
     clickAudio,
     containerRef,
+    filterdAudios,
   };
 }

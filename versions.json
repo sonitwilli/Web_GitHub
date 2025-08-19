@@ -1,6 +1,20 @@
 {
     "versions": [
         {
+            "version": "8.0.26",
+            "date": "Dự kiến",
+            "content": [
+                "[Web V5] Log Player",
+                "[WEB][Sự kiện] Lỗi không hiện 'LIVE' trên player sự kiện mode mobile",
+                "[WEB][PlayerVOD] Lỗi vẫn pause VOD sau khi thực hiện tua/tới lui 10s",
+                "[WEB][Sự kiện] Lỗi luôn play từ đầu sự kiện công chiếu",
+                "[WEB][Preview] Lỗi không play được previewVOD thuê phim trên Safari",
+                "[WEB][Login] Lỗi disable thiết bị hiện tại ở màn hình vượt quá thiết bị",
+                "[WEB][Truyền hình] Lỗi chỉ enable timeshift 24h cho kênh set timeshift 48h/ 72h",
+                "[WEB][V5][Guide mua gói] Lỗi không ẩn guide mua gói sau 5s"
+            ]
+        }, 
+        {
             "version": "8.0.25",
             "date": "Dự kiến",
             "content": [

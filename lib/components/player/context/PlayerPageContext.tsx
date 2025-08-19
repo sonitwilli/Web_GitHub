@@ -33,6 +33,7 @@ import {
   PLAYER_WRAPPER_ID,
   ROUTE_PATH_NAMES,
   TOKEN,
+  VIDEO_ID,
 } from '@/lib/constant/texts';
 import _ from 'lodash';
 import { userAgentInfo } from '@/lib/utils/ua';
@@ -1182,6 +1183,28 @@ export function PlayerPageContextProvider({ children }: Props) {
     const offset = getSeekPremier(dataEvent);
     setSeekOffsetInSeconds(offset || 0);
   }, [fetchChannelCompleted, dataEvent]);
+
+  const seekToOffset = useCallback(() => {
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (video && seekOffsetInSeconds) {
+      video.currentTime = seekOffsetInSeconds;
+    }
+  }, [seekOffsetInSeconds]);
+
+  useEffect(() => {
+    if (
+      dataEvent?.type === 'event' &&
+      dataEvent?.is_premier === '1' &&
+      seekOffsetInSeconds
+    ) {
+      seekToOffset();
+    }
+  }, [
+    dataEvent?.type,
+    dataEvent?.is_premier,
+    seekOffsetInSeconds,
+    seekToOffset,
+  ]);
 
   useEffect(() => {
     if (

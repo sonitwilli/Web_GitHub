@@ -27,13 +27,14 @@ export interface AudioItemType {
   X_GROUP_ID?: string;
   X_SAMPLE_RATE?: string;
   X_ID?: string;
+  X_BITRATE?: string;
 }
 
 export default function AudioButton() {
   const { setControlPopupType, isUserInactive } =
     useContext(PlayerWrapperContext);
 
-  const { open, setOpen, audiosAAC, containerRef } = useAudio();
+  const { open, setOpen, containerRef, filterdAudios } = useAudio();
   const { width } = useScreenSize();
 
   // Close menu when user becomes inactive
@@ -52,7 +53,7 @@ export default function AudioButton() {
     }
   };
 
-  if (!audiosAAC?.length || audiosAAC?.length < 2) {
+  if (!filterdAudios?.length || filterdAudios?.length < 2) {
     return;
   }
   return (

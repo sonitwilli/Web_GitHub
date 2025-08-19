@@ -6,14 +6,14 @@ interface Props {
   type?: ControlPopupType;
 }
 export default function AudioContent({ onClick, type = 'default' }: Props) {
-  const { selectedAudio, audiosAAC, clickAudio } = useAudio();
+  const { selectedAudio, clickAudio, filterdAudios } = useAudio();
 
   const click = (q: AudioItemType) => {
     clickAudio(q);
     if (onClick) onClick();
   };
 
-  if (!audiosAAC?.length || audiosAAC?.length < 2) {
+  if (!filterdAudios?.length || filterdAudios?.length < 2) {
     return;
   }
   return (
@@ -28,7 +28,7 @@ export default function AudioContent({ onClick, type = 'default' }: Props) {
         Âm thanh
       </div>
       <div className="pt-[8px]">
-        {audiosAAC?.map((ad, index) => (
+        {filterdAudios?.map((ad, index) => (
           <div
             key={index}
             className={`${

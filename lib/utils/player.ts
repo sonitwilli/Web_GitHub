@@ -161,6 +161,7 @@ export const detectHlsManifest = (manifestContent: string) => {
             X_DEFAULT: trackInfo.DEFAULT,
             X_GROUP_ID: trackInfo['GROUP-ID'],
             X_SAMPLE_RATE: trackInfo['SAMPLE-RATE'],
+            X_BITRATE: '-1',
           });
         }
       }
