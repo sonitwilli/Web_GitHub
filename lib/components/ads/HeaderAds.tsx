@@ -34,7 +34,7 @@ const HeaderAds: React.FC = () => {
         maxHeight: isScrolling ? '0px' : '300px', // Set reasonable max height for ads
       }}
     >
-      {isPathInRouteNames && (
+      {(isPathInRouteNames || currentPath.includes('block')) && (
         <button
           type="button"
           aria-label="Đóng quảng cáo"

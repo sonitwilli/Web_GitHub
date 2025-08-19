@@ -2,6 +2,7 @@ import { axiosInstance } from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 import { getCookie } from 'cookies-next';
 import { BLOCK_PAGE_SIZE } from '@/lib/constant/texts';
+import { getPageId } from '@/lib/utils/methods';
 
 export interface PageDataResponseType {
   msg?: string;
@@ -370,7 +371,7 @@ const getBlockItemData = async ({
         : pageSize
         ? parseInt(pageSize as string) + 1
         : 31,
-    page_id: page_id || '',
+    page_id: page_id || getPageId() || '',
   };
 
   const queries =
