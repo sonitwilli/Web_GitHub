@@ -21,18 +21,8 @@ import { HISTORY_TEXT } from '@/lib/constant/texts';
 export const getServerSideProps = (async (context) => {
   const { id } = context.params as { id: string };
   if (id === 'channel') {
-    // const cookie = req.headers.cookie || '';
-    // const parsed = parse(cookie);
     let defaultChannel = 'fpt-play';
     try {
-      // const res = await getSuggestChannels({
-      //   isServerSide: true,
-      //   cookies: parsed as CookiesType,
-      // });
-      // const list = res?.data?.data || [];
-      // if (list?.length) {
-      //   defaultChannel = list[0].id || 'fpt-play';
-      // }
       const res = await getChannels();
       defaultChannel = res?.data?.data?.default_channel || 'fpt-play';
     } catch {
@@ -40,7 +30,7 @@ export const getServerSideProps = (async (context) => {
     }
     return {
       redirect: {
-        destination: `/xem-truyen-hinh/${defaultChannel}?${HISTORY_TEXT.LANDING_PAGE}=1`,
+        destination: `/xem-truyen-hinh/${defaultChannel}?${HISTORY_TEXT.LANDING_PAGE}=0`,
         permanent: false,
       },
     };

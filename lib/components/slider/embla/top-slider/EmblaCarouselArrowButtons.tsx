@@ -31,8 +31,11 @@ export const usePrevNextButtons = (
   }, [emblaApi]);
 
   const onSelect = useCallback((emblaApi: EmblaCarouselType) => {
-    setPrevBtnDisabled(!emblaApi.canScrollPrev());
-    setNextBtnDisabled(!emblaApi.canScrollNext());
+    const canScrollPrev = emblaApi.canScrollPrev();
+    const canScrollNext = emblaApi.canScrollNext();
+
+    setPrevBtnDisabled(!canScrollPrev);
+    setNextBtnDisabled(!canScrollNext);
   }, []);
 
   useEffect(() => {

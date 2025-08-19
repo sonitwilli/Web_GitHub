@@ -131,16 +131,18 @@ export default function PageBlocks({
             isFirstBlock={index === firstBlockIndex}
           />
         ))}
-        {!shouldHideAds && <BottomBannerAds />}
       </>
     );
-  }, [blocks, keywordSearch, handleBlockEmpty, firstBlockIndex, shouldHideAds]);
+  }, [blocks, keywordSearch, handleBlockEmpty, firstBlockIndex]);
 
   if (typeof blocks === 'undefined' || !blocks?.length) {
     return <div className="h-screen"></div>;
   }
 
   return (
-    <div className="flex flex-col gap-[40px] xl:gap-[80px]">{blockItems}</div>
+    <>
+      <div className="flex flex-col gap-[40px] xl:gap-[80px]">{blockItems}</div>
+      {!shouldHideAds && <BottomBannerAds />}
+    </>
   );
 }

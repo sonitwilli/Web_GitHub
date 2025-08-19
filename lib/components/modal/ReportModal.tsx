@@ -135,7 +135,7 @@ const ReportModal: React.FC<ReportModalProps> = ({
     <ModalWrapper
       open={open}
       onHidden={onHidden}
-      contentClassName="w-full max-w-[576px] bg-eerie-black rounded-2xl p-8 text-white shadow-lg relative"
+      contentClassName="w-full max-w-[576px] max-h-[calc(100dvh-30px)] overflow-y-auto bg-eerie-black rounded-2xl p-8 text-white shadow-lg relative"
       overlayClassName="fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]"
       shouldCloseOnOverlayClick={false}
       htmlOpenClassName="overflow-hidden"
