@@ -1,7 +1,6 @@
 import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
-import ReactDOM from 'react-dom';
 import VodRating from '../rating/VodRating';
 import { createLink, scaleImageUrl } from '@/lib/utils/methods';
 import styles from './BlockHoverItem.module.css';
@@ -28,30 +27,6 @@ interface Props {
 }
 
 export default function BlockHoverItem({}: Props) {
-  const [portalEl, setPortalEl] = useState<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (typeof document === 'undefined') return undefined;
-    let el = document.getElementById('hover_slide_card_root') as HTMLElement | null;
-    let created = false;
-    if (!el) {
-      el = document.createElement('div');
-      el.id = 'hover_slide_card_root';
-      document.body.appendChild(el);
-      created = true;
-    }
-    // position portal at top-left of viewport and keep it under header (header uses z-10)
-    el.style.position = 'absolute';
-    el.style.top = '0';
-    el.style.left = '0';
-    el.style.zIndex = '5';
-    setPortalEl(el);
-
-    return () => {
-      setPortalEl(null);
-      if (created && el && el.parentNode) el.parentNode.removeChild(el);
-    };
-  }, []);
   const appCtx = useContext(AppContext);
   const {
     hoveredBlock: block,
@@ -158,15 +133,15 @@ export default function BlockHoverItem({}: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
-  const hoverCard = (
+  return (
     <div
       id="hover_slide_card"
-      className={`${styles.hoveredItem} rounded-[16px] absolute top-[50%] left-[50%] w-[354px] shadow-2xs z-[5] -translate-x-1/2 -translate-y-1/2 opacity-1`}
+      className={`${styles.hoveredItem} rounded-[16px] absolute top-[50%] left-[50%] w-[354px] shadow-2xs z-[-1] -translate-x-1/2 -translate-y-1/2 opacity-1`}
       onMouseLeave={handleOnMouseLeave}
     >
       <div
         ref={playerContainerRef}
-        className="w-full absolute z-[4] top-0 left-0 ease-out duration-400 scale-0 bg-eerie-black rounded-[16px]"
+        className="w-full absolute z-[1] top-0 left-0 ease-out duration-400 scale-0 bg-eerie-black rounded-[16px]"
         style={{
           boxShadow: '0px 6px 20px 0px rgba(0, 0, 0, 0.5)',
         }}
@@ -249,7 +224,7 @@ export default function BlockHoverItem({}: Props) {
         </div>
       </div>
 
-  <div className="w-full relative z-[3] opacity-0 pointer-events-none">
+      <div className="w-full relative -z[1] opacity-0 pointer-events-none">
         <div className="w-full relative">
           <img
             key={playerKey}
@@ -314,10 +289,4 @@ export default function BlockHoverItem({}: Props) {
       </div>
     </div>
   );
-
-  if (portalEl) {
-    return ReactDOM.createPortal(hoverCard, portalEl);
-  }
-
-  return hoverCard;
 }
