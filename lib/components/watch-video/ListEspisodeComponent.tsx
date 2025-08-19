@@ -344,17 +344,17 @@ const ListEspisodeComponent = ({ position }: Props) => {
       }`}
     >
       <div
-        className={`flex flex-col gap-[16px] bg-eerie-black border-b border-charleston-green p-[16px] ${
+        className={`flex flex-col gap-[16px] bg-eerie-black border-b border-charleston-green p-[24px] ${
           isMobile
         ? `pl-[24px] pt-[32px]`
         : isFullscreen
-        ? 'pl-[24px] pt-[32px] md:w-[520px]'
+        ? `pt-[32px] md:w-[520px]`
         : 'xl:w-[416px]'
         }`}
         style={isMobile ? 
           (isFullscreen 
             ? { width: deviceWidth } 
-            : { width: deviceWidth - 16 }
+            : { width: deviceWidth - 32 }
           ) 
           : undefined}
       >
@@ -368,11 +368,11 @@ const ListEspisodeComponent = ({ position }: Props) => {
             className={`relative mb-2 pr-[32px] ${
               isFullscreen && position === 'fullscreen'
                 ? 'w-full'
-                : 'xl:w-[400px]'
+                : 'xl:w-[376px]'
             }`}
           >
             <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-[24px]">
+              <div className="flex gap-[16px] md:gap-[24px] ">
                 {Array.from({ length: totalPages }, (_, i) => {
                   const start = i * itemsPerPage + 1;
                   const end = Math.min(
