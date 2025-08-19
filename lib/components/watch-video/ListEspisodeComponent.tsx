@@ -92,7 +92,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
     window.addEventListener('resize', checkIsMobile);
 
     return () => window.removeEventListener('resize', checkIsMobile);
-  }, []);
+  }, [deviceWidth]);
 
   // Reset states when fullscreen mode changes
   useEffect(() => {
