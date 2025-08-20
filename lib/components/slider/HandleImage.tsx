@@ -50,7 +50,7 @@ export default function HandleImage({
     } else {
       return imageRadius;
     }
-  }, [imageRadius]);
+  }, [imageRadius, block?.type]);
   const placeHolder = useMemo(() => {
     if (isChannel) {
       return '/images/placeholder_channel.png';

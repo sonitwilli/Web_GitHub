@@ -990,6 +990,26 @@ export function PlayerPageContextProvider({ children }: Props) {
             dataPlaylist = playlistDetail.data.data;
           }
 
+          // If route doesn't include a specific video (slug[1]) but playlist has videos,
+          // redirect immediately to the first video to avoid showing the intermediate page.
+          const slugsAfterFetch = router?.query?.slug;
+          const videosAfterFetch = dataPlaylist?.videos;
+          if (
+            videosAfterFetch &&
+            videosAfterFetch.length > 0 &&
+            (!slugsAfterFetch || !slugsAfterFetch[1]) &&
+            !isRedirecting
+          ) {
+            const firstVideo = videosAfterFetch[0];
+            const rawSlug = Array.isArray(slugsAfterFetch) ? slugsAfterFetch[0] : slugsAfterFetch;
+            if (rawSlug) {
+              setIsRedirecting(true);
+              // use replace to avoid extra history entry
+              router.replace(`/playlist/${rawSlug}/${firstVideo.id}`);
+              return { channelDetail, dataPlaylist };
+            }
+          }
+
           const videos = dataPlaylist?.videos;
           const found = videos?.find((x) => x.id === slugs?.[1]);
 
