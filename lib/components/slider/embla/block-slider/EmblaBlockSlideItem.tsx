@@ -108,7 +108,7 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
           hoverItem.style.left = `${centerAX}px`;
           hoverItem.style.top = `${centerAY}px`;
           hoverItem.style.opacity = `1`;
-          hoverItem.style.zIndex = `9999`;
+          hoverItem.style.zIndex = `1`;
           hoverItem.style.pointerEvents = `auto`;
         }
       }
