@@ -24,9 +24,14 @@ export type VIDEO_CODEC_ERROR = {
 interface Props {
   dataChannel?: ChannelDetailType;
   dataStream?: StreamItemType;
+  queryEpisodeNotExist?: boolean;
 }
 
-export default function useCodec({ dataChannel, dataStream }: Props) {
+export default function useCodec({
+  dataChannel,
+  dataStream,
+  queryEpisodeNotExist,
+}: Props) {
   // const { codecError } = useAppSelector((s) => s.player);
   const dispatch = useAppDispatch();
   const getCodecUrls = useCallback(
@@ -161,6 +166,11 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
         return;
       }
       const channelInfo = channelParam || dataChannel || {};
+
+      if (queryEpisodeNotExist && channelInfo?.trailer_info?.url) {
+        return channelInfo?.trailer_info?.url;
+      }
+
       const streamInfo = streamParam || dataStream || {};
       const href = window.location.href;
       const isLive =
@@ -296,7 +306,7 @@ export default function useCodec({ dataChannel, dataStream }: Props) {
         return codecUrls?.H264_CODEC;
       }
     },
-    [dataChannel, dataStream, getCodecUrls, dispatch],
+    [dataChannel, dataStream, getCodecUrls, dispatch, queryEpisodeNotExist],
   );
 
   const urlToPlay = useMemo(() => {

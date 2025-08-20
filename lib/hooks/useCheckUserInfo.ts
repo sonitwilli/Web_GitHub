@@ -4,7 +4,14 @@ import { changeUserInfo } from '@/lib/store/slices/userSlice';
 import { getUserInfo } from '@/lib/api/user';
 import { fetchListProfiles } from '@/lib/utils/multiProfiles/fetchListProfiles';
 import { setCookie, deleteCookie } from 'cookies-next';
-import { NUMBER_PR, TOKEN, TYPE_PR, USER } from '@/lib/constant/texts';
+import {
+  NUMBER_PR,
+  PROFILE_TYPES,
+  TOKEN,
+  TYPE_PR,
+  USER,
+} from '@/lib/constant/texts';
+import { trackingLoginProfileLog104 } from '../tracking/trackingProfile';
 
 export const useCheckUserInfo = () => {
   const [checkLoginComplete, setCheckLoginComplete] = useState(false);
@@ -15,6 +22,17 @@ export const useCheckUserInfo = () => {
     try {
       if (localStorage.getItem(TOKEN)) {
         const res = await getUserInfo();
+        const firstNUM = await localStorage.getItem(NUMBER_PR);
+        if (firstNUM && firstNUM !== res?.data?.profile?.profile_id) {
+          trackingLoginProfileLog104({
+            Status:
+              res?.data?.profile?.profile_type === PROFILE_TYPES.KID_PROFILE
+                ? 'Kid'
+                : 'Normal',
+            ItemName: res?.data?.profile?.name,
+            isLandingPage: '0',
+          });
+        }
         dispatch(changeUserInfo(res?.data || {}));
         localStorage.setItem(NUMBER_PR, res?.data?.profile?.profile_id || '');
         localStorage.setItem(TYPE_PR, res?.data?.profile?.profile_type || '');

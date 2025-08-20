@@ -138,17 +138,6 @@ const LibrarySlide: React.FC<PropType> = (props) => {
     onNextButtonClick,
   } = usePrevNextButtons(emblaMainApi);
 
-  // Debug log for button visibility
-  useEffect(() => {
-    console.log('LibrarySlide button states:', {
-      prevBtnDisabled,
-      nextBtnDisabled,
-      queryId,
-      prevButtonHidden: prevBtnDisabled,
-      nextButtonHidden: nextBtnDisabled || queryId,
-    });
-  }, [prevBtnDisabled, nextBtnDisabled, queryId]);
-
   if (slidesItems?.length === 0 && queryId) {
     return <NoData />;
   }

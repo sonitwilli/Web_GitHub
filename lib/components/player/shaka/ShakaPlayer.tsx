@@ -67,6 +67,7 @@ type Props = {
   src?: string; // Ưu tiên nếu có
   dataChannel?: ChannelDetailType;
   dataStream?: StreamItemType;
+  queryEpisodeNotExist?: boolean;
 };
 
 const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
@@ -97,13 +98,17 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     streamType,
     previewHandled,
     isExpanded,
-
+    queryEpisodeNotExist,
     clearErrorInterRef,
   } = usePlayerPageContext();
 
   const { handleIntervalCheckErrors, convertShakaError } = usePlayer();
 
-  const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
+  const { getUrlToPlay } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const { isFullscreen } = useAppSelector((s) => s.player);
   const { historyData } = useAppSelector((s) => s.vod);
   const [isUserInteractive, setIsUserInteractive] = useState(false);
@@ -437,6 +442,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       : showLoginPlayer && loginManifestUrl
       ? loginManifestUrl
       : getUrlToPlay();
+
+    console.log('finalUrl :>> ', finalUrl);
 
     if (finalUrl) {
       if (typeof window.shaka !== 'undefined') {

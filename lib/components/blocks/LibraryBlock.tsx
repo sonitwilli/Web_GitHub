@@ -40,13 +40,13 @@ export default function LibraryBlock() {
   useEffect(() => {
     if (blocksSortedRecommendNotHighlight) {
       setIsEmpty(
-        new Array(blocksSortedRecommendNotHighlight.length).fill(false)
+        new Array(blocksSortedRecommendNotHighlight.length).fill(false),
       );
       setIsError(
-        new Array(blocksSortedRecommendNotHighlight.length).fill(false)
+        new Array(blocksSortedRecommendNotHighlight.length).fill(false),
       );
       reloadRefs.current = new Array(
-        blocksSortedRecommendNotHighlight.length
+        blocksSortedRecommendNotHighlight.length,
       ).fill(() => {});
     }
   }, [blocksSortedRecommendNotHighlight]);
@@ -77,7 +77,7 @@ export default function LibraryBlock() {
   // Filter blocks based on query id
   const filteredBlocks = queryId
     ? blocksSortedRecommendNotHighlight.filter(
-        (block: BlockItemType) => block.id === queryId
+        (block: BlockItemType) => block.id === queryId,
       )
     : blocksSortedRecommendNotHighlight;
 
@@ -170,7 +170,8 @@ export default function LibraryBlock() {
 
   if (
     (allBlocksEmpty && !allBlocksError) ||
-    (filteredBlocks.length === 1 && isEmpty[0])
+    (filteredBlocks.length === 1 && isEmpty[0]) ||
+    (filteredBlocks.length === 1 && isEmpty[1])
   ) {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
@@ -207,7 +208,7 @@ export default function LibraryBlock() {
       <div className="flex flex-col gap-[56px]">
         {filteredBlocks.map((block: BlockItemType, filteredIndex: number) => {
           const originalIndex = blocksSortedRecommendNotHighlight.findIndex(
-            (originalBlock: BlockItemType) => originalBlock.id === block.id
+            (originalBlock: BlockItemType) => originalBlock.id === block.id,
           );
           return (
             <LibraryBlockItem

@@ -476,7 +476,7 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   ChangeSubtitles: '',
   EnterWebview: '',
   AccessProfile: 'AccessProfile',
-  RegisteredProfile: 'AccessProfile',
+  RegisteredProfile: 'RegisterProfile',
   ModifiedProfile: '',
   RemovedProfile: '',
   Login: 'Login',

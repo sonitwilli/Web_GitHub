@@ -55,6 +55,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     videoCurrentTime,
     videoDuration,
     videoHeight,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
 
   const { showModalShare, setShowModalShare } = useModalToggle({});
@@ -325,7 +326,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
         const existedAds = ins
           ? (ins as HTMLElement).children.length > 0
           : false;
-          setAdsExist(existedAds);
+        setAdsExist(existedAds);
       } catch {}
     };
 
@@ -337,7 +338,13 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   return (
     <>
-      <div className={`${(isHeaderAdsClosed || isHeaderAdsClosed === null || !adsExist) ? 'mt-[96px]' : 'mt-4'} ${isExpanded ? '' : 'chat-container'}`}>
+      <div
+        className={`${
+          isHeaderAdsClosed || isHeaderAdsClosed === null || !adsExist
+            ? 'mt-[96px]'
+            : 'mt-4'
+        } ${isExpanded ? '' : 'chat-container'}`}
+      >
         <div
           className={`${
             isExpanded
@@ -409,6 +416,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                         {isDrm ? (
                           <>
                             <ShakaPlayer
+                              queryEpisodeNotExist={queryEpisodeNotExist}
                               dataChannel={dataChannel}
                               dataStream={dataStream}
                             />
@@ -417,6 +425,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                         ) : (
                           <>
                             <HlsPlayer
+                              queryEpisodeNotExist={queryEpisodeNotExist}
                               dataChannel={dataChannel}
                               dataStream={dataStream}
                             />

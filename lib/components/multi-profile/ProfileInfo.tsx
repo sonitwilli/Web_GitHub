@@ -11,8 +11,8 @@ import ErrorData from '@/lib/components/error/ErrorData';
 import Loading from '@/lib/components/common/Loading';
 import { setProfiles } from '@/lib/store/slices/multiProfiles';
 import { useAppSelector } from '@/lib/store';
-
-
+import { trackingEnterProfileLog101 } from '@/lib/tracking/trackingProfile';
+import { PROFILE_TYPES } from '@/lib/constant/texts';
 
 const ProfileInfo: React.FC = () => {
   const {
@@ -32,17 +32,28 @@ const ProfileInfo: React.FC = () => {
   const router = useRouter();
   const { messageConfigs } = useAppSelector((state) => state.app);
 
-  // Tương đương với mounted
+  // Tương đương với mounted - chỉ gọi getListProfile một lần
   useEffect(() => {
     // Lấy danh sách hồ sơ
     getListProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Tracking riêng biệt khi defaultProfile thay đổi và đã có giá trị
   useEffect(() => {
-    console.log('profilesData', profilesData);
+    if (defaultProfile?.profile_id) {
+      trackingEnterProfileLog101({
+        Status:
+          defaultProfile?.profile_type === PROFILE_TYPES.KID_PROFILE
+            ? 'Kid'
+            : 'Normal',
+      });
+    }
+  }, [defaultProfile?.profile_id, defaultProfile?.profile_type]);
+
+  useEffect(() => {
     dispatch(setProfiles(profilesList));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profilesList]);
 
   useEffect(() => {
@@ -124,8 +135,12 @@ const ProfileInfo: React.FC = () => {
             return;
           }}
           modalContent={{
-            title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
-            content: messageConfigs?.profile?.action_delete?.msg_deleted || 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+            title:
+              messageConfigs?.profile?.action_delete?.title_deleted ||
+              'Hồ sơ đã bị xóa',
+            content:
+              messageConfigs?.profile?.action_delete?.msg_deleted ||
+              'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
             buttons: {
               accept: 'Xác nhận',
             },

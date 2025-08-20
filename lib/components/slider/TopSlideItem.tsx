@@ -137,7 +137,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
               }}
             />
             <img
-              src="/images/top_slide_shadow3.png"
+              src="/images/Mask_High-light_New.png"
               alt="bg"
               className="w-full h-[101%] absolute bottom-0 left-0 translate-y-[5px]"
             />
@@ -162,7 +162,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
             imageRadius="rounded-0"
           />
           <img
-            src="/images/top_slide_shadow3.png"
+            src="/images/Mask_High-light_New.png"
             alt="bg"
             className="w-full h-full absolute top-0 left-0"
           />

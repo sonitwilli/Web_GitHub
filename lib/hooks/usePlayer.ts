@@ -68,9 +68,14 @@ export default function usePlayer() {
     streamType,
     setRealPlaySeconds,
     clearErrorInterRef,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
   const { handleLoadAds } = useAdsPlayer();
-  const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
+  const { getUrlToPlay } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { openPlayerErrorModal } = useContext(PlayerWrapperContext);

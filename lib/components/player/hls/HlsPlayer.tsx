@@ -33,6 +33,7 @@ type HlsPlayerProps = {
   srcTimeShift?: string; // Ưu tiên nếu có
   dataChannel?: ChannelDetailType | VodDetailType;
   dataStream?: StreamItemType;
+  queryEpisodeNotExist?: boolean;
 };
 
 const HlsPlayer: React.FC<HlsPlayerProps> = ({

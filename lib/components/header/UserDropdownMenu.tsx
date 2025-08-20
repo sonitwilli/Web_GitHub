@@ -13,6 +13,7 @@ import {
   HAVING_ERROR,
   TYPE_PR,
   ALREADY_SHOWN_MODAL_MANAGEMENT_CODE,
+  PROFILE_TYPES,
 } from '@/lib/constant/texts';
 import ConfirmModal from '@/lib/components/modal/ModalConfirm';
 import { useProfileContext } from '@/lib/components/contexts/ProfileContext';
@@ -33,6 +34,7 @@ import { ModalManagementCodeRef } from '@/lib/components/modal/ModalManagementCo
 import { updateProfile } from '@/lib/api/multi-profiles';
 import { changeUserInfo } from '@/lib/store/slices/userSlice';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import { trackingLoginProfileLog104 } from '@/lib/tracking/trackingProfile';
 
 interface Props {
   profiles: Profile[];
@@ -141,8 +143,11 @@ export default function UserDropdownMenu({
       if (checkPinResult?.defaultData?.error_code === '3') {
         setIsErrorCode('3');
         setModalContent({
-          title: checkPinResult?.defaultData?.message?.title || 'Hồ sơ đã bị xóa',
-          content: checkPinResult?.defaultData?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+          title:
+            checkPinResult?.defaultData?.message?.title || 'Hồ sơ đã bị xóa',
+          content:
+            checkPinResult?.defaultData?.message?.content ||
+            'Hồ sơ này đã bị xóa bởi thiết bị khác',
           buttons: {
             accept: 'Đóng',
           },
@@ -155,7 +160,10 @@ export default function UserDropdownMenu({
         return;
       }
     }
-    const updateResult = await updateProfile({ pin, type: pinModalType }, selectedProfile);
+    const updateResult = await updateProfile(
+      { pin, type: pinModalType },
+      selectedProfile,
+    );
     setLoading(false);
 
     if (updateResult?.data?.status === '0') {
@@ -225,10 +233,17 @@ export default function UserDropdownMenu({
       return;
     }
     if (loginResult?.success) {
+      console.log(1111111111, loginResult);
+      
+      trackingLoginProfileLog104({
+        Status: loginResult?.data?.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+        ItemName: selectedProfile?.name,
+        isLandingPage: '1',
+      });
+
       handleLoginSuccess({ profile: loginResult?.data || {} });
       setShowPinModal(false);
     } else if (loginResult?.defaultData?.error_code === '3') {
-      console.log('loginResult', loginResult);
       setIsErrorCode('3');
       setModalContent({
         title: loginResult?.defaultData?.message?.title || 'Hồ sơ đã bị xóa',

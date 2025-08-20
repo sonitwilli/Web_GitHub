@@ -97,6 +97,7 @@ function ChannelPageContent() {
     channelNotFound,
     notFoundError,
     videoHeight,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
   const dispatch = useDispatch();
   const { width } = useScreenSize();
@@ -363,12 +364,14 @@ function ChannelPageContent() {
                                   src={srcTimeShift}
                                   dataChannel={dataChannel}
                                   dataStream={dataStream}
+                                  queryEpisodeNotExist={queryEpisodeNotExist}
                                 />
                               ) : (
                                 <HlsPlayer
                                   srcTimeShift={srcTimeShift}
                                   dataChannel={dataChannel}
                                   dataStream={dataStream}
+                                  queryEpisodeNotExist={queryEpisodeNotExist}
                                 />
                               )}
                             </>

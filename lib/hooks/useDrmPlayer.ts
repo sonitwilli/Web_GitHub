@@ -38,10 +38,15 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
     isTDM,
     setErrorFairPlay,
     errorFairPlay,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
   const router = useRouter();
   const playerWrapperCtx = useContext(PlayerWrapperContext);
-  const { urlToPlay } = useCodec({ dataChannel, dataStream });
+  const { urlToPlay } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const { setIp, setFingerPrintData, setShowFingerPrintClient } =
     playerWrapperCtx;
 

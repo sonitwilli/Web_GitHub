@@ -190,6 +190,8 @@ type ContextType = {
   clearErrorInterRef?: () => void;
   errorFairPlay?: boolean;
   setErrorFairPlay?: (v: boolean) => void;
+  queryEpisodeNotExist?: boolean;
+  setQueryEpisodeNotExist?: (v: boolean) => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -207,6 +209,7 @@ type Props = {
 };
 
 export function PlayerPageContextProvider({ children }: Props) {
+  const [queryEpisodeNotExist, setQueryEpisodeNotExist] = useState(false);
   const isBackgroundRetryRef = useRef(false);
   const { isFullscreen } = useAppSelector((s) => s.player);
   const [hlsErrors, setHlsErrors] = useState<ErrorData[]>([]);
@@ -857,6 +860,33 @@ export function PlayerPageContextProvider({ children }: Props) {
             }
           } else if (status === 406) {
             setRequirePurchaseData(response?.data);
+          } else if (status === 410) {
+            console.log('--- QUERY EPISODE NOT EXIST');
+            // Case tập không tồn tại: ví dụ /xem-video/title-id/tap-99, API stream trả về status http 410
+            // 1/ List episode lớn hơn 0 => play tập 1, url sẽ là /xem-video/abc-id/tap-1
+            // 2/ List episode rỗng, nhưng API content/vod có trả về field trailer_info.url => play trailer_info.url.  URL vẫn là /xem-video/title-id/tap-99
+            // 3/ List episode rỗng, API content/vod không trả về field trailer_info.url => show banner image theo thứ tự ưu tiên landscape_title => landscape. URL vẫn là /xem-video/title-id/tap-99
+            const list = channelDetailData?.episodes;
+            if (list?.length) {
+              console.log('--- EPISODE LIST', list, router.query);
+              let first = list?.find((item) => item.id === '0');
+              if (!first) {
+                first = list[0];
+              }
+              if (first) {
+                const slug = Array.isArray(router.query.slug)
+                  ? [...router.query.slug]
+                  : [router.query.slug];
+                slug[1] = `tap-${Number(first.id) + 1}`;
+                const { slug: useSlug, ...rest } = router.query;
+                router.push({
+                  pathname: `/xem-video/${slug.join('/')}`,
+                  query: rest,
+                });
+                return useSlug;
+              }
+            }
+            setQueryEpisodeNotExist(true);
           }
         }
         return {};
@@ -1333,6 +1363,7 @@ export function PlayerPageContextProvider({ children }: Props) {
         clearErrorInterRef,
         errorFairPlay,
         setErrorFairPlay,
+        queryEpisodeNotExist,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

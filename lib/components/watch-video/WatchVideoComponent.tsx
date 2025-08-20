@@ -86,6 +86,7 @@ const WatchVideoComponent = () => {
     previewHandled,
     dataPlaylist,
     videoHeight,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
   const router = useRouter();
@@ -365,6 +366,7 @@ const WatchVideoComponent = () => {
                             <ShakaPlayer
                               dataChannel={dataChannel}
                               dataStream={dataStream}
+                              queryEpisodeNotExist={queryEpisodeNotExist}
                             />
                             <LimitAgeOverlay
                               maturityRating={

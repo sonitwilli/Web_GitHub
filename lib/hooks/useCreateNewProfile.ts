@@ -6,6 +6,8 @@ import {
 } from '@/lib/api/multi-profiles'; // Adjust path based on your file structure
 import { showToast } from '@/lib/utils/globalToast';
 import { useRouter } from 'next/router';
+import { trackingRegisteredProfileLog102 } from '../tracking/trackingProfile';
+import { PROFILE_TYPES } from '../constant/texts';
 
 interface UseCreateNewProfileProps {
   setLoadingCreate?: (value: boolean) => void;
@@ -39,6 +41,10 @@ export const useCreateNewProfile = ({
           showToast({
             title: data?.message?.title,
             desc: data?.message?.content || '',
+          });
+          trackingRegisteredProfileLog102({
+            ItemId: params.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+            ItemName: params.name,
           });
           router.push('/tai-khoan?tab=ho-so');
         } else {
