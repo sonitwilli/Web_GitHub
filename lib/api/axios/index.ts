@@ -7,9 +7,9 @@ import {
 } from '@/lib/constant/texts';
 import { base64, md5 } from '@/lib/utils/hash';
 import axios from 'axios';
-import dayjs from 'dayjs';
 import { getCookie } from 'cookies-next';
 import { browserRealVersion } from '@/lib/utils/getBrowser';
+import moment from 'moment';
 
 export interface BrowserInfo {
   name?: string;
@@ -64,7 +64,7 @@ axiosInstance.interceptors.request.use(
         localStorage.setItem('browser_info', JSON.stringify(userAgentInfo));
       }
     }
-    const currentDate = dayjs().format('DD-MM-YYYY');
+    const currentDate = moment().format('DD-MM-YYYY');
     // device_id
     if (
       $config?.url?.includes('message_broker/mqtt') &&

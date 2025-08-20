@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { UserAgentType } from '@/lib/utils/methods';
-import dayjs from 'dayjs';
 import { DEFAULT_API_SUFFIX, NUMBER_PR, TYPE_PR } from '@/lib/constant/texts';
 import { base64, md5 } from '@/lib/utils/hash';
+import moment from 'moment';
 
 export interface BrowserInfo {
   name?: string;
@@ -37,7 +37,7 @@ const axiosServer = ({ cookies }: { cookies: any }) => {
         profileId = cookies[NUMBER_PR];
         profileType = cookies[TYPE_PR];
       }
-      const currentDate = dayjs().format('DD-MM-YYYY');
+      const currentDate = moment().format('DD-MM-YYYY');
       // device_id
       $config.headers['X-Did'] = deviceId;
       // profile

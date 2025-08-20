@@ -90,16 +90,18 @@ export default function ChannelItem({
           imageRadius="rounded-[12px]"
         />
       )}
-
-      {channel.timeshift_limit &&
-        ['12', '24', '48', '72'].includes(channel.timeshift_limit) &&
-        channel?.show_icon_timeshift === '1' && (
+      {channel.timeshift_limit && channel?.show_icon_timeshift === '1' && (
+        <div className="absolute right-[6px] bottom-[6px] w-[28px] h-[28px]">
           <img
-            src={`/images/timeshift/${channel?.timeshift_limit}.png`}
+            src={`/images/timeshift/timeshift_wrapper.png`}
             alt="timeshift"
-            className="absolute right-[6px] bottom-[6px] w-[28px] h-[28px]"
+            className="w-full h-full object-contain"
           />
-        )}
+          <span className="text-[10px] font-[800] text-fpl absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2">
+            {channel.timeshift_limit}
+          </span>
+        </div>
+      )}
 
       {channel?.id === dataChannel?._id && (
         <img

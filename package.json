@@ -23,7 +23,6 @@
     "cookies-next": "^5.1.0",
     "copy-to-clipboard": "^3.3.3",
     "cross-env": "^7.0.3",
-    "dayjs": "^1.11.13",
     "dompurify": "^3.2.6",
     "dotenv": "^16.5.0",
     "embla-carousel": "^8.6.0",
