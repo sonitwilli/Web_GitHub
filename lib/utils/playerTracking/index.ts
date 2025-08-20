@@ -461,8 +461,7 @@ export const getPlayerParams = () => {
   } = getContentData();
   let sub = sessionStorage.getItem(SELECTED_SUBTITLE_LABEL);
   if (sub) {
-    /*@ts-ignore*/
-    sub = KEY_LANGUAGES_AUDIO_CODECS[s] || sub;
+    sub = KEY_LANGUAGES_AUDIO_CODECS[sub as keyof typeof KEY_LANGUAGES_AUDIO_CODECS] || sub;
   }
   const realDuration =
     Duration || sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || 0;

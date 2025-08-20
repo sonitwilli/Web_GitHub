@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { UAParser } from 'ua-parser-js';
-import { TAB_ID } from '@/lib/constant/texts';
+import { TAB_ID, TYPE_PR } from '@/lib/constant/texts';
 import { md5 } from './hash';
 import {
   BlockItemType,
@@ -561,3 +561,36 @@ export const loadJsManual = ({
     if (cb) cb();
   };
 };
+
+export function getPageId() {
+  try {
+    if (typeof window === 'undefined') {
+      return '';
+    }
+    const profileType = localStorage.getItem(TYPE_PR) || '';
+    const path = window.location.pathname;
+
+    if (
+      path === '/' ||
+      path.includes('/trang/home') ||
+      path.includes('/trang/home-kids')
+    ) {
+      return profileType === '2' ? 'home-kids' : 'home';
+    }
+
+    if (path.includes('/trang/')) {
+      const categoryId = path.split('/trang/')[1]?.split('/')[0];
+      return categoryId || '';
+    }
+
+    if (path.includes('/xem-truyen-hinh/')) {
+      return 'channel';
+    }
+
+    if (path.includes('/tai-khoan')) {
+      return 'library';
+    }
+
+    return '';
+  } catch {}
+}

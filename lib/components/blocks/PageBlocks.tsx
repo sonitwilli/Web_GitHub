@@ -25,7 +25,7 @@ export default function PageBlocks({
 }: Props) {
   const dispatch = useAppDispatch();
   const [emptyBlocks, setEmptyBlocks] = useState<Set<number>>(new Set());
-  const [firstBlockIndex, setFirstBlockIndex] = useState<number>(1);
+  const [firstBlockIndex, setFirstBlockIndex] = useState<number>(0);
   const totalBlocksRef = useRef<number>(0);
   const router = useRouter();
   const [shouldHideAds, setShouldHideAds] = useState(false);
@@ -52,14 +52,15 @@ export default function PageBlocks({
   // Reset empty blocks when keyword or blocks change
   useEffect(() => {
     setEmptyBlocks(new Set());
-    setFirstBlockIndex(1); // Reset về index 1 ban đầu
+    setFirstBlockIndex(0); // Reset về index 1 ban đầu
   }, [keywordSearch, blocks]);
 
   // Tự động cập nhật firstBlockIndex khi block hiện tại empty
   useEffect(() => {
     if (!blocks?.length) return;
+
     // Tìm block đầu tiên không empty, bắt đầu từ index 1
-    let newFirstBlockIndex = 1;
+    let newFirstBlockIndex = 0;
 
     while (
       newFirstBlockIndex < blocks.length &&
@@ -131,16 +132,18 @@ export default function PageBlocks({
             isFirstBlock={index === firstBlockIndex}
           />
         ))}
-        {!shouldHideAds && <BottomBannerAds />}
       </>
     );
-  }, [blocks, keywordSearch, handleBlockEmpty, firstBlockIndex, shouldHideAds]);
+  }, [blocks, keywordSearch, handleBlockEmpty, firstBlockIndex]);
 
   if (typeof blocks === 'undefined' || !blocks?.length) {
     return <div className="h-screen"></div>;
   }
 
   return (
-    <div className="flex flex-col gap-[40px] xl:gap-[80px]">{blockItems}</div>
+    <>
+      <div className="flex flex-col gap-[40px] xl:gap-[80px]">{blockItems}</div>
+      {!shouldHideAds && <BottomBannerAds />}
+    </>
   );
 }

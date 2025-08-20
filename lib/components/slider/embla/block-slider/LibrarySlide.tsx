@@ -138,6 +138,17 @@ const LibrarySlide: React.FC<PropType> = (props) => {
     onNextButtonClick,
   } = usePrevNextButtons(emblaMainApi);
 
+  // Debug log for button visibility
+  useEffect(() => {
+    console.log('LibrarySlide button states:', {
+      prevBtnDisabled,
+      nextBtnDisabled,
+      queryId,
+      prevButtonHidden: prevBtnDisabled,
+      nextButtonHidden: nextBtnDisabled || queryId,
+    });
+  }, [prevBtnDisabled, nextBtnDisabled, queryId]);
+
   if (slidesItems?.length === 0 && queryId) {
     return <NoData />;
   }
@@ -227,10 +238,15 @@ const LibrarySlide: React.FC<PropType> = (props) => {
           </div>
         )}
         <div className="embla library">
-          <div className="embla__viewport px-0 sm:px-[16px] py-[16px] pb-0" ref={emblaMainRef}>
+          <div
+            className="embla__viewport px-0 sm:px-[16px] py-[16px] pb-0"
+            ref={emblaMainRef}
+          >
             <div
               className={`embla__container ${
-                queryId ? '!grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-[26px] sm:gap-y-[48px]' : ''
+                queryId
+                  ? '!grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-y-[26px] sm:gap-y-[48px]'
+                  : ''
               }`}
             >
               {slidesItems?.map((slide, index) => (
@@ -248,10 +264,10 @@ const LibrarySlide: React.FC<PropType> = (props) => {
           </div>
           <div
             className={`block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)] hover:text-white hover:cursor-pointer duration-400 absolute top-0 -left-[50px] -translate-y-1/2 ${
-              prevBtnDisabled || queryId ? '!hidden' : ''
+              queryId || prevBtnDisabled ? '!hidden' : ''
             }`}
             style={{
-              marginTop: `${(imageHeight / 2) + 16}px`,
+              marginTop: `${imageHeight / 2 + 16}px`,
             }}
           >
             <PrevButton
@@ -262,10 +278,10 @@ const LibrarySlide: React.FC<PropType> = (props) => {
 
           <div
             className={`block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)] hover:text-white hover:cursor-pointer duration-400 absolute top-0 -right-[50px] -translate-y-1/2 ${
-              nextBtnDisabled || queryId ? '!hidden' : ''
+              queryId || nextBtnDisabled  ? '!hidden' : ''
             }`}
             style={{
-              marginTop: `${(imageHeight / 2) + 16}px`,
+              marginTop: `${imageHeight / 2 + 16}px`,
             }}
           >
             <NextButton
@@ -279,13 +295,17 @@ const LibrarySlide: React.FC<PropType> = (props) => {
         open={isModal}
         onHidden={() => setIsModal(false)}
         modalContent={{
-          title: blockMeta?.name === FOLLOWING ? blockMeta?.btn_info?.popup_info?.title || 'Xóa nội dung theo dõi' : blockMeta?.btn_info?.popup_info?.title || 'Xóa lịch sử xem',
+          title:
+            blockMeta?.name === FOLLOWING
+              ? blockMeta?.btn_info?.popup_info?.title ||
+                'Xóa nội dung theo dõi'
+              : blockMeta?.btn_info?.popup_info?.title || 'Xóa lịch sử xem',
           content:
-          blockMeta?.name === FOLLOWING ?
-            blockMeta?.btn_info?.popup_info?.description ||
-            'Bạn muốn xóa vĩnh viễn nội dung theo dõi của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại' :
-            blockMeta?.btn_info?.popup_info?.description ||
-            'Bạn muốn xóa vĩnh viễn lịch sử xem của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại',
+            blockMeta?.name === FOLLOWING
+              ? blockMeta?.btn_info?.popup_info?.description ||
+                'Bạn muốn xóa vĩnh viễn nội dung theo dõi của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại'
+              : blockMeta?.btn_info?.popup_info?.description ||
+                'Bạn muốn xóa vĩnh viễn lịch sử xem của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại',
           buttons: {
             cancel: 'Đóng',
             accept: 'Xóa',
