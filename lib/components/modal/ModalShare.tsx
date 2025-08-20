@@ -122,8 +122,8 @@ export default function ModalShare({
           ))}
         </div>
         <div className="bg-smoky-black h-[48px] w-full rounded-[8px] flex items-center px-[12px] relative">
-          <div className="text-spanish-gray w-[292px] line-clamp-1">
-            {linkShare}
+          <div className="text-spanish-gray flex-1 min-w-0 truncate pr-[95px]">
+            {linkShare || link}
           </div>
 
           <button
