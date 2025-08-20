@@ -1,4 +1,5 @@
 import { getVodDetail, getVodHistory } from '@/lib/api/vod';
+import { getPlaylistDetail } from '@/lib/api/playlist';
 import PlayerPageContextWrapper from '@/lib/components/player/context/PlayerPageContextWrapper';
 import { VodPageContextProvider } from '@/lib/components/player/context/VodPageContext';
 import WatchVideoComponent from '@/lib/components/watch-video/WatchVideoComponent';
@@ -178,6 +179,31 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
     return { props: { key: new Date().getTime(), seoProps: fallbackSeoProps } };
   }
   if (vodId) {
+    // If this is a playlist route and the path doesn't include a video id
+    // perform server-side redirect to the first video in the playlist to
+    // avoid rendering the intermediate playlist page on the client.
+    try {
+      if (resolvedUrl?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
+        const playlistRes = await getPlaylistDetail(vodId);
+        const videos = playlistRes?.data?.data?.videos || playlistRes?.data?.videos;
+        if (Array.isArray(videos) && videos.length && !(slugs && slugs[1])) {
+          const firstVideoId = videos[0]?.id;
+          if (firstVideoId) {
+            // build query string from resolvedUrl (safer fallback)
+            const hasQuery = resolvedUrl?.includes('?');
+            const qs = hasQuery ? resolvedUrl?.split('?').slice(1).join('?') : '';
+            const destination = qs ? `/playlist/${slugs[0]}/${firstVideoId}?${qs}` : `/playlist/${slugs[0]}/${firstVideoId}`;
+            return {
+              redirect: {
+                destination,
+                permanent: false,
+              },
+            };
+          }
+        }
+      }
+    } catch {
+    }
     try {
       const channelRes = await getVodDetail({
         vodId: vodId || '',

@@ -38,7 +38,7 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
     )
       return false;
     return block?.block_type !== 'auto_expansion';
-  }, [isWatchVideoPage, block?.block_type, block?.type]);
+  }, [isWatchVideoPage, block?.block_type, block?.type, block?.id]);
   const slideRef = useRef<HTMLDivElement>(null);
   const slideChildRef = useRef<HTMLDivElement>(null);
   const timeRef = useRef<NodeJS.Timeout | null>(null);
