@@ -431,6 +431,7 @@ export default function BlockSlideItem({
           slide?.type !== 'livetv' &&
           slide?.type !== 'page' &&
           block?.block_type !== 'horizontal_slider_with_background' &&
+          block?.block_type !== 'category' && 
           block?.block_type !== 'new_vod_detail') ||
         router?.pathname.includes('/su-kien/') ? (
           <h3
