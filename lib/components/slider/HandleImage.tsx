@@ -41,6 +41,10 @@ export default function HandleImage({
   const blockCtx = useContext(BlockContext);
   const libraryCtx = useContext(LibraryContext);
   const imageRounded = useMemo(() => {
+    // if page meta or block type indicates famous people, force circular images
+    if (block?.type === 'famous_people') {
+      return 'rounded-full';
+    }
     if (typeof imageRadius === 'undefined') {
       return 'rounded-[16px]';
     } else {
@@ -104,6 +108,9 @@ export default function HandleImage({
       className={`nvm nvm-image ${imageRounded} h-0 w-full relative overflow-hidden ${
         imageRatio
           ? imageRatio
+          // force square container for famous_people to avoid ellipse
+          : block?.type === 'famous_people'
+          ? 'pb-[100%] aspect-square mt-2'
           : block?.block_type === 'numeric_rank'
           ? 'pb-[150%]'
           : block?.block_type === 'new_vod_detail'
@@ -125,7 +132,7 @@ export default function HandleImage({
           isError
             ? 'hidden'
             : isLoaded
-            ? 'inline absolute min-w-full min-h-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 object-cover'
+            ? 'inline absolute w-full h-full top-0 left-0 object-cover'
             : '!max-w-0 !max-h-0'
         } ${
           block?.block_type === 'participant'
