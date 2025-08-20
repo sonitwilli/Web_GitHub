@@ -16,7 +16,7 @@ import { usePlayerPageContext } from '../components/player/context/PlayerPageCon
 import { PlayerWrapperContext } from '../components/player/core/PlayerWrapper';
 import { useRouter } from 'next/router';
 import useCodec, { VIDEO_CODEC_NAMES } from './useCodec';
-import { setCodecError } from '../store/slices/playerSlice';
+import { setCodecError, setFullscreen } from '../store/slices/playerSlice';
 import { trackingErrorLog17 } from '../tracking/trackingCommon';
 import { ErrorData, ErrorDetails, ErrorTypes } from 'hls.js';
 import { getTimeShiftChannel } from '../api/channel';
@@ -36,6 +36,7 @@ import { trackingStoreKey } from '../constant/tracking';
 import { saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
 import { UAParser } from 'ua-parser-js';
+import { userAgentInfo } from '@/lib/utils/ua';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -130,6 +131,23 @@ export default function usePlayer() {
   const clickFullScreen = () => {
     try {
       const wrapper = document.getElementById(PLAYER_WRAPPER);
+  const ua = (userAgentInfo() || {}) as { isSafari?: boolean; isFromIos?: boolean };
+  const isIosSafari = !!ua.isSafari && !!ua.isFromIos;
+
+      // On iOS Safari, using native fullscreen on the video element triggers the browser's native controls
+      // and hides our custom controls. Use a CSS-based fullscreen mode instead (toggle redux state)
+      if (isIosSafari && wrapper) {
+        if (isFullscreen) {
+          // exit custom fullscreen
+          dispatch(setFullscreen(false));
+          wrapper.classList.remove('player-wrapper-ios-fullscreen');
+        } else {
+          // enter custom fullscreen (CSS-based)
+          dispatch(setFullscreen(true));
+          wrapper.classList.add('player-wrapper-ios-fullscreen');
+        }
+        return;
+      }
       if (wrapper) {
         if (isFullscreen) {
           if (document.exitFullscreen) {
