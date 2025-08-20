@@ -231,3 +231,23 @@
     display: none !important;
   }
 }
+
+
+/* iOS Safari custom fullscreen to avoid native player controls taking over */
+.player-wrapper-ios-fullscreen {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 100000 !important;
+  background: black !important;
+}
+.player-wrapper-ios-fullscreen video {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: contain !important;
+}
+.player-wrapper-ios-fullscreen #nvm_player_control {
+  opacity: 1 !important; /* keep custom controls visible */
+}
