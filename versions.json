@@ -1,6 +1,18 @@
 {
     "versions": [
         {
+            "version": "8.0.27",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][DetailVOD] Danh sách phát: Lỗi không scroll 3 tab tiếp theo/trước đó khi nhấn vào btn Next/Previous ở tab danh sách",
+                "[WEB][DetailVOD] Lỗi không lưu bookmark VOD",
+                "[WEB][ReportPlayer] Lỗi hiển thị popup report ở mode responsive landscape (fullscreen/not fullscreen)",
+                "[WEB][Player] Lỗi hiển thị màn hình 666 khi chọn icon Report/Chia sẻ sau khi thay đổi Phụ đề",
+                "[WEB][Thư viện] Lỗi hiển thị sai số lượng mặc định item ở block Lịch sử xem/Đang theo dõi",
+                "[WEB][Thư viện] Lỗi hiển thị btn Next/Previous ở block Lịch sử xem/Đang theo dõi"
+            ]
+        }, 
+        {
             "version": "8.0.26",
             "date": "Dự kiến",
             "content": [
