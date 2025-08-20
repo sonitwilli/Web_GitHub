@@ -36,7 +36,6 @@ export default function HandleImage({
   imageRadius,
   isChannel,
   imageRatio,
-  metaBlock,
 }: Props) {
   const { width } = useScreenSize();
   const blockCtx = useContext(BlockContext);
