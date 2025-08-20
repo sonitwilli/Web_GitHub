@@ -45,7 +45,7 @@ export default function Top10Item({ movie, index }: Props) {
     >
       {/* Thumbnail with ranking number */}
       <div
-        className={`relative w-[200px] rounded-[12px] overflow-hidden ${
+        className={`relative w-[128px] min-w-[128px] xl:w-[200px] xl:min-w-[200px] rounded-[8px] xl:rounded-[12px] overflow-hidden ${
           posterOverlaysReady.includes('top-ribbon')
             ? 'overflow-visible mt-[3px]'
             : posterOverlaysReady.includes('mid-ribbon')
@@ -66,7 +66,7 @@ export default function Top10Item({ movie, index }: Props) {
             imageRatio="pb-[56.25%]"
             alt={movie?.title}
             placeHolder="/images/player_page_placeholder.png"
-            className="rounded-[12px]"
+            className="rounded-[8px] xl:rounded-[12px]"
           />
         </div>
         {/* Ranking number overlay */}
@@ -90,8 +90,7 @@ export default function Top10Item({ movie, index }: Props) {
           <img
             src={`/images/top-10/${(index || 0) + 1}.png`}
             alt={movie?.title_vie}
-            width={54}
-            height={44}
+            className="w-[34px] h-[28px] xl:w-[54px] xl:h-[44px]"
           />
         </div>
       </div>
