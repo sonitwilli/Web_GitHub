@@ -85,7 +85,6 @@ const WatchVideoComponent = () => {
     videoDuration,
     previewHandled,
     dataPlaylist,
-    videoHeight,
     queryEpisodeNotExist,
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
@@ -106,15 +105,6 @@ const WatchVideoComponent = () => {
       videoRef.current = el;
     }
   }, []);
-
-  useEffect(() => {
-    try {
-      console.log('WatchVideoComponent - dataChannel:', dataChannel);
-      console.log('WatchVideoComponent - dataPlaylist:', dataPlaylist);
-    } catch (e) {
-      // swallow logging errors in environments where console may be restricted
-    }
-  }, [dataChannel, dataPlaylist]);
 
   useEffect(() => {
     const currentWarningData = (dataStream as DataStreamField)?.warning;
