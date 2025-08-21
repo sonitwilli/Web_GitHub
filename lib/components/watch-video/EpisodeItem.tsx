@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useVodPageContext } from '../player/context/VodPageContext';
 import CustomImage from '../common/CustomImage';
-import { scalePosterOverlayUrl } from '@/lib/utils/methods';
+import { scalePosterOverlayUrl, scaleImageUrl } from '@/lib/utils/methods';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 
@@ -62,7 +62,12 @@ const EpisodeItem = (props: PropsEspisodes) => {
     >
       <div className="rounded-[8px] overflow-hidden w-[128px] relative min-w-[128px]">
         <CustomImage
-          src={episode?.thumb || episode?.landscape}
+          src={
+            scaleImageUrl({
+              imageUrl: episode?.thumb || episode?.landscape,
+              width: 128,
+            })
+          }
           containerClassName="w-full"
           imageRatio="pb-[56.25%]"
           alt={episode.thumb || episode.landscape}
