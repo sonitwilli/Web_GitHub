@@ -85,7 +85,6 @@ const WatchVideoComponent = () => {
     videoDuration,
     previewHandled,
     dataPlaylist,
-    videoHeight,
     queryEpisodeNotExist,
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
@@ -210,6 +209,20 @@ const WatchVideoComponent = () => {
     return result;
   })();
 
+  // Check if episodes list should be displayed
+  const shouldShowEpisodesList = (() => {
+    if (viewportType !== VIEWPORT_TYPE.DESKTOP) return false;
+    if (isExpanded) return false;
+    
+    // Show episodes list if there are multiple episodes/videos OR if it's a series/season
+    const hasMultipleEpisodes = dataChannel?.episodes && dataChannel?.episodes?.length > 1;
+    const hasMultiplePlaylistVideos = dataPlaylist?.videos && dataPlaylist?.videos?.length > 1;
+    const isSeriesOrSeason = dataChannel?.episode_type === EpisodeTypeEnum.SERIES || 
+                           dataChannel?.episode_type === EpisodeTypeEnum.SEASON;
+    
+    return Boolean(hasMultipleEpisodes || hasMultiplePlaylistVideos || isSeriesOrSeason);
+  })();
+
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const handleInitBanner = () => {
@@ -257,62 +270,24 @@ const WatchVideoComponent = () => {
           >
             <div
               className={`h-full ${
-                isExpanded ? '' : 'xl:grid xl:grid-cols-[1fr_432px]'
+                isExpanded ? '' : shouldShowEpisodesList ? 'xl:grid xl:grid-cols-[1fr_432px]' : ''
               }`}
             >
               {!fetchChannelCompleted ? (
-                <div
-                  className="w-full col-span-full"
-                  style={{
-                    height:
-                      viewportType === VIEWPORT_TYPE.DESKTOP
-                        ? `${
-                            videoHeight && videoHeight > 0 ? videoHeight : ''
-                          }px`
-                        : '',
-                  }}
-                >
+                <div className="w-full col-span-full max-h-[416px]">
                   <PlayerPlaceholder />
                 </div>
               ) : (
                 <>
                   <div
-                    className={`relative  ${isExpanded ? '' : ''} ${
-                      showLoginPlayer &&
-                      (!dataChannel?.episodes ||
-                      dataChannel?.episodes?.length < 2
+                    className={`relative ${isExpanded ? '' : ''} ${
+                      (showLoginPlayer || requirePurchaseData) && !shouldShowEpisodesList
                         ? 'col-span-full !pr-0'
-                        : '')
-                    } ${
-                      requirePurchaseData &&
-                      (!dataChannel?.episodes ||
-                      dataChannel?.episodes?.length < 2
-                        ? 'col-span-full !pr-0'
-                        : '')
+                        : ''
                     } ${viewportType !== VIEWPORT_TYPE.DESKTOP ? '!pr-0' : ''}`}
-                    style={{
-                      height:
-                        viewportType === VIEWPORT_TYPE.DESKTOP
-                          ? `${
-                              videoHeight && videoHeight > 0 ? videoHeight : ''
-                            }px`
-                          : '',
-                    }}
                   >
                     {showLoginPlayer ? (
-                      <div
-                        className="relative"
-                        style={{
-                          height:
-                            viewportType === VIEWPORT_TYPE.DESKTOP
-                              ? `${
-                                  videoHeight && videoHeight > 0
-                                    ? videoHeight
-                                    : ''
-                                }px`
-                              : '',
-                        }}
-                      >
+                      <div className="relative">
                         <CustomImage
                           src={scaleImageUrl({
                             imageUrl:
@@ -321,7 +296,7 @@ const WatchVideoComponent = () => {
                           })}
                           alt={dataChannel?.name || dataChannel?.title}
                           placeHolder="/images/player_page_placeholder.png"
-                          className="mx-auto max-h-full"
+                          className="mx-auto max-h-[416px]"
                         />
                         <button
                           aria-label="Play"
@@ -344,21 +319,7 @@ const WatchVideoComponent = () => {
                         </button>
                       </div>
                     ) : requirePurchaseData ? (
-                      <div
-                        className=" "
-                        style={{
-                          height:
-                            viewportType === VIEWPORT_TYPE.DESKTOP
-                              ? `${
-                                  videoHeight && videoHeight > 0
-                                    ? videoHeight
-                                    : ''
-                                }px`
-                              : '',
-                        }}
-                      >
-                        <RequirePurchaseVod />
-                      </div>
+                      <RequirePurchaseVod />
                     ) : (
                       <PlayerWrapper>
                         {fetchChannelCompleted && (
@@ -413,34 +374,17 @@ const WatchVideoComponent = () => {
                       </PlayerWrapper>
                     )}
                   </div>
-                  {(viewportType === VIEWPORT_TYPE.DESKTOP &&
-                    dataChannel?.episodes &&
-                    dataChannel?.episodes?.length > 1) ||
-                  (viewportType === VIEWPORT_TYPE.DESKTOP &&
-                    (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-                      dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
-                    dataChannel?.episodes?.length &&
-                    dataChannel?.episodes?.length) ? (
-                    <div
-                      className={`w-full ${
-                        isExpanded ? 'hidden' : 'pl-[16px]'
-                      }`}
-                    >
-                      {Number(dataChannel?.episode_type) !== 0 && (
+                  
+                  {/* Episodes List - Now shows independently of player state */}
+                  {shouldShowEpisodesList && (
+                    <div className="w-full pl-[16px]">
+                      {(Number(dataChannel?.episode_type) !== 0 ||
+                        (dataPlaylist?.videos !== undefined &&
+                          dataPlaylist.videos.length > 0)) && (
+                  
                         <ListEspisodeComponent position="default" />
                       )}
                     </div>
-                  ) : dataPlaylist?.videos &&
-                    dataPlaylist?.videos?.length > 0 ? (
-                    <div
-                      className={`w-full ${
-                        isExpanded ? 'hidden' : 'pl-[16px]'
-                      }`}
-                    >
-                      <ListEspisodeComponent position="default" />
-                    </div>
-                  ) : (
-                    ''
                   )}
                 </>
               )}
