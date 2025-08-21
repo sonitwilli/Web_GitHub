@@ -4,6 +4,10 @@ import { trackingStoreKey } from '../constant/tracking';
 import { trackingPingLog111 } from './useTrackingPing';
 import { changePageBlocks } from '../store/slices/blockSlice';
 import { useAppDispatch } from '../store';
+import {
+  changeClickToPlayTime,
+  changeInitPlayerTime,
+} from '../store/slices/trackingSlice';
 
 export default function usePlayerPageCycle() {
   const dispatch = useAppDispatch();
@@ -14,9 +18,15 @@ export default function usePlayerPageCycle() {
           key: trackingStoreKey.PLAYER_PLAYING_SESSION,
           value: new Date().toISOString(),
         },
+        {
+          key: trackingStoreKey.PLAYER_CONTENT_SESSION,
+          value: new Date().toISOString(),
+        },
       ],
     });
     dispatch(changePageBlocks([]));
+    dispatch(changeClickToPlayTime(new Date().getTime()));
+    dispatch(changeInitPlayerTime(new Date().getTime()));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

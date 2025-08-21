@@ -338,7 +338,8 @@ const InforVideoComponent = (props: PropsVideo) => {
           dataPlaylist?.videos?.length > 1) ||
         (viewportType !== VIEWPORT_TYPE.DESKTOP &&
           (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-            dataChannel?.episode_type === EpisodeTypeEnum.SEASON)) ? (
+            dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+          dataChannel?.episodes?.length) ? (
           <div className="ListEspisodeComponent mt-[48px]">
             <ListEspisodeComponent position="bottom" />
           </div>
@@ -376,8 +377,9 @@ const InforVideoComponent = (props: PropsVideo) => {
           {isExpanded &&
             ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
               (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
-              dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-              dataChannel?.episode_type === EpisodeTypeEnum.SEASON) && (
+              ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+                dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+                dataChannel?.episodes?.length)) && (
               <div className="mb-[72px]">
                 <ListEspisodeComponent position="bottom" />
               </div>

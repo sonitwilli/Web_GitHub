@@ -381,6 +381,7 @@ const WatchVideoComponent = () => {
                       {(Number(dataChannel?.episode_type) !== 0 ||
                         (dataPlaylist?.videos !== undefined &&
                           dataPlaylist.videos.length > 0)) && (
+                  
                         <ListEspisodeComponent position="default" />
                       )}
                     </div>
