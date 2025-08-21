@@ -142,6 +142,7 @@ export const checkAppNameAppId = (route: RouteInfo) => {
     const currentAppId = localStorage.getItem(trackingStoreKey.APP_ID);
     if (navs) {
       const pathname = window.location.pathname;
+      console.log('--- TRACKING pathname', pathname);
       const allNavs = fixedAppNames.concat(JSON.parse(navs));
       if (pathname === '/' || pathname === '/trang/home') {
         found = { name: 'Trang chủ', id: 'home' };
@@ -160,6 +161,11 @@ export const checkAppNameAppId = (route: RouteInfo) => {
         found = {
           name: 'Truyền hình',
           id: 'channel',
+        };
+      } else if (route?.path?.includes('/tim-kiem')) {
+        found = {
+          name: 'SEARCH',
+          id: 'SEARCH',
         };
       } else if (route?.params?.id && route?.path?.includes('/trang/')) {
         found = allNavs.find((item) => item?.id === route?.params?.id) || {

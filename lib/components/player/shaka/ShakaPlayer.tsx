@@ -4,6 +4,7 @@ import {
   useContext,
   useState,
   useLayoutEffect,
+  useMemo,
 } from 'react';
 import { ChannelDetailType } from '@/lib/api/channel';
 import { StreamItemType } from '@/lib/api/stream';
@@ -303,6 +304,9 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     player.addEventListener('texttrackvisibility', () => {
       trackPlayerChange();
     });
+    player.addEventListener('loading', () => {
+      console.log('--- SHAKA: LOAD MANIFEST');
+    });
     const fragDownloadTimes = new Map();
     player
       .getNetworkingEngine()
@@ -436,14 +440,24 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       playVideo();
     }
   }
+
+  const posterPlayer = useMemo(() => {
+    if (dataChannel?.trailer_info?.url) {
+      return '/images/default-poster-horizontal.png';
+    }
+    if (!queryEpisodeNotExist) {
+      return '/images/default-poster-horizontal.png';
+    }
+    return (
+      dataChannel?.image?.landscape || '/images/default-poster-horizontal.png'
+    );
+  }, [dataChannel, queryEpisodeNotExist]);
   useEffect(() => {
     const finalUrl = previewHandled
       ? getUrlToPlay() || dataStream?.trailer_url
       : showLoginPlayer && loginManifestUrl
       ? loginManifestUrl
       : getUrlToPlay();
-
-    console.log('finalUrl :>> ', finalUrl);
 
     if (finalUrl) {
       if (typeof window.shaka !== 'undefined') {
@@ -513,7 +527,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           muted
           controls={false}
           webkit-playsinline="true"
-          poster="/images/default-poster-horizontal.png"
+          poster={posterPlayer}
           className={`w-full h-auto max-h-full block aspect-video ${
             !isFullscreen && !isExpanded ? 'xl:rounded-[16px]' : ''
           } ${styles.video} ${

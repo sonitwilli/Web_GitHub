@@ -56,6 +56,7 @@ import {
 } from '@/lib/api/playlist';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { trackingStartMovieLog51 } from '@/lib/hooks/useTrackingPlayback';
 
 export interface PlayerModalType {
   content?: ModalContent;
@@ -339,54 +340,54 @@ export function PlayerPageContextProvider({ children }: Props) {
   );
 
   const [previewHandled, setPreviewHandled] = useState(false);
-  const checkScreen = () => {
-    if (typeof window === 'undefined') {
-      return '';
-    }
-    try {
-      let value = 'PingVOD';
-      const href = window.location.href;
-      if (previewHandled) {
-        if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
-          value = 'PingPreviewLive';
-        }
-        if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
-          value = 'PingPreview';
-        }
-        if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
-          value = 'PingPreviewShow';
-        }
-      } else {
-        if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
-          value = 'PingChannel';
-        }
-        if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
-          value = 'PingVOD';
-        }
-        if (href?.includes(ROUTE_PATH_NAMES.PREMIERE)) {
-          value = 'PingPremiere';
-        }
-        if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
-          value = 'PingLiveshow';
-        }
-      }
-      saveSessionStorage({
-        data: [
-          {
-            key: trackingStoreKey.PLAYER_SCREEN,
-            value,
-          },
-        ],
-      });
-      return value;
-    } catch {
-      return '';
-    }
-  };
-  useEffect(() => {
-    checkScreen();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [previewHandled]);
+  // const checkScreen = () => {
+  //   if (typeof window === 'undefined') {
+  //     return '';
+  //   }
+  //   try {
+  //     let value = 'PingVOD';
+  //     const href = window.location.href;
+  //     if (previewHandled) {
+  //       if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
+  //         value = 'PingPreviewLive';
+  //       }
+  //       if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
+  //         value = 'PingPreview';
+  //       }
+  //       if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
+  //         value = 'PingPreviewShow';
+  //       }
+  //     } else {
+  //       if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
+  //         value = 'PingChannel';
+  //       }
+  //       if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
+  //         value = 'PingVOD';
+  //       }
+  //       if (href?.includes(ROUTE_PATH_NAMES.PREMIERE)) {
+  //         value = 'PingPremiere';
+  //       }
+  //       if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
+  //         value = 'PingLiveshow';
+  //       }
+  //     }
+  //     saveSessionStorage({
+  //       data: [
+  //         {
+  //           key: trackingStoreKey.PLAYER_SCREEN,
+  //           value,
+  //         },
+  //       ],
+  //     });
+  //     return value;
+  //   } catch {
+  //     return '';
+  //   }
+  // };
+  // useEffect(() => {
+  //   checkScreen();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [previewHandled]);
   const [dataPlaylist, setDataPlaylist] =
     useState<PlayListDetailResponseType>();
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -1160,6 +1161,9 @@ export function PlayerPageContextProvider({ children }: Props) {
   ]);
 
   useEffect(() => {
+    if (fetchChannelCompleted) {
+      trackingStartMovieLog51();
+    }
     if (!dataEvent) return;
     if (isPrepareLive === false) {
       // Re-init lại player flow sau khi chuẩn bị xong

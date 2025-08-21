@@ -235,17 +235,15 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   useEffect(() => {
     if (fetchChannelCompleted && fetchTop10Done) {
       if (streamType === 'vod') {
-        // phim bộ thì luôn show danh sách tập
-        if (dataChannel?.episode_type === EpisodeTypeEnum.SINGLE) {
+        if (
+          dataChannel?.episode_type === EpisodeTypeEnum.SINGLE ||
+          !dataChannel?.episodes?.length ||
+          dataChannel?.episodes?.length < 1
+        ) {
           if (setIsExpanded) {
             setIsExpanded(true);
           }
         }
-        // if (!dataChannel?.episodes || dataChannel?.episodes?.length < 2) {
-        //   if (setIsExpanded) {
-        //     setIsExpanded(true);
-        //   }
-        // }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -508,8 +506,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
         isFullscreen &&
         ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
           (dataPlaylist?.videos && dataPlaylist?.videos?.length) ||
-          dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-          dataChannel?.episode_type === EpisodeTypeEnum.SEASON) ? (
+          ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+            dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+            dataChannel?.episodes?.length)) ? (
           <div className={`${openEpisodesFullscreen ? '' : 'hidden'}`}>
             <div className="fixed z-[10] top-0 right-0 w-full h-full grid grid-cols-[1fr_min(520px,100vw)] sm:grid-cols-[1fr_520px]">
               <div className="h-full  bg-gradient-to-r from-[rgba(13,13,12,0)] to-[rgba(13,13,12,1)]"></div>

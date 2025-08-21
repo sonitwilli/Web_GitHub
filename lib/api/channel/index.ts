@@ -126,7 +126,7 @@ export interface ChannelDetailType extends VodDetailType {
   type_show_logo?: number;
   user_added_favourite?: number;
   user_favourite_id?: string;
-  verimatrix?: boolean | string;
+  verimatrix?: boolean | string | number;
   vip_plan_logo?: string;
   website_url?: string;
   wm?: string;
@@ -147,6 +147,8 @@ export interface ChannelDetailType extends VodDetailType {
   title_vie?: string;
   is_tvod?: string;
   begin_time?: string;
+  directors_detail?: Array<unknown>;
+  nation?: string;
 }
 
 export interface Seo {

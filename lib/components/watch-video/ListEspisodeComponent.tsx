@@ -346,17 +346,24 @@ const ListEspisodeComponent = ({ position }: Props) => {
       <div
         className={`flex flex-col gap-[16px] bg-eerie-black border-b border-charleston-green p-[24px] ${
           isMobile
-        ? `pl-[24px] pt-[32px]`
-        : isFullscreen
-        ? `pt-[32px] md:w-[520px]`
-        : 'xl:w-[416px]'
+            ? `pl-[24px] pt-[32px]`
+            : isFullscreen
+            ? `pt-[32px] md:w-[520px]`
+            : 'xl:w-[416px]'
+        } ${
+          position === 'default' &&
+          dataChannel?.episodes &&
+          dataChannel?.episodes?.length < 16
+            ? '!py-0 justify-center'
+            : ''
         }`}
-        style={isMobile ? 
-          (isFullscreen 
-            ? { width: deviceWidth } 
-            : { width: deviceWidth - 32 }
-          ) 
-          : undefined}
+        style={
+          isMobile
+            ? isFullscreen
+              ? { width: deviceWidth }
+              : { width: deviceWidth - 32 }
+            : undefined
+        }
       >
         <span className="text-[16px] font-[500] tablet:font-[600] tablet:text-[18px]">
           Danh sách phát
