@@ -461,7 +461,10 @@ export const getPlayerParams = () => {
   } = getContentData();
   let sub = sessionStorage.getItem(SELECTED_SUBTITLE_LABEL);
   if (sub) {
-    sub = KEY_LANGUAGES_AUDIO_CODECS[sub as keyof typeof KEY_LANGUAGES_AUDIO_CODECS] || sub;
+    sub =
+      KEY_LANGUAGES_AUDIO_CODECS[
+        sub as keyof typeof KEY_LANGUAGES_AUDIO_CODECS
+      ] || sub;
   }
   const realDuration =
     Duration || sessionStorage.getItem(trackingStoreKey.PLAYER_DURATION) || 0;
@@ -479,6 +482,16 @@ export const getPlayerParams = () => {
     sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH),
   );
   const streamBwMbps = streamBwBitPerS / 1024 / 1024;
+  const streamType = sessionStorage.getItem(
+    trackingStoreKey.PLAYER_STREAM_TYPE,
+  ) as StreamType;
+  const isLinkDRM =
+    dataChannel?.drm === 1 ||
+    dataChannel?.drm === '1' ||
+    dataChannel?.drm === true ||
+    dataChannel?.verimatrix === 1 ||
+    dataChannel?.verimatrix === '1' ||
+    dataChannel?.verimatrix === true;
   return {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
@@ -498,6 +511,8 @@ export const getPlayerParams = () => {
     ItemName: ItemName || '',
     RefEpisodeID: currentEpisode?.ref_episode_id || '',
     RefItemId: dataChannel?.id || dataChannel?._id || '',
+    RefPlaylistID:
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '' || '',
     PlaylistID:
       sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '' || '',
     ChapterID: getChapterId() || '',
@@ -543,7 +558,8 @@ export const getPlayerParams = () => {
     playing_session:
       sessionStorage.getItem(trackingStoreKey.PLAYER_PLAYING_SESSION || '') ||
       '',
-    Screen: sessionStorage.getItem(trackingStoreKey.PLAYER_SCREEN) || '',
+    content_session:
+      sessionStorage.getItem(trackingStoreKey.PLAYER_CONTENT_SESSION) || '',
     AppSource: dataChannel?.app_id || '',
     FrameRate:
       String(
@@ -552,6 +568,15 @@ export const getPlayerParams = () => {
         ),
       ) || '',
     BlockPosition: sessionStorage.getItem(trackingStoreKey.BLOCK_INDEX) || '',
+    isTrailer: dataStream?.is_trailer || '',
+    isLive: streamType === 'event' ? '2' : '0',
+    isLinkDRM: isLinkDRM ? '1' : '0',
+    Directors:
+      dataChannel?.directors_detail
+        ?.map((item: any) => item.full_name)
+        .join(',') || '',
+    Country: dataChannel?.nation || '',
+    FType: dataChannel?.is_tvod ? '2' : '1',
   };
 };
 

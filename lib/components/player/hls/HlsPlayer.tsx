@@ -150,6 +150,9 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       hls.on(Hls.Events.SUBTITLE_TRACK_SWITCH, () => {
         trackPlayerChange();
       });
+      hls.on(Hls.Events.MANIFEST_LOADING, () => {
+        console.log('--- HLS: LOAD MANIFEST');
+      });
       const fragDownloadTimes = new Map();
       hls.on(Hls.Events.FRAG_LOADING, (event, data) => {
         fragDownloadTimes.set(data.frag.sn, performance.now());

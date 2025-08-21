@@ -6,6 +6,8 @@ interface trackingState {
   appId: string;
   screen: string;
   position: object | undefined;
+  clickToPlayTime: number;
+  initPlayerTime: number;
 }
 
 const initialState: trackingState = {
@@ -14,6 +16,8 @@ const initialState: trackingState = {
   appId: '',
   screen: '',
   position: undefined,
+  clickToPlayTime: 0,
+  initPlayerTime: 0,
 };
 
 const trackingSlice = createSlice({
@@ -35,6 +39,12 @@ const trackingSlice = createSlice({
     changePosition: (state, action: PayloadAction<object>) => {
       state.position = action.payload;
     },
+    changeClickToPlayTime: (state, action: PayloadAction<number>) => {
+      state.clickToPlayTime = action.payload;
+    },
+    changeInitPlayerTime: (state, action: PayloadAction<number>) => {
+      state.initPlayerTime = action.payload;
+    },
   },
 });
 
@@ -45,6 +55,8 @@ export const {
   changeAppId,
   changeScreen,
   changePosition,
+  changeClickToPlayTime,
+  changeInitPlayerTime,
 } = trackingSlice.actions;
 
 // Export reducer

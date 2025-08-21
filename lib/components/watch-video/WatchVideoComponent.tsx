@@ -418,7 +418,9 @@ const WatchVideoComponent = () => {
                     dataChannel?.episodes?.length > 1) ||
                   (viewportType === VIEWPORT_TYPE.DESKTOP &&
                     (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-                      dataChannel?.episode_type === EpisodeTypeEnum.SEASON)) ? (
+                      dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+                    dataChannel?.episodes?.length &&
+                    dataChannel?.episodes?.length) ? (
                     <div
                       className={`w-full ${
                         isExpanded ? 'hidden' : 'pl-[16px]'

@@ -31,7 +31,7 @@ export interface VodDetailType {
   blocks?: Block[];
   countries?: string;
   description?: string;
-  drm?: string | boolean;
+  drm?: string | boolean | number;
   duration?: string;
   enable_ads?: number | string;
   enable_report?: string;

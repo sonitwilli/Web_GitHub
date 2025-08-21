@@ -72,6 +72,14 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
     checkDeviceId();
     trackingStartApplication();
     trackingCodecDeviceInformationLog30();
+    const currentRoute: RouteInfo = {
+      path: router.asPath,
+      params: router.query,
+      hash: typeof window !== 'undefined' ? window.location.hash : '',
+      full: typeof window !== 'undefined' ? window.location.href : '',
+    };
+    setAppNameAppId(currentRoute, currentRoute);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     const handleStart = () => {

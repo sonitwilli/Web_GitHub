@@ -35,6 +35,7 @@ import {
 import { trackingStoreKey } from '../constant/tracking';
 import { saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
+import { useTrackingPlayback } from './useTrackingPlayback';
 import { UAParser } from 'ua-parser-js';
 import { userAgentInfo } from '@/lib/utils/ua';
 
@@ -71,6 +72,7 @@ export default function usePlayer() {
     queryEpisodeNotExist,
   } = usePlayerPageContext();
   const { handleLoadAds } = useAdsPlayer();
+  const { trackingStartFirstFrameLog520 } = useTrackingPlayback();
   const { getUrlToPlay } = useCodec({
     dataChannel,
     dataStream,
@@ -136,8 +138,11 @@ export default function usePlayer() {
   const clickFullScreen = () => {
     try {
       const wrapper = document.getElementById(PLAYER_WRAPPER);
-  const ua = (userAgentInfo() || {}) as { isSafari?: boolean; isFromIos?: boolean };
-  const isIosSafari = !!ua.isSafari && !!ua.isFromIos;
+      const ua = (userAgentInfo() || {}) as {
+        isSafari?: boolean;
+        isFromIos?: boolean;
+      };
+      const isIosSafari = !!ua.isSafari && !!ua.isFromIos;
 
       // On iOS Safari, using native fullscreen on the video element triggers the browser's native controls
       // and hides our custom controls. Use a CSS-based fullscreen mode instead (toggle redux state)
@@ -242,6 +247,9 @@ export default function usePlayer() {
             value: new Date().getTime().toString(),
           },
         ],
+      });
+      trackingStartFirstFrameLog520({
+        Event: 'Initial',
       });
     }
     trackPlayerChange();

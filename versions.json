@@ -1,6 +1,17 @@
 {
     "versions": [
         {
+            "version": "8.0.28",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Chia sẻ] Lỗi hiển thị btn Sao chép và URL ở popup chia sẻ ở mode repsonsive",
+                "[WEB][Playlist] Lỗi loading lâu + nháy khi play 1 playlist bất kỳ",
+                "[WEB][Sự kiện] Lỗi hiện page 666 khi chọn nội dung ở block gợi ý sự kiện sau khi thay đổi Phụ đề",
+                "[WEB][Thư viện] Lỗi không hiển thị màn hình Không có dữ liệu + btn Về trang chủ khi xóa tất cả nội dung Đang theo dõi",
+                "[WEB][Page] Lỗi hiện khoảng đen giữa block và footer khi scroll"
+            ]
+        }, 
+        {
             "version": "8.0.27",
             "date": "Dự kiến",
             "content": [
