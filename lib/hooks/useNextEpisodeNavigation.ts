@@ -11,6 +11,7 @@ import {
   BOOLEAN_TEXTS,
 } from '../constant/texts';
 import { viToEn } from '../utils/methods';
+import { trackingNextMovieLog55 } from './useTrackingPlayback';
 
 export type ContentType = 'vod' | 'channel' | 'event' | 'premiere' | 'playlist';
 
@@ -135,6 +136,7 @@ export const useNextEpisodeNavigation = ({
 
   // Navigate to next episode
   const navigateToNextEpisode = useCallback(() => {
+    // TODO: check duplicate navigateToNextEpisode run twice
     const url = generateNextEpisodeUrl();
     if (!url) return;
 
@@ -155,9 +157,11 @@ export const useNextEpisodeNavigation = ({
       }
       sessionStorage.setItem(IS_NEXT_FROM_PLAYER, 'NextFromPlayer');
     }
+    trackingNextMovieLog55();
     // Navigate to the next episode
     router.push(`${url}?${HISTORY_TEXT.BOOK_MARK}=${BOOLEAN_TEXTS.FALSE}`);
-  }, [generateNextEpisodeUrl, nextEpisode, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [generateNextEpisodeUrl]);
 
   return {
     generateNextEpisodeUrl,

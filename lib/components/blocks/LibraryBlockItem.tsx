@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { useGetBlockData } from '@/lib/hooks/useGetBlockData'; // Adjust the import path as needed
 import { useFetchRecommendBlock } from '@/lib/hooks/useFetchRecommendBlock';
 import { AppContext } from '@/lib/components/container/AppContainer';
+import Loading from '../common/Loading';
 // import NoData from '@/lib/components/empty-data/NoData';
 
 interface Props {
@@ -15,6 +16,7 @@ interface Props {
   setIsEmpty?: (value: boolean) => void;
   setIsError?: (value: boolean) => void;
   registerReloadData?: (reloadData: () => void) => void;
+  blockLoading?: (isLoading: boolean) => void;
 }
 
 export default function LibraryBlockItem({
@@ -49,12 +51,15 @@ export default function LibraryBlockItem({
 
   useEffect(
     () => {
-      if (block?.id && info?.profile?.profile_id) {
-        fetchRecommendBlock(configs);
-      }
+      const fetchData = async () => {
+        if (block?.id && info?.profile?.profile_id) {
+          await fetchRecommendBlock(configs);
+        }
+      };
+      fetchData();
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [blockData]
+    [blockData],
   );
 
   const handleReloadData = useCallback(() => {
@@ -102,7 +107,7 @@ export default function LibraryBlockItem({
       setSideBarLeft({
         url: '/tai-khoan?tab=thu-vien',
         text: 'Thư viện',
-      })
+      }),
     );
 
     if (block?.id) {
@@ -112,7 +117,7 @@ export default function LibraryBlockItem({
           query: { ...router.query, id: block.id },
         },
         undefined,
-        { shallow: true }
+        { shallow: true },
       );
     }
   };
@@ -138,7 +143,7 @@ export default function LibraryBlockItem({
         setSideBarLeft({
           url: '/',
           text: 'Quay lại FPT Play',
-        })
+        }),
       );
     } else if (
       (queryId &&
@@ -151,13 +156,38 @@ export default function LibraryBlockItem({
         setSideBarLeft({
           url: '/tai-khoan?tab=thu-vien',
           text: 'Thư viện',
-        })
+        }),
       );
     }
   }, [queryId, data, block?.redirect?.view_more_limit, dispatch]);
 
-  if (isLoading || data?.length === 0) {
-    return null;
+  if (isLoading && queryId) {
+    return (
+      <div className="relative">
+        <div className="flex items-center gap-[16px] justify-between sm:justify-start mb-0 xl:mb-4">
+          {
+            <h2
+              className={`${
+                queryId
+                  ? 'text-[18px] sm:text-[28px]'
+                  : 'text-[18px] sm:text-[24px]'
+              } font-[700] leading-[1.3] text-white-smoke pl-0 sm:pl-[16px]`}
+            >
+              {queryId === '2' ? 'Lịch sử xem' : 'Đang theo dõi'}
+            </h2>
+          }
+          {Array.isArray(data) &&
+            data?.length > 0 &&
+            data?.length > Number(block?.redirect?.view_more_limit) &&
+            !isShowMore && <ShowMore onClick={handleShowMoreClick} />}
+        </div>
+        <div className="relative min-h-[300px] mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
+          <div className="flex flex-col gap-[56px]">
+            <Loading />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (

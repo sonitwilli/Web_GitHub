@@ -315,6 +315,7 @@ export interface SlideHightlightInfoType {
   count?: string;
   bg_color?: string;
   icon?: string;
+  count_origin?: number;
 }
 
 export interface BlockSlideItemImageType {

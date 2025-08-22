@@ -94,7 +94,7 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isEndVideo, hlsErrors, dataStream, dataChannel, errorFairPlay} =
+  const { isEndVideo, hlsErrors, dataStream, dataChannel } =
     usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
@@ -136,7 +136,6 @@ const Preview: React.FC<PreviewProps> = ({
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
       (hlsErrors && hlsErrors.length > 0) ||
-      (errorFairPlay) || 
       (playerError && (type === 'live' || type === 'event')) ||
       isLiveEnded;
 
@@ -158,7 +157,6 @@ const Preview: React.FC<PreviewProps> = ({
     isPreviewEnded,
     isEndVideo,
     hlsErrors,
-    errorFairPlay,
     playerError,
     type,
     isLiveEnded,

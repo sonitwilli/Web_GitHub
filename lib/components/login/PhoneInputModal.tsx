@@ -200,7 +200,7 @@ const PhoneInputModal = forwardRef<PhoneInputModalRef, Props>(
               Tôi đã đọc và đồng ý với{' '}
               <Link
                 prefetch={false}
-                href={'/dieu-khoan-su-dung'}
+                href={'/thong-tin/dieu-khoan-su-dung'}
                 className="ml-[3px] cursor-pointer text-fpl underline terms"
                 onClick={() => {
                   dispatch(closeLoginModal());

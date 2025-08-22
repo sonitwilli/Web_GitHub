@@ -283,6 +283,14 @@ export const useNoAdsGuide = ({
         clearMonitoringInterval();
       }
 
+      if (
+        sessionStorage &&
+        sessionStorage.getItem('session_ads_logo_playing')
+      ) {
+        setShowNoAdsGuide(false);
+        return;
+      }
+
       setTimeout(() => {
         setShowNoAdsGuide(false);
       }, AUTO_HIDE_DELAY);

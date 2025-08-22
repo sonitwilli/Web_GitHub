@@ -143,10 +143,16 @@ export const trackingShowContentLog29 = ({
   tracking(params);
 };
 
-export const trackingCodecDeviceInformationLog30 = () => {
+export const trackingCodecDeviceInformationLog31 = (isRetry?: boolean) => {
   getCodecDeviceInformation();
   const videoCodec = localStorage[trackingStoreKey.VIDEO_CODECS_SUPPORT] || '';
   const audioCodec = localStorage[trackingStoreKey.AUDIO_CODECS_SUPPORT] || '';
+  if (!audioCodec || (!videoCodec && !isRetry)) {
+    setTimeout(() => {
+      trackingCodecDeviceInformationLog31(true);
+    }, 1000);
+    return;
+  }
   const params: TrackingParams = {
     Event: 'CodecDeviceInformation',
     AudioCodec: audioCodec,
@@ -158,10 +164,7 @@ export const trackingCodecDeviceInformationLog30 = () => {
 };
 
 export const getCodecDeviceInformation = () => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-  if (typeof MediaSource === 'undefined') {
+  if (typeof window === 'undefined' || typeof MediaSource === 'undefined') {
     return;
   }
   const filterAudioCodecsSupport = () => {

@@ -21,6 +21,7 @@ import {
 } from '../components/player/context/PlayerPageContext';
 import { trackingShowContentLog29 } from '../tracking/trackingCommon';
 import { checkShakaResponseFilter } from '../utils/player';
+import { useTrackingPlayback } from './useTrackingPlayback';
 
 type Props = {
   eventId?: string;
@@ -36,10 +37,9 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
     isHboGo,
     isQNet,
     isTDM,
-    setErrorFairPlay,
-    errorFairPlay,
     queryEpisodeNotExist,
   } = usePlayerPageContext();
+  const { trackingGetDRMKeyLog166 } = useTrackingPlayback();
   const router = useRouter();
   const playerWrapperCtx = useContext(PlayerWrapperContext);
   const { urlToPlay } = useCodec({
@@ -113,6 +113,9 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           }
           const rawLicenseBase64 = wrapped.license;
           response.data = Uint8ArrayUtils.fromBase64(rawLicenseBase64);
+          trackingGetDRMKeyLog166({
+            Status: response.status === 200 ? '1' : '0',
+          });
         }
         if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
           checkShakaResponseFilter({ response });
@@ -226,31 +229,22 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                 window.shaka.util.Uint8ArrayUtils.fromBase64(
                   responseText,
                 ).buffer;
+              trackingGetDRMKeyLog166({
+                Status: response.status === 200 ? '1' : '0',
+              });
             },
           );
-
-          if (cb) cb();
-
-          if (errorFairPlay) {
-            if (setErrorFairPlay) setErrorFairPlay(false);
-          }
         })
 
         .catch((e: any) => {
           console.log('GET DRMTODAY ERRORS: ', e);
-          if (setErrorFairPlay) setErrorFairPlay(true);
+        })
+        .finally(() => {
+          if (cb) cb();
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      dataChannel,
-      dataStream,
-      info,
-      isQNet,
-      isHboGo,
-      errorFairPlay,
-      setErrorFairPlay,
-    ],
+    [dataChannel, dataStream, info, isQNet, isHboGo],
   );
   const initFairPlaySigma = useCallback(
     ({ cb }: { cb?: () => void }) => {
@@ -361,30 +355,22 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                     window.shaka.util.Uint8ArrayUtils.fromBase64(
                       rawLicenseBase64,
                     );
+                  trackingGetDRMKeyLog166({
+                    Status: response.status === 200 ? '1' : '0',
+                  });
                 } catch {}
               }
             });
-
-          if (cb) cb();
-          if (errorFairPlay) {
-            if (setErrorFairPlay) setErrorFairPlay(false);
-          }
         })
         .catch((err) => {
           console.log('ERRORS_SIGMA: ', err.message);
-          if (setErrorFairPlay) setErrorFairPlay(true);
+        })
+        .finally(() => {
+          if (cb) cb();
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [
-      dataChannel,
-      dataStream,
-      info,
-      isHboGo,
-      isQNet,
-      errorFairPlay,
-      setErrorFairPlay,
-    ],
+    [dataChannel, dataStream, info, isHboGo, isQNet],
   );
 
   const [tokenPingQNet, setTokenPingQNet] = useState('');

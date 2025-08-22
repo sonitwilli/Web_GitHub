@@ -210,6 +210,7 @@ export type TrackingEvent =
   | 'SkipBack'
   | 'Share'
   | 'Comment'
+  | 'Like'
   | 'LoadBlockDisplay'
   | 'OnClick'
   | 'UnsubcribePackage'

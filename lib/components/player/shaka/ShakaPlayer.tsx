@@ -45,6 +45,7 @@ import {
   checkShakaResponseFilter,
   getRemainingBufferedTime,
 } from '@/lib/utils/player';
+import { trackingPlayAttempLog521 } from '@/lib/hooks/useTrackingPlayback';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -103,7 +104,11 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     clearErrorInterRef,
   } = usePlayerPageContext();
 
-  const { handleIntervalCheckErrors, convertShakaError } = usePlayer();
+  const {
+    handleIntervalCheckErrors,
+    convertShakaError,
+    isValidForProfileType,
+  } = usePlayer();
 
   const { getUrlToPlay } = useCodec({
     dataChannel,
@@ -305,6 +310,26 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       trackPlayerChange();
     });
     player.addEventListener('loading', () => {
+      const firstLoad = sessionStorage.getItem(
+        trackingStoreKey.PLAYER_FIRST_LOAD,
+      );
+      if (!firstLoad) {
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_FIRST_LOAD,
+              value: new Date().getTime().toString(),
+            },
+          ],
+        });
+        trackingPlayAttempLog521({
+          Event: 'FirstLoad',
+        });
+      } else {
+        trackingPlayAttempLog521({
+          Event: 'PlayAttemp',
+        });
+      }
       console.log('--- SHAKA: LOAD MANIFEST');
     });
     const fragDownloadTimes = new Map();
@@ -406,6 +431,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     }
   };
   async function initShaka() {
+    console.log('isValidForProfileType :>> ', isValidForProfileType);
     if (isDrm) {
       if (isHboGo || isQNet) {
         endPingHbo();

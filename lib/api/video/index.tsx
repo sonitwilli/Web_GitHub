@@ -1,6 +1,33 @@
 import { axiosInstance } from '../axios';
 
-export const fetchDataInforVideo = async (id: string) => {
+// Types for rating API response
+export interface RatingContentItem {
+  avg_rate?: string;
+  bg?: string;
+  count?: string;
+  count_description?: string;
+  count_origin?: number;
+  icon?: string;
+  type?: string;
+}
+
+export interface RatingUserData {
+  rate?: string;
+}
+
+export interface RatingData {
+  content?: RatingContentItem[];
+  user?: RatingUserData;
+}
+
+export interface RatingResponse {
+  status?: string;
+  error_code?: string;
+  data?: RatingData;
+  msg?: string;
+}
+
+export const fetchDataInforVideo = async (id?: string) => {
   try {
     const res = await axiosInstance.get(`content/vod/${id}`);
     return res?.data;
@@ -9,17 +36,20 @@ export const fetchDataInforVideo = async (id: string) => {
   }
 };
 
-export const fetchRatingData = async (itemId: string, refId: string) => {
+export const fetchRatingData = async (
+  itemId?: string,
+  refId?: string,
+): Promise<RatingData | null> => {
   try {
-    const res = await axiosInstance.get('/config/rating', {
+    const res = await axiosInstance.get<RatingResponse>('/config/rating', {
       params: {
         item_id: itemId,
         ref_id: refId,
       },
     });
-    return res?.data?.data?.user?.rate ?? 0;
+    return res?.data?.data || null;
   } catch {
-    return 0;
+    return null;
   }
 };
 
@@ -29,10 +59,10 @@ export const postRatingData = async ({
   appId,
   rating,
 }: {
-  itemId: string;
-  refId: string;
-  appId: string;
-  rating: number;
+  itemId?: string;
+  refId?: string;
+  appId?: string;
+  rating?: number;
 }) => {
   try {
     const res = await axiosInstance.post('/config/rating', {

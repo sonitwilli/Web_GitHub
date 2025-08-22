@@ -57,6 +57,7 @@ import {
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { trackingStartMovieLog51 } from '@/lib/hooks/useTrackingPlayback';
+import { trackingEnterDetailLiveShowLog170 } from '@/lib/hooks/useTrackingEvent';
 
 export interface PlayerModalType {
   content?: ModalContent;
@@ -189,8 +190,6 @@ type ContextType = {
     dataPlaylist?: PlayListDetailResponseType;
   }) => Promise<StreamItemType>;
   clearErrorInterRef?: () => void;
-  errorFairPlay?: boolean;
-  setErrorFairPlay?: (v: boolean) => void;
   queryEpisodeNotExist?: boolean;
   setQueryEpisodeNotExist?: (v: boolean) => void;
 };
@@ -384,14 +383,19 @@ export function PlayerPageContextProvider({ children }: Props) {
   //     return '';
   //   }
   // };
-  // useEffect(() => {
-  //   checkScreen();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [previewHandled]);
+  useEffect(() => {
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.IS_PREVIEW_CONTENT,
+          value: previewHandled ? '1' : '0',
+        },
+      ],
+    });
+  }, [previewHandled]);
   const [dataPlaylist, setDataPlaylist] =
     useState<PlayListDetailResponseType>();
   const [isRedirecting, setIsRedirecting] = useState(false);
-  const [errorFairPlay, setErrorFairPlay] = useState(false);
 
   const portalTarget = useMemo(() => {
     if (isFullscreen) {
@@ -963,7 +967,9 @@ export function PlayerPageContextProvider({ children }: Props) {
           channelDetail?.verimatrix === true ||
           channelDetail?.drm === '1' ||
           channelDetail?.drm === true) &&
-        (streamType === 'channel' || streamType === 'event')
+        (streamType === 'channel' ||
+          streamType === 'event' ||
+          streamType === 'premiere')
       ) {
         const validBrowser = isRequiredBrowser();
         if (!validBrowser) return;
@@ -1002,7 +1008,9 @@ export function PlayerPageContextProvider({ children }: Props) {
             !isRedirecting
           ) {
             const firstVideo = videosAfterFetch[0];
-            const rawSlug = Array.isArray(slugsAfterFetch) ? slugsAfterFetch[0] : slugsAfterFetch;
+            const rawSlug = Array.isArray(slugsAfterFetch)
+              ? slugsAfterFetch[0]
+              : slugsAfterFetch;
             if (rawSlug) {
               setIsRedirecting(true);
               // use replace to avoid extra history entry
@@ -1162,7 +1170,27 @@ export function PlayerPageContextProvider({ children }: Props) {
 
   useEffect(() => {
     if (fetchChannelCompleted) {
-      trackingStartMovieLog51();
+      switch (streamType) {
+        case 'vod':
+        case 'playlist':
+          trackingStartMovieLog51();
+          break;
+        case 'event':
+        case 'premiere':
+          trackingEnterDetailLiveShowLog170({
+            Event: 'EnterDetailLiveShow',
+          });
+          break;
+        case 'channel':
+        case 'timeshift':
+          trackingEnterDetailLiveShowLog170({
+            Event: 'RequestPackage',
+          });
+          break;
+
+        default:
+          trackingStartMovieLog51();
+      }
     }
     if (!dataEvent) return;
     if (isPrepareLive === false) {
@@ -1385,8 +1413,6 @@ export function PlayerPageContextProvider({ children }: Props) {
         getStream,
         // @ts-ignore
         clearErrorInterRef,
-        errorFairPlay,
-        setErrorFairPlay,
         queryEpisodeNotExist,
       }}
     >

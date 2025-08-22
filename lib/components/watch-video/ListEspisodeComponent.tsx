@@ -372,7 +372,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
         {/* PAGINATION CONTROL */}
         {dataEspisodes?.length > 15 ? (
           <div
-            className={`relative mb-2 pr-[32px] ${
+            className={`relative mb-2 ${
               isFullscreen && position === 'fullscreen'
                 ? 'w-full'
                 : 'xl:w-[376px]'
@@ -414,7 +414,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
             {prevBtnEnabled && (
               <button
                 onClick={scrollPrev}
-                className="flex items-center absolute left-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
+                className="flex items-center absolute left-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer w-[46px] h-[25px]"
                 style={{
                   background:
                     'linear-gradient(to left, rgba(27, 26, 25, 0) 0%, rgba(27, 26, 25, 0.8) 50%, rgba(27, 26, 25, 1) 100%)',
@@ -432,7 +432,7 @@ const ListEspisodeComponent = ({ position }: Props) => {
             {nextBtnEnabled && (
               <button
                 onClick={scrollNext}
-                className="flex justify-end absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer"
+                className="flex justify-end absolute right-0 top-1/2 -translate-y-1/2 z-10 cursor-pointer w-[46px] h-[25px]"
                 style={{
                   background:
                     'linear-gradient(to right, rgba(27, 26, 25, 0) 0%, rgba(27, 26, 25, 0.8) 50%, rgba(27, 26, 25, 1) 100%)',

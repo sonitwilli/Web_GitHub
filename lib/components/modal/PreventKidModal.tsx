@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import ModalWrapper from '@/lib/components/modal/ModalWrapper'; // Giả định đường dẫn
-import { getConfig } from '@/lib/api/config'; // Import API getConfig
 import { PROFILE_TYPES, TYPE_PR } from '@/lib/constant/texts'; // Giả định constants
 import { usePlayerPageContext } from '../player/context/PlayerPageContext'; // Giả định context để lấy dataChannel
+import { useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 
 // Danh sách whitelist
 const whiteList = [
@@ -31,21 +32,12 @@ const PreventKidModal: React.FC = () => {
   const [preventKidText, setPreventKidText] = useState('');
   const [profilesRouteChanged] = useState(false); // Giả định tạm thời, thay bằng Redux nếu cần
   const { dataChannel } = usePlayerPageContext(); // Giả định context để lấy dataChannel
+  const messageConfigs = useSelector((state: RootState) => state.app.messageConfigs);
 
   // Lấy msg_not_support từ API
   useEffect(() => {
-    const fetchConfig = async () => {
-      try {
-        const response = await getConfig();
-        const msgNotSupport = response.data?.data?.profile?.msg_not_support || '';
-        setPreventKidText(msgNotSupport);
-      } catch (error) {
-        console.error('Failed to fetch config:', error);
-      }
-    };
-
-    fetchConfig();
-  }, []);
+    setPreventKidText(messageConfigs?.profile?.msg_not_support || '');
+  }, [messageConfigs]);
 
   // Kiểm tra điều kiện hiển thị modal
   useEffect(() => {

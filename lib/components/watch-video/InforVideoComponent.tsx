@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import useModalToggle from '@/lib/hooks/useModalToggle';
 import dynamic from 'next/dynamic';
 import VodRating from '../rating/VodRating';
@@ -17,6 +17,7 @@ import ListEspisodeComponent from './ListEspisodeComponent';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import Categories from './Categories';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
+import { fetchRatingData, RatingData } from '@/lib/api/video';
 
 const RatingStar = dynamic(() => import('./RatingStart'), {
   ssr: false,
@@ -65,6 +66,24 @@ const InforVideoComponent = (props: PropsVideo) => {
     [dataVideo],
   );
 
+  const [ratingInfo, setRatingInfo] = useState<RatingData | null>(null);
+
+  useEffect(() => {
+    const loadRating = async () => {
+      const userRating = await fetchRatingData(
+        dataVideo?._id || dataVideo?.id || '',
+        dataVideo?.ref_id || '',
+      );
+      if (userRating) {
+        setRatingInfo(userRating);
+      }
+    };
+    if ((dataVideo?._id || dataVideo?.id) && dataVideo?.ref_id && !ratingInfo) {
+      loadRating();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dataVideo]);
+
   const { isLiked, handleReaction } = useReaction({ slide });
   const slideFromVod = {
     _id: dataVideo?._id ?? dataVideo?.id ?? '',
@@ -76,13 +95,6 @@ const InforVideoComponent = (props: PropsVideo) => {
       description: dataVideo?.description ?? '',
     },
   };
-
-  const ratingInfo = useMemo(() => {
-    return (
-      dataVideo?.highlighted_info?.filter((item) => item?.type === 'rating') ||
-      []
-    );
-  }, [dataVideo]);
 
   const highlightInfo = useMemo(() => {
     return (
@@ -259,7 +271,7 @@ const InforVideoComponent = (props: PropsVideo) => {
 
         {/* Hightligh info */}
         <div className="flex flex-col flex-wrap lg:flex-row lg:justify-between lg:items-center gap-[24px] mb-[24px]">
-          <div className="flex gap-3 flex-wrap">
+          <div className="flex gap-3 flex-wrap items-center">
             {highlightInfo?.map((item, index) => (
               <div className="h-[28px]" key={index}>
                 <img
@@ -272,24 +284,30 @@ const InforVideoComponent = (props: PropsVideo) => {
               </div>
             ))}
 
-            {ratingInfo && ratingInfo?.length > 0 && (
-              <div className="h-[28px] rounded-[8px] px-2 border border-white-01 bg-raisin-black/80">
-                <VodRating
-                  /*@ts-ignore*/
-                  hightlightInfo={ratingInfo[0]}
-                  type="hovered-slide"
+            {ratingInfo && ratingInfo?.content?.[0] && (
+              <VodRating
+                /*@ts-ignore*/
+                hightlightInfo={ratingInfo?.content?.[0]}
+              />
+            )}
+
+            {ratingInfo && ratingInfo?.content?.[0] && (
+              <div className="flex items-center">
+                <RatingStar
+                  itemId={dataVideo?._id ?? dataVideo?.id ?? ''}
+                  refId={dataVideo?.ref_id ?? ''}
+                  appId={dataVideo?.app_id ?? ''}
+                  totalStars={5}
+                  hightlightInfo={
+                    ratingInfo
+                      ? {
+                          ...(ratingInfo?.content?.[0] as HighlightedInfo),
+                        }
+                      : {}
+                  }
                 />
               </div>
             )}
-
-            <div className="flex items-center">
-              <RatingStar
-                itemId={dataVideo?._id ?? dataVideo?.id ?? ''}
-                refId={dataVideo?.ref_id ?? ''}
-                appId={dataVideo?.app_id ?? ''}
-                totalStars={5}
-              />
-            </div>
           </div>
         </div>
 

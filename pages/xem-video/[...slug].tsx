@@ -82,8 +82,7 @@ export default function VodPage() {
   const fetchPlaylistHistory = async () => {
     try {
       const slugs = router?.query?.slug;
-      const rawId = Array.isArray(slugs) ? slugs[0] : slugs;
-      const videoId = rawId?.split('-').pop();
+      const videoId = Array.isArray(slugs) ? slugs[1] : slugs;
       const chapterId = '-1';
 
       const history = await getVodHistory({
@@ -99,15 +98,8 @@ export default function VodPage() {
           },
         ],
       });
-
-      if (history && history?.data?.movie_id !== videoId) {
-        const episodeHistory = history?.data?.movie_id;
-        const targetPath = `/playlist/${videoId}/${episodeHistory || ''}`;
-        await router.push(targetPath);
-        setFetchHistoryDone(true);
-      } else {
-        setFetchHistoryDone(true);
-      }
+      dispatch(changeHistoryData(history?.data));
+      setFetchHistoryDone(true);
     } catch {
       setFetchHistoryDone(true);
     } finally {

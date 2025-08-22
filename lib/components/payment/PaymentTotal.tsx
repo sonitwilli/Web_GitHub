@@ -133,7 +133,7 @@ const PaymentTotal: React.FC<PaymentTotalProps> = ({
   const policyHtmlString = useMemo(() => {
     let html =
       policyHtml?.html_desktop ||
-      '<p>Bằng việc chấp nhận thanh toán, Quý khách đã đồng ý với Quy chế sử dụng dịch vụ của FPT Play, và ủy quyền cho FPT Play tự động gia hạn khi hết hạn sử dụng. Quý khách có thể hủy gia hạn bất cứ lúc nào. Xem chi tiết <a href="/dieu-khoan-su-dung">Tại đây</a></p>';
+      '<p>Bằng việc chấp nhận thanh toán, Quý khách đã đồng ý với Quy chế sử dụng dịch vụ của FPT Play, và ủy quyền cho FPT Play tự động gia hạn khi hết hạn sử dụng. Quý khách có thể hủy gia hạn bất cứ lúc nào. Xem chi tiết <a href="/thong-tin/dieu-khoan-su-dung">Tại đây</a></p>';
     html = html.replace(/&gt;/g, '>').replace(/&lt;/g, '<');
     return html.replace('<a ', '<a style="color: #ff6500" ');
   }, [policyHtml]);

@@ -274,7 +274,7 @@ const WatchVideoComponent = () => {
               }`}
             >
               {!fetchChannelCompleted ? (
-                <div className="w-full col-span-full max-h-[416px]">
+                <div className="w-full col-span-full max-h-60vh">
                   <PlayerPlaceholder />
                 </div>
               ) : (
@@ -296,7 +296,7 @@ const WatchVideoComponent = () => {
                           })}
                           alt={dataChannel?.name || dataChannel?.title}
                           placeHolder="/images/player_page_placeholder.png"
-                          className="mx-auto max-h-[416px]"
+                          className="mx-auto max-h-60vh"
                         />
                         <button
                           aria-label="Play"

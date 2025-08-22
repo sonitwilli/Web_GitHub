@@ -24,7 +24,7 @@ export interface MessageConfigDataType {
 
 export interface Profile {
   msg_not_support?: string;
-  action_delete?: DeleteProfile
+  action_delete?: DeleteProfile;
 }
 
 export interface DeleteProfile {
@@ -123,7 +123,7 @@ export interface Playzone {
 const getMessageConfigs = async (): Promise<
   AxiosResponse<MessageConfigRes>
 > => {
-  return axiosInstance.get('/playos/general_info/config/message');
+  return axiosInstance.get('/playos/general_info/message');
 };
 
 export { getMessageConfigs };

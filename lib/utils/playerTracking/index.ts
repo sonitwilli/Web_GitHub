@@ -443,7 +443,72 @@ export const getItemInfo = () => {
     return {};
   }
 };
-
+export const getTrackingParamIsLive = () => {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+  // 0: VOD => pathname
+  // 1: Kênh truyền hình  => pathname
+  // 2: Sự kiện  => pathname + event
+  // 3: Sự kiện dẫn kênh  => pathname + event
+  // 4: Công chiếu  => pathname
+  // 5: Preview Channel => pathname + field previewHandled
+  // 6: Preview Liveshow => pathname + field previewHandled
+  // 7: Trailer => data stream
+  // 8: Pladio
+  // 9: PreviewVOD => pathname + field previewHandled
+  // 10: Timeshift => pathname
+  const url = window.location.pathname;
+  const { dataStream } = getContentData();
+  const isVod = url.includes('/xem-video/');
+  const isChannel = url.includes('/xem-truyen-hinh/');
+  const isEvent = url.includes('/su-kien/');
+  const isPremiere = url.includes('/cong-chieu/');
+  const isPreview =
+    sessionStorage.getItem(trackingStoreKey.IS_PREVIEW_CONTENT) === '1';
+  if (isVod) {
+    if (isPreview) {
+      return 9;
+    }
+    if (dataStream) {
+      const isTrailer = dataStream?.is_trailer;
+      if (isTrailer) {
+        return 7;
+      } else {
+        return 0;
+      }
+    }
+    return 0;
+  }
+  if (isChannel) {
+    if (isPreview) {
+      return 5;
+    }
+    // check query timeshift_id has value
+    const urlParams = new URLSearchParams(window.location.search);
+    const timeshiftId = urlParams.get('timeshift_id');
+    if (timeshiftId) {
+      return 10;
+    }
+    return 1;
+  }
+  if (isEvent) {
+    if (isPreview) {
+      return 6;
+    }
+    // check query type = eventtv => 3
+    const urlParams = new URLSearchParams(window.location.search);
+    const event = urlParams.get('event');
+    if (event === 'eventtv') {
+      return 3;
+    }
+    return 2;
+  }
+  if (isPremiere) {
+    return 4;
+  }
+  return 0;
+};
 export const getPlayerParams = () => {
   if (typeof window === 'undefined') {
     return {};
@@ -482,9 +547,6 @@ export const getPlayerParams = () => {
     sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH),
   );
   const streamBwMbps = streamBwBitPerS / 1024 / 1024;
-  const streamType = sessionStorage.getItem(
-    trackingStoreKey.PLAYER_STREAM_TYPE,
-  ) as StreamType;
   const isLinkDRM =
     dataChannel?.drm === 1 ||
     dataChannel?.drm === '1' ||
@@ -492,6 +554,7 @@ export const getPlayerParams = () => {
     dataChannel?.verimatrix === 1 ||
     dataChannel?.verimatrix === '1' ||
     dataChannel?.verimatrix === true;
+  const isLive = getTrackingParamIsLive();
   return {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
@@ -569,7 +632,7 @@ export const getPlayerParams = () => {
       ) || '',
     BlockPosition: sessionStorage.getItem(trackingStoreKey.BLOCK_INDEX) || '',
     isTrailer: dataStream?.is_trailer || '',
-    isLive: streamType === 'event' ? '2' : '0',
+    isLive: isLive?.toString() || '',
     isLinkDRM: isLinkDRM ? '1' : '0',
     Directors:
       dataChannel?.directors_detail

@@ -13,8 +13,8 @@ export default function RequirePurchaseVod() {
     useRequirePurchase();
 
   return (
-    <div className="RequirePurchaseVod h-full relative max-h-[416px] rounded-[16px] overflow-hidden">
-      <div className="relative max-h-[416px]">
+    <div className="RequirePurchaseVod h-full relative max-h-60vh rounded-[16px] overflow-hidden">
+      <div className="relative max-h-60vh">
         {dataChannel?.image?.landscape ||
         dataChannel?.image?.landscape_title ? (
           <CustomImage
@@ -24,13 +24,13 @@ export default function RequirePurchaseVod() {
                 dataChannel?.image?.landscape_title,
             })}
             placeHolder="/images/player_page_placeholder.png"
-            className="max-h-[416px] object-cover mx-auto"
+            className="max-h-60vh object-cover mx-auto"
           />
         ) : (
           <img
             src="/images/player_page_placeholder.png"
             alt={dataChannel?.name || dataChannel?.title}
-            className="max-h-[416px] object-cover mx-auto"
+            className="max-h-60vh object-cover mx-auto"
           />
         )}
 

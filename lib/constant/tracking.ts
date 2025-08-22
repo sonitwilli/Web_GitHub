@@ -103,6 +103,7 @@ export const TRACKING_LOG_ID: Record<TrackingEvent, number> = {
   SkipForward: 514,
   Share: 516,
   Comment: 516,
+  Like: 516,
   LoadBlockDisplay: 511,
   OnClick: 187,
   UnsubcribePackage: 188,
@@ -230,6 +231,7 @@ export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
   SkipForward: '',
   Share: '',
   Comment: '',
+  Like: '',
   LoadBlockDisplay: 'dynamic',
   OnClick: 'SUBSCRIPTION',
   UnsubcribePackage: 'SUBSCRIPTION',
@@ -357,6 +359,7 @@ export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
   SkipForward: '',
   Share: '',
   Comment: '',
+  Like: '',
   LoadBlockDisplay: 'dynamic',
   OnClick: 'SUBSCRIPTION',
   UnsubcribePackage: 'SUBSCRIPTION',
@@ -485,6 +488,7 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   SkipForward: '',
   Share: '',
   Comment: '',
+  Like: '',
   LoadBlockDisplay: 'ListBlockDisplay',
   OnClick: '',
   UnsubcribePackage: '',
@@ -694,4 +698,6 @@ export const trackingStoreKey = {
   PLAYER_VOD_ID: 'PLAYER_VOD_ID',
   PLAYER_TRACKING_STATE: 'PLAYER_TRACKING_STATE', // start hoặc stop
   BLOCK_INDEX: 'BLOCK_INDEX',
+  PLAYER_FIRST_LOAD: 'PLAYER_FIRST_LOAD',
+  IS_PREVIEW_CONTENT: 'IS_PREVIEW_CONTENT',
 };

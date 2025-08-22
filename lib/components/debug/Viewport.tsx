@@ -6,6 +6,7 @@ type ViewportInfo = {
   height?: number;
   browser?: string;
   device?: string;
+  os?: string;
 };
 
 const getViewportInfo = (): ViewportInfo => {
@@ -21,12 +22,12 @@ const getViewportInfo = (): ViewportInfo => {
     device: result.device.type
       ? result.device.type.charAt(0).toUpperCase() + result.device.type.slice(1)
       : 'Desktop',
+    os: result?.os?.name,
   };
 };
 
 const Viewport: React.FC = () => {
   const [info, setInfo] = useState<ViewportInfo>(getViewportInfo());
-
   useEffect(() => {
     function handleResize() {
       setInfo(getViewportInfo());
@@ -38,6 +39,7 @@ const Viewport: React.FC = () => {
 
   return (
     <div className="fixed bottom-[2px] right-[2px] bg-black/70 text-white p-[2px] rounded-lg text-[12px] z-[9999] font-mono pointer-events-none select-none shadow-lg">
+      <div>O: {info.os}</div>
       <div>W: {info.width}px</div>
       <div>H: {info.height}px</div>
       <div>B: {info.browser}</div>

@@ -164,8 +164,12 @@ export function VodPageContextProvider({ children }: Props) {
   const getChapter = async () => {
     try {
       if (vodId) {
-        const res = await getWatchingChapter({ vodId });
-        setChapterList(res?.data?.chapter || {});
+        if (router.pathname.includes('playlist')) {
+          console.log('Get list bookmark Playlist')
+        } else {
+          const res = await getWatchingChapter({ vodId });
+          setChapterList(res?.data?.chapter || {});
+        }
       }
     } catch {}
   };

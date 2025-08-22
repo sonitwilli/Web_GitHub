@@ -231,7 +231,7 @@ export default function PageBlockItem({
               : ''
           }`}
         >
-          <h2 className="text-[20px] 2xl:text-[24px] font-[600] text-white-smoke truncate">
+          <h2 className="text-[20px] 2xl:text-[24px] max-w-[80%] font-[600] text-white-smoke truncate">
             {blockData?.meta?.name || block?.name}
           </h2>
           {blockData?.meta?.short_description && (
@@ -283,7 +283,7 @@ export default function PageBlockItem({
             : ''
         }`}
       >
-        <h2 className="text-[20px] 2xl:text-[24px] font-[600] text-white-smoke truncate">
+        <h2 className="text-[20px] 2xl:text-[24px] font-[600] text-white-smoke truncate max-w-[80%]">
           {blockData?.meta?.name || block?.name}
         </h2>
         {blockData?.meta?.short_description && (

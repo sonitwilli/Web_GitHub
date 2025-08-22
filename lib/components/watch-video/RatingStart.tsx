@@ -3,13 +3,15 @@ import { FaStar } from 'react-icons/fa';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { showToast } from '@/lib/utils/globalToast';
-import { fetchRatingData, postRatingData } from '@/lib/api/video';
+import { postRatingData } from '@/lib/api/video';
+import { HighlightedInfo } from './InforVideoComponent';
 
 interface RatingStarProps {
   itemId: string;
   refId?: string;
   appId?: string;
   totalStars?: number;
+  hightlightInfo?: HighlightedInfo;
 }
 
 const RatingStar: React.FC<RatingStarProps> = ({
@@ -17,6 +19,7 @@ const RatingStar: React.FC<RatingStarProps> = ({
   refId = '',
   appId = '',
   totalStars = 5,
+  hightlightInfo,
 }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
@@ -40,17 +43,10 @@ const RatingStar: React.FC<RatingStarProps> = ({
     },
   };
 
-  const loadRating = async () => {
-    const userRating = await fetchRatingData(itemId, refId);
-    setRating(userRating);
-  };
-
   useEffect(() => {
     if (!itemId || !refId) return;
-    loadRating();
     setIsEditRating(false);
     setHover(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [itemId, refId]);
 
   const handleRatingVod = async (starValue: number) => {
@@ -91,15 +87,32 @@ const RatingStar: React.FC<RatingStarProps> = ({
     setHover(null);
   };
 
+  const isNotEmptyObject = (obj: HighlightedInfo | null) => {
+    return obj && Object.keys(obj)?.length > 0 && obj.constructor === Object;
+  };
+
+  if (!isNotEmptyObject(hightlightInfo || null)) {
+    return null;
+  }
+
   return (
     <div className="flex h-[32px]">
+      {!hightlightInfo?.avg_rate && !isEditRating && !rating && (
+        <div className="flex items-center gap-2 p-2 bg-charleston-green rounded-[8px] mr-3">
+          <FaStar size={18} className="text-fpl" />
+          <p className="text-spanish-gray text-base font-[450] leading-[130%] mt-[2px] whitespace-nowrap">
+            {generalInfoMessage.rating_content.action_no_rating}
+          </p>
+        </div>
+      )}
+
       {rating > 0 && !isEditRating && (
         <div className="flex items-center gap-2">
           <FaStar size={18} className="text-fpl" />
           <span className="text-white text-base font-bold">{rating}</span>
           <div className="w-1 h-1 bg-gray-400 rounded-full mx-1" />
           <span
-            className="text-fpl cursor-pointer text-sm font-semibold"
+            className="text-fpl cursor-pointer text-sm font-semibold mt-[2px]"
             onClick={() => setIsEditRating(true)}
           >
             {generalInfoMessage.rating_content.action_edit}
@@ -148,7 +161,7 @@ const RatingStar: React.FC<RatingStarProps> = ({
           })}
           {isEditRating && (
             <span
-              className="text-fpl cursor-pointer text-sm ml-2 mt-[-5px] font-semibold"
+              className="text-fpl cursor-pointer text-sm ml-2 mt-[0px] font-semibold"
               onClick={() => setIsEditRating(false)}
             >
               {generalInfoMessage.rating_content.action_cancel}

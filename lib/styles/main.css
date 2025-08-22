@@ -58,6 +58,10 @@ body::-webkit-scrollbar-track {
   max-height: calc(100vh - 172px);
 }
 
+.max-h-60vh {
+  max-height: 60vh;
+}
+
 .hide-scroll::-webkit-scrollbar {
   width: 0;
   height: 0;

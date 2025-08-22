@@ -8,6 +8,7 @@ interface trackingState {
   position: object | undefined;
   clickToPlayTime: number;
   initPlayerTime: number;
+  getDRMKeyTime: number;
 }
 
 const initialState: trackingState = {
@@ -18,6 +19,7 @@ const initialState: trackingState = {
   position: undefined,
   clickToPlayTime: 0,
   initPlayerTime: 0,
+  getDRMKeyTime: 0,
 };
 
 const trackingSlice = createSlice({
@@ -45,6 +47,9 @@ const trackingSlice = createSlice({
     changeInitPlayerTime: (state, action: PayloadAction<number>) => {
       state.initPlayerTime = action.payload;
     },
+    changeGetDRMKeyTime: (state, action: PayloadAction<number>) => {
+      state.getDRMKeyTime = action.payload;
+    },
   },
 });
 
@@ -57,6 +62,7 @@ export const {
   changePosition,
   changeClickToPlayTime,
   changeInitPlayerTime,
+  changeGetDRMKeyTime,
 } = trackingSlice.actions;
 
 // Export reducer

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { store, useAppDispatch, useAppSelector } from '../store';
 import {
   ERROR_PLAYER_FPT_PLAY,
@@ -7,6 +7,7 @@ import {
   PLAYER_IS_RETRYING,
   PLAYER_NAME,
   PLAYER_WRAPPER,
+  TYPE_PR,
   VIDEO_CURRENT_TIME,
   VIDEO_ID,
   VIDEO_TIME_BEFORE_ERROR,
@@ -35,7 +36,11 @@ import {
 import { trackingStoreKey } from '../constant/tracking';
 import { saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
-import { useTrackingPlayback } from './useTrackingPlayback';
+import {
+  trackingPauseMovieLog53,
+  trackingResumeMovieLog54,
+  useTrackingPlayback,
+} from './useTrackingPlayback';
 import { UAParser } from 'ua-parser-js';
 import { userAgentInfo } from '@/lib/utils/ua';
 
@@ -57,6 +62,7 @@ export default function usePlayer() {
     setIsVideoPaused,
     videoCurrentTime,
     hlsErrosRef,
+    hlsErrors,
     setHlsErrors,
     dataChannel,
     dataStream,
@@ -70,7 +76,17 @@ export default function usePlayer() {
     setRealPlaySeconds,
     clearErrorInterRef,
     queryEpisodeNotExist,
+    fetchChannelCompleted,
   } = usePlayerPageContext();
+  const isValidForProfileType = useMemo(() => {
+    if (!fetchChannelCompleted) {
+      return true;
+    }
+    const p = localStorage.getItem(TYPE_PR);
+    if (p === '2' && dataChannel?.is_kid !== '1') {
+      return false;
+    }
+  }, [dataChannel, fetchChannelCompleted]);
   const { handleLoadAds } = useAdsPlayer();
   const { trackingStartFirstFrameLog520 } = useTrackingPlayback();
   const { getUrlToPlay } = useCodec({
@@ -248,9 +264,17 @@ export default function usePlayer() {
           },
         ],
       });
-      trackingStartFirstFrameLog520({
-        Event: 'Initial',
-      });
+      if (hlsErrors && hlsErrors.length > 0) {
+        trackingStartFirstFrameLog520({
+          Event: 'Retry',
+        });
+      } else {
+        trackingStartFirstFrameLog520({
+          Event: 'Initial',
+        });
+      }
+    } else {
+      trackingResumeMovieLog54();
     }
     trackPlayerChange();
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
@@ -464,6 +488,7 @@ export default function usePlayer() {
   };
 
   const handlePaused = () => {
+    trackingPauseMovieLog53();
     if (setIsVideoPaused) setIsVideoPaused(true);
   };
 
@@ -858,5 +883,6 @@ export default function usePlayer() {
     handleIntervalCheckErrorsSafari,
     checkSafariError,
     clearIntervalErrorSafari,
+    isValidForProfileType,
   };
 }

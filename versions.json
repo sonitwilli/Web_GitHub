@@ -1,6 +1,22 @@
 {
     "versions": [
         {
+            "version": "8.0.29",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Playlist] Lỗi không play bookmark sau khi reload page ở playlist",
+                "[WEB][Playlist] Lỗi không play bookmark khi chọn ở danh sách phát",
+                "[WEB][Playlist] Lỗi không play bookmark khi chọn vào item ở playlist đã có bookmark",
+                "[WEB][Sự kiện] Lỗi không hiện thông báo không hỗ trợ xem DRM trên trình duyệt khác Safari, Edge",
+                "[WEB][Sự kiện] Không vuốt lên xuống được trang detail sự kiện ở mode mobile",
+                "[WEB][Sự kiện] Lỗi luôn play từ đầu sự kiện công chiếu",
+                "[WEB][DetailVOD] Rating: Lỗi đang hiển thị ratingVOD ở các nội dung không thuộc thể loại Phim bộ/Phim lẻ/Thiếu nhi/Anime/Giải trí",
+                "[WEB][DetailVOD] Rating: Lỗi thiếu text 'Chưa có đánh giá' đối với VOD chưa có đánh giá nào",
+                "[WEB][Sự kiện] Lỗi sự kiện tiếp sóng đã đến end_time",
+                "[WEB][Page Thể loại] Lỗi đang hiển thị sai poster (đang hiển thị poster không title) + không hiển thị label"
+            ]
+        }, 
+        {
             "version": "8.0.28",
             "date": "Dự kiến",
             "content": [

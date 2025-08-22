@@ -49,13 +49,13 @@ export const trackingStartMovieLog51 = () => {
       dataWatching,
       currentEpisode,
     });
-    const { Screen } = getPlaybackParams();
+    const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '51',
       Event: Event || 'StartMovie',
       ...playerParams,
-      Screen,
+      ...playbackTrackingParams,
     });
   } catch {}
 };
@@ -91,13 +91,13 @@ export const trackingStopMovieLog52 = () => {
     if (isTrailer) {
       Event = 'StopTrailer';
     }
-    const { Screen } = getPlaybackParams();
+    const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '52',
       Event: Event || 'StopMovie',
       ...playerParams,
-      Screen,
+      ...playbackTrackingParams,
     });
   } catch {}
 };
@@ -115,13 +115,13 @@ export const trackingPauseMovieLog53 = () => {
     if (isTrailer) {
       Event = 'PauseTrailer';
     }
-    const { Screen } = getPlaybackParams();
+    const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '53',
       Event: Event || 'PauseMovie',
       ...playerParams,
-      Screen,
+      ...playbackTrackingParams,
     });
   } catch {}
 };
@@ -151,7 +151,7 @@ export const trackingResumeMovieLog54 = () => {
 };
 
 export const trackingNextMovieLog55 = () => {
-  // Log514 : NextMovie | NextTrailer
+  // Log55 : NextMovie | NextTrailer
   try {
     if (typeof window === 'undefined') {
       return;
@@ -159,7 +159,7 @@ export const trackingNextMovieLog55 = () => {
     let Event: TrackingEvent = 'NextMovie';
     const { dataStream } = getContentData();
     const playerParams = getPlayerParams();
-    const { Screen } = getPlaybackParams();
+    const playbackTrackingParams = getPlaybackParams();
     const isTrailer = dataStream?.is_trailer;
     if (isTrailer) {
       Event = 'NextTrailer';
@@ -169,14 +169,127 @@ export const trackingNextMovieLog55 = () => {
       LogId: '55',
       Event: Event || 'NextMovie',
       ...playerParams,
+      ...playbackTrackingParams,
+    });
+  } catch {}
+};
+
+export const trackingSeekVideoLog514 = ({ Event }: TrackingParams) => {
+  // Log514 : SeekVideo
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '514',
+      Event: Event || 'Seek',
+      ...playerParams,
+      ...playbackTrackingParams,
+    });
+  } catch {}
+};
+
+export const trackingPlaybackErrorLog515 = ({
+  Event,
+  Screen,
+  ErrCode,
+  ErrMessage,
+  ErrUrl,
+  ErrHeader,
+}: TrackingParams) => {
+  // Log515 : PlaybackError | RetryPlayer
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '515',
+      Event: Event || 'PlaybackError',
+      ...playerParams,
+      ...playbackTrackingParams,
       Screen,
+      ErrCode,
+      ErrMessage,
+      ErrUrl,
+      ErrHeader,
+    });
+  } catch {}
+};
+
+export const trackingChangeSubAudioLog518 = ({
+  Event,
+  ItemName,
+}: TrackingParams) => {
+  // Log518 : ChangeSubtitles | ChangeAudio
+  try {
+    if (typeof window === 'undefined' || !Event) {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '518',
+      Event: Event,
+      ...playerParams,
+      ...playbackTrackingParams,
+      ItemName,
+    });
+  } catch {}
+};
+export const trackingChangeVideoQualityLog416 = ({
+  ItemName,
+}: TrackingParams) => {
+  // Log416 : ChangeVideoQuality
+  try {
+    if (typeof window === 'undefined' || !Event) {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '416',
+      Event: 'ChangeVideoQuality',
+      ...playerParams,
+      ...playbackTrackingParams,
+      ItemName,
+    });
+  } catch {}
+};
+
+export const trackingShareCommentLikeLog516 = ({ Event }: TrackingParams) => {
+  // Log516 : TrackingShare | TrackingComment | TrackingLike
+  try {
+    if (typeof window === 'undefined' || !Event) {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '516',
+      Event: Event,
+      ...playerParams,
+      ...playbackTrackingParams,
     });
   } catch {}
 };
 
 export const useTrackingPlayback = () => {
   // Hook to access tracking state
-  const { clickToPlayTime, initPlayerTime } = useAppSelector(
+  const { clickToPlayTime, initPlayerTime, getDRMKeyTime } = useAppSelector(
     (state) => state.tracking,
   );
 
@@ -186,7 +299,7 @@ export const useTrackingPlayback = () => {
       if (typeof window === 'undefined') {
         return;
       }
-      const { Screen } = getPlaybackParams();
+      const playbackTrackingParams = getPlaybackParams();
       const playerParams = getPlayerParams();
       const {
         dataChannel,
@@ -217,10 +330,37 @@ export const useTrackingPlayback = () => {
       return tracking({
         LogId: '520',
         Event: Event || 'Initial',
-        Screen,
+        ...playbackTrackingParams,
         ...playerParams,
         ClickToPlayTime: calculatedClickToPlayTime.toString(),
         InitPlayerTime: calculatedInitPlayTime.toString(),
+      });
+    } catch {}
+  };
+
+  const trackingGetDRMKeyLog166 = ({
+    Status,
+    ErrCode,
+    ErrMessage,
+  }: TrackingParams) => {
+    // Log166: GetDRMKeySuccessfully | GetDRMKeyFailed
+    try {
+      if (typeof window === 'undefined' || !Event) {
+        return;
+      }
+      const playerParams = getPlayerParams();
+      const playbackTrackingParams = getPlaybackParams();
+      const calculatedGetDRMKeyTime = Date.now() - getDRMKeyTime;
+      /*@ts-ignore*/
+      return tracking({
+        LogId: '166',
+        Event: Status === '1' ? 'GetDRMKeySuccessfully' : 'GetDRMKeyFailed',
+        ...playerParams,
+        ...playbackTrackingParams,
+        Status,
+        ErrCode,
+        ErrMessage,
+        RealTimePlaying: calculatedGetDRMKeyTime.toString(),
       });
     } catch {}
   };
@@ -233,5 +373,11 @@ export const useTrackingPlayback = () => {
     trackingPauseMovieLog53,
     trackingResumeMovieLog54,
     trackingNextMovieLog55,
+    trackingSeekVideoLog514,
+    trackingPlaybackErrorLog515,
+    trackingChangeSubAudioLog518,
+    trackingChangeVideoQualityLog416,
+    trackingShareCommentLikeLog516,
+    trackingGetDRMKeyLog166,
   };
 };

@@ -74,7 +74,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
       onHandleDeleteMethods,
       onDoDeleteAccountNewFlow,
       openManagementCodeModal,
-      isCustom = false,
+      isCustom = true,
     },
     ref,
   ) => {

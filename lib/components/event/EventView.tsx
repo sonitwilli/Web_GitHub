@@ -84,10 +84,10 @@ const EventView = ({ dataEvent, eventId }: Props) => {
         // Mobile: calculate height based on player_wrapper + 80px
         if (playerWrapper) {
           const playerHeight = playerWrapper.offsetHeight;
-          const calculatedHeight = `calc(100vh - ${playerHeight + 80}px)`;
+          const calculatedHeight = `calc(100svh - ${playerHeight + 95}px)`;
           setLiveChatHeight(calculatedHeight);
         } else {
-          setLiveChatHeight('calc(100vh - 200px)'); // fallback
+          setLiveChatHeight('calc(100svh - 200px)'); // fallback
         }
 
         // Only disable scrolling if live chat is open on mobile
@@ -99,17 +99,23 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
             // Disable HTML scroll on mobile sau khi scroll
             setTimeout(() => {
+              document.documentElement.style.height = '100svh';
               document.documentElement.style.overflow = 'hidden';
+              document.body.style.height = '100svh';
               document.body.style.overflow = 'hidden';
             }, 300); // Delay để scroll animation hoàn thành
           } else {
             // Nếu đã scroll rồi thì chỉ disable scroll
+            document.documentElement.style.height = '100svh';
             document.documentElement.style.overflow = 'hidden';
+            document.body.style.height = '100dvh';
             document.body.style.overflow = 'hidden';
           }
         } else {
           // Re-enable scroll when live chat is closed on mobile
+          document.documentElement.style.height = 'auto';
           document.documentElement.style.overflow = '';
+          document.body.style.height = 'auto';
           document.body.style.overflow = '';
           hasScrolledToTopRef.current = false;
         }
@@ -121,7 +127,10 @@ const EventView = ({ dataEvent, eventId }: Props) => {
         hasScrolledToTopRef.current = false;
 
         // Re-enable HTML scroll on tablet+
+        document.documentElement.style.height = 'auto';
         document.documentElement.style.overflow = '';
+        document.body.style.height = 'auto';
+        document.body.style.overflow = '';
         document.body.style.overflow = '';
       }
       if (isMobileView || isTabletView) {
@@ -237,7 +246,10 @@ const EventView = ({ dataEvent, eventId }: Props) => {
         mutationObserver.disconnect();
       }
       // Restore scroll when component unmounts
+      document.documentElement.style.height = 'auto';
       document.documentElement.style.overflow = '';
+      document.body.style.height = 'auto';
+      document.body.style.overflow = '';
       document.body.style.overflow = '';
     };
   }, [isExpanded, isOpenLiveChat, hideBar]); // Chỉ chạy một lần khi component mount

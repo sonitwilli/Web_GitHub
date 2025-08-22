@@ -33,6 +33,7 @@ const LIST_BLOCK_TO_SHOW = [
   'search',
   'new_vod_detail',
   'top_10_detail_vod',
+  'category_vod',
 ] as const;
 
 type BlockType = (typeof LIST_BLOCK_TO_SHOW)[number];
@@ -70,6 +71,7 @@ const BLOCK_TYPE_SIZE_MAP: Record<BlockType, 'large' | 'small'> = {
   search: 'small',
   new_vod_detail: 'large',
   top_10_detail_vod: 'small',
+  category_vod: 'small',
 };
 
 function getOverlayDimensions(type: string, size: string) {
@@ -236,6 +238,7 @@ const PosterOverlay: React.FC<Props> = ({
       search: 'horizontal',
       new_vod_detail: 'horizontal',
       top_10_detail_vod: 'horizontal',
+      category_vod: 'horizontal',
     } as const;
     const orientation = orientationMap[blockType as BlockType] || 'horizontal';
     const shouldHideBottomPosition = blockType === 'numeric_rank';

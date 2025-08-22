@@ -65,7 +65,7 @@ const EpisodeItem = (props: PropsEspisodes) => {
           src={
             scaleImageUrl({
               imageUrl: episode?.thumb || episode?.landscape,
-              width: 128,
+              width: 150,
             })
           }
           containerClassName="w-full"
