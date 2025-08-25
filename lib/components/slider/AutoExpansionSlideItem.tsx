@@ -10,14 +10,10 @@ import {
 } from 'react';
 import BlockItemMetaData from '../blocks/BlockItemMetaData';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
-import { IoNotificationsOutline } from 'react-icons/io5';
-import { BiSolidBellOff } from 'react-icons/bi';
 import Hls from 'hls.js';
 import { MdOutlineVolumeOff, MdOutlineVolumeUp } from 'react-icons/md';
-import { subscribeVod } from '@/lib/api/vod';
 import {
   changeIsMutedTrailerPlayer,
-  changeTimeOpenModalRequireLogin,
 } from '@/lib/store/slices/appSlice';
 import { BlockContext } from './embla/block-slider/EmblaBlockSlider';
 import PosterOverlays from '../overlays/PosterOverlays';
@@ -35,7 +31,6 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
   const { width } = useScreenSize();
   const blockCtx = useContext(BlockContext);
   const dispatch = useAppDispatch();
-  const { isLogged } = useAppSelector((state) => state.user);
   const { isMutedTrailerPlayer } = useAppSelector((s) => s.app);
   const { isInViewport, targetElement } = useIntersectionObserver({
     threshold: 0.3,
@@ -223,30 +218,13 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
     };
   }, []);
 
-  const [isSub, setIsSub] = useState(false);
+  const [setIsSub] = useState(false);
 
   useEffect(() => {
     if (slide?.is_subscribed === '1') {
       setIsSub(true);
     }
   }, [slide]);
-
-  const handleSub = async () => {
-    if (!isLogged) {
-      dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
-    } else {
-      try {
-        await subscribeVod({
-          id: slide?.id || '',
-          type: 'vod',
-          value: isSub ? 'unsub' : 'sub',
-        });
-        setIsSub(!isSub);
-      } catch (error) {
-        console.log('error :>> ', error);
-      }
-    }
-  };
 
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -381,27 +359,6 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
             </button>
           </div>
         )}
-        {/* <div className="absolute z-[3] right-[8px] bottom-[8px] xl:right-[24px] xl:bottom-[25px]">
-          <button
-            onClick={handleSub}
-            className="flex items-center justify-center border border-white-016 gap-[4px] rounded-[240px] py-[4px] px-[8px] xl:py-[8px] xl:px-[16px] text-[12px] md:text-[14px] xl:text-[16px] font-[500] leading-[130%] tracking-[0.32px] bg-white-smoke text-smoky-black hover:text-fpl hover:cursor-pointer "
-          >
-            {isSub ? (
-              <>
-                <BiSolidBellOff
-                  style={{ transform: 'scaleX(-1)' }}
-                  className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px]"
-                />
-                <span className="mt-[1px]">Huỷ đặt lịch</span>
-              </>
-            ) : (
-              <>
-                <IoNotificationsOutline className="text-[14px] md:text-[16px] lg:text-[18px] xl:text-[20px]" />
-                <span className="mt-[1px]">Đặt lịch</span>
-              </>
-            )}
-          </button>
-        </div> */}
 
         {slide?.trailer_info?.url ? (
           <div
