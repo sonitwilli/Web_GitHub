@@ -46,7 +46,7 @@ export default function BlockSlideItem({
   block,
   slide,
   index,
-  styleTitle = 'mt-[8px] mb-0 line-clamp-2 w-full text-[16px] font-[500] px-[4px]',
+  styleTitle = 'mt-[8px] mb-0 line-clamp-2 w-full text-[14px] md:text-[16px] font-[500] px-[4px]',
   metaBlock,
 }: Props) {
   const { blockIndex } = useBlock({ block });
@@ -203,7 +203,7 @@ export default function BlockSlideItem({
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block]);
-  if (block?.block_type === 'auto_expansion') {
+  if (block?.block_type === 'new_vod_detail') {
     return (
       <AutoExpansionSlideItem
         block={block}
@@ -234,7 +234,7 @@ export default function BlockSlideItem({
             : ''
         }`}
         onClick={(ev) => {
-          if (block?.block_type === 'new_vod_detail') {
+          if (block?.block_type === 'auto_expansion') {
             ev.preventDefault(); // Disable navigation
             if (newVodCtx?.setSelectedSlide) {
               newVodCtx.setSelectedSlide(slide || {});
@@ -276,6 +276,7 @@ export default function BlockSlideItem({
                 block: block || {},
                 blockData: slide || {},
                 metaBlock,
+                urlRouterPath: router.asPath
               })}
               type={
                 block?.block_type === 'participant' ? 'circle' : blockDirection
@@ -432,7 +433,7 @@ export default function BlockSlideItem({
           slide?.type !== 'page' &&
           block?.block_type !== 'horizontal_slider_with_background' &&
           block?.block_type !== 'category' && 
-          block?.block_type !== 'new_vod_detail') ||
+          block?.block_type !== 'auto_expansion') ||
         router?.pathname.includes('/su-kien/') ? (
           <h3
             className={`${styleTitle} ${

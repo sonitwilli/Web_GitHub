@@ -29,7 +29,7 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
     if (
       !block?.block_type ||
       block?.block_type === 'participant' ||
-      block.block_type === 'new_vod_detail' ||
+      block.block_type === 'auto_expansion' ||
       block.type === 'group_channel' ||
       block.type === 'app_category' ||
       block?.type === 'vod_related' ||
@@ -37,7 +37,7 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
       block?.id === 'channel'
     )
       return false;
-    return block?.block_type !== 'auto_expansion';
+    return block?.block_type !== 'new_vod_detail';
   }, [isWatchVideoPage, block?.block_type, block?.type, block?.id]);
   const slideRef = useRef<HTMLDivElement>(null);
   const slideChildRef = useRef<HTMLDivElement>(null);
@@ -162,10 +162,10 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
       <div
         ref={slideChildRef}
         className={`nvm-${block?.block_type} ${
-          block?.block_type === 'new_vod_detail' &&
+          block?.block_type === 'auto_expansion' &&
           slide?.id === selectedSlide?.id
             ? 'border-[3px] border-white rounded-[12px]'
-            : block?.block_type === 'new_vod_detail' &&
+            : block?.block_type === 'auto_expansion' &&
               slide?.id !== selectedSlide?.id
             ? 'border-[3px] border-transparent rounded-[12px]'
             : ''

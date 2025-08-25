@@ -152,7 +152,7 @@ export default function PageBlockItem({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [blockData]);
 
-  if (block?.block_type === 'new_vod_detail') {
+  if (block?.block_type === 'auto_expansion') {
     return (
       <NewVodDetail
         data={data as BlockSlideItemType[]}
@@ -231,7 +231,7 @@ export default function PageBlockItem({
               : ''
           }`}
         >
-          <h2 className="text-[20px] 2xl:text-[24px] max-w-[80%] font-[600] text-white-smoke truncate">
+          <h2 className="text-[20px] 2xl:text-[24px] max-w-[90%] font-[600] text-white-smoke truncate">
             {blockData?.meta?.name || block?.name}
           </h2>
           {blockData?.meta?.short_description && (
@@ -277,13 +277,13 @@ export default function PageBlockItem({
       }`}
     >
       <div
-        className={`${useContainer ? 'f-container' : ''} mb-[24px] ${
+        className={`${useContainer ? 'f-container' : ''} mb-[14px] md:mb-[24px] ${
           !blockData?.meta?.short_description
-            ? 'flex items-center gap-[16px] justify-between tablet:justify-start'
+            ? 'flex items-center gap-0 md:gap-[16px] justify-between tablet:justify-start'
             : ''
         }`}
       >
-        <h2 className="text-[20px] 2xl:text-[24px] font-[600] text-white-smoke truncate max-w-[80%]">
+        <h2 className="text-[16px] 2xl:text-[24px] pr-[16px] md:pr-0 font-[600] text-white-smoke truncate max-w-[90%]">
           {blockData?.meta?.name || block?.name}
         </h2>
         {blockData?.meta?.short_description && (

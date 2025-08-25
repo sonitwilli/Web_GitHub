@@ -85,6 +85,7 @@ export interface ChannelDetailType extends VodDetailType {
   audio_name_mode?: string;
   auto_profile?: string;
   bg_audio?: number;
+  background?: string;
   channel_number?: number;
   comment?: number;
   comment_type?: string;
@@ -149,6 +150,8 @@ export interface ChannelDetailType extends VodDetailType {
   begin_time?: string;
   directors_detail?: Array<unknown>;
   nation?: string;
+  landscape?: string;
+  landscape_title?: string;
 }
 
 export interface Seo {

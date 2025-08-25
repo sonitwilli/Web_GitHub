@@ -142,7 +142,7 @@ export default function PageBlocks({
 
   return (
     <>
-      <div className="flex flex-col gap-[40px] xl:gap-[80px]">{blockItems}</div>
+      <div className="flex flex-col gap-[24px] md:gap-[32px] xl:gap-[80px]">{blockItems}</div>
       {!shouldHideAds && <BottomBannerAds />}
     </>
   );

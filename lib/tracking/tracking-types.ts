@@ -15,7 +15,8 @@ export type TrackingAppId =
   | 'playzone'
   | 'Login'
   | 'YearInReview'
-  | 'CHATBOT';
+  | 'CHATBOT'
+  | 'ACCOUNT';
 export type TrackingAppName =
   | 'HOME'
   | 'ERROR'
@@ -35,7 +36,8 @@ export type TrackingAppName =
   | 'Kho game'
   | 'Login'
   | 'YearInReview'
-  | 'CHATBOT';
+  | 'CHATBOT'
+  | 'ACCOUNT';
 
 export type TrackingScreen =
   | 'SIGNUP'
@@ -110,7 +112,18 @@ export type TrackingScreen =
   | 'PageLogin'
   | 'CancelOTP'
   | 'LimitDevice'
-  | 'Buffering';
+  | 'Buffering'
+  | 'AddAlarm'
+  | 'RemoveAlarm'
+  | 'Function'
+  | 'SideTagButton'
+  | 'ModifiedInformation'
+  | 'DeactivateAccount'
+  | 'SubscriptionList'
+  | 'UnsubscriptionClick'
+  | 'UnsubscriptionConfirm'
+  | 'UnsubcribeSuccessfully'
+  | 'UnsubcribeFailed';
 
 export type TrackingEvent =
   | 'SignupSuccess'
@@ -237,7 +250,14 @@ export type TrackingEvent =
   | 'EnterChatBot'
   | 'Request'
   | 'Feedback'
-  | 'Buffering';
+  | 'Buffering'
+  | 'AddAlarm'
+  | 'RemoveAlarm'
+  | 'DeactivateAccount'
+  | 'ButtonClick'
+  | 'AccessItem'
+  | 'ModifiedInformation'
+  | 'DeactivateSuccess';
 
 export interface TrackingParams {
   platform?: string;

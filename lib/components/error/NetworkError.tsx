@@ -152,12 +152,12 @@ const NetworkError: React.FC<Props> = ({ className = '' }) => {
 
         {/* Title */}
         <h2 className="text-white text-2xl font-semibold mb-4">
-          Không có kết nối internet
+          Không có kết nối mạng
         </h2>
 
         {/* Description */}
         <p className="text-gray-400 text-base leading-relaxed mb-8">
-          Có thể liên kết bị hỏng hoặc trang đã bị gỡ.
+          Bạn vui lòng kiểm tra lại kết nối mạng và thử lại.
         </p>
       </div>
     </div>

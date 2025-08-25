@@ -39,6 +39,10 @@ import { AppContext } from '@/lib/components/container/AppContainer';
 import { scaleImageUrl } from '@/lib/utils/methods';
 import styles from '@/lib/components/login/LoginModal.module.css';
 import { AxiosError } from 'axios';
+import {
+  trackingAccessItemLog108,
+  trackingLog198,
+} from '@/lib/hooks/useTrackingModule';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
@@ -66,6 +70,12 @@ export default function DeleteAccountPage() {
   }, [width]);
 
   // --- Effects ---
+  useEffect(() => {
+    trackingAccessItemLog108({
+      Event: 'DeactivateAccount',
+    });
+  }, []);
+
   useEffect(() => {
     if (configs?.image?.bg_signin_signup_tv) {
       const url = scaleImageUrl({
@@ -258,7 +268,10 @@ export default function DeleteAccountPage() {
           action: 'home',
           buttonContent: 'Thoát',
         });
-
+        trackingLog198({
+          Event: 'DeactivateSuccess',
+          Status: 'Success',
+        });
         // Clear user data and logout
         if (typeof window !== 'undefined') {
           localStorage.removeItem(TOKEN);
@@ -273,8 +286,16 @@ export default function DeleteAccountPage() {
           action: 'reload',
           buttonContent: 'Thử lại',
         });
+        trackingLog198({
+          Event: 'DeactivateSuccess',
+          Status: 'Fail',
+        });
       }
     } catch (error) {
+      trackingLog198({
+        Event: 'DeactivateSuccess',
+        Status: 'Fail',
+      });
       let errorMsg = DEFAULT_ERROR_MSG;
       let title = 'Thông báo';
       if (error instanceof AxiosError) {

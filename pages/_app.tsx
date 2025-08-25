@@ -25,6 +25,11 @@ import {
 import { trackingChangeModuleLog18 } from '@/lib/tracking/trackingHome';
 import { trackingAccessLog50 } from '@/lib/tracking/trackingModule';
 import { trackingStopMovieLog52 } from '@/lib/hooks/useTrackingPlayback';
+import { trackingStopLiveShowLog172 } from '@/lib/hooks/useTrackingEvent';
+import {
+  trackingStopChannelLog42,
+  trackingStopTimeshiftLog44,
+} from '@/lib/hooks/useTrackingIPTV';
 
 const AppModal = dynamic(() => import('@/lib/components/modal/AppModal'), {
   ssr: false,
@@ -103,20 +108,29 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
       };
       if (routeFrom) {
         setAppNameAppId(newRouteTo, routeFrom);
-        const playerPage = [
-          'xem-truyen-hinh',
-          'su-kien',
-          'cong-chieu',
-          'xem-video',
-          'playlist',
-          'short-video',
-        ];
-        const isPageMatching = playerPage.some((keyword) =>
+        const vodPage = ['xem-video', 'playlist'];
+        const eventPage = ['su-kien', 'cong-chieu'];
+        const channelPage = ['xem-truyen-hinh'];
+        const timeshiftPage = channelPage && routeFrom.params.timeshift_id;
+        const isPageMatching = vodPage.some((keyword) =>
           routeFrom.full.includes(keyword),
         );
         if (routeFrom.path !== newRouteTo.path && isPageMatching) {
           // Gọi log Stop khi chuyển trang từ player page
-          trackingStopMovieLog52();
+          // vod gửi log 52, event gửi log 172, channel gửi log 42, timeshift gửi log 44
+          if (vodPage.some((keyword) => routeFrom.full.includes(keyword))) {
+            trackingStopMovieLog52();
+          } else if (
+            eventPage.some((keyword) => routeFrom.full.includes(keyword))
+          ) {
+            trackingStopLiveShowLog172();
+          } else if (timeshiftPage) {
+            trackingStopTimeshiftLog44();
+          } else if (
+            channelPage.some((keyword) => routeFrom.full.includes(keyword))
+          ) {
+            trackingStopChannelLog42();
+          }
         }
       }
       trackingChangeModuleLog18();

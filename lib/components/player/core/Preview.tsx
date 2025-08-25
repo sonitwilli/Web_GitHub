@@ -30,7 +30,7 @@ import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 
-export type PreviewType = 'vod' | 'live' | 'event';
+export type PreviewType = 'vod' | 'playlist' | 'live' | 'event';
 
 interface CurrentUser {
   id: string;
@@ -230,7 +230,7 @@ const Preview: React.FC<PreviewProps> = ({
   const previewConfig = messageConfigs?.preview || {};
 
   const popupMessage = useMemo(() => {
-    if (type === 'vod') {
+    if (type === 'vod' || type === 'playlist') {
       if (isTvod)
         return previewConfig.msg_rent_movie || PREVIEW_MESSAGES.VOD.POPUP.TVOD;
       return previewConfig.msg_buy_package || PREVIEW_MESSAGES.VOD.POPUP.SVOD;
@@ -242,7 +242,7 @@ const Preview: React.FC<PreviewProps> = ({
   }, [type, isTvod, previewConfig]);
 
   const popupButtonText = useMemo(() => {
-    if (type === 'vod') {
+    if (type === 'vod' || type === 'playlist') {
       if (isTvod)
         return previewConfig.btn_rent_movie || PREVIEW_MESSAGES.VOD.BUTTON.TVOD;
       return previewConfig.btn_buy_package || PREVIEW_MESSAGES.VOD.BUTTON.SVOD;
@@ -253,7 +253,7 @@ const Preview: React.FC<PreviewProps> = ({
   }, [type, isTvod, previewConfig]);
 
   const backgroundTitle = useMemo(() => {
-    if (type === 'vod') {
+    if (type === 'vod' || type === 'playlist') {
       if (isTvod)
         return (
           previewConfig.title_end_preview_rent_movie ||
@@ -271,7 +271,7 @@ const Preview: React.FC<PreviewProps> = ({
   }, [type, isTvod, previewConfig, currentStream]);
 
   const backgroundDescription = useMemo(() => {
-    if (type === 'vod') {
+    if (type === 'vod' || type === 'playlist') {
       if (isTvod)
         return (
           previewConfig.msg_end_preview_rent_movie ||
@@ -289,7 +289,7 @@ const Preview: React.FC<PreviewProps> = ({
   }, [type, isTvod, previewConfig, currentStream]);
 
   const backgroundButtonText = useMemo(() => {
-    if (type === 'vod') {
+    if (type === 'vod' || type === 'playlist') {
       if (isTvod)
         return (
           previewConfig.btn_rent_movie ||

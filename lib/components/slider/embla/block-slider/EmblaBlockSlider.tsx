@@ -140,11 +140,11 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                    ? '-left-[8px] w-[156px] bg-gradient-to-l from-smoky-black/1 to-smoky-black justify-start text-white-smoke pb-[20px]'
                    : '-left-[50px]'
                }  -translate-y-1/2 ${prevBtnDisabled ? '!hidden' : ''} ${
-              block?.block_type === 'new_vod_detail' ? 'top-1/2' : ''
+              block?.block_type === 'auto_expansion' ? 'top-1/2' : ''
             }`}
             style={{
               marginTop: `${
-                block?.block_type === 'new_vod_detail'
+                block?.block_type === 'auto_expansion'
                   ? ''
                   : block?.type === 'vod_related' ||
                     block?.type === 'famous_people'
@@ -173,13 +173,13 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                   ? '-right-[8px] w-[156px] bg-gradient-to-r from-smoky-black/1 to-smoky-black justify-end text-white-smoke pb-[20px]'
                   : '-right-[50px]'
               }  -translate-y-1/2 ${nextBtnDisabled ? '!hidden' : ''} ${
-              block?.block_type === 'new_vod_detail' ? 'top-1/2' : ''
+              block?.block_type === 'auto_expansion' ? 'top-1/2' : ''
             } ${
               !imageLoaded ? 'pointer-events-none opacity-0' : 'opacity-100'
             }`}
             style={{
               marginTop: `${
-                block?.block_type === 'new_vod_detail'
+                block?.block_type === 'auto_expansion'
                   ? ''
                   : block?.type === 'vod_related' ||
                     block?.type === 'famous_people'

@@ -37,7 +37,7 @@ export const trackingEnterDetailLiveShowLog170 = ({
   } catch {}
 };
 
-export const trackingStopLiveShowLog172 = ({ Event }: TrackingParams) => {
+export const trackingStopLiveShowLog172 = () => {
   // Log172 : StopLiveShow
   try {
     if (typeof window === 'undefined') {
@@ -48,7 +48,43 @@ export const trackingStopLiveShowLog172 = ({ Event }: TrackingParams) => {
     /*@ts-ignore*/
     return tracking({
       LogId: '172',
-      Event: Event || 'StopLiveShow',
+      Event: 'StopLiveShow',
+      ...playerParams,
+      ...playbackTrackingParams,
+    });
+  } catch {}
+};
+
+export const trackingAddAlarmLog174 = ({ Event }: TrackingParams) => {
+  // Log174 : AddAlarm | RemoveAlarm
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '174',
+      Event: Event || 'AddAlarm',
+      ...playerParams,
+      ...playbackTrackingParams,
+    });
+  } catch {}
+};
+
+export const trackingShowBackdropLog177 = ({ Event }: TrackingParams) => {
+  // Log177 : ShowBackdrop
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '177',
+      Event: Event || 'ShowBackdrop',
       ...playerParams,
       ...playbackTrackingParams,
     });
@@ -91,7 +127,7 @@ export const trackingPlayAttempLog179 = ({ Event }: TrackingParams) => {
   } catch {}
 };
 
-export const useTrackingPlayback = () => {
+export const useTrackingEvent = () => {
   // Hook to access tracking state
   const { clickToPlayTime, initPlayerTime } = useAppSelector(
     (state) => state.tracking,

@@ -3,13 +3,23 @@ import { trackingStoreKey } from '@/lib/constant/tracking';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { openLoginModal } from '@/lib/store/slices/loginSlice';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { PLAYER_WRAPPER_ID } from '@/lib/constant/texts';
+import usePlayer from '@/lib/hooks/usePlayer';
 
 export default function RequireLogin() {
   const { timeOpenModalRequireLogin } = useAppSelector((state) => state.app);
+  const { isFullscreen } = useAppSelector((s) => s.player);
+  const { clickFullScreen } = usePlayer();
+
   const [modalOpen, setModalOpen] = useState(false);
   const dispatch = useAppDispatch();
 
+  const portalTarget = useMemo(() => {
+    if (isFullscreen) {
+      return document.getElementById(PLAYER_WRAPPER_ID) as HTMLElement;
+    }
+  }, [isFullscreen]);
   useEffect(() => {
     if (timeOpenModalRequireLogin) {
       setModalOpen(true);
@@ -20,6 +30,9 @@ export default function RequireLogin() {
   }, [timeOpenModalRequireLogin]);
 
   const handleSubmit = () => {
+    if (isFullscreen) {
+      clickFullScreen();
+    }
     dispatch(openLoginModal());
     dispatch(changeTimeOpenModalRequireLogin(0));
   };
@@ -47,6 +60,7 @@ export default function RequireLogin() {
         onSubmit={handleSubmit}
         onCancel={handleClose}
         bodyContentClassName="!text-[16px] !text-spanish-gray !leading-[130%] tracking-[0.32px]"
+        portalTarget={portalTarget}
       />
     </div>
   );

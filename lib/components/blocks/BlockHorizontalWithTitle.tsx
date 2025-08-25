@@ -33,7 +33,7 @@ export default function BlockHorizontalWithTitle({
 
   return (
     <div className="f-container horizontal_banner_with_title">
-      <div className="xl:grid xl:grid-cols-[auto_auto] xl:gap-[16px]">
+      <div className="xl:flex xl:gap-[16px]">
         <div className="flex items-center mb-[16px] gap-[16px] xl:hidden">
           <h2 className="text-[20px] 2xl:text-[24px] font-[700] text-white-smoke capitalize">
             {blockData?.data?.length
@@ -59,16 +59,20 @@ export default function BlockHorizontalWithTitle({
           )}
         </div>
 
-        <div className="hidden xl:block relative" ref={imgContainerRef}>
+        <div
+          className="hidden xl:block relative"
+          ref={imgContainerRef}
+        >
           <img
             ref={imgRef}
             src={scaleImageUrl({
               imageUrl:
                 block?.background_image?.web ||
                 '/images/default-poster-vertical.jpg',
+              width: 300,
             })}
             alt={block?.name}
-            className="images/default-poster-vertical.jpg w-[225px] 2xl:w-[272px] aspect-[272/454] rounded-[16px]"
+            className="w-full aspect-[272/454] rounded-[16px]"
           />
 
           <div className="absolute bottom-[40px] left-0 px-[16px] w-full">

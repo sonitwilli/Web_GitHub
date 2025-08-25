@@ -16,6 +16,7 @@ import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+import { trackingAddAlarmLog174 } from '@/lib/hooks/useTrackingEvent';
 
 type Props = {
   startTime: number;
@@ -97,6 +98,9 @@ const CountdownTimer = ({
       if (Number(res?.data?.status) === 1) {
         setIsSubscribed(!isSubscribed);
       }
+      trackingAddAlarmLog174({
+        Event: value === 'sub' ? 'AddAlarm' : 'RemoveAlarm',
+      });
     } catch (error) {
       if (error instanceof AxiosError) {
         if (error.response?.status === 401) {

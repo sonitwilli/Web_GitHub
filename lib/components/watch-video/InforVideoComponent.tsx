@@ -67,17 +67,16 @@ const InforVideoComponent = (props: PropsVideo) => {
   );
 
   const [ratingInfo, setRatingInfo] = useState<RatingData | null>(null);
-
+  const loadRating = async () => {
+    const userRating = await fetchRatingData(
+      dataVideo?._id || dataVideo?.id || '',
+      dataVideo?.ref_id || '',
+    );
+    if (userRating) {
+      setRatingInfo(userRating);
+    }
+  };
   useEffect(() => {
-    const loadRating = async () => {
-      const userRating = await fetchRatingData(
-        dataVideo?._id || dataVideo?.id || '',
-        dataVideo?.ref_id || '',
-      );
-      if (userRating) {
-        setRatingInfo(userRating);
-      }
-    };
     if ((dataVideo?._id || dataVideo?.id) && dataVideo?.ref_id && !ratingInfo) {
       loadRating();
     }
@@ -291,20 +290,15 @@ const InforVideoComponent = (props: PropsVideo) => {
               />
             )}
 
-            {ratingInfo && ratingInfo?.content?.[0] && (
+            {ratingInfo && (
               <div className="flex items-center">
                 <RatingStar
                   itemId={dataVideo?._id ?? dataVideo?.id ?? ''}
                   refId={dataVideo?.ref_id ?? ''}
                   appId={dataVideo?.app_id ?? ''}
                   totalStars={5}
-                  hightlightInfo={
-                    ratingInfo
-                      ? {
-                          ...(ratingInfo?.content?.[0] as HighlightedInfo),
-                        }
-                      : {}
-                  }
+                  ratingInfo={ratingInfo}
+                  loadRating={() => loadRating()}
                 />
               </div>
             )}
@@ -393,15 +387,18 @@ const InforVideoComponent = (props: PropsVideo) => {
       {viewportType === VIEWPORT_TYPE.DESKTOP && (
         <div className="w-[416px] ml-auto flex-1">
           {isExpanded &&
-            ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
-              ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-                dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
-                dataChannel?.episodes?.length)) && (
-              <div className="mb-[72px]">
-                <ListEspisodeComponent position="bottom" />
-              </div>
-            )}
+          ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+            (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
+            ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+              dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+              dataChannel?.episodes?.length &&
+              dataChannel?.episodes?.length > 0)) ? (
+            <div className="mb-[72px]">
+              <ListEspisodeComponent position="bottom" />
+            </div>
+          ) : (
+            ''
+          )}
           <Top10 />
         </div>
       )}

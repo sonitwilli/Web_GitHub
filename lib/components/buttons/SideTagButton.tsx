@@ -1,17 +1,18 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { useRouter } from "next/router";
-import { watchSingleDocument } from "@/lib/plugins/firebase";
-import tracking from "@/lib/tracking";
-import { trackingStoreKey } from "@/lib/constant/tracking";
-import { PROFILE_TYPES, TYPE_PR, NUMBER_PR } from "@/lib/constant/texts";
-import useScreenSize from "@/lib/hooks/useScreenSize";
-import { useAppDispatch, useAppSelector } from "@/lib/store";
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { useRouter } from 'next/router';
+import { watchSingleDocument } from '@/lib/plugins/firebase';
+import tracking from '@/lib/tracking';
+import { trackingStoreKey } from '@/lib/constant/tracking';
+import { PROFILE_TYPES, TYPE_PR, NUMBER_PR } from '@/lib/constant/texts';
+import useScreenSize from '@/lib/hooks/useScreenSize';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import {
   setSidetagPosition,
   clearSidetagPosition,
   changeListFloatBubbles,
-} from "@/lib/store/slices/sidetagSlice";
-import { useChatbot } from "@/lib/hooks/useChatbot";
+} from '@/lib/store/slices/sidetagSlice';
+import { useChatbot } from '@/lib/hooks/useChatbot';
+import { trackingAccessItemLog108 } from '@/lib/hooks/useTrackingModule';
 
 interface FloatBubbleItem {
   icon: string;
@@ -59,7 +60,7 @@ const SideTagButton: React.FC = () => {
 
   // Get profile type from localStorage
   const profileType = useMemo(() => {
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       return localStorage.getItem(TYPE_PR);
     }
     return null;
@@ -67,8 +68,8 @@ const SideTagButton: React.FC = () => {
 
   // Get current user from localStorage
   const currentUser = useMemo(() => {
-    if (typeof window !== "undefined") {
-      const currentUserData = localStorage.getItem("user");
+    if (typeof window !== 'undefined') {
+      const currentUserData = localStorage.getItem('user');
       if (currentUserData) {
         try {
           return JSON.parse(currentUserData);
@@ -91,49 +92,49 @@ const SideTagButton: React.FC = () => {
 
   // Parse inset position from style string
   const parseInsetPosition = useCallback((styleString: string) => {
-    if (!styleString) return "";
+    if (!styleString) return '';
 
     const insetMatch = styleString.match(/inset:\s*([^;]+)/);
-    if (!insetMatch) return "";
+    if (!insetMatch) return '';
 
     const insetValue = insetMatch[1].trim();
-    const values = insetValue.split(" ");
+    const values = insetValue.split(' ');
 
     // inset: top right bottom left
     if (values.length === 4) {
       const [top, right, bottom, left] = values;
 
       // Check which sides have px values (not auto)
-      const hasTop = top !== "auto" && top.includes("px");
-      const hasRight = right !== "auto" && right.includes("px");
-      const hasBottom = bottom !== "auto" && bottom.includes("px");
-      const hasLeft = left !== "auto" && left.includes("px");
+      const hasTop = top !== 'auto' && top.includes('px');
+      const hasRight = right !== 'auto' && right.includes('px');
+      const hasBottom = bottom !== 'auto' && bottom.includes('px');
+      const hasLeft = left !== 'auto' && left.includes('px');
 
       // Determine position based on which sides have values
-      let position = "";
+      let position = '';
       if (hasRight && hasBottom) {
-        position = "right bottom";
+        position = 'right bottom';
       } else if (hasRight && hasTop) {
-        position = "right top";
+        position = 'right top';
       } else if (hasLeft && hasBottom) {
-        position = "left bottom";
+        position = 'left bottom';
       } else if (hasLeft && hasTop) {
-        position = "left top";
+        position = 'left top';
       }
 
       return position;
     }
 
-    return "";
+    return '';
   }, []);
 
   // Handle image error
   const handleImageError = useCallback(
     (e: React.SyntheticEvent<HTMLImageElement>) => {
       const target = e.target as HTMLImageElement;
-      target.src = "/images/error-image.png";
+      target.src = '/images/error-image.png';
     },
-    []
+    [],
   );
 
   // Check if page should display float bubble
@@ -142,8 +143,8 @@ const SideTagButton: React.FC = () => {
       const currentPath = router.asPath;
       const currentPageParam = router.query;
 
-      if (pageKey === "home" || pageKey === "/") {
-        if (currentPath === "/" || currentPageParam?.id === "home") {
+      if (pageKey === 'home' || pageKey === '/') {
+        if (currentPath === '/' || currentPageParam?.id === 'home') {
           return true;
         }
         return false;
@@ -156,7 +157,7 @@ const SideTagButton: React.FC = () => {
         return false;
       }
     },
-    [router.asPath, router.query]
+    [router.asPath, router.query],
   );
 
   // Handle position styling
@@ -164,48 +165,48 @@ const SideTagButton: React.FC = () => {
     (
       position: string,
       coordinatesX: number | string = 0,
-      coordinatesY: number | string = 0
+      coordinatesY: number | string = 0,
     ) => {
-      const defaultBorder = "12px";
+      const defaultBorder = '12px';
       switch (position?.toUpperCase()) {
-        case "BR": {
-          let borderRadius = "";
-          if (coordinatesX === 0 || coordinatesX === "0") {
+        case 'BR': {
+          let borderRadius = '';
+          if (coordinatesX === 0 || coordinatesX === '0') {
             borderRadius = `border-radius: ${defaultBorder} 0 0 ${defaultBorder}`;
           }
           return `inset: auto ${coordinatesX}px ${coordinatesY}px auto;${borderRadius}`;
         }
-        case "BL": {
-          let borderRadius = "";
-          if (coordinatesX === 0 || coordinatesX === "0") {
+        case 'BL': {
+          let borderRadius = '';
+          if (coordinatesX === 0 || coordinatesX === '0') {
             borderRadius = `border-radius: 0 ${defaultBorder} ${defaultBorder} 0`;
           }
           return `inset: auto auto ${coordinatesY}px ${coordinatesX}px; ${borderRadius}`;
         }
-        case "TR": {
-          let borderRadius = "";
-          if (coordinatesX === 0 || coordinatesX === "0") {
+        case 'TR': {
+          let borderRadius = '';
+          if (coordinatesX === 0 || coordinatesX === '0') {
             borderRadius = `border-radius: ${defaultBorder} 0 0 ${defaultBorder}`;
           }
           return `inset: ${coordinatesY}px ${coordinatesX}px auto auto; ${borderRadius}`;
         }
-        case "TL": {
-          let borderRadius = "";
-          if (coordinatesX === 0 || coordinatesX === "0") {
+        case 'TL': {
+          let borderRadius = '';
+          if (coordinatesX === 0 || coordinatesX === '0') {
             borderRadius = `border-radius: 0 ${defaultBorder} ${defaultBorder} 0`;
           }
           return `inset: ${coordinatesY}px auto auto ${coordinatesX}px; ${borderRadius}`;
         }
         default: {
-          let borderRadius = "";
-          if (coordinatesX === 0 || coordinatesX === "0") {
+          let borderRadius = '';
+          if (coordinatesX === 0 || coordinatesX === '0') {
             borderRadius = `border-radius: ${defaultBorder} 0 0 ${defaultBorder}`;
           }
           return `inset: auto ${coordinatesX}px ${coordinatesY}px auto; ${borderRadius}`;
         }
       }
     },
-    []
+    [],
   );
 
   // Process side tag info from Firebase data
@@ -215,7 +216,7 @@ const SideTagButton: React.FC = () => {
 
       const filteredBubbles = data?.data?.filter(
         (item: FloatBubble) =>
-          item.status === "1" && checkDisplayFloatBubble(item.page_key)
+          item.status === '1' && checkDisplayFloatBubble(item.page_key),
       );
 
       if (!filteredBubbles || !filteredBubbles?.length) {
@@ -230,7 +231,7 @@ const SideTagButton: React.FC = () => {
         const positionStyle = handleSetPosition(
           position,
           coordinates?.x,
-          coordinates?.y
+          coordinates?.y,
         );
         const style = `background: ${bg_color};${positionStyle}`;
 
@@ -245,14 +246,14 @@ const SideTagButton: React.FC = () => {
       if (processedBubbles.length > 0) {
         const firstBubble = processedBubbles[0];
         const parsedPosition = parseInsetPosition(
-          firstBubble.floatBubbleStyle || ""
+          firstBubble.floatBubbleStyle || '',
         );
 
         dispatch(
           setSidetagPosition({
             position: parsedPosition,
             hasPosition: !!parsedPosition,
-          })
+          }),
         );
       } else {
         dispatch(clearSidetagPosition());
@@ -261,7 +262,7 @@ const SideTagButton: React.FC = () => {
       setListFloatBubbles(processedBubbles);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [checkDisplayFloatBubble, handleSetPosition]
+    [checkDisplayFloatBubble, handleSetPosition],
   );
 
   // Initialize side tag data from Firebase
@@ -273,41 +274,47 @@ const SideTagButton: React.FC = () => {
       floatIconPath,
       floatDocumentId,
       (data) => {
-        if (data && "data" in data) {
+        if (data && 'data' in data) {
           getSideTagInfo(data as FirebaseFloatBubbleResponse);
         }
       },
       () => {
         // Handle error if needed
-        console.error("Failed to watch floating bubble document");
-      }
+        console.error('Failed to watch floating bubble document');
+      },
     );
   }, [getSideTagInfo]);
 
   // Handle float item click
-  const handleClickFloatItem = useCallback((item: FloatBubbleItem) => {
-    if (typeof window !== "undefined") {
-      localStorage.setItem("sidetag_item_clicked", JSON.stringify(item));
+  const handleClickFloatItem = useCallback(
+    (item: FloatBubbleItem) => {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('sidetag_item_clicked', JSON.stringify(item));
 
-      tracking({
-        LogId: "108",
-        Event: "AccessItem",
-        ItemName: item?.title || "",
-        ItemId: item?.url?.includes("khoanh-khac-2024") ? "YearInReview" : "",
-        Screen: "Function",
-        Url: item?.url || "",
-        profile_id: localStorage.getItem(NUMBER_PR) || "",
-        profile_session:
-          sessionStorage.getItem(trackingStoreKey.PROFILE_SESSION) || "",
-      });
-
-      if (item?.type === "chatbot") {
-        clickChatbot();
-      } else {
-        window.open(item.url, "_blank");
+        tracking({
+          LogId: '108',
+          Event: 'AccessItem',
+          ItemName: item?.title || '',
+          ItemId: item?.url?.includes('khoanh-khac-2024') ? 'YearInReview' : '',
+          Screen: 'Function',
+          Url: item?.url || '',
+          profile_id: localStorage.getItem(NUMBER_PR) || '',
+          profile_session:
+            sessionStorage.getItem(trackingStoreKey.PROFILE_SESSION) || '',
+        });
+        trackingAccessItemLog108({
+          Event: 'ButtonClick',
+          Url: item?.url || '',
+        });
+        if (item?.type === 'chatbot') {
+          clickChatbot();
+        } else {
+          window.open(item.url, '_blank');
+        }
       }
-    }
-  }, [clickChatbot]);
+    },
+    [clickChatbot],
+  );
 
   // Initialize on mount and route changes
   useEffect(() => {
@@ -319,13 +326,13 @@ const SideTagButton: React.FC = () => {
     const styleObj: Record<string, string> = {};
     if (!cssString) return styleObj;
 
-    const declarations = cssString.split(";").filter((decl) => decl.trim());
+    const declarations = cssString.split(';').filter((decl) => decl.trim());
     declarations.forEach((decl) => {
-      const [property, value] = decl.split(":").map((s) => s.trim());
+      const [property, value] = decl.split(':').map((s) => s.trim());
       if (property && value) {
         // Convert kebab-case to camelCase
         const camelProperty = property.replace(/-([a-z])/g, (g) =>
-          g[1].toUpperCase()
+          g[1].toUpperCase(),
         );
         styleObj[camelProperty] = value;
       }
@@ -355,15 +362,15 @@ const SideTagButton: React.FC = () => {
             className="py-4 px-3 z-10 rounded-xl flex flex-col gap-5 w-min sm:flex hidden items-end"
             style={{
               background: bubble.bg_color,
-              position: "fixed",
+              position: 'fixed',
               zIndex: 10,
               ...floatStyle,
             }}
           >
             {bubble?.isDisplay &&
               bubble?.items?.map((item, i) => {
-                if (item?.type === "chatbot") {
-                  if (info?.chatbot !== "1") {
+                if (item?.type === 'chatbot') {
+                  if (info?.chatbot !== '1') {
                     return null;
                   }
                 }

@@ -131,6 +131,12 @@ export const TRACKING_LOG_ID: Record<TrackingEvent, number> = {
   Request: 531,
   Feedback: 532,
   Buffering: 112,
+  AddAlarm: 173,
+  RemoveAlarm: 173,
+  DeactivateAccount: 108,
+  ButtonClick: 108,
+  ModifiedInformation: 198,
+  DeactivateSuccess: 198,
 };
 
 export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
@@ -259,6 +265,12 @@ export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
   Request: 'CHATBOT',
   Feedback: 'CHATBOT',
   Buffering: 'dynamic',
+  AddAlarm: 'dynamic',
+  RemoveAlarm: 'dynamic',
+  DeactivateAccount: 'ACCOUNT',
+  ButtonClick: 'dynamic',
+  ModifiedInformation: 'dynamic',
+  DeactivateSuccess: 'dynamic',
 };
 
 export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
@@ -387,6 +399,12 @@ export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
   Request: 'CHATBOT',
   Feedback: 'CHATBOT',
   Buffering: 'dynamic',
+  AddAlarm: 'dynamic',
+  RemoveAlarm: 'dynamic',
+  DeactivateAccount: 'ACCOUNT',
+  ButtonClick: 'dynamic',
+  ModifiedInformation: 'dynamic',
+  DeactivateSuccess: 'dynamic',
 };
 
 export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
@@ -515,6 +533,12 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   Request: '',
   Feedback: '',
   Buffering: '',
+  AddAlarm: 'AddAlarm',
+  RemoveAlarm: 'RemoveAlarm',
+  DeactivateAccount: 'Function',
+  ButtonClick: 'SideTagButton',
+  ModifiedInformation: 'Function',
+  DeactivateSuccess: 'Function',
 };
 
 export const TRACKING_URL = 'https://logs-ott.fbox.fpt.vn/topics/web-ott';

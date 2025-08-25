@@ -50,6 +50,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     isPrepareLive,
     setIsPrepareLive,
     isEndedLive,
+    setIsEndedLive,
     seekOffsetInSeconds,
     isPlaySuccess,
     videoCurrentTime,
@@ -67,6 +68,10 @@ const EventView = ({ dataEvent, eventId }: Props) => {
   const [adsExist, setAdsExist] = useState(false);
   const isOpenLiveChat =
     useAppSelector((s) => s.player.isOpenLiveChat) || false;
+
+  const isEndedLiveCountdown = useAppSelector(
+    (s) => s.player.isEndedLiveCountdown,
+  );
 
   // Handle responsive height calculation based on player-wrapper-play-success or player_wrapper DOM changes
   useEffect(() => {
@@ -271,10 +276,25 @@ const EventView = ({ dataEvent, eventId }: Props) => {
   );
 
   const isEventPremier = useMemo(
-    () => dataEvent?.is_premier === '1' && dataEvent?.type === 'event',
+    () =>
+      String(dataEvent?.is_premier) === '1' &&
+      String(dataEvent?.type) === 'event',
+    [dataEvent],
+  );
+  const isEventFPTLive = useMemo(
+    () =>
+      String(dataEvent?.is_premier) === '0' &&
+      String(dataEvent?.type) === 'event',
     [dataEvent],
   );
   const { isFullscreen } = useAppSelector((s) => s.player);
+
+  useEffect(() => {
+    if (isEndedLiveCountdown && (isEventPremier || isEventFPTLive)) {
+      setIsEndedLive?.(true);
+    }
+  }, [isEndedLiveCountdown, isEventPremier, isEventFPTLive, setIsEndedLive]);
+
   useEffect(() => {
     if (
       !isPlaySuccess ||

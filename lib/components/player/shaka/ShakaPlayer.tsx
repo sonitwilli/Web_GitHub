@@ -431,7 +431,9 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     }
   };
   async function initShaka() {
-    console.log('isValidForProfileType :>> ', isValidForProfileType);
+    if (!isValidForProfileType) {
+      return;
+    }
     if (isDrm) {
       if (isHboGo || isQNet) {
         endPingHbo();

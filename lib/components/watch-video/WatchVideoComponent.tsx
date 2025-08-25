@@ -213,14 +213,19 @@ const WatchVideoComponent = () => {
   const shouldShowEpisodesList = (() => {
     if (viewportType !== VIEWPORT_TYPE.DESKTOP) return false;
     if (isExpanded) return false;
-    
+
     // Show episodes list if there are multiple episodes/videos OR if it's a series/season
-    const hasMultipleEpisodes = dataChannel?.episodes && dataChannel?.episodes?.length > 1;
-    const hasMultiplePlaylistVideos = dataPlaylist?.videos && dataPlaylist?.videos?.length > 1;
-    const isSeriesOrSeason = dataChannel?.episode_type === EpisodeTypeEnum.SERIES || 
-                           dataChannel?.episode_type === EpisodeTypeEnum.SEASON;
-    
-    return Boolean(hasMultipleEpisodes || hasMultiplePlaylistVideos || isSeriesOrSeason);
+    const hasMultipleEpisodes =
+      dataChannel?.episodes && dataChannel?.episodes?.length > 1;
+    const hasMultiplePlaylistVideos =
+      dataPlaylist?.videos && dataPlaylist?.videos?.length > 1;
+    const isSeriesOrSeason =
+      dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+      dataChannel?.episode_type === EpisodeTypeEnum.SEASON;
+
+    return Boolean(
+      hasMultipleEpisodes || hasMultiplePlaylistVideos || isSeriesOrSeason,
+    );
   })();
 
   useEffect(() => {
@@ -270,7 +275,11 @@ const WatchVideoComponent = () => {
           >
             <div
               className={`h-full ${
-                isExpanded ? '' : shouldShowEpisodesList ? 'xl:grid xl:grid-cols-[1fr_432px]' : ''
+                isExpanded
+                  ? ''
+                  : shouldShowEpisodesList
+                  ? 'xl:grid xl:grid-cols-[1fr_432px]'
+                  : ''
               }`}
             >
               {!fetchChannelCompleted ? (
@@ -281,7 +290,8 @@ const WatchVideoComponent = () => {
                 <>
                   <div
                     className={`relative ${isExpanded ? '' : ''} ${
-                      (showLoginPlayer || requirePurchaseData) && !shouldShowEpisodesList
+                      (showLoginPlayer || requirePurchaseData) &&
+                      !shouldShowEpisodesList
                         ? 'col-span-full !pr-0'
                         : ''
                     } ${viewportType !== VIEWPORT_TYPE.DESKTOP ? '!pr-0' : ''}`}
@@ -292,9 +302,14 @@ const WatchVideoComponent = () => {
                           src={scaleImageUrl({
                             imageUrl:
                               dataChannel?.image?.landscape ||
-                              dataChannel?.image?.landscape_title,
+                              dataChannel?.image?.landscape_title ||
+                              (dataPlaylist && dataChannel?.landscape_title),
                           })}
-                          alt={dataChannel?.name || dataChannel?.title}
+                          alt={
+                            dataChannel?.name ||
+                            dataChannel?.title ||
+                            (dataPlaylist && dataChannel?.landscape_title)
+                          }
                           placeHolder="/images/player_page_placeholder.png"
                           className="mx-auto max-h-60vh"
                         />
@@ -374,14 +389,13 @@ const WatchVideoComponent = () => {
                       </PlayerWrapper>
                     )}
                   </div>
-                  
+
                   {/* Episodes List - Now shows independently of player state */}
                   {shouldShowEpisodesList && (
                     <div className="w-full pl-[16px]">
                       {(Number(dataChannel?.episode_type) !== 0 ||
                         (dataPlaylist?.videos !== undefined &&
                           dataPlaylist.videos.length > 0)) && (
-                  
                         <ListEspisodeComponent position="default" />
                       )}
                     </div>

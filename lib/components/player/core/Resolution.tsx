@@ -3,7 +3,7 @@
 import useResolution from '@/lib/hooks/useResolution';
 import ResolutionContent from './ResolutionContent';
 import useScreenSize from '@/lib/hooks/useScreenSize';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useRef } from 'react';
 import { PlayerWrapperContext } from './PlayerWrapper';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 export interface ResolutionItemType {
@@ -28,6 +28,7 @@ export default function Resolution() {
   const { containerRef, open, setOpen } = useResolution();
   const { width } = useScreenSize();
   const { previewHandled } = usePlayerPageContext();
+  const longPressTimerRef = useRef<number | null>(null);
 
   // Close menu when user becomes inactive
   useEffect(() => {
@@ -42,6 +43,20 @@ export default function Resolution() {
       }
     } else {
       setOpen(!open);
+    }
+  };
+
+  const onMouseDown = () => {
+    // Long press 5s to toggle debug overlay
+    longPressTimerRef.current = window.setTimeout(() => {
+      const ev = new CustomEvent('toggle_debug_overlay');
+      window.dispatchEvent(ev);
+    }, 5000) as unknown as number;
+  };
+  const onMouseUp = () => {
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
     }
   };
 
@@ -61,7 +76,12 @@ export default function Resolution() {
       >
         <ResolutionContent onClick={() => setOpen(false)} />
       </div>
-      <div onClick={click} className="c-control-button-icon">
+      <div
+        onClick={click}
+        onMouseDown={onMouseDown}
+        onMouseUp={onMouseUp}
+        className="c-control-button-icon"
+      >
         <img
           src="/images/player/resolution.png"
           className="w-[24px] h-[24px] tablet:w-[32px] tablet:h-[32px]"

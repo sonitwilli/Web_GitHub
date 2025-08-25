@@ -36,6 +36,7 @@ import {
 } from '@/lib/constant/texts';
 import { convertMsg } from '@/lib/utils/profile';
 import { changeUserInfo } from '@/lib/store/slices/userSlice';
+import { trackingLog198 } from '@/lib/hooks/useTrackingModule';
 
 interface User {
   user_phone?: string;
@@ -64,7 +65,7 @@ const ForgetPasswordModalProfile = forwardRef<
   const [open, setOpen] = useState(false);
   const [resendOtp, setResendOtp] = useState(false);
   const [intervalRetry, setIntervalRetry] = useState<NodeJS.Timeout | null>(
-    null
+    null,
   );
   const [modalContent, setModalContent] = useState<ModalContent | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,11 +74,11 @@ const ForgetPasswordModalProfile = forwardRef<
   const userInfo = useSelector((state: RootState) => state.user);
   const otpType = useSelector((state: RootState) => state.otp);
   const storeVerifyToken = useSelector(
-    (state: RootState) => state.otp.storeVerifyToken
+    (state: RootState) => state.otp.storeVerifyToken,
   );
 
   const { verify_token } = useSelector(
-    (state: RootState) => state.accountSlice
+    (state: RootState) => state.accountSlice,
   );
 
   const getCurrentUser = useCallback((): User | null => {
@@ -111,6 +112,13 @@ const ForgetPasswordModalProfile = forwardRef<
     } else {
       doChangePasswordNewFlow();
     }
+    trackingLog198({
+      Event: 'ModifiedInformation',
+      SubMenuId:
+        userInfo?.info?.allow_pin === '1'
+          ? 'Thiết lập mã quản lý'
+          : 'Đổi mã quản lý',
+    });
   };
 
   const requireLogin = () => {
@@ -189,7 +197,7 @@ const ForgetPasswordModalProfile = forwardRef<
                 {
                   msg: result?.msg || '',
                   text_format: result?.data?.text_format || [],
-                }
+                },
               )}</div></div>`,
               placeholder_input: 'Nhập mã OTP',
               button: [
@@ -291,7 +299,7 @@ const ForgetPasswordModalProfile = forwardRef<
                 {
                   msg: result?.msg || '',
                   text_format: result?.data?.text_format || [],
-                }
+                },
               )}</div></div>`,
               placeholder_input: 'Nhập mã OTP',
               button: [
@@ -355,7 +363,7 @@ const ForgetPasswordModalProfile = forwardRef<
       if (resPin) {
         if (forgotPasswordModalRef.current) {
           forgotPasswordModalRef.current?.setErrorResponseNewPassword?.(
-            resPin?.data?.msg || DEFAULT_ERROR_MSG
+            resPin?.data?.msg || DEFAULT_ERROR_MSG,
           );
         }
       } else {
@@ -382,7 +390,9 @@ const ForgetPasswordModalProfile = forwardRef<
         case '9': {
           openConfirmModal({
             title: result?.data?.title || 'Thời gian thao tác đã hết',
-            content: result?.msg || `Đã quá thời gian để thực hiện thao tác này. Bạn có thể thử lại từ đầu.`,
+            content:
+              result?.msg ||
+              `Đã quá thời gian để thực hiện thao tác này. Bạn có thể thử lại từ đầu.`,
             buttons: {
               accept: 'Đóng',
             },
@@ -393,7 +403,7 @@ const ForgetPasswordModalProfile = forwardRef<
         default: {
           if (forgotPasswordModalRef.current) {
             forgotPasswordModalRef.current.setErrorResponseNewPassword?.(
-              result.msg || DEFAULT_ERROR_MSG
+              result.msg || DEFAULT_ERROR_MSG,
             );
           }
           break;
@@ -425,7 +435,7 @@ const ForgetPasswordModalProfile = forwardRef<
       if (resPin) {
         if (forgotPasswordModalRef.current) {
           forgotPasswordModalRef.current?.setErrorResponseNewPassword?.(
-            resPin?.data?.msg || DEFAULT_ERROR_MSG
+            resPin?.data?.msg || DEFAULT_ERROR_MSG,
           );
         }
       } else {
@@ -453,7 +463,7 @@ const ForgetPasswordModalProfile = forwardRef<
         default: {
           if (forgotPasswordModalRef.current) {
             forgotPasswordModalRef?.current?.setServerError(
-              result?.msg || DEFAULT_ERROR_MSG
+              result?.msg || DEFAULT_ERROR_MSG,
             );
           }
           break;

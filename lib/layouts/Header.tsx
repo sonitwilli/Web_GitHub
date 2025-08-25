@@ -302,6 +302,45 @@ export default function Header() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Thêm useEffect để check iOS version
+  useEffect(() => {
+    const checkIOSVersion = () => {
+      const userAgent = navigator.userAgent;
+      
+      // Function để detect iPhone OS version
+      function detectIPhoneVersion(userAgent: string): number | null {
+        if (userAgent.includes('iPhone OS')) {
+          const match = userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
+          if (match) {
+            const major = parseInt(match[1]);
+            const minor = parseInt(match[2]);
+            const version = major * 100 + minor;
+            return version;
+          }
+        }
+        return null;
+      }
+
+      const iphoneVersion = detectIPhoneVersion(userAgent);
+      
+      // Kiểm tra nếu là iPhone và version < 16
+      if (iphoneVersion !== null && iphoneVersion < 1500) {
+        // Hiển thị thông báo
+        const confirmed = window.confirm(
+          'Phiên bản iOS của bạn quá cũ. Vui lòng cập nhật lên iOS 15 trở lên để sử dụng ứng dụng này. Nhấn OK để được hỗ trợ.'
+        );
+        
+        if (confirmed) {
+          // Redirect khi user click OK
+          window.location.href = 'https://hotro.fptplay.vn';
+        }
+      }
+    };
+
+    // Chạy check ngay khi component mount
+    checkIOSVersion();
+  }, []);
+
   const desktopMenus = useMemo(() => {
     let result: MenuItem[] = [];
 

@@ -84,6 +84,7 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     previewHandled,
     dataStream,
     videoCurrentTime,
+    isLastPlaylistVideo,
   } = usePlayerPageContext();
   const { isFinalEpisode, vodId } = useVodPageContext();
 
@@ -214,8 +215,14 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
       isFinalEpisode && // Only show for final episode
       (hasReachedEndContent || (isEndVideo ?? 0) > 0);
 
+    // For Playlists: Show when video ends AND it's the last video
+    const shouldShowForPlaylist =
+      streamType === 'playlist' &&
+      isLastPlaylistVideo && // Only show for last video in playlist
+      (isEndVideo ?? 0) > 0;
+
     const shouldShow =
-      shouldShowForVod &&
+      (shouldShowForVod || shouldShowForPlaylist) &&
       recommendData &&
       recommendData.title &&
       (recommendData.id || recommendData._id) &&
@@ -240,6 +247,7 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     hasReachedEndContent,
     dataPlaylist,
     router?.query?.slug,
+    isLastPlaylistVideo,
   ]);
 
   // Auto redirect countdown

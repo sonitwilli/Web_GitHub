@@ -7,6 +7,8 @@ import { useDispatch } from 'react-redux';
 import { setDataEvent } from '@/lib/store/slices/playerSlice';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+import ErrorComponent from '../error/ErrorComponent';
 
 type Props = {
   eventId?: string;
@@ -48,6 +50,7 @@ const firebasePreferredFields: (keyof FirebaseEventData)[] = [
 
 const EventContainer = ({ eventId, type }: Props) => {
   const [dataEvent, setDataEventLocal] = useState<EventDetailExtended>();
+  const { channelNotFound, notFoundError } = usePlayerPageContext();
 
   useEffect(() => {
     saveSessionStorage({
@@ -123,6 +126,18 @@ const EventContainer = ({ eventId, type }: Props) => {
     };
   }, [dispatch, eventId, mergeEventData]);
 
-  return <EventView dataEvent={dataEvent} eventId={eventId} type={type} />;
+  return channelNotFound ? (
+    <div className="f-container pt-[96px]">
+      <ErrorComponent
+        message={
+          notFoundError?.title || 'Trang này đã bị xóa hoặc không tồn tại!'
+        }
+        subMessage={notFoundError?.content || 'Không tìm thấy sự kiện!'}
+        code={404}
+      />
+    </div>
+  ) : (
+    <EventView dataEvent={dataEvent} eventId={eventId} type={type} />
+  );
 };
 export default EventContainer;

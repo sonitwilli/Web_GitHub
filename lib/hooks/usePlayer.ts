@@ -41,6 +41,17 @@ import {
   trackingResumeMovieLog54,
   useTrackingPlayback,
 } from './useTrackingPlayback';
+import {
+  trackingStartFirstFrameLog178,
+  useTrackingEvent,
+} from './useTrackingEvent';
+import {
+  trackingPauseTimeshiftLog431,
+  trackingResumeTimeshiftLog432,
+  trackingStartChannelLog41,
+  trackingStartTimeshiftLog43,
+  useTrackingIPTV,
+} from './useTrackingIPTV';
 import { UAParser } from 'ua-parser-js';
 import { userAgentInfo } from '@/lib/utils/ua';
 
@@ -77,18 +88,24 @@ export default function usePlayer() {
     clearErrorInterRef,
     queryEpisodeNotExist,
     fetchChannelCompleted,
+    isPlaySuccess,
+    isEndedLive,
   } = usePlayerPageContext();
   const isValidForProfileType = useMemo(() => {
     if (!fetchChannelCompleted) {
-      return true;
+      return false;
     }
     const p = localStorage.getItem(TYPE_PR);
     if (p === '2' && dataChannel?.is_kid !== '1') {
       return false;
+    } else {
+      return true;
     }
   }, [dataChannel, fetchChannelCompleted]);
   const { handleLoadAds } = useAdsPlayer();
   const { trackingStartFirstFrameLog520 } = useTrackingPlayback();
+  const { trackingStartLiveShowLog171 } = useTrackingEvent();
+  const { trackingStartFirstFrameLog413 } = useTrackingIPTV();
   const { getUrlToPlay } = useCodec({
     dataChannel,
     dataStream,
@@ -251,7 +268,19 @@ export default function usePlayer() {
     }
   };
 
+  const checkVolumeOnLoaded = () => {
+    // set giá trị volume, không thay đổi state mute/muted
+    try {
+      const v = localStorage.getItem(VOLUME_PLAYER);
+      const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+      if (v && video) {
+        video.volume = Number(v);
+      }
+    } catch {}
+  };
+
   const handlePlaying = async () => {
+    checkVolumeOnLoaded();
     const firstPlay = sessionStorage.getItem(
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
     );
@@ -264,17 +293,69 @@ export default function usePlayer() {
           },
         ],
       });
-      if (hlsErrors && hlsErrors.length > 0) {
-        trackingStartFirstFrameLog520({
-          Event: 'Retry',
-        });
-      } else {
-        trackingStartFirstFrameLog520({
-          Event: 'Initial',
-        });
+      switch (streamType) {
+        case 'vod':
+        case 'playlist':
+          if (hlsErrors && hlsErrors.length > 0) {
+            trackingStartFirstFrameLog520({
+              Event: 'Retry',
+            });
+          } else {
+            trackingStartFirstFrameLog520({
+              Event: 'Initial',
+            });
+          }
+          break;
+        case 'event':
+        case 'premiere':
+          if (!isEndedLive) {
+            trackingStartLiveShowLog171();
+            if (hlsErrors && hlsErrors.length > 0) {
+              trackingStartFirstFrameLog178({
+                Event: 'Retry',
+              });
+            } else {
+              trackingStartFirstFrameLog178({
+                Event: 'Initial',
+              });
+            }
+          }
+          break;
+        case 'channel':
+          trackingStartChannelLog41();
+          if (hlsErrors && hlsErrors.length > 0) {
+            trackingStartFirstFrameLog413({
+              Event: 'Retry',
+            });
+          } else {
+            trackingStartFirstFrameLog413({
+              Event: 'Initial',
+            });
+          }
+          break;
+        case 'timeshift':
+          trackingStartTimeshiftLog43();
+          if (hlsErrors && hlsErrors.length > 0) {
+            trackingStartFirstFrameLog413({
+              Event: 'Retry',
+            });
+          } else {
+            trackingStartFirstFrameLog413({
+              Event: 'Initial',
+            });
+          }
+          break;
+        default:
+          trackingStartFirstFrameLog520({
+            Event: 'Initial',
+          });
       }
     } else {
-      trackingResumeMovieLog54();
+      if (streamType === 'timeshift') {
+        trackingResumeTimeshiftLog432();
+      } else {
+        trackingResumeMovieLog54();
+      }
     }
     trackPlayerChange();
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
@@ -409,6 +490,9 @@ export default function usePlayer() {
   };
 
   const handleVolumeChange = () => {
+    if (!isPlaySuccess) {
+      return;
+    }
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
       const v = video.volume;
@@ -488,7 +572,11 @@ export default function usePlayer() {
   };
 
   const handlePaused = () => {
-    trackingPauseMovieLog53();
+    if (streamType === 'timeshift') {
+      trackingPauseTimeshiftLog431();
+    } else {
+      trackingPauseMovieLog53();
+    }
     if (setIsVideoPaused) setIsVideoPaused(true);
   };
 

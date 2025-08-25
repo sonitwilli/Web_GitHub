@@ -21,6 +21,7 @@ import { getMenu } from '@/lib/api/sidebar'; // Import hàm getMenu
 import { ALREADY_SHOWN_MODAL_MANAGEMENT_CODE } from '@/lib/constant/texts';
 import BookMarkIcon from '../icons/BookMarkIcon';
 import LaptopIcon from '../icons/LaptopIcon';
+import { trackingLog180 } from '@/lib/hooks/useTrackingModule';
 
 interface MenuItem {
   id?: string;
@@ -194,6 +195,7 @@ const SidebarAccount: React.FC = () => {
         token: token || '',
         user: info || {},
       };
+      trackingLog180();
       await logout(logoutState);
     } catch (error) {
       console.error('Logout failed:', error);

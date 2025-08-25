@@ -17,6 +17,8 @@ import { useAppDispatch, useAppSelector } from '@/lib/store';
 import FingerPrintClient from './FingerPrintClient';
 import dynamic from 'next/dynamic';
 import {
+  DEFAULT_IP_ADDRESS,
+  IP_ADDRESS,
   PLAYER_WRAPPER,
   SHOW_REAL_TIME_CHAT,
   VIDEO_ID,
@@ -48,6 +50,8 @@ import { isSituationWarningVisible } from '@/lib/hooks/useSituationWarningVisibi
 import { PreviewType } from './Preview';
 import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
+import { trackingPlaybackErrorLog515 } from '@/lib/hooks/useTrackingPlayback';
+import axios from 'axios';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -62,6 +66,7 @@ const MiddleButtons = dynamic(() => import('./MiddleButtons'), { ssr: false });
 const PlayerError = dynamic(() => import('./PlayerError'), { ssr: false });
 const PlayerLogin = dynamic(() => import('./PlayerLogin'));
 const Preview = dynamic(() => import('./Preview'), { ssr: false });
+const DebugOverlay = dynamic(() => import('./DebugOverlay'), { ssr: false });
 const MemoPreview = React.memo(Preview);
 
 interface Props {
@@ -161,6 +166,31 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   const dispatch = useAppDispatch();
   const [showBroadcastSchedule, setShowBroadcastSchedule] = useState(false);
   const [isUserInactive, setIsUserInactive] = useState(false);
+  const [debugVisible, setDebugVisible] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      return window.sessionStorage.getItem('is_debug_player') === 'true';
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const handler = () => {
+      setDebugVisible((prev) => {
+        const next = !prev;
+        try {
+          window.sessionStorage?.setItem('is_debug_player', String(next));
+        } catch {}
+        return next;
+      });
+    };
+    window.addEventListener('toggle_debug_overlay', handler as EventListener);
+    return () => {
+      window.removeEventListener(
+        'toggle_debug_overlay',
+        handler as EventListener,
+      );
+    };
+  }, []);
 
   // Get states from other hooks for blocking UI detection
   const { isVisible: isAutoNextVisible } = useAutoNextVideo();
@@ -273,6 +303,11 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   const openPlayerErrorModal = (v: PlayerErrorType) => {
     setIsShowErrorModal(true);
     setPlayerError(v);
+    trackingPlaybackErrorLog515({
+      Event: 'Error',
+      ErrCode: v.code,
+      ErrMessage: v.content,
+    });
     trackingShowPopupLog191();
   };
 
@@ -320,6 +355,23 @@ export default function PlayerWrapper({ children, eventId }: Props) {
       }
     }
   };
+
+  const getIp = async () => {
+    try {
+      const { data } = await axios.get('https://checkip.fptplay.net');
+      if (data) {
+        localStorage.setItem(IP_ADDRESS, data);
+      }
+    } catch {
+      localStorage.setItem(IP_ADDRESS, DEFAULT_IP_ADDRESS);
+    }
+  };
+
+  useEffect(() => {
+    if (debugVisible) {
+      getIp();
+    }
+  }, [debugVisible]);
 
   useEffect(() => {
     // Trigger initial timer
@@ -463,6 +515,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
           ''
         )}
         {children}
+
+        {/* Debug overlay */}
+        <DebugOverlay visible={debugVisible} dataChannel={dataChannel} />
 
         {/* Preview component for VOD and Live */}
         {isPreviewActive && (

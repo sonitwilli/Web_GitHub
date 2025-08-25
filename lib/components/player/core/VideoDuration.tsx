@@ -8,7 +8,6 @@ export default function VideoDuration() {
   useEffect(() => {
     const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (!videoElement) {
-      console.error('No video element found in the document');
       return;
     }
     const getFinite = (n: number) => (Number.isFinite(n) && !isNaN(n) ? n : 0);
@@ -34,6 +33,7 @@ export default function VideoDuration() {
     };
     const handleDurationChange = () => {
       const d = getFinite(videoElement.duration);
+
       setDuration(d);
       // Ensure current time never exceeds new duration
       setCurrentTime((prev) => clamp(prev, d));
@@ -61,9 +61,13 @@ export default function VideoDuration() {
 
   const formatTime = (timeInSeconds: number): string => {
     if (!Number.isFinite(timeInSeconds) || isNaN(timeInSeconds)) return '00:00';
-    const hours = Math.floor(timeInSeconds / 3600);
-    const minutes = Math.floor((timeInSeconds % 3600) / 60);
-    const seconds = Math.floor(timeInSeconds % 60);
+
+    // Always round UP for duration display (ceiling)
+    const totalSeconds = Math.ceil(timeInSeconds);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
     if (hours > 0) {
       // h:mm:ss format
       return `${hours}:${minutes.toString().padStart(2, '0')}:${seconds

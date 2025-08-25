@@ -4,6 +4,7 @@ import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useCallback, useMemo, useState } from 'react';
 import PosterOverlays from '../overlays/PosterOverlays';
 import HandleImage from '../slider/HandleImage';
+import { scaleImageUrl } from '@/lib/utils/methods';
 
 interface SuggestChannelsProps {
   channel?: ChannelItemType;
@@ -75,7 +76,12 @@ export default function ChannelItem({
         <HandleImage
           isChannel
           imageAlt={channel?.title}
-          imageUrl={channel?.image?.portrait || channel?.image?.portrait_mobile}
+          imageUrl={
+            scaleImageUrl({ 
+              imageUrl: channel?.image?.portrait || channel?.image?.portrait_mobile, 
+              width: 200 
+            })
+          }
           type="horizontal"
           blockDirection="horizontal"
           imageRadius="rounded-[12px]"
@@ -84,7 +90,12 @@ export default function ChannelItem({
         <HandleImage
           isChannel
           imageAlt={channel?.id}
-          imageUrl={channel?.thumb}
+          imageUrl={
+            scaleImageUrl({ 
+              imageUrl: channel?.thumb, 
+              width: 200 
+            })
+          }
           type="horizontal"
           blockDirection="horizontal"
           imageRadius="rounded-[12px]"

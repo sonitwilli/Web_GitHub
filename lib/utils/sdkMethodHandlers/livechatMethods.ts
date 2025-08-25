@@ -87,6 +87,8 @@ import { showToast } from '@/lib/utils/globalToast';
 import { setIsOpenLiveChat } from '@/lib/store/slices/playerSlice';
 import { SHOW_REAL_TIME_CHAT } from '@/lib/constant/texts';
 import { showDownloadBarGlobally } from '@/lib/hooks/useDownloadBarControl';
+import { trackingClickLinkLog190 } from '@/lib/hooks/useTrackingLivechat';
+import { TrackingEvent, TrackingScreen } from '@/lib/tracking/tracking-types';
 export const Commands: LivechatMethods = {
   getSupportedMethods() {
     return [
@@ -116,6 +118,12 @@ export const Commands: LivechatMethods = {
   },
   sendLog(data?: sendLogOptions): boolean {
     console.log('sendLog', data);
+    trackingClickLinkLog190({
+      Url: data?.metadata.Url,
+      Screen: data?.metadata.Screen as TrackingScreen,
+      LogId: data?.metadata.LogId || '',
+      Event: data?.metadata.Event as TrackingEvent,
+    });
     return true;
   },
   openPopup(type: string, args?: openPopupOptions): boolean {

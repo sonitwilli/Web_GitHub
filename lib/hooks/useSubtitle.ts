@@ -10,6 +10,7 @@ import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
+import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
 
 export interface SubtitleItemType {
   language?: string;
@@ -44,6 +45,10 @@ export default function useSubtitle() {
           value: JSON.stringify(selected),
         },
       ],
+    });
+    trackingChangeSubAudioLog518({
+      Event: 'ChangeSubtitles',
+      ItemName: selected?.label,
     });
   }, [selected]);
 

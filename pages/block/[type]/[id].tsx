@@ -170,7 +170,7 @@ const BlockDetailPage: React.FC = () => {
                 }`}
               >
                 {metaBlock?.name && (
-                  <h1 className="text-left text-white font-bold text-[40px] leading-[130%] tracking-[2%] capitalize">
+                  <h1 className="text-left text-white font-bold text-[40px] leading-[130%] tracking-[2%] capitalize line-clamp-2 overflow-hidden">
                     {metaBlock.name}
                   </h1>
                 )}

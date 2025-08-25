@@ -1,20 +1,24 @@
-import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
-import { createLink, scaleImageUrl } from '@/lib/utils/methods';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import HandleImage from '../../HandleImage';
-import VodHighlightInfo from '@/lib/components/vod/VodHighlightInfo';
-import VodMetaData from '@/lib/components/vod/VodMetaData';
-import VodActionButtons from '@/lib/components/vod/VodActionButtons';
-import { useAppDispatch, useAppSelector } from '@/lib/store';
-import useBlockPlayer from '@/lib/hooks/useBlockPlayer';
-import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
-import BlockPlayer, {
-  BlockPlayerTypes,
-} from '@/lib/components/player/hls/BlockPlayer';
-import PosterOverlays from '@/lib/components/overlays/PosterOverlays';
-import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
-import { NewVodContext } from './NewVodDetail';
-
+import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
+import { createLink, scaleImageUrl } from "@/lib/utils/methods";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import HandleImage from "../../HandleImage";
+import VodHighlightInfo from "@/lib/components/vod/VodHighlightInfo";
+import VodMetaData from "@/lib/components/vod/VodMetaData";
+import VodActionButtons from "@/lib/components/vod/VodActionButtons";
+import { useAppDispatch, useAppSelector } from "@/lib/store";
+import useBlockPlayer from "@/lib/hooks/useBlockPlayer";
+import { changeIsMutedTrailerPlayer } from "@/lib/store/slices/appSlice";
+import { BlockPlayerTypes } from "@/lib/components/player/hls/BlockPlayerShaka";
+import PosterOverlays from "@/lib/components/overlays/PosterOverlays";
+import { PosterOverlayItem } from "@/lib/utils/posterOverlays/types";
+import { NewVodContext } from "./NewVodDetail";
+import dynamic from "next/dynamic";
+const BlockPlayerShaka = dynamic(
+  () => import("@/lib/components/player/hls/BlockPlayerShaka"),
+  {
+    ssr: false,
+  }
+);
 interface Props {
   block?: BlockItemType;
   slide?: BlockSlideItemType;
@@ -46,7 +50,7 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
   }, [slide]);
 
   const slideLink = useMemo(() => {
-    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
+    return createLink({ data: slide || {}, type: block?.type || "" }) || "/";
   }, [slide, block]);
 
   useEffect(() => {
@@ -91,21 +95,21 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
     <div className="relative w-full lg:flex lg:justify-end">
       <div
         className={`relative w-full lg:w-[63%] h-full block ${
-          posterOverlaysReady.includes('top-ribbon')
-            ? 'overflow-visible mt-[3px]'
-            : posterOverlaysReady.includes('mid-ribbon')
-            ? 'overflow-visible ml-[3px] mr-[3px]'
-            : posterOverlaysReady.includes('bottom-ribbon')
-            ? 'overflow-visible mb-[3px]'
-            : 'overflow-hidden'
+          posterOverlaysReady.includes("top-ribbon")
+            ? "overflow-visible mt-[3px]"
+            : posterOverlaysReady.includes("mid-ribbon")
+            ? "overflow-visible ml-[3px] mr-[3px]"
+            : posterOverlaysReady.includes("bottom-ribbon")
+            ? "overflow-visible mb-[3px]"
+            : "overflow-hidden"
         }`}
       >
         {slide?.trailer_info?.url && showPlayer && (
           <div className="w-full h-full absolute top-0 left-0">
-            <BlockPlayer
+            <BlockPlayerShaka
               url={slide?.trailer_info?.url}
               isMuted={isMutedTrailerPlayer}
-              type={BlockPlayerTypes.new_vod_detail}
+              type={BlockPlayerTypes.auto_expansion}
               isStartPlay={isStartPlayTrailer}
               onError={() => setIsPlaySuccess(false)}
               onPlaySuccess={() => setIsPlaySuccess(true)}
@@ -123,11 +127,11 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
 
         <div
           className={`ease-out duration-1000 relative z-[1] ${
-            isPlaySuccess ? 'opacity-0' : 'opacity-100'
+            isPlaySuccess ? "opacity-0" : "opacity-100"
           }`}
         >
           <HandleImage
-            imageAlt={slide?.title_vie || slide?.title || ''}
+            imageAlt={slide?.title_vie || slide?.title || ""}
             imageClassName="w-full min-w-full max-w-full"
             imageUrl={scaleImageUrl({
               imageUrl:
@@ -160,7 +164,7 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
           <div>
             {slide?.image?.title ? (
               <img
-                src={slide.image?.title || ''}
+                src={slide.image?.title || ""}
                 alt="title image"
                 className="max-w-full max-h-[64px] tablet:max-h-[80px] xl:max-h-[96px] xl:max-w-[632px]"
               />
@@ -183,12 +187,12 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
         )}
 
         {/* Description */}
-        {slide?.detail?.description && (
+        {slide?.detail?.short_description && (
           <div className="hidden tablet:block">
             <p
               className={`mt-[16px] font-[500] text-[18px] line-clamp-3 w-full text-shadow-top-slide`}
             >
-              {slide?.detail?.description}
+              {slide?.detail?.short_description}
             </p>
           </div>
         )}

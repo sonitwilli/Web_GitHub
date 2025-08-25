@@ -345,20 +345,20 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
               <div className="mt-[8px]">
                 <BlockItemMetaData slide={slide} />
               </div>
-              {slide?.detail?.short_description ? (
+              {/* {slide?.detail?.short_description ? (
                 <p className="font-[500] leading-[130%] tracking-[0.28px] text-[12px] md:text-[14px] text-white-smoke mt-[16px]">
                   {slide?.detail?.short_description}
                 </p>
               ) : (
                 ''
-              )}
+              )} */}
             </div>
           )}
           {/* Poster Overlays Area */}
           {!(isHover || isPlaying) && slide?.poster_overlays && (
             <PosterOverlays
               posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
-              blockType={'auto_expansion'}
+              blockType={'new_vod_detail'}
               positionLabelsStatus={[positionLabelsStatus]}
               onHandlePosterOverlays={handlePosterOverlays}
             />
@@ -381,7 +381,7 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
             </button>
           </div>
         )}
-        <div className="absolute z-[3] right-[8px] bottom-[8px] xl:right-[24px] xl:bottom-[25px]">
+        {/* <div className="absolute z-[3] right-[8px] bottom-[8px] xl:right-[24px] xl:bottom-[25px]">
           <button
             onClick={handleSub}
             className="flex items-center justify-center border border-white-016 gap-[4px] rounded-[240px] py-[4px] px-[8px] xl:py-[8px] xl:px-[16px] text-[12px] md:text-[14px] xl:text-[16px] font-[500] leading-[130%] tracking-[0.32px] bg-white-smoke text-smoky-black hover:text-fpl hover:cursor-pointer "
@@ -401,7 +401,7 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
               </>
             )}
           </button>
-        </div>
+        </div> */}
 
         {slide?.trailer_info?.url ? (
           <div
@@ -439,11 +439,11 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
           ''
         )}
       </div>
-      <div className="mt-2 px-1">
+      {/* <div className="mt-2 px-1">
         <p className="font-[600] text-[18px] leading-[130%] tracking-[2%] text-white-smoke line-clamp-3 overflow-hidden">
           {slide?.title_vie || slide?.title}
         </p>
-      </div>
+      </div> */}
     </div>
   );
 }

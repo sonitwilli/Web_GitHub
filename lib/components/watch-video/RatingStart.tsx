@@ -1,17 +1,19 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { FaStar } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '@/lib/store';
+import { RootState, useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { showToast } from '@/lib/utils/globalToast';
-import { postRatingData } from '@/lib/api/video';
+import { postRatingData, RatingData } from '@/lib/api/video';
 import { HighlightedInfo } from './InforVideoComponent';
+import { useSelector } from 'react-redux';
 
 interface RatingStarProps {
   itemId: string;
   refId?: string;
   appId?: string;
   totalStars?: number;
-  hightlightInfo?: HighlightedInfo;
+  ratingInfo?: RatingData;
+  loadRating?: () => void;
 }
 
 const RatingStar: React.FC<RatingStarProps> = ({
@@ -19,7 +21,8 @@ const RatingStar: React.FC<RatingStarProps> = ({
   refId = '',
   appId = '',
   totalStars = 5,
-  hightlightInfo,
+  ratingInfo,
+  loadRating,
 }) => {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState<number | null>(null);
@@ -28,26 +31,52 @@ const RatingStar: React.FC<RatingStarProps> = ({
   const dispatch = useAppDispatch();
   const { isLogged } = useAppSelector((state) => state.user);
 
-  const generalInfoMessage = {
-    rating_content: {
-      action_edit: 'Chỉnh sửa',
-      action_cancel: 'Hủy',
-      action_no_rating: 'Chưa có đánh giá',
-      hover_message: {
-        five_star: 'Rất đáng xem',
-        four_star: 'Hay',
-        three_star: 'Ổn',
-        two_star: 'Chưa hay lắm',
-        one_star: 'Cần cải thiện',
+  const messageConfigs = useSelector(
+    (state: RootState) => state.app.messageConfigs,
+  );
+
+  const generalInfoMessage = useMemo(
+    () => ({
+      rating_content: {
+        action_edit: messageConfigs?.rating_content?.action_edit || 'Chỉnh sửa',
+        action_cancel: messageConfigs?.rating_content?.action_cancel || 'Hủy',
+        action_no_rating:
+          messageConfigs?.rating_content?.action_no_rating ||
+          'Chưa có đánh giá',
+        hover_message: {
+          five_star:
+            messageConfigs?.rating_content?.hover_message?.five_star ||
+            'Rất đáng xem',
+          four_star:
+            messageConfigs?.rating_content?.hover_message?.four_star || 'Hay',
+          three_star:
+            messageConfigs?.rating_content?.hover_message?.three_star || 'Ổn',
+          two_star:
+            messageConfigs?.rating_content?.hover_message?.two_star ||
+            'Chưa hay lắm',
+          one_star:
+            messageConfigs?.rating_content?.hover_message?.one_star ||
+            'Cần cải thiện',
+        },
       },
-    },
-  };
+    }),
+    [messageConfigs],
+  );
 
   useEffect(() => {
     if (!itemId || !refId) return;
+    if (
+      ratingInfo?.user?.rate &&
+      parseInt(ratingInfo?.user?.rate, 10) > 0 &&
+      parseInt(ratingInfo?.user?.rate, 10) <= totalStars
+    ) {
+      setRating(parseInt(ratingInfo?.user?.rate, 10));
+    } else {
+      setRating(0);
+    }
     setIsEditRating(false);
     setHover(null);
-  }, [itemId, refId]);
+  }, [itemId, refId, ratingInfo, totalStars]);
 
   const handleRatingVod = async (starValue: number) => {
     if (!isLogged) {
@@ -71,6 +100,7 @@ const RatingStar: React.FC<RatingStarProps> = ({
         setIsEditRating(false);
       }
       setRating(starValue);
+      loadRating?.();
     } else {
       showToast({
         title: res?.message?.title || 'Gửi đánh giá thất bại',
@@ -91,7 +121,9 @@ const RatingStar: React.FC<RatingStarProps> = ({
     return obj && Object.keys(obj)?.length > 0 && obj.constructor === Object;
   };
 
-  if (!isNotEmptyObject(hightlightInfo || null)) {
+  const hightlightInfo = useMemo(() => ratingInfo?.content?.[0], [ratingInfo]);
+
+  if (!isNotEmptyObject(hightlightInfo as HighlightedInfo | null)) {
     return null;
   }
 

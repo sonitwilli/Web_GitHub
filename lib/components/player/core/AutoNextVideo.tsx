@@ -142,7 +142,7 @@ const AutoNextVideo: React.FC<AutoNextVideoProps> = ({ isExpanded }) => {
     >
       {/* Container - positioned according to Figma spec */}
       <div
-        className={`w-full flex flex-col xl:flex-row xl:items-end xl:justify-between items-start gap-4 tablet:gap-6 xl:gap-8 absolute bottom-[20px] tablet:bottom-[42px] xl:bottom-[40px] ${
+        className={`w-full flex flex-col xl:flex-row xl:items-end xl:justify-between items-start gap-4 tablet:gap-6 xl:gap-[104px] absolute bottom-[20px] tablet:bottom-[42px] xl:bottom-[40px] ${
           isExpanded
             ? 'left-[16px] tablet:left-[32px] xl:left-[351px] right-[16px] tablet:right-[32px] xl:right-auto xl:max-w-[1216px]'
             : isFullscreen

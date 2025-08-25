@@ -113,7 +113,7 @@ export default function HandleImage({
           ? 'pb-[100%] aspect-square mt-2'
           : block?.block_type === 'numeric_rank'
           ? 'pb-[150%]'
-          : block?.block_type === 'new_vod_detail'
+          : block?.block_type === 'auto_expansion'
           ? 'pb-[calc(608_/_1080_*_100%)]'
           : blockDirection === 'horizontal'
           ? 'pb-[56.25%]'

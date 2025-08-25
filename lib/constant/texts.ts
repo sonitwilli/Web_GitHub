@@ -56,7 +56,7 @@ export const HISTORYWATCH = 'lich-su-xem';
 export const TITLE_SEND_OTP_FAIL = 'Gửi mã OTP không thành công';
 
 export const BLOCK_NUMERIC_RANK: string = 'numeric_rank';
-export const BLOCK_AUTO_EXPANSION: string = 'auto_expansion';
+export const BLOCK_NEW_VOD_DETAIL: string = 'new_vod_detail';
 
 export const CATEGORY_BLOCKS: Array<string> = [
   'category',
@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.29';
+export const APP_VERSION = '8.0.30';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';

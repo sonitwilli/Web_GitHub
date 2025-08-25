@@ -12,6 +12,7 @@ import { StreamProfile } from '@/lib/api/channel';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
 import { saveSessionStorage } from '../utils/storage';
+import { trackingChangeVideoQualityLog416 } from './useTrackingPlayback';
 export interface ResolutionItemType {
   language?: string;
   id?: string | number;
@@ -116,6 +117,9 @@ export default function useResolution() {
       switchQuality({ h: x.height });
     }
     setOpen(false);
+    trackingChangeVideoQualityLog416({
+      ItemName: x.name || (x.height as string),
+    });
   };
 
   const switchQuality = useCallback(

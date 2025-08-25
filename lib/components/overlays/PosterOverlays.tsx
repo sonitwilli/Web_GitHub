@@ -242,7 +242,7 @@ const PosterOverlay: React.FC<Props> = ({
     } as const;
     const orientation = orientationMap[blockType as BlockType] || 'horizontal';
     const shouldHideBottomPosition = blockType === 'numeric_rank';
-    const listNotToScale = ['auto_expansion'];
+    const listNotToScale = ['new_vod_detail'];
     const groupTypeMap: Record<PosterOverlayType, OverlayGroupType> = {
       banner_overlay: 'banner',
       ribbon_overlay: 'ribbon',

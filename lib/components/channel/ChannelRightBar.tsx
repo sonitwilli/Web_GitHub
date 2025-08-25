@@ -11,6 +11,10 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import { useRouter } from 'next/router';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import {
+  trackingExitScheduleLog461,
+  trackingShowScheduleLog46,
+} from '@/lib/hooks/useTrackingIPTV';
 
 type Props = {
   dataChannel?: ChannelDetailType;
@@ -47,6 +51,14 @@ export default function ChannelRightBar({
     };
     fetchChannels();
   }, []);
+
+  useEffect(() => {
+    if (tab === 'schedule') {
+      trackingShowScheduleLog46();
+    } else {
+      trackingExitScheduleLog461();
+    }
+  }, [tab]);
 
   // Lấy channelId
   const channelId = dataChannel?._id || '';

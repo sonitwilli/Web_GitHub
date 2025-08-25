@@ -5,6 +5,7 @@ import { UAParser } from 'ua-parser-js';
 import { supportedVideoCodecs } from '../utils/player';
 import { store, useAppDispatch } from '../store';
 import { setPlayingVideoCodec } from '../store/slices/playerSlice';
+import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 
 export enum VIDEO_CODEC_NAMES {
   DOLBY_VISION_CODEC = 'DOLBY_VISION_CODEC',
@@ -34,7 +35,8 @@ export default function useCodec({
 }: Props) {
   // const { codecError } = useAppSelector((s) => s.player);
   const dispatch = useAppDispatch();
-  const getCodecUrls = useCallback(
+    const { previewHandled } = usePlayerPageContext(); 
+    const getCodecUrls = useCallback(
     ({ dataChannel: channelParam, dataStream: streamParam }: Props = {}) => {
       const channelInfo = channelParam || dataChannel || {};
       const streamInfo = streamParam || dataStream || {};
@@ -118,7 +120,9 @@ export default function useCodec({
         av1 = isDrm ? url_hls_drm_av1 : url_hls_av1;
         vp9 = isDrm ? url_hls_drm_vp9 : url_hls_vp9;
         h265 = isDrm ? url_hls_drm_h265 : url_hls_h265;
-        h264 = isDrm ? url_hls_drm : url_hls || url;
+        h264 = isDrm
+          ? url_hls_drm || (previewHandled && url_hls)
+          : url_hls || url;
       } else {
         dolby = isDrm
           ? url_dash_drm_dolby_vision || url_hls_drm_dolby_vision
@@ -156,6 +160,7 @@ export default function useCodec({
         H264_CODEC: h264 || url,
       };
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dataChannel, dataStream],
   );
 

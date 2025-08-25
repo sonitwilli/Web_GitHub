@@ -242,7 +242,7 @@ export default function LoginFastDialog() {
 
   useEffect(() => {
     if (isLogged === false) {
-      dispatch(openLoginModal());
+      dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
     }
   }, [dispatch, isLogged]);
 

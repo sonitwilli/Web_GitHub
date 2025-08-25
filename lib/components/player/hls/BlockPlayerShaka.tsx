@@ -1,15 +1,15 @@
-import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
-import { useAppDispatch } from '@/lib/store';
-import { changeTimeStartBlockPlayer } from '@/lib/store/slices/blockSlice';
-import Hls from 'hls.js';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
-import { TopSliderContext } from '../../slider/embla/top-slider/EmblaTopSlider';
-import { NewVodContext } from '../../slider/embla/new-vod-detail-slider/NewVodDetail';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
+import { useAppDispatch } from "@/lib/store";
+import { changeTimeStartBlockPlayer } from "@/lib/store/slices/blockSlice";
+import React, { useCallback, useContext, useEffect, useRef } from "react";
+import { TopSliderContext } from "../../slider/embla/top-slider/EmblaTopSlider";
+import { NewVodContext } from "../../slider/embla/new-vod-detail-slider/NewVodDetail";
 
 export enum BlockPlayerTypes {
-  top_slider = 'top_slider',
-  block_slider = 'block_slider',
-  auto_expansion = 'auto_expansion',
+  top_slider = "top_slider",
+  block_slider = "block_slider",
+  auto_expansion = "auto_expansion",
 }
 
 interface Props {
@@ -17,7 +17,6 @@ interface Props {
   isMuted?: boolean;
   loop?: boolean;
   type?: BlockPlayerTypes;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onError?: (ev?: any) => void;
   isStartPlay?: boolean;
   onPlaySuccess?: () => void;
@@ -26,7 +25,7 @@ interface Props {
   slide?: BlockSlideItemType;
 }
 
-const BlockPlayer = ({
+const BlockPlayerShaka = ({
   url,
   isMuted,
   loop,
@@ -41,7 +40,6 @@ const BlockPlayer = ({
   const { isInViewport: topSliderInViewport } = topCtx;
   const { isInViewport: newVodSliderInViewport } = newVodCtx;
   const videoRef = useRef<HTMLVideoElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const playerRef = useRef<any>(null);
   const dispatch = useAppDispatch();
   const playVideo = () => {
@@ -58,22 +56,22 @@ const BlockPlayer = ({
   };
 
   const initPlayer = () => {
-    if (type === 'block_slider') {
-      const hoverItem = document.getElementById('hover_slide_card');
+    if (type === "block_slider") {
+      const hoverItem = document.getElementById("hover_slide_card");
       if (hoverItem) {
         const styles = getComputedStyle(hoverItem);
-        if (styles.opacity === '0') {
+        if (styles.opacity === "0") {
           // khúc này hover card chưa xuất hiện thì ko play
           return;
         }
       }
     }
 
-    initHls({ src: url || '' });
+    initHls({ src: url || "" });
   };
 
   const initWindowPlayer = useCallback(
-    (player: Hls) => {
+    (player: any) => {
       if (type === BlockPlayerTypes.top_slider) {
         window.topSliderPlayer = player;
       }
@@ -84,23 +82,23 @@ const BlockPlayer = ({
         window.newVodPlayer = player;
       }
     },
-    [type],
+    [type]
   );
   const pausePlayer = useCallback(() => {
     let video: HTMLMediaElement | null = null;
     if (type === BlockPlayerTypes.top_slider) {
       if (window.topSliderPlayer) {
-        video = window.topSliderPlayer?.media;
+        video = window.topSliderPlayer?.getMediaElement();
       }
     }
     if (type === BlockPlayerTypes.block_slider) {
       if (window.blockPlayer) {
-        video = window.blockPlayer?.media;
+        video = window.blockPlayer?.getMediaElement();
       }
     }
     if (type === BlockPlayerTypes.auto_expansion) {
       if (window.newVodPlayer) {
-        video = window.newVodPlayer?.media;
+        video = window.newVodPlayer?.getMediaElement();
       }
     }
     if (video) {
@@ -111,7 +109,7 @@ const BlockPlayer = ({
   const pauseTopPlayerWhenNotInViewport = useCallback(() => {
     if (type === BlockPlayerTypes.top_slider) {
       if (!topSliderInViewport && window.topSliderPlayer) {
-        const video = window.topSliderPlayer?.media;
+        const video = window.topSliderPlayer?.getMediaElement();
         if (video) {
           video.pause();
         }
@@ -122,7 +120,7 @@ const BlockPlayer = ({
   const pauseNewVodPlayerWhenNotInViewport = useCallback(() => {
     if (type === BlockPlayerTypes.auto_expansion) {
       if (!newVodSliderInViewport && window.newVodPlayer) {
-        const video = window.newVodPlayer?.media;
+        const video = window.newVodPlayer?.getMediaElement();
         if (video) {
           video.pause();
         }
@@ -145,33 +143,46 @@ const BlockPlayer = ({
     pausePlayer();
     if (!videoRef.current) return;
     window.blockPlayerVideo = videoRef.current;
-    if (type !== 'top_slider' || block?.block_type === 'auto_expansion') {
+    if (type !== "top_slider" || block?.block_type === "auto_expansion") {
       dispatch(changeTimeStartBlockPlayer(new Date().getTime()));
     }
-    let hls: Hls | null = null;
-    if (Hls.isSupported()) {
-      hls = new Hls({
-        enableWorker: true,
-        lowLatencyMode: true,
-      });
-      hls.loadSource(src);
-      hls.attachMedia(videoRef.current);
-      hls.on(Hls.Events.ERROR, function (event, data) {
-        console.log('--- BLOCK PLAYER ERROR', { event, data });
-        if (onError) {
-          onError(data);
-        }
-      });
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        playVideo();
-      });
-      playerRef.current = hls;
-      initWindowPlayer(hls);
-    } else if (videoRef.current.canPlayType('application/vnd.apple.mpegurl')) {
-      console.log('Browser not support HLS');
-      videoRef.current.src = src;
-    } else {
-    }
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const shaka = require("shaka-player");
+    const player = new shaka.Player(videoRef.current);
+    playerRef.current = player;
+    player.addEventListener("error", (event: any) => {
+      console.log("--- BLOCK PLAYER ERROR", event);
+      if (onError) {
+        onError(event);
+      }
+    });
+    initWindowPlayer(player);
+    player.load(src).then(() => {
+      playVideo();
+    });
+    // if (Hls.isSupported()) {
+    //   hls = new Hls({
+    //     enableWorker: true,
+    //     lowLatencyMode: true,
+    //   });
+    //   hls.loadSource(src);
+    //   hls.attachMedia(videoRef.current);
+    //   hls.on(Hls.Events.ERROR, function (event, data) {
+    //     console.log("--- BLOCK PLAYER ERROR", { event, data });
+    //     if (onError) {
+    //       onError(data);
+    //     }
+    //   });
+    //   hls.on(Hls.Events.MANIFEST_PARSED, () => {
+    //     playVideo();
+    //   });
+    //   playerRef.current = hls;
+    //   initWindowPlayer(hls);
+    // } else if (videoRef.current.canPlayType("application/vnd.apple.mpegurl")) {
+    //   console.log("Browser not support HLS");
+    //   videoRef.current.src = src;
+    // } else {
+    // }
   };
 
   useEffect(() => {
@@ -180,14 +191,16 @@ const BlockPlayer = ({
     }
 
     return () => {
-      if (playerRef.current) {
-        playerRef.current.destroy();
-      }
-      if (window.blockPlayer?.destroy) {
-        window.blockPlayer.destroy();
-      }
+      destroyShaka();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const destroyShaka = useCallback(() => {
+    if (playerRef.current?.unload) {
+      playerRef.current?.unload?.();
+      playerRef.current = null;
+    }
   }, []);
 
   useEffect(() => {
@@ -196,11 +209,11 @@ const BlockPlayer = ({
     }
 
     if (isMuted) {
-      videoRef.current.muted = true;
       videoRef.current.volume = 0;
+      videoRef.current.muted = true;
     } else {
-      videoRef.current.muted = false;
       videoRef.current.volume = 1;
+      videoRef.current.muted = false;
     }
   }, [isMuted]);
 
@@ -223,4 +236,4 @@ const BlockPlayer = ({
   );
 };
 
-export default BlockPlayer;
+export default BlockPlayerShaka;

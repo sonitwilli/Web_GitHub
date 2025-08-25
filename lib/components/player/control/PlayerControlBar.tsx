@@ -1,9 +1,13 @@
 import dynamic from 'next/dynamic';
-import { usePlayerPageContext } from '../context/PlayerPageContext';
+import { StreamType, usePlayerPageContext } from '../context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { playerButtonProps } from '../common/playerButtonProps';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
+import useUA from '@/lib/hooks/useUA';
+import { useMemo } from 'react';
+import useCodec from '@/lib/hooks/useCodec';
+
 const ChatButton = dynamic(() => import('../core/ChatButton'), {
   ssr: false,
 });
@@ -47,11 +51,32 @@ export default function PlayerControlBar() {
     videoDuration,
     videoCurrentTime,
     dataPlaylist,
+    previewHandled,
+    dataStream,
+    streamType,
   } = usePlayerPageContext();
   const { isFullscreen, isOpenLiveChat } = useAppSelector((s) => s.player);
   const { width } = useScreenSize();
-
+  const { viewportInfo } = useUA();
   // Attach handler to parent and delegate to buttons
+  const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
+
+  const hiddenControlBarPreview = useMemo(() => {
+    return (
+      !getUrlToPlay() &&
+      previewHandled &&
+      isPlaySuccess &&
+      dataStream?.trailer_url &&
+      dataStream?.trailer_url !== getUrlToPlay() &&
+      ['playlist', 'vod'].includes(streamType as StreamType)
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaySuccess]);
+
+  if (hiddenControlBarPreview) {
+    return null;
+  }
+
   return (
     <div
       className={`absolute left-0 bottom-0 z-[2] ease-out duration-500 ${
@@ -107,7 +132,12 @@ export default function PlayerControlBar() {
               ''
             )}
             <ScheduleButton />
-            <FullScreen />
+            {viewportInfo?.device &&
+            viewportInfo?.device?.toUpperCase()?.includes('MOBILE') ? (
+              ''
+            ) : (
+              <FullScreen />
+            )}
           </div>
         </div>
       </div>

@@ -2,6 +2,10 @@ import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
 import Image from 'next/image';
 import { CiHeart } from 'react-icons/ci';
 import { ActionType } from '../vod/VodActionButtons';
+import { usePlayerPageContext } from '../player/context/PlayerPageContext';
+import { useMemo } from 'react';
+import { IoNotifications } from 'react-icons/io5';
+import { BiSolidBellOff } from 'react-icons/bi';
 
 export interface Props {
   isActive?: boolean;
@@ -12,12 +16,46 @@ export interface Props {
   type?: ActionType;
 }
 
+const TEXT = {
+  follow: 'Bỏ theo dõi',
+  unFollow: 'Theo dõi',
+  order: 'Đặt lịch',
+  unOrder: 'Hủy đặt lịch',
+};
+
 export default function LikeReaction({
   isActive,
   onClick,
   isChannel,
   type,
 }: Props) {
+  const { dataChannel } = usePlayerPageContext();
+  const isCommingSoon = useMemo(
+    () => dataChannel?.is_coming_soon === '1',
+    [dataChannel],
+  );
+
+  const renderActiveIcon = () => {
+    if (isCommingSoon) {
+      return <IoNotifications className="text-[24px]" />;
+    }
+    return (
+      <Image src="/images/heart-fill.png" alt="like" width={24} height={24} />
+    );
+  };
+
+  const renderIcon = () => {
+    if (isCommingSoon) {
+      return (
+        <BiSolidBellOff
+          style={{ transform: 'scaleX(-1)' }}
+          className="text-[24px]"
+        />
+      );
+    }
+    return <CiHeart className="text-[25px]" />;
+  };
+
   return (
     <button
       className={`bg-white-012 border border-white-024 hover:bg-white-016 rounded-full p-[7px] xl:p-[11px]
@@ -33,15 +71,15 @@ export default function LikeReaction({
       aria-label="like"
       onClick={onClick}
     >
-      {isActive ? (
-        <Image src="/images/heart-fill.png" alt="like" width={24} height={24} />
-      ) : (
-        <CiHeart className="text-[25px]" />
-      )}
+      {isActive ? renderActiveIcon() : renderIcon()}
 
       {isChannel && (
         <span className="font-[600] text-[16px] leading-[130%] tracking-[0.32px] text-white-smoke block">
-          {isActive ? <>Bỏ theo dõi</> : <>Theo dõi</>}
+          {isActive ? (
+            <>{isCommingSoon ? TEXT.order : TEXT.follow}</>
+          ) : (
+            <>{isCommingSoon ? TEXT.unOrder : TEXT.unFollow}</>
+          )}
         </span>
       )}
     </button>

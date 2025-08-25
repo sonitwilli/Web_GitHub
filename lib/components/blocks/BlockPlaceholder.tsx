@@ -27,7 +27,7 @@ export default function BlockPlaceholder({ block }: Props) {
   const imageRatio = useMemo(() => {
     if (block?.block_type === 'numeric_rank') {
       return 'pb-[150%]';
-    } else if (block?.block_type === 'new_vod_detail') {
+    } else if (block?.block_type === 'auto_expansion') {
       return 'pb-[calc(608_/_1080_*_100%)]';
     } else if (blockDirection === 'horizontal') {
       return 'pb-[56.25%]';

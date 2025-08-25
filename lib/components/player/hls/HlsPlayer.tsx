@@ -24,6 +24,9 @@ import {
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { getRemainingBufferedTime } from '@/lib/utils/player';
+import { trackingPlayAttempLog521 } from '@/lib/hooks/useTrackingPlayback';
+import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
+import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -54,7 +57,8 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       });
     }
   }, []);
-  const { handleAddError, handleIntervalCheckErrors } = usePlayer();
+  const { handleAddError, handleIntervalCheckErrors, isValidForProfileType } =
+    usePlayer();
   const { viewportType } = useScreenSize();
   const { isTimeShift } = useContext(ChannelPageContext);
   const { info } = useAppSelector((s) => s.user);
@@ -152,6 +156,60 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       });
       hls.on(Hls.Events.MANIFEST_LOADING, () => {
         console.log('--- HLS: LOAD MANIFEST');
+        const firstLoad = sessionStorage.getItem(
+          trackingStoreKey.PLAYER_FIRST_LOAD,
+        );
+        if (!firstLoad) {
+          saveSessionStorage({
+            data: [
+              {
+                key: trackingStoreKey.PLAYER_FIRST_LOAD,
+                value: new Date().getTime().toString(),
+              },
+            ],
+          });
+          switch (streamType) {
+            case 'vod':
+            case 'playlist':
+              trackingPlayAttempLog521({
+                Event: 'FirstLoad',
+              });
+              break;
+            case 'event':
+            case 'premiere':
+              trackingPlayAttempLog179({
+                Event: 'FirstLoad',
+              });
+              break;
+            case 'channel':
+            case 'timeshift':
+              trackingPlayAttempLog414({
+                Event: 'FirstLoad',
+              });
+              break;
+          }
+        } else {
+          switch (streamType) {
+            case 'vod':
+            case 'playlist':
+              trackingPlayAttempLog521({
+                Event: 'PlayAttemp',
+              });
+              break;
+            case 'event':
+            case 'premiere':
+              trackingPlayAttempLog179({
+                Event: 'PlayAttemp',
+              });
+              break;
+            case 'channel':
+            case 'timeshift':
+              trackingPlayAttempLog414({
+                Event: 'PlayAttemp',
+              });
+              break;
+          }
+        }
       });
       const fragDownloadTimes = new Map();
       hls.on(Hls.Events.FRAG_LOADING, (event, data) => {
@@ -234,6 +292,9 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 
   // Khởi tạo player một lần
   useEffect(() => {
+    if (!isValidForProfileType) {
+      return;
+    }
     destroyHls();
     const url = getUrlToPlay();
     if (

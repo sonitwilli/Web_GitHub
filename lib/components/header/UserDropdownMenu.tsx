@@ -35,6 +35,7 @@ import { updateProfile } from '@/lib/api/multi-profiles';
 import { changeUserInfo } from '@/lib/store/slices/userSlice';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { trackingLoginProfileLog104 } from '@/lib/tracking/trackingProfile';
+import { scaleImageUrl } from '@/lib/utils/methods';
 
 interface Props {
   profiles: Profile[];
@@ -418,16 +419,22 @@ export default function UserDropdownMenu({
         <div
           className="w-full h-full rounded-full bg-cover bg-center"
           style={{
-            backgroundImage: `url(${
-              currentProfile?.avatar_url || fallbackAvatar
-            })`,
+            backgroundImage: `url(${scaleImageUrl({
+              imageUrl: currentProfile?.avatar_url || fallbackAvatar,
+              width: 40,
+              height: 40,
+            })})`,
           }}
         />
 
-        {isKidProfile && (
+        {isKidProfile && (  
           <img
             className="absolute bottom-[4px] left-0 right-[4px] pl-[4px] pr-[8px]"
-            src="/images/profiles/child.png"
+            src={scaleImageUrl({
+              imageUrl: '/images/profiles/child.png',
+              width: 40,
+              height: 40,
+            })}
             alt="child"
           />
         )}
@@ -463,15 +470,21 @@ export default function UserDropdownMenu({
                     <div
                       className="w-[24px] h-[24px] rounded-full border border-white bg-cover bg-center"
                       style={{
-                        backgroundImage: `url(${
-                          profile.avatar_url || fallbackAvatar
-                        })`,
+                        backgroundImage: `url(${scaleImageUrl({
+                          imageUrl: profile.avatar_url || fallbackAvatar,
+                          width: 24,
+                          height: 24,
+                        })})`,
                       }}
                     />
                     {profile?.profile_type === '2' && (
                       <img
                         className="absolute bottom-[4px] left-0 right-[4px] pl-[4px] pr-[4px]"
-                        src="/images/profiles/child.png"
+                        src={scaleImageUrl({
+                          imageUrl: '/images/profiles/child.png',
+                          width: 24,
+                          height: 24,
+                        })}
                         alt="child"
                       />
                     )}

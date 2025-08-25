@@ -13,7 +13,7 @@ export default function RequirePurchase() {
         <img
           src={requirePurchaseData?.require_vip_image}
           alt="purchase"
-          className="mx-auto h-full"
+          className="mx-auto max-h-full"
         />
         
         {/* Dark overlay over the image - only on mobile and tablet */}

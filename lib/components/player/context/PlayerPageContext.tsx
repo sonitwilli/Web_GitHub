@@ -57,7 +57,16 @@ import {
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { trackingStartMovieLog51 } from '@/lib/hooks/useTrackingPlayback';
-import { trackingEnterDetailLiveShowLog170 } from '@/lib/hooks/useTrackingEvent';
+import {
+  trackingEnterDetailLiveShowLog170,
+  trackingShowBackdropLog177,
+} from '@/lib/hooks/useTrackingEvent';
+import {
+  trackingEnterIPTVLog40,
+  trackingRequestPackageLog412,
+  trackingStartChannelLog41,
+} from '@/lib/hooks/useTrackingIPTV';
+import { trackingLog512 } from '@/lib/tracking/trackingModule';
 
 export interface PlayerModalType {
   content?: ModalContent;
@@ -530,6 +539,10 @@ export function PlayerPageContextProvider({ children }: Props) {
         const found = getCurrentVodEpisode(channelDetailData);
         isPreview = found?.is_preview === '1';
       }
+      if (streamType === 'playlist') {
+        const currentVideo = channelDetailData?.episodes?.[0];
+        isPreview = currentVideo?.is_preview === '1';
+      }
       // Live/Event/Premiere: Check has preview URLs
       if (['channel', 'event'].includes(streamType)) {
         isPreview = responseData?.enable_preview === '1';
@@ -860,7 +873,7 @@ export function PlayerPageContextProvider({ children }: Props) {
             }
             setShowLoginPlayer(true);
             setShowModalLogin(true);
-            if (streamType === 'vod') {
+            if (streamType === 'vod' || streamType === 'playlist') {
               dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
             }
           } else if (status === 406) {
@@ -963,13 +976,16 @@ export function PlayerPageContextProvider({ children }: Props) {
       }
 
       if (
-        (channelDetail?.verimatrix === '1' ||
-          channelDetail?.verimatrix === true ||
-          channelDetail?.drm === '1' ||
-          channelDetail?.drm === true) &&
-        (streamType === 'channel' ||
-          streamType === 'event' ||
-          streamType === 'premiere')
+        channelDetail?.verimatrix === '1' ||
+        channelDetail?.verimatrix === true ||
+        channelDetail?.drm === '1' ||
+        channelDetail?.drm === true
+        //   &&
+        // (streamType === "channel" ||
+        //   streamType === "event" ||
+        //   streamType === "premiere" ||
+        //   streamType === "vod" ||
+        //   streamType === "playlist")
       ) {
         const validBrowser = isRequiredBrowser();
         if (!validBrowser) return;
@@ -1172,24 +1188,56 @@ export function PlayerPageContextProvider({ children }: Props) {
     if (fetchChannelCompleted) {
       switch (streamType) {
         case 'vod':
+          if (requirePurchaseData) {
+            trackingLog512({
+              Event: 'RequestPackage',
+            });
+          } else {
+            trackingLog512({
+              Event: 'EnterDetail',
+            });
+            trackingStartMovieLog51();
+          }
+          break;
         case 'playlist':
-          trackingStartMovieLog51();
+          if (requirePurchaseData) {
+            trackingLog512({
+              Event: 'RequestPackage',
+            });
+          } else {
+            trackingLog512({
+              Event: 'EnterPlaylist',
+            });
+            trackingStartMovieLog51();
+          }
           break;
         case 'event':
         case 'premiere':
-          trackingEnterDetailLiveShowLog170({
-            Event: 'EnterDetailLiveShow',
-          });
+          if (isEndedLive) {
+            trackingShowBackdropLog177({
+              Event: 'ShowBackdrop',
+            });
+          } else {
+            if (requirePurchaseData) {
+              trackingEnterDetailLiveShowLog170({
+                Event: 'EnterDetailLiveShow',
+              });
+            } else {
+              trackingEnterDetailLiveShowLog170({
+                Event: 'RequestPackage',
+              });
+            }
+          }
           break;
         case 'channel':
         case 'timeshift':
-          trackingEnterDetailLiveShowLog170({
-            Event: 'RequestPackage',
-          });
+          trackingEnterIPTVLog40();
+          if (requirePurchaseData) {
+            trackingRequestPackageLog412();
+          } else {
+            trackingStartChannelLog41();
+          }
           break;
-
-        default:
-          trackingStartMovieLog51();
       }
     }
     if (!dataEvent) return;
@@ -1261,10 +1309,12 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [seekOffsetInSeconds, setSeekOffsetInSeconds] = useState<number>(0);
 
   useEffect(() => {
-    if (!fetchChannelCompleted || !dataEvent) return;
-    const offset = getSeekPremier(dataEvent);
-    setSeekOffsetInSeconds(offset || 0);
-  }, [fetchChannelCompleted, dataEvent]);
+    if (isPlaySuccess) {
+      const offset = getSeekPremier(dataEvent);
+      setSeekOffsetInSeconds(offset || 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaySuccess]);
 
   const seekToOffset = useCallback(() => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;

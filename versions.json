@@ -1,6 +1,27 @@
 {
     "versions": [
         {
+            "version": "8.0.30",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Landing page] Không hiển thị màn hình 404 khi bấm button Trực tiếp Sự kiện đã kết thúc",
+                "[WEB][Playlist] Lỗi hiển thị khi nhấn vào item TVOD có preview/không có preview ở playlist",
+                "[WEB][Mua gói] Lỗi image mua gói truyền hình trên Safari mode responsive",
+                "[WEB][ProfileKID] Lỗi không hiển thị popup chặn đối với nội dung VOD/Truyền hình/Sự kiện (profile thường) khi sử dụng hồ sơ trẻ em",
+                "[WEB][PlayerVOD] Âm thanh: Lỗi phát không đúng âm thanh đã chọn popup cài đặt âm thanh",
+                "[WEB][DetailVOD] Lỗi không phát trailer đối với VOD lẻ sắp công chiếu",
+                "[WEB][Trang chủ] Block Horizontal Banner with Title ở mode responsive bị lỗi size + button 'Xem thêm' bị đè lên dấu '>'",
+                "[WEB][Mất kết nối mạng] Lỗi hiển thị sai description ở màn hình mất kết nối mạng",
+                "[WEB][Playlist] Lỗi không auto hiển thị popup Yêu cầu đăng nhập/play preview đối với trường hợp chưa đăng nhập",
+                "[WEB][Playlist] Lỗi không thao tác được với btn Theo dõi đối với item thuộc playlist",
+                "[WEB][Playlist] Lỗi không hiển thị màn hình nextmovie khi xem hết item cuối cùng danh sách",
+                "[WEB][DetailVOD] VOD Sắp công chiếu: Lỗi không chuyển btn Theo dõi/Bỏ theo dõi thành Đặt lịch/Hủy đặt lịch",
+                "[WEB][Preview] Lỗi không play được previewVOD thuê phim trên Safari",
+                "[WEB][V5][Guide mua gói] Lỗi hiển thị guide mua gói trùng với button Bỏ qua giới thiệu",
+                "[WEB][Preview VOD] Lỗi không hiển thị preview VOD normal mode/responsive mobile"
+            ]
+        }, 
+        {
             "version": "8.0.29",
             "date": "Dự kiến",
             "content": [

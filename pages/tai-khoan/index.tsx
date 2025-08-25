@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { GoArrowLeft } from 'react-icons/go';
 import { useRouter } from 'next/router';
@@ -32,6 +32,7 @@ import AccountInfo from '@/lib/components/account/AccountInfo';
 import Overview from '@/lib/components/account/Overview';
 import PaymentPackageList from '@/lib/components/payment/PaymentPackageList';
 import PaymentTransactionHistoryTable from '@/lib/components/payment/PaymentTransactionHistoryTable';
+import { trackingAccessItemLog108 } from '@/lib/hooks/useTrackingModule';
 
 const tabComponents: { [key: string]: React.FC } = {
   [ACCOUNT_OVERVIEW]: Overview,
@@ -54,7 +55,12 @@ const AccountPage: React.FC = () => {
   const { tab } = router.query;
   const SelectedComponent =
     tab && tabComponents[tab as string] ? tabComponents[tab as string] : null;
-
+  useEffect(() => {
+    trackingAccessItemLog108({
+      Event: 'AccessItem',
+      Screen: 'Function',
+    });
+  }, [SelectedComponent]);
   return (
     <DefaultLayout>
       <div className="min-h-screen">

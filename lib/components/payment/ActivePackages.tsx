@@ -10,6 +10,7 @@ import Loading from '@/lib/components/common/Loading';
 import NoData from '@/lib/components/empty-data/NoData';
 import { useAppDispatch } from '@/lib/store';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
+import { trackingLog186 } from '@/lib/hooks/useTrackingModule';
 
 const ActivePackages: React.FC = () => {
   const { data, loading, error, refetch } = useFetchServices();
@@ -23,6 +24,10 @@ const ActivePackages: React.FC = () => {
         text: PACKAGE_AND_PAYMENT_MANAGEMENT,
       }),
     );
+    trackingLog186({
+      Screen: 'SubscriptionList',
+      ItemName: packages.map((pkg) => pkg.plan_name).join('#'),
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -3,6 +3,7 @@ import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
 import { reaction, ReactionParamsType } from '@/lib/api/reaction';
 import { useAppDispatch, useAppSelector } from '../store';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
+import { trackingLog59 } from './useTrackingAppModule';
 
 interface Props {
   block?: BlockItemType;
@@ -41,12 +42,18 @@ export default function useReaction({ slide }: Props) {
       dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       return;
     }
-    if (!slide?.id || !slide?.type) return;
+    if ((!slide?.id && !slide?._id) || !slide?.type) return;
+
     try {
+      if (!isLiked) {
+        trackingLog59({
+          Event: isLiked ? 'Unsubscribed' : 'Subscribed',
+        });
+      }
       const realId =
         slide?.type === 'event' || slide?.type === 'eventtv'
           ? slide?.highlight_id
-          : slide?.id;
+          : slide?.id || slide?._id;
       const params: ReactionParamsType = {
         id: realId as string,
         type:

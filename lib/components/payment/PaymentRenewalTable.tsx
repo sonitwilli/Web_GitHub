@@ -39,6 +39,11 @@ import ErrorData from '@/lib/components/error/ErrorData';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
 import { useDispatch } from 'react-redux';
 import Loading from '../common/Loading';
+import {
+  trackingLog186,
+  trackingLog187,
+  trackingLog188,
+} from '@/lib/hooks/useTrackingModule';
 
 const PaymentRenewalTable: React.FC = () => {
   const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
@@ -141,6 +146,11 @@ const PaymentRenewalTable: React.FC = () => {
 
   // Xử lý khi click menu đóng (⋮)
   const handleCloseMenu = useCallback((token: Token) => {
+    trackingLog187({
+      Screen: 'UnsubscriptionClick',
+      ItemId: token.subscription_id || '',
+      ItemName: token.plan_name || '',
+    });
     setSelectedToken(token);
     setModalContent({
       title: 'Hủy gia hạn tự động',
@@ -203,6 +213,11 @@ const PaymentRenewalTable: React.FC = () => {
   const handleConfirmModalSubmit = useCallback(async () => {
     if (!selectedToken) return;
     try {
+      trackingLog187({
+        Screen: 'UnsubscriptionConfirm',
+        ItemId: selectedToken.subscription_id || '',
+        ItemName: selectedToken.plan_name || '',
+      });
       // Lấy số điện thoại thực tế của user
       const phone = userPhone;
       if (!phone) {
@@ -283,6 +298,13 @@ const PaymentRenewalTable: React.FC = () => {
       const { status, msg_data } = response.data;
 
       if (!status || msg_data?.status_code !== 1) {
+        trackingLog188({
+          Screen: 'UnsubcribeFailed',
+          ItemId: selectedToken.subscription_id || '',
+          ItemName: selectedToken.plan_name || '',
+          ErrCode: msg_data?.status_code?.toString() || '',
+          ErrMessage: msg_data?.content || SUPPORT_CONTACT,
+        });
         showToast({
           desc: msg_data?.content || SUPPORT_CONTACT,
           title: ERROR_CONNECTION,
@@ -298,10 +320,25 @@ const PaymentRenewalTable: React.FC = () => {
             `Quý khách đã tắt tự động gia hạn ${selectedToken?.plan_name} thành công.`,
           title: TURNOFF_AUTOPAY,
         });
+        trackingLog188({
+          Screen: 'UnsubcribeSuccessfully',
+          ItemId: selectedToken.subscription_id || '',
+          ItemName: selectedToken.plan_name || '',
+        });
       }
       verifyModalRef?.current?.closeModal?.();
       fetchUserTokens();
-    } catch (error) {
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      trackingLog188({
+        Screen: 'UnsubcribeFailed',
+        ItemId: selectedToken.subscription_id || '',
+        ItemName: selectedToken.plan_name || '',
+        ErrCode: error?.response?.data?.error_code || '',
+        ErrMessage:
+          error?.response?.data?.msg || error?.message || SUPPORT_CONTACT,
+      });
       console.error('Error cancelling extension:', error);
       showToast({
         title: ERROR_CONNECTION,
@@ -320,11 +357,15 @@ const PaymentRenewalTable: React.FC = () => {
 
   // Cleanup interval on unmount
   useEffect(() => {
+    trackingLog186({
+      ItemName: (tokens as Token[])?.map((item) => item.plan_name).join('#'),
+    });
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
       }
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   if (state.loading) {

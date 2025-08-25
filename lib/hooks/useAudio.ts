@@ -20,6 +20,7 @@ import { usePlayerPageContext } from '../components/player/context/PlayerPageCon
 import { AudioItemType } from '../components/player/core/AudioButton';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
+import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
 
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
@@ -349,6 +350,10 @@ export default function useAudio() {
           value: JSON.stringify(selectedAudio),
         },
       ],
+    });
+    trackingChangeSubAudioLog518({
+      Event: 'ChangeAudio',
+      ItemName: selectedAudio?.X_LABEL,
     });
   }, [selectedAudio]);
 

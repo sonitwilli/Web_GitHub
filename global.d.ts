@@ -1,4 +1,4 @@
-import Hls from 'hls.js';
+import Hls from "hls.js";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export {};
@@ -10,17 +10,17 @@ declare global {
     sigmaPacker?: any;
     shaka?: any;
     videojs?: any;
-    blockPlayer?: Hls;
+    blockPlayer?: any;
     blockPlayerVideo?: HTMLVideoElement;
     ui?: any;
     eventManager?: any;
     shakaPlayer?: any;
     videojsPlayer?: any;
     hlsPlayer?: Hls;
-    topSliderPlayer?: Hls;
-    hoverPlayer?: Hls;
-    newVodPlayer?: Hls;
-    autoExpansionPlayer?: Hls;
+    topSliderPlayer?: any;
+    hoverPlayer?: any;
+    newVodPlayer?: any;
+    autoExpansionPlayer?: any;
     Ads?: any;
     waitForSdk?: () => Promise<void>;
     sdk?: {

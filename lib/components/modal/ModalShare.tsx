@@ -1,12 +1,13 @@
 import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
 import { createLink } from '@/lib/utils/methods';
 import dynamic from 'next/dynamic';
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import copy from 'copy-to-clipboard';
 import { useRouter } from 'next/router';
 import { ChannelDetailType } from '@/lib/api/channel';
 import { useAppSelector } from '@/lib/store';
+import { trackingShareCommentLikeLog516 } from '@/lib/hooks/useTrackingPlayback';
 
 const ModalWrapper = dynamic(
   () => import('@/lib/components/modal/ModalWrapper'),
@@ -51,7 +52,13 @@ export default function ModalShare({
   const link = useMemo(() => {
     return linkShare || process.env.BASE_URL + `${router.pathname}`;
   }, [router, linkShare]);
-
+  useEffect(() => {
+    if (open) {
+      trackingShareCommentLikeLog516({
+        Event: 'Share',
+      });
+    }
+  }, [open]);
   const socialList = useMemo(() => {
     return [
       {

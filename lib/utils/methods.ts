@@ -186,26 +186,39 @@ export const thumbnailUrl = ({
   block,
   blockData,
   metaBlock,
+  urlRouterPath,
 }: {
   block: BlockItemType;
   blockData: BlockSlideItemType;
   metaBlock?: PageMetaType;
+  urlRouterPath?: string;
 }) => {
+  let urlImage = null
   const blockType = metaBlock?.block_style
     ? metaBlock?.block_style
     : block?.block_type || block?.type;
   switch (blockType) {
     case 'highlight':
-    case 'category':
     case 'horizontal_highlight':
-      return scaleImageUrl({
-        imageUrl:
-          blockData?.image?.landscape || blockData?.image?.landscape_title,
-      });
+      if (urlRouterPath && urlRouterPath.includes('xem-truyen-hinh')) {
+        urlImage = scaleImageUrl({
+          imageUrl:
+            blockData?.image?.landscape || blockData?.image?.landscape_title,
+            width: 300
+        })
+      } else {
+        urlImage = scaleImageUrl({
+          imageUrl:
+            blockData?.image?.landscape || blockData?.image?.landscape_title,
+        })
+      }
+      return urlImage
+    case 'category':
     case 'horizontal_banner_with_title':
       return scaleImageUrl({
         imageUrl:
           blockData?.image?.landscape_title || blockData?.image?.landscape,
+        width: 300,
       });
     case 'vertical_slider_small':
     case 'vertical_slider_medium':
@@ -249,12 +262,14 @@ export const thumbnailUrl = ({
         return scaleImageUrl({
           imageUrl:
             blockData?.image?.landscape || blockData?.image?.landscape_title,
+          width: 300,
         });
       }
     default:
       return scaleImageUrl({
         imageUrl:
           blockData?.image?.portrait || blockData?.image?.portrait_mobile,
+          width: 300,
       });
   }
 };

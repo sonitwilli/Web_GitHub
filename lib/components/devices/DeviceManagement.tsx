@@ -7,6 +7,7 @@ import ErrorData from '@/lib/components/error/ErrorData';
 import Loading from '@/lib/components/common/Loading';
 import ConfirmModal from '@/lib/components/modal/ModalConfirm';
 import { useRouter } from 'next/router';
+import { trackingLog180, trackingLog198 } from '@/lib/hooks/useTrackingModule';
 
 const DeviceManagement: React.FC = () => {
   const { data, loading, error, refetch } = useFetchDevices();
@@ -115,10 +116,17 @@ const DeviceManagement: React.FC = () => {
       if (response?.data?.status === '0') {
         return;
       }
-
+      trackingLog198({
+        Event: 'ModifiedInformation',
+        SubMenuId: 'Quản lý thiết bị',
+        ItemId: selectedDevice || '',
+        Status: 'Success',
+        ItemName: 'Đăng xuất thiết bị',
+      });
       if (selectedDevice === currentDevice?.deviceId) {
         await router.push('/');
         checkUserInfo();
+        trackingLog180();
       } else {
         setOtherDevicesRawState((prev) =>
           prev.filter((d) => {
@@ -135,6 +143,13 @@ const DeviceManagement: React.FC = () => {
       // Xử lý lỗi - không cập nhật state nếu removeDevice thất bại
       console.error('Failed to remove device:', error);
       setShowConfirmModal(false);
+      trackingLog198({
+        Event: 'ModifiedInformation',
+        SubMenuId: 'Quản lý thiết bị',
+        ItemId: selectedDevice || '',
+        Status: 'Fail',
+        ItemName: 'Đăng xuất thiết bị',
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.isReady, router?.pathname, selectedDevice]);

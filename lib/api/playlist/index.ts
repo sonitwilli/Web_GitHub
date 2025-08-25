@@ -58,6 +58,7 @@ export interface PlayListVideo {
     max_height?: string;
     max_width?: string;
   };
+  is_preview?: string;
 }
 
 export interface PlayListMain {

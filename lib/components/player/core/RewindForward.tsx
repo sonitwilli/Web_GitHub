@@ -1,5 +1,3 @@
-/* eslint-disable jsx-a11y/alt-text */
-
 import { VIDEO_ID } from '@/lib/constant/texts';
 import { ControlPopupType } from './MobilePopup';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
@@ -71,29 +69,33 @@ export default function RewindForward({ type }: Props) {
       {type === 'fullcreen' && (
         <>
           {isEndVideo &&
-            typeof videoCurrentTime === 'number' &&
-            typeof videoDuration === 'number' &&
-            videoCurrentTime >= videoDuration ? (
-              <img
-                src="/images/player/replay.png"
-                className="w-[40px] h-[40px]"
-                alt="play-pause"
-                width={40}
-                height={40}
-                onClick={play}
-                {...playerButtonProps}
-              />
-            ) : (
-              <img
-                src={isVideoPaused ? '/images/player/play_arrow.png' : '/images/player/pause.png'}
-                alt="play-pause"
-                width={40}
-                height={40}
-                className="w-[40px] h-[40px]"
-                onClick={play}
-                {...playerButtonProps}
-              />
-            )}
+          typeof videoCurrentTime === 'number' &&
+          typeof videoDuration === 'number' &&
+          videoCurrentTime >= videoDuration ? (
+            <img
+              src="/images/player/replay.png"
+              className="w-[40px] h-[40px]"
+              alt="play-pause"
+              width={40}
+              height={40}
+              onClick={play}
+              {...playerButtonProps}
+            />
+          ) : (
+            <img
+              src={
+                isVideoPaused
+                  ? '/images/player/play_arrow.png'
+                  : '/images/player/pause.png'
+              }
+              alt="play-pause"
+              width={40}
+              height={40}
+              className="w-[40px] h-[40px]"
+              onClick={play}
+              {...playerButtonProps}
+            />
+          )}
         </>
       )}
 

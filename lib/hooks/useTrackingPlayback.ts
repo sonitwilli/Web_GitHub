@@ -217,7 +217,9 @@ export const trackingPlaybackErrorLog515 = ({
       ...playbackTrackingParams,
       Screen,
       ErrCode,
-      ErrMessage,
+      ErrMessage:
+        ErrMessage ||
+        'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.',
       ErrUrl,
       ErrHeader,
     });

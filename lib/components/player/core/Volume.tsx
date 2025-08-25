@@ -11,7 +11,7 @@ import {
   VOLUME_PLAYER,
 } from '@/lib/constant/texts';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
-import { useAppSelector } from '@/lib/store';
+import { store } from '@/lib/store';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { useKeyboardControls } from '@/lib/hooks/useKeyboardControls';
 interface VolumeControlProps {
@@ -23,7 +23,6 @@ interface VolumeControlProps {
 
 export default function Volume({}: VolumeControlProps) {
   const { width } = useScreenSize();
-  const { interacted } = useAppSelector((s) => s.app);
   const { isPlaySuccess } = usePlayerPageContext();
   const [isMuted, setIsMuted] = useState(true);
   const [sliderValue, setSliderValue] = useState(0);
@@ -53,20 +52,15 @@ export default function Volume({}: VolumeControlProps) {
       if (video) {
         const isMutedVideo = video.muted;
         if (isMutedVideo) {
-          video.muted = false;
           setIsMuted(false);
           setSliderValue(video.volume);
-          const vol = video.volume;
-          if (vol === 0) {
-            setSliderValue(1);
-            video.volume = 1;
-          }
           localStorage.setItem(MUTE_VOLUME_PLAYER, 'false');
+          video.muted = false;
         } else {
-          video.muted = true;
           setIsMuted(true);
           setSliderValue(0);
           localStorage.setItem(MUTE_VOLUME_PLAYER, 'true');
+          video.muted = true;
         }
       }
     } catch {}
@@ -76,21 +70,25 @@ export default function Volume({}: VolumeControlProps) {
       const muted = localStorage.getItem(MUTE_VOLUME_PLAYER);
       if (muted === 'false') {
         const v = localStorage.getItem(VOLUME_PLAYER);
+
         const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
         if (v && video) {
           setIsMuted(false);
           setSliderValue(Number(v));
-          video.muted = false;
           video.volume = Number(v);
+          video.muted = false;
         }
       }
     } catch {}
   };
   useEffect(() => {
-    if (isPlaySuccess && interacted) {
-      checkVolumeOnStart();
+    if (isPlaySuccess) {
+      const { interacted } = store.getState().app;
+      if (interacted) {
+        checkVolumeOnStart();
+      }
     }
-  }, [isPlaySuccess, interacted]);
+  }, [isPlaySuccess]);
 
   // Listen for volume changes from keyboard controls
   useEffect(() => {

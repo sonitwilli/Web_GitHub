@@ -359,6 +359,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.PLAYER_REAL_TIME_PLAYING,
       trackingStoreKey.PLAYER_DURATION,
       trackingStoreKey.PLAYER_START_BUFFER_TIME,
+      trackingStoreKey.PLAYER_FIRST_LOAD,
     ],
   });
 };
