@@ -116,7 +116,6 @@ const SearchingPage = () => {
   const resetInput = () => {
     setKeyword('');
     setSuggestKeywords([]);
-    router.push('/tim-kiem', undefined, { shallow: true });
   };
 
   const handleInputFocus = () => {
