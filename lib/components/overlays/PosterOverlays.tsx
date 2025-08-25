@@ -172,7 +172,12 @@ function getOverlayClass(
   }
   return `${overlayBase} ${rounded} ${mb} ${bot}`.trim();
 }
-function getOverlayImageClass(type: string, size: string, error?: boolean) {
+function getOverlayImageClass(
+  type: string,
+  size: string,
+  error?: boolean,
+  blockType?: string,
+) {
   if (error) return 'invisible w-0 h-0 pointer-events-none';
   switch (type) {
     case 'banner_overlay':
@@ -184,6 +189,12 @@ function getOverlayImageClass(type: string, size: string, error?: boolean) {
         size === 'large' ? 'w-[30px]' : 'w-[24px]'
       } h-auto`;
     case 'general_overlay':
+      // hide general overlays on mobile/tablet only for auto_expansion blocks
+      if (blockType === 'auto_expansion') {
+        return `object-contain ${
+          size === 'large' ? 'h-[22px]' : 'h-[20px]'
+        } w-auto hidden xl:block`;
+      }
       return `object-contain ${
         size === 'large' ? 'h-[22px]' : 'h-[20px]'
       } w-auto`;
@@ -492,6 +503,7 @@ const PosterOverlay: React.FC<Props> = ({
                           overlay.type as string,
                           overlay.size as string,
                           overlay.error,
+                          blockType,
                         )}
                         onError={handleImageError}
                         draggable={false}
@@ -525,6 +537,7 @@ const PosterOverlay: React.FC<Props> = ({
                         overlay.type as string,
                         overlay.size as string,
                         overlay.error,
+                        blockType,
                       )}
                       onError={handleImageError}
                       draggable={false}

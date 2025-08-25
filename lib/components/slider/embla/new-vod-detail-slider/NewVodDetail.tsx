@@ -52,7 +52,7 @@ export default function NewVodDetail({ blockData, block, data }: Props) {
           <NewVodDetailSlideItem slide={selectedSlide} block={block} />
         </div>
         <div
-          className={`${width >= 1280 ? 'f-container' : ''} mt-[32px] xl:mt-0`}
+          className="f-container mt-[32px] xl:mt-0"
         >
           <EmblaBlockSlider
             slidesItems={data || []}
