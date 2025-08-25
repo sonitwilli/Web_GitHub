@@ -6,15 +6,52 @@
   top: 80%;
 }
 
+.numberContainer {
+  height: 66%;
+  padding-top: calc(100% - 63%);
+}
+
+@media screen and (min-width: 768px) {
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 90%);
+  }
+}
+
 @media screen and (min-width: 1024px) {
   .imageContainer {
     padding-bottom: 50px;
   }
+
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 70%);
+  }
 }
+
+@media screen and (min-width: 1200px) {
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 68%);
+  }
+}
+
+@media screen and (min-width: 1280px) {
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 90%);
+  }
+}
+
 
 @media screen and (min-width: 1600px) {
   .imageContainer {
     padding-bottom: 90px;
+  }
+
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 68%);
   }
 
   .slideTitle {

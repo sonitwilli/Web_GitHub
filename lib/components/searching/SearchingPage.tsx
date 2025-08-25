@@ -115,7 +115,7 @@ const SearchingPage = () => {
 
   const resetInput = () => {
     setKeyword('');
-    setSuggestKeywords([]);
+    setSuggestKeywords([]);    
   };
 
   const handleInputFocus = () => {

@@ -248,7 +248,7 @@ export default function BlockSlideItem({
             block?.block_type === 'participant'
               ? 'w-full min-w-full max-w-full relative slide-image-container'
               : 'w-full min-w-full max-w-full relative slide-image-container'
-          }   ${block?.block_type === 'numeric_rank' ? 'pb-[53px]' : ''}`}
+          }`}
         >
           {block?.block_type !== 'participant' && (
             <div className="z-[1] absolute w-full h-full top-0 left-0 bg-black-01 ease-out duration-100 hover:bg-transparent rounded-[16px]"></div>
@@ -276,7 +276,7 @@ export default function BlockSlideItem({
                 block: block || {},
                 blockData: slide || {},
                 metaBlock,
-                urlRouterPath: router.asPath
+                urlRouterPath: router.asPath,
               })}
               type={
                 block?.block_type === 'participant' ? 'circle' : blockDirection
@@ -407,7 +407,7 @@ export default function BlockSlideItem({
 
         {block?.block_type === 'numeric_rank' ? (
           <div
-            className={`flex flex-col justify-start items-start numeric_rank_overlay absolute w-full h-[66%] xl:h-1/2 bottom-0 left-0 rounded-[12px] px-[12px] xl:px-[24px] pt-[59px]`}
+            className={`flex flex-col justify-start items-start numeric_rank_overlay absolute w-full  bottom-0 left-0 rounded-[12px] px-[12px] xl:px-[24px] ${styles.numberContainer}`}
             style={{
               background: `${linearGradient}`,
             }}
@@ -417,7 +417,7 @@ export default function BlockSlideItem({
               src={`/images/numeric/${index + 1}.png`}
               alt="index number"
               height={100}
-              className="h-[44px] xl:h-[72px]"
+              className="h-[44px] sm:h-[72px] xl:h-[72px]"
             />
             {block?.block_type === 'numeric_rank' && (
               <h3 className="line-clamp-2 w-full text-[16px] font-[500] mb-[8px] tablet:mt-[12px] xl:mt-[16px]">

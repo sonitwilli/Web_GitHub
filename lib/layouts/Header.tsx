@@ -327,7 +327,7 @@ export default function Header() {
       if (iphoneVersion !== null && iphoneVersion < 1500) {
         // Hiển thị thông báo
         const confirmed = window.confirm(
-          'Phiên bản iOS của bạn quá cũ. Vui lòng cập nhật lên iOS 15 trở lên để sử dụng ứng dụng này. Nhấn OK để được hỗ trợ.'
+          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.'
         );
         
         if (confirmed) {

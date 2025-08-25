@@ -213,6 +213,7 @@ export const thumbnailUrl = ({
         })
       }
       return urlImage
+    case 'auto_expansion':
     case 'category':
     case 'horizontal_banner_with_title':
       return scaleImageUrl({
