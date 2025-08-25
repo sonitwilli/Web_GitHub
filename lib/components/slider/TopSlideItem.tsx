@@ -183,7 +183,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                   className="max-w-full max-h-[74px] tablet:max-h-[48px] xl:max-h-[120px] xl:max-w-[632px] "
                 />
               ) : (
-                <p className="text-[24px] leading-[29px] font-[600] line-clamp-2 max-w-[632px]">
+                <p className="text-[24px] md:text-[28px] xl:text-[48px] leading-[29px] xl:leading-[54px] font-[600] line-clamp-2 max-w-[632px] xl:max-h-[170px]">
                   {slide?.title_vie || slide?.title}
                 </p>
               )}
