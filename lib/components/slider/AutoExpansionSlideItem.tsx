@@ -218,14 +218,6 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
     };
   }, []);
 
-  const [setIsSub] = useState(false);
-
-  useEffect(() => {
-    if (slide?.is_subscribed === '1') {
-      setIsSub(true);
-    }
-  }, [slide]);
-
   const imgRef = useRef<HTMLImageElement | null>(null);
 
   const positionLabelsStatus = {
