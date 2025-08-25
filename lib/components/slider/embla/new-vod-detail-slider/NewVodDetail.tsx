@@ -7,7 +7,6 @@ import EmblaBlockSlider from '../block-slider/EmblaBlockSlider';
 import { createContext, useEffect, useState } from 'react';
 import NewVodDetailSlideItem from './NewVodDetailSlideItem';
 import { useIntersectionObserver } from '@/lib/hooks/useIntersectionObserver';
-import useScreenSize from '@/lib/hooks/useScreenSize';
 
 interface Props {
   blockData?: BlockItemResponseType;
@@ -26,7 +25,6 @@ export const NewVodContext = createContext<ContextType>({
 });
 
 export default function NewVodDetail({ blockData, block, data }: Props) {
-  const { width } = useScreenSize();
   const [selectedSlide, setSelectedSlide] = useState<BlockSlideItemType>();
   const { isInViewport, targetElement } = useIntersectionObserver({
     threshold: 0.3,
