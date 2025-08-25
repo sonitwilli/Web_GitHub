@@ -87,13 +87,19 @@
   padding-left: 8px;
 }
 
+@media (max-width: 1279px) {
+  .block-slider-auto_expansion .embla__container {
+    margin-left: -8px;
+  }
+}
+
 .block-slider-participant .embla__slide {
   flex: 0 0 calc(100% / 3);
   padding-left: 0px;
 }
 
 .block-slider-participant .embla__container {
-  margin-left: -0;
+  margin-left: 0;
 }
 @media (min-width: 768px) {
   .block-slider .embla__slide {
