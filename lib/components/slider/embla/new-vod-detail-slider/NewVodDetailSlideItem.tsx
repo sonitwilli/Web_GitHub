@@ -53,6 +53,27 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
     return createLink({ data: slide || {}, type: block?.type || "" }) || "/";
   }, [slide, block]);
 
+  const generalOverlays = useMemo(() => {
+    // poster_overlays may be an array of strings or PosterOverlayItem objects.
+    const list = (slide?.poster_overlays as (PosterOverlayItem | string)[]) || [];
+    if (!Array.isArray(list)) return [] as (PosterOverlayItem | string)[];
+    return list.filter((item): item is PosterOverlayItem | string =>
+      typeof item === 'string' ? true : !!(item && item.type === 'general_overlay')
+    );
+  }, [slide]);
+
+  const filteredPosterOverlays = useMemo(() => {
+    const list = (slide?.poster_overlays as PosterOverlayItem[]) || [];
+    if (!Array.isArray(list)) return [] as PosterOverlayItem[];
+    return list.filter((item): item is PosterOverlayItem => {
+      if (typeof item === 'string') return false;
+      const pos = (item.position || '').toLowerCase();
+      // drop top-right
+      if (['tr'].includes(pos)) return false;
+      return true;
+    });
+  }, [slide]);
+
   useEffect(() => {
     let timeout = undefined;
     if (timeout) {
@@ -149,9 +170,9 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
           />
         </div>
 
-        {slide?.poster_overlays && (
+        {filteredPosterOverlays && filteredPosterOverlays.length > 0 && (
           <PosterOverlays
-            posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
+            posterOverlays={filteredPosterOverlays}
             blockType={block?.block_type}
             positionLabelsStatus={[positionLabelsStatus]}
             onHandlePosterOverlays={handlePosterOverlays}
@@ -175,9 +196,36 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
             )}
           </div>
         </div>
-        <div className="mt-[16px]">
-          {/* <VodRating /> */}
-          <VodHighlightInfo slide={slide} block={block} />
+        <div className="mt-[16px] flex items-center gap-[12px]">
+          {/* General Overlays */}
+          {generalOverlays && generalOverlays.length > 0 && (
+            <div className="flex items-center gap-[8px]">
+              {generalOverlays.map((o, i) => {
+                let src = '';
+                if (typeof o === 'string') {
+                  src = o;
+                } else {
+                  const item = o as PosterOverlayItem;
+                  src = item?.url || item?.url_portrait || '';
+                }
+                if (!src) return null;
+                return (
+                  <div key={i} className="flex-shrink-0">
+                    <img
+                      src={src}
+                      alt={slide?.title_vie || slide?.title || ''}
+                      className="h-[28px]"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* VodHighlightInfo stays on the same line */}
+          <div className="flex-1">
+            <VodHighlightInfo slide={slide} block={block} />
+          </div>
         </div>
         {/* labels */}
         {vodDetailHighlight && vodDetailHighlight?.length > 0 && (
