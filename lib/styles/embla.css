@@ -83,7 +83,7 @@
 }
 
 .block-slider-auto_expansion .embla__slide {
-  flex: 0 0 calc(100% / 4);
+  flex: 0 0 calc(100% / 5);
   padding-left: 8px;
 }
 

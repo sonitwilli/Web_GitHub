@@ -164,10 +164,10 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
         className={`nvm-${block?.block_type} ${
           block?.block_type === 'auto_expansion' &&
           slide?.id === selectedSlide?.id
-            ? 'border-[3px] border-white rounded-[12px]'
+            ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-white rounded-[12px]'
             : block?.block_type === 'auto_expansion' &&
               slide?.id !== selectedSlide?.id
-            ? 'border-[3px] border-transparent rounded-[12px]'
+            ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-transparent rounded-[12px]'
             : ''
         } ${block?.block_type === 'participant' ? '' : ''}`}
       >
