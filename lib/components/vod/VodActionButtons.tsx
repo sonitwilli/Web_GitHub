@@ -104,8 +104,9 @@ export default function VodActionButtons({
           </div>
         )}
 
-        {/* TODO: lắng nghe từ firebase để biết isActive hay không */}
-        <LikeReaction isActive={isLiked} onClick={handleReaction} type={type} />
+        {block?.block_type !== 'auto_expansion' && (
+          <LikeReaction isActive={isLiked} onClick={handleReaction} type={type} />
+        )}
 
         <ShareReaction onClick={() => setShowModalShare(true)} type={type} />
 
