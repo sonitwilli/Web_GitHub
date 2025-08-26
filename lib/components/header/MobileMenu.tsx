@@ -213,7 +213,7 @@ export default function MobileMenu({ menus }: Props) {
                   prefetch={false}
                   key={`menu-mobile-${index}-${menu.id}`}
                   href={`/trang/${menu.id}`}
-                  className={`text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray ${
+                  className={`text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray truncate whitespace-nowrap ${
                     menu.id === activeMenu?.id ? '!text-white-smoke' : ''
                   }`}
                   title={menu?.name}
@@ -249,7 +249,10 @@ export default function MobileMenu({ menus }: Props) {
                       className="h-[14px]"
                     />
                   ) : (
-                    menu.name
+                    ((): string => {
+                      const name = menu?.name || '';
+                      return name.length > 30 ? `${name.slice(0, 30)}…` : name;
+                    })()
                   )}
                 </Link>
               );

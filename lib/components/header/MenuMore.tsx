@@ -34,7 +34,7 @@ export default function MenuMore({ menus }: Props) {
               <Link
                 key={index}
                 href={`/trang/${menu.id}`}
-                className="p-[8px] text-spanish-gray hover:text-fpl font-[600] text-[16px] leading-[130%] tracking-[0.32px] text-nowrap flex items-center justify-center whitespace-break-spaces text-center"
+                className="p-[8px] text-spanish-gray hover:text-fpl font-[600] text-[16px] leading-[130%] tracking-[0.32px] flex items-center justify-center text-center"
                 onClick={(ev) => {
                   clickLinkItem({
                     event: ev,
@@ -55,7 +55,18 @@ export default function MenuMore({ menus }: Props) {
                     className="max-h-[14px]"
                   />
                 ) : (
-                  menu.name
+                  <span
+                    className="block text-center max-w-[96px] overflow-hidden break-words"
+                    style={{
+                      display: '-webkit-box',
+                      WebkitLineClamp: 2,
+                      WebkitBoxOrient: 'vertical',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                    }}
+                  >
+                    {menu?.name}
+                  </span>
                 )}
               </Link>
             ))}
