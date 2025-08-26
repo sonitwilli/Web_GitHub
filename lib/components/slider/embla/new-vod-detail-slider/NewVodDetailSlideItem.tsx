@@ -53,27 +53,6 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
     return createLink({ data: slide || {}, type: block?.type || "" }) || "/";
   }, [slide, block]);
 
-  const generalOverlays = useMemo(() => {
-    // poster_overlays may be an array of strings or PosterOverlayItem objects.
-    const list = (slide?.poster_overlays as (PosterOverlayItem | string)[]) || [];
-    if (!Array.isArray(list)) return [] as (PosterOverlayItem | string)[];
-    return list.filter((item): item is PosterOverlayItem | string =>
-      typeof item === 'string' ? true : !!(item && item.type === 'general_overlay')
-    );
-  }, [slide]);
-
-  const filteredPosterOverlays = useMemo(() => {
-    const list = (slide?.poster_overlays as PosterOverlayItem[]) || [];
-    if (!Array.isArray(list)) return [] as PosterOverlayItem[];
-    return list.filter((item): item is PosterOverlayItem => {
-      if (typeof item === 'string') return false;
-      const pos = (item.position || '').toLowerCase();
-      // drop top-right
-      if (['tr'].includes(pos)) return false;
-      return true;
-    });
-  }, [slide]);
-
   useEffect(() => {
     let timeout = undefined;
     if (timeout) {
@@ -170,9 +149,30 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
           />
         </div>
 
-        {filteredPosterOverlays && filteredPosterOverlays.length > 0 && (
+        {/* show top-right poster overlays on mobile/tablet as well */}
+        {(() => {
+          const list = (slide?.poster_overlays as (PosterOverlayItem | string)[]) || [];
+          const topRight = Array.isArray(list)
+            ? list.filter((it): it is PosterOverlayItem => typeof it !== 'string' && (it.position || '').toLowerCase() === 'tr')
+            : [];
+          if (!topRight || topRight.length === 0) return null;
+          return (
+            <div className="absolute top-0 right-0 z-[2] xl:hidden flex items-start gap-2 pointer-events-none">
+              {topRight.map((o, i) => (
+                <img
+                  key={i}
+                  src={o.url || o.url_portrait || ''}
+                  alt={o.type || 'poster_overlay'}
+                  className="h-[28px] object-contain"
+                />
+              ))}
+            </div>
+          );
+        })()}
+
+        {slide?.poster_overlays && (
           <PosterOverlays
-            posterOverlays={filteredPosterOverlays}
+            posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
             blockType={block?.block_type}
             positionLabelsStatus={[positionLabelsStatus]}
             onHandlePosterOverlays={handlePosterOverlays}
@@ -196,33 +196,7 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
             )}
           </div>
         </div>
-        <div className="mt-[16px] flex items-center gap-[12px]">
-          {/* General Overlays */}
-          {generalOverlays && generalOverlays.length > 0 && (
-            <div className="flex items-center gap-[8px]">
-              {generalOverlays.map((o, i) => {
-                let src = '';
-                if (typeof o === 'string') {
-                  src = o;
-                } else {
-                  const item = o as PosterOverlayItem;
-                  src = item?.url || item?.url_portrait || '';
-                }
-                if (!src) return null;
-                return (
-                  <div key={i} className="flex-shrink-0">
-                    <img
-                      src={src}
-                      alt={slide?.title_vie || slide?.title || ''}
-                      className="h-[28px]"
-                    />
-                  </div>
-                );
-              })}
-            </div>
-          )}
-
-          {/* VodHighlightInfo stays on the same line */}
+        <div className="mt-[16px]">
           <div className="flex-1">
             <VodHighlightInfo slide={slide} block={block} />
           </div>
@@ -236,7 +210,7 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
 
         {/* Description */}
         {slide?.detail?.short_description && (
-          <div className="hidden tablet:block">
+          <div className="block">
             <p
               className={`mt-[16px] font-[500] text-[18px] line-clamp-3 w-full text-shadow-top-slide`}
             >
