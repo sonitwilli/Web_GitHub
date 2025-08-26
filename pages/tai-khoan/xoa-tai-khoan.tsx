@@ -24,12 +24,7 @@ import AccountInfoModal, {
 import { RootState } from '@/lib/store';
 import { openLoginModal } from '@/lib/store/slices/loginSlice';
 import { showToast } from '@/lib/utils/globalToast';
-import {
-  TITLE_SEND_OTP_FAIL,
-  DEFAULT_ERROR_MSG,
-  TOKEN,
-  USER,
-} from '@/lib/constant/texts';
+import { TITLE_SEND_OTP_FAIL, TOKEN, USER } from '@/lib/constant/texts';
 // import tracking from '@/lib/tracking';
 import { useDeleteAccount } from '@/lib/hooks/account/useDeleteAccount';
 import { useRouter } from 'next/router';
@@ -39,15 +34,20 @@ import { AppContext } from '@/lib/components/container/AppContainer';
 import { scaleImageUrl } from '@/lib/utils/methods';
 import styles from '@/lib/components/login/LoginModal.module.css';
 import { AxiosError } from 'axios';
+import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
+import { useNetwork } from '@/lib/components/contexts/NetworkProvider';
+import { DEFAULT_ERROR_MSG, TITLE_SERVICE_ERROR } from '@/lib/constant/errors';
 import {
   trackingAccessItemLog108,
   trackingLog198,
 } from '@/lib/hooks/useTrackingModule';
+import { resetProfiles } from '@/lib/store/slices/multiProfiles';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.info);
+  const { isOffline } = useNetwork();
 
   const verifyModalRef = useRef<VerifyModalNewRef>(null);
   const noticeModalRef = useRef<NoticeModalRef>(null);
@@ -108,26 +108,59 @@ export default function DeleteAccountPage() {
   const { checkStatus, validate, sendOtp, doDisable } = useDeleteAccount();
 
   const checkDeleteAccount = useCallback(async () => {
-    const { status, packages, extras, content, message } = await checkStatus();
+    try {
+      const { status, packages, extras, content, message } =
+        await checkStatus();
 
-    if (status === 200 || status === 302) {
-      // Store policy content for later use
-      sessionStorage.setItem('delete_account_policy', content);
-
-      // Set packages data and open account info modal
-      accountInfoRef.current?.setPackages?.(packages, extras);
-      accountInfoRef.current?.open?.();
-    } else {
+      if (status === 200 || status === 302) {
+        sessionStorage.setItem('delete_account_policy', content);
+        accountInfoRef.current?.setPackages?.(packages, extras);
+        accountInfoRef.current?.open?.();
+      } else if (status === 401) {
+        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+      } else {
+        noticeModalRef.current?.openModal({
+          title: 'Thông báo',
+          content: message || DEFAULT_ERROR_MSG,
+          action: 'home',
+          buttonContent: 'Thoát',
+        });
+      }
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        if (err.response?.status === 401) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+          return;
+        }
+        // Offline/network error → show toast only, do not switch modal
+        if (!err.response || err.code === 'ERR_NETWORK') {
+          showToast({
+            title: TITLE_SERVICE_ERROR,
+            desc: DEFAULT_ERROR_MSG,
+            timeout: 5000,
+          });
+          return;
+        }
+      }
+      // Other errors: keep existing modal behavior
       noticeModalRef.current?.openModal({
         title: 'Thông báo',
-        content: message || DEFAULT_ERROR_MSG,
+        content: DEFAULT_ERROR_MSG,
         action: 'home',
         buttonContent: 'Thoát',
       });
     }
-  }, [checkStatus, accountInfoRef]);
+  }, [checkStatus, accountInfoRef, dispatch]);
 
   const sendOtpDeleteAccount = async () => {
+    if (isOffline) {
+      showToast({
+        title: TITLE_SERVICE_ERROR,
+        desc: DEFAULT_ERROR_MSG,
+        timeout: 5000,
+      });
+      return;
+    }
     try {
       const v = await validate();
       if (v?.mask_phone && typeof window !== 'undefined') {
@@ -196,8 +229,8 @@ export default function DeleteAccountPage() {
                 noticeModalRef.current?.openModal({
                   title: 'Thông báo',
                   content: `Quý khách đã gửi quá nhiều yêu cầu, vui lòng thử lại sau ${countdown} giây`,
-                  action: 'do_retry',
-                  buttonContent: 'Thử lại',
+                  action: 'home',
+                  buttonContent: 'Thoát',
                 });
               } else {
                 window.clearInterval(id);
@@ -213,23 +246,57 @@ export default function DeleteAccountPage() {
           });
         }
       }
-    } catch {
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+          return;
+        }
+        if (!error.response || error.code === 'ERR_NETWORK') {
+          showToast({
+            title: TITLE_SERVICE_ERROR,
+            desc: DEFAULT_ERROR_MSG,
+            timeout: 5000,
+          });
+          return;
+        }
+      }
       showToast({ title: TITLE_SEND_OTP_FAIL, desc: DEFAULT_ERROR_MSG });
     }
   };
 
   const handleSubmitPolicy = async () => {
-    // Close policy modal first
-    policyModalRef.current?.close();
-    // Then send OTP and open verify modal
-    await sendOtpDeleteAccount();
+    if (isOffline) {
+      showToast({
+        title: TITLE_SERVICE_ERROR,
+        desc: DEFAULT_ERROR_MSG,
+        timeout: 5000,
+      });
+      return;
+    } else {
+      // Close policy modal first
+      policyModalRef.current?.close();
+      // Then send OTP and open verify modal
+      await sendOtpDeleteAccount();
+    }
   };
 
   const handleContinueFromAccountInfo = async () => {
-    accountInfoRef.current?.close?.();
-    // Get stored policy content and open policy modal
-    const policyContent = sessionStorage.getItem('delete_account_policy') || '';
-    policyModalRef.current?.open(policyContent);
+    if (isOffline) {
+      showToast({
+        title: TITLE_SERVICE_ERROR,
+        desc: DEFAULT_ERROR_MSG,
+        timeout: 5000,
+      });
+      accountInfoRef.current?.open?.();
+      return;
+    } else {
+      accountInfoRef.current?.close?.();
+      // Get stored policy content and open policy modal
+      const policyContent =
+        sessionStorage.getItem('delete_account_policy') || '';
+      policyModalRef.current?.open(policyContent);
+    }
   };
 
   const doDeleteAccountNewFlow = async ({
@@ -237,6 +304,14 @@ export default function DeleteAccountPage() {
   }: {
     verify_token: string;
   }) => {
+    if (isOffline) {
+      showToast({
+        title: TITLE_SERVICE_ERROR,
+        desc: DEFAULT_ERROR_MSG,
+        timeout: 5000,
+      });
+      return;
+    }
     try {
       const result = await doDisable(verify_token);
 
@@ -277,14 +352,26 @@ export default function DeleteAccountPage() {
           localStorage.removeItem(TOKEN);
           localStorage.removeItem(USER);
           sessionStorage.clear();
+          dispatch(resetProfiles());
         }
+      } else if (result?.status === '401' || result?.status === 401) {
+        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       } else {
         // Error case - show error and use reload action like Nuxt
+        const r: {
+          data?: { title?: string };
+          title?: string;
+          msg?: string;
+        } = result as unknown as {
+          data?: { title?: string };
+          title?: string;
+          msg?: string;
+        };
         noticeModalRef.current?.openModal({
-          title: result?.data?.title || 'Thông báo',
+          title: r?.data?.title || r?.title || 'Thông báo',
           content: result?.msg || DEFAULT_ERROR_MSG,
-          action: 'reload',
-          buttonContent: 'Thử lại',
+          action: 'home',
+          buttonContent: 'Thoát',
         });
         trackingLog198({
           Event: 'DeactivateSuccess',
@@ -292,6 +379,20 @@ export default function DeleteAccountPage() {
         });
       }
     } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+          return;
+        }
+        if (!error.response || error.code === 'ERR_NETWORK') {
+          showToast({
+            title: TITLE_SERVICE_ERROR,
+            desc: DEFAULT_ERROR_MSG,
+            timeout: 5000,
+          });
+          return;
+        }
+      }
       trackingLog198({
         Event: 'DeactivateSuccess',
         Status: 'Fail',
@@ -299,7 +400,10 @@ export default function DeleteAccountPage() {
       let errorMsg = DEFAULT_ERROR_MSG;
       let title = 'Thông báo';
       if (error instanceof AxiosError) {
-        title = error.response?.data?.title || 'Thông báo';
+        title =
+          error.response?.data?.title ||
+          error.response?.data?.data?.title ||
+          'Thông báo';
         errorMsg = error.response?.data?.msg || DEFAULT_ERROR_MSG;
       }
       // Exception case - close all modals and show error
@@ -310,8 +414,8 @@ export default function DeleteAccountPage() {
       noticeModalRef.current?.openModal({
         title,
         content: errorMsg,
-        action: 'reload',
-        buttonContent: 'Thử lại',
+        action: 'home',
+        buttonContent: 'Thoát',
       });
     }
   };

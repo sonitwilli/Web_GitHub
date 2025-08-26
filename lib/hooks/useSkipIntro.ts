@@ -1,10 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
-import {
-  IS_USER_SEEKING,
-  SEEK_VIDEO_STARTTIME,
-  VIDEO_ID,
-} from '../constant/texts';
+import { VIDEO_ID } from '../constant/texts';
+import { saveSeekEvent } from '../utils/seekTracking';
 
 interface UseSkipIntroReturn {
   isVisible: boolean;
@@ -25,16 +22,15 @@ export const useSkipIntro = (
 
     if (videoElement && startContent) {
       try {
-        // Set session storage for tracking
-        if (typeof sessionStorage !== 'undefined') {
-          sessionStorage.setItem(IS_USER_SEEKING, '1');
-          sessionStorage.setItem(
-            SEEK_VIDEO_STARTTIME,
-            new Date().getTime().toString(),
-          );
-        }
-
+        const oldTime = videoElement.currentTime;
         videoElement.currentTime = startContent;
+
+        // Track seek event for skip intro
+        saveSeekEvent({
+          timestamp: Date.now(),
+          direction: startContent > oldTime ? 'forward' : 'backward',
+          method: 'button',
+        });
 
         // optional callback
         onSkip?.();

@@ -25,7 +25,9 @@ import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
     usePlayerPageContext();
+
   const [selectedAudio, setSelectedAudio] = useState<AudioItemType>();
+
   const [open, setOpen] = useState(false);
   const [audioNameList, setAudioNameList] = useState<string[]>([]);
   const generateAudioText = ({
@@ -217,80 +219,87 @@ export default function useAudio() {
     return filteredList;
   }, [audiosAAC]);
 
-  useEffect(() => {
-    if (filterdAudios) {
-      saveSessionStorage({
-        data: [
-          {
-            key: trackingStoreKey.PLAYER_AUDIO_LIST,
-            value: JSON.stringify(audios),
-          },
-        ],
-      });
-    }
-
-    if (
-      !filterdAudios?.length ||
-      filterdAudios.length < 2 ||
-      !isMetaDataLoaded
-    ) {
-      return;
-    }
-
-    const found = filterdAudios?.find((x, index) => {
-      let saved = '';
-      if (streamType === 'channel' || streamType === 'event') {
-        saved = localStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) || '';
-      } else {
-        saved = localStorage.getItem(SELECTED_AUDIO_LABEL) || '';
+  const checkAudioOnRender = async () => {
+    try {
+      if (filterdAudios) {
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_AUDIO_LIST,
+              value: JSON.stringify(audios),
+            },
+          ],
+        });
       }
-      const matched = filterdAudios?.find((y) => y.X_NAME === saved);
-      if (matched) {
-        return x.X_NAME === matched.X_NAME;
-      } else {
+
+      if (
+        !filterdAudios?.length ||
+        filterdAudios.length < 2 ||
+        !isMetaDataLoaded
+      ) {
+        return;
+      }
+
+      const found = filterdAudios?.find((x, index) => {
+        let saved = '';
+        if (streamType === 'channel' || streamType === 'event') {
+          saved = localStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) || '';
+        } else {
+          saved = localStorage.getItem(SELECTED_AUDIO_LABEL) || '';
+        }
+        const matched = filterdAudios?.find((y) => y.X_NAME === saved);
+        if (matched) {
+          return x.X_NAME === matched.X_NAME;
+        } else {
+          if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {
+            const audioList = window.hlsPlayer.audioTracks;
+            if (audioList?.length) {
+              const f = audioList?.find((x) => x.autoselect || x.default);
+              if (f) {
+                return f.name === x.X_NAME;
+              } else {
+                return index === 0;
+              }
+            }
+          }
+          if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
+            const audioList = window.shakaPlayer.getAudioTracks();
+            if (audioList?.length) {
+              const f = audioList?.find((x: any) => x?.active);
+              if (f) {
+                return f.label === x.X_NAME;
+              } else {
+                return index === 0;
+              }
+            }
+          }
+        }
+      });
+      if (found) {
+        setSelectedAudio(found);
         if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {
           const audioList = window.hlsPlayer.audioTracks;
           if (audioList?.length) {
-            const f = audioList?.find((x) => x.autoselect || x.default);
-            if (f) {
-              return f.name === x.X_NAME;
-            } else {
-              return index === 0;
-            }
+            const f = audioList?.find((x) => x.name === found.X_NAME);
+            window.hlsPlayer.setAudioOption(f);
           }
-        }
-        if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
+        } else if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
           const audioList = window.shakaPlayer.getAudioTracks();
-          if (audioList?.length) {
-            const f = audioList?.find((x: any) => x?.active);
-            if (f) {
-              return f.label === x.X_NAME;
-            } else {
-              return index === 0;
-            }
+          const f = audioList?.find((x: any) => x?.label === found.X_NAME);
+          if (f) {
+            // window.shakaPlayer.selectAudioTrack(f);
+            // window.shakaPlayer.selectAudioLanguage(found?.X_SHORT_LANGUAGE);
+            // window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
+            window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
           }
         }
       }
-    });
-    if (found) {
-      setSelectedAudio(found);
-      if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {
-        const audioList = window.hlsPlayer.audioTracks;
-        if (audioList?.length) {
-          const f = audioList?.find((x) => x.name === found.X_NAME);
-          window.hlsPlayer.setAudioOption(f);
-        }
-      } else if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
-        const audioList = window.shakaPlayer.getAudioTracks();
-        const f = audioList?.find((x: any) => x?.label === found.X_NAME);
-        if (f) {
-          // window.shakaPlayer.selectAudioTrack(f);
-          // window.shakaPlayer.selectAudioLanguage(found?.X_SHORT_LANGUAGE);
-          // window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
-          window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
-        }
-      }
-    }
+    } catch {}
+  };
+
+  useEffect(() => {
+    checkAudioOnRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     audiosAAC,
     streamType,

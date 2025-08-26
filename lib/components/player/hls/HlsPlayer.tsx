@@ -24,7 +24,10 @@ import {
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { getRemainingBufferedTime } from '@/lib/utils/player';
-import { trackingPlayAttempLog521 } from '@/lib/hooks/useTrackingPlayback';
+import {
+  trackingLogChangeResolutionLog113,
+  trackingPlayAttempLog521,
+} from '@/lib/hooks/useTrackingPlayback';
 import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
 import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
 
@@ -147,6 +150,17 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       });
       hls.on(Hls.Events.LEVEL_SWITCHED, () => {
         trackPlayerChange();
+        const isUserManual = sessionStorage.getItem(
+          trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION,
+        );
+        trackingLogChangeResolutionLog113({
+          Resolution: `${hls?.levels[hls?.currentLevel]?.height}p`,
+          isManual: isUserManual || '0',
+        });
+        sessionStorage.setItem(
+          trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION,
+          '0',
+        );
       });
       hls.on(Hls.Events.AUDIO_TRACK_SWITCHING, () => {
         trackPlayerChange();

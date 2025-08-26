@@ -45,7 +45,10 @@ import {
   checkShakaResponseFilter,
   getRemainingBufferedTime,
 } from '@/lib/utils/player';
-import { trackingPlayAttempLog521 } from '@/lib/hooks/useTrackingPlayback';
+import {
+  trackingLogChangeResolutionLog113,
+  trackingPlayAttempLog521,
+} from '@/lib/hooks/useTrackingPlayback';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -309,6 +312,35 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     player.addEventListener('texttrackvisibility', () => {
       trackPlayerChange();
     });
+    player.addEventListener('variantchanged', () => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const active = player.getVariantTracks().find((t: any) => t.active);
+      const isUserManual = sessionStorage.getItem(
+        trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION,
+      );
+      trackingLogChangeResolutionLog113({
+        Resolution: `${active.width}x${active.height}`,
+        isManual: isUserManual || '0',
+      });
+      sessionStorage.setItem(trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION, '0');
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('abrstatuschanged', (e: any) => {
+      if (e?.newStatus) {
+        trackingLogChangeResolutionLog113({
+          Resolution: `${e.newStatus.width}x${e.newStatus.height}`,
+          isManual: '0',
+        });
+      }
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('adaptation', (e: any) => {
+      trackingLogChangeResolutionLog113({
+        Resolution: `${e?.newTrack?.width}x${e?.newTrack?.height}`,
+        isManual: '0',
+      });
+    });
+
     player.addEventListener('loading', () => {
       const firstLoad = sessionStorage.getItem(
         trackingStoreKey.PLAYER_FIRST_LOAD,

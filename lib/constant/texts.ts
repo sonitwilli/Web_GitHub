@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.30';
+export const APP_VERSION = '8.0.31';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -580,3 +580,5 @@ export const MQTT_TOPIC_LINK = 'MQTT_TOPIC_LINK';
 export const MQTT_PUBLISH_FAILED_LIST = 'MQTT_PUBLISH_FAILED_LIST';
 export const MQTT_PUBLISH_STREAM_DATA = 'MQTT_PUBLISH_STREAM_DATA';
 export const PLAYER_BOOKMARK_SECOND = 'PLAYER_BOOKMARK_SECOND';
+export const TEXT_OS_NOT_SUPPORT =
+  'Hiện tại FPT Play chỉ hỗ trợ trình phát trên ứng dụng FPT Play. Vui lòng mở ứng dụng để tiếp tục xem.';

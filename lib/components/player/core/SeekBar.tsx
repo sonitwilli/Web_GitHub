@@ -6,6 +6,7 @@ import { VIDEO_ID } from '@/lib/constant/texts';
 import Head from 'next/head';
 import React from 'react';
 import axios from 'axios';
+import { saveSeekEvent } from '@/lib/utils/seekTracking';
 // import ThumbNails from '@/lib/utils/thumbNails';
 // import { userAgentInfo } from '@/lib/utils/ua';
 
@@ -34,12 +35,24 @@ export default function SeekBar() {
     dataStream,
   } = usePlayerPageContext();
   const change = (v: number) => {
-    if (setVideoCurrentTime) {
-      setVideoCurrentTime(v / 1000);
-    }
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
-      video.currentTime = v / 1000;
+      const oldTime = video.currentTime;
+      const newTime = v / 1000;
+
+      if (setVideoCurrentTime) {
+        setVideoCurrentTime(newTime);
+      }
+      video.currentTime = newTime;
+
+      // Track seek event if there's a significant time change
+      if (Math.abs(newTime - oldTime) > 1) {
+        saveSeekEvent({
+          timestamp: Date.now(),
+          direction: 'seekbar',
+          method: 'seekbar',
+        });
+      }
     }
   };
 
@@ -170,6 +183,10 @@ export default function SeekBar() {
     setThumbnailUrl(null);
     setThumbCrop(null);
   };
+  const handleMouseDown = () => {
+    // set time start
+    console.log('handleMouseDown seekbar');
+  };
 
   return (
     <div
@@ -177,6 +194,7 @@ export default function SeekBar() {
       ref={seekBarRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onMouseDown={handleMouseDown}
       style={{ position: 'relative' }}
     >
       <Head>

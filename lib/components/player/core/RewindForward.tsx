@@ -2,6 +2,7 @@ import { VIDEO_ID } from '@/lib/constant/texts';
 import { ControlPopupType } from './MobilePopup';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { playerButtonProps } from '../common/playerButtonProps';
+import { saveSeekEvent } from '@/lib/utils/seekTracking';
 
 interface Props {
   type?: ControlPopupType;
@@ -18,6 +19,12 @@ export default function RewindForward({ type }: Props) {
         if (video.paused) {
           video.play().catch(() => {});
         }
+        // Track seek event
+        saveSeekEvent({
+          timestamp: Date.now(),
+          direction: 'backward',
+          method: 'button',
+        });
       }
     } catch {}
   };
@@ -29,6 +36,12 @@ export default function RewindForward({ type }: Props) {
         if (video.paused) {
           video.play().catch(() => {});
         }
+        // Track seek event
+        saveSeekEvent({
+          timestamp: Date.now(),
+          direction: 'forward',
+          method: 'button',
+        });
       }
     } catch {}
   };

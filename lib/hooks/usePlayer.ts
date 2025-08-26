@@ -54,6 +54,8 @@ import {
 } from './useTrackingIPTV';
 import { UAParser } from 'ua-parser-js';
 import { userAgentInfo } from '@/lib/utils/ua';
+import { trackingSeekVideoLog514 } from './useTrackingPlayback';
+import { getSeekEvent, clearSeekEvent } from '@/lib/utils/seekTracking';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -281,6 +283,15 @@ export default function usePlayer() {
 
   const handlePlaying = async () => {
     checkVolumeOnLoaded();
+
+    // Check and tracking seek event
+    const seekEvent = getSeekEvent();
+    if (seekEvent) {
+      trackingSeekVideoLog514();
+      // Clear the seek event after logging
+      clearSeekEvent();
+    }
+
     const firstPlay = sessionStorage.getItem(
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
     );

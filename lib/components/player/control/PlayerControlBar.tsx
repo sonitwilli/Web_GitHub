@@ -120,7 +120,8 @@ export default function PlayerControlBar() {
             <Report />
             <ChatButton />
             <Subtitles />
-            <AudioButton />
+            {isPlaySuccess ? <AudioButton /> : ''}
+
             <Resolution />
             <SpeedButton />
             {(dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||

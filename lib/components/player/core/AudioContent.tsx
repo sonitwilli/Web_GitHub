@@ -5,7 +5,7 @@ interface Props {
   onClick?: () => void;
   type?: ControlPopupType;
 }
-export default function AudioContent({ onClick, type = 'default' }: Props) {
+export default function AudioContent({ onClick, type }: Props) {
   const { selectedAudio, clickAudio, filterdAudios } = useAudio();
 
   const click = (q: AudioItemType) => {

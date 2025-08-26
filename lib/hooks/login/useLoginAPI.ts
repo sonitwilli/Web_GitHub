@@ -270,7 +270,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             break;
           case '3':
           case '9':
-            showNotificationModal({ msg });
+            showNotificationModal(res.data as NotificationInput);
             break;
           case '11':
             setErrorPhone(msg || INVALID_PHONE_MESSAGE);

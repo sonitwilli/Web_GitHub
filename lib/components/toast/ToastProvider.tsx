@@ -31,7 +31,7 @@ export const ToastProvider = ({ children, container }: ToastProviderProps) => {
   const toastRef = useRef<HTMLDivElement | null>(null);
   const toastStateRef = useRef<ToastData | null>(null);
   const isFullscreen = useSelector(
-    (state: RootState) => state.player.isFullscreen
+    (state: RootState) => state.player.isFullscreen,
   );
   const prevIsFullscreenRef = useRef<boolean>(isFullscreen);
 
@@ -52,7 +52,7 @@ export const ToastProvider = ({ children, container }: ToastProviderProps) => {
       setIsLeaving(false);
       timeoutRef.current = window.setTimeout(clearToast, data.timeout ?? 5000);
     },
-    [clearToast]
+    [clearToast],
   );
 
   useEffect(() => {
@@ -101,8 +101,8 @@ export const ToastProvider = ({ children, container }: ToastProviderProps) => {
         ref={toastRef}
         className={`${
           container
-            ? 'absolute top-4 right-4 z-[999] w-[250px] sm:w-[400px]'
-            : 'fixed top-[136px] right-10 z-[999] w-[250px] sm:w-[400px]'
+            ? 'absolute top-4 right-4 z-[10000] w-[250px] sm:w-[400px]'
+            : 'fixed top-[136px] right-10 z-[10000] w-[250px] sm:w-[400px]'
         } transition-all ${isLeaving ? styles.toastLeave : styles.toastOpen} ${
           toast.wrapperStyle
         }`}

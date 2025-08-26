@@ -5,6 +5,7 @@ import {
   VIDEO_ID,
   VOLUME_PLAYER,
 } from '@/lib/constant/texts';
+import { saveSeekEvent } from '@/lib/utils/seekTracking';
 
 // Keyboard shortcuts configuration
 const KEYBOARD_SHORTCUTS = {
@@ -95,12 +96,28 @@ export function useKeyboardControls() {
     if (video.paused) {
       video.play().catch(() => {});
     }
+
+    // Track seek event
+    saveSeekEvent({
+      timestamp: Date.now(),
+      direction: seconds > 0 ? 'forward' : 'backward',
+      method: 'keyboard',
+    });
   }, []);
 
   const handleNavigation = useCallback(
     (video: HTMLVideoElement, key: string) => {
+      const oldTime = video.currentTime;
       const percentage = key === '0' ? 0 : parseInt(key) / 10;
-      video.currentTime = video.duration * percentage;
+      const newTime = video.duration * percentage;
+      video.currentTime = newTime;
+
+      // Track seek event for navigation
+      saveSeekEvent({
+        timestamp: Date.now(),
+        direction: newTime > oldTime ? 'forward' : 'backward',
+        method: 'keyboard',
+      });
     },
     [],
   );

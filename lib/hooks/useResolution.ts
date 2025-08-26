@@ -13,6 +13,7 @@ import { usePlayerPageContext } from '../components/player/context/PlayerPageCon
 import { useVodPageContext } from '../components/player/context/VodPageContext';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingChangeVideoQualityLog416 } from './useTrackingPlayback';
+import { trackingStoreKey } from '../constant/tracking';
 export interface ResolutionItemType {
   language?: string;
   id?: string | number;
@@ -104,6 +105,7 @@ export default function useResolution() {
 
   const click = (x: ResolutionItemType) => {
     localStorage.setItem(SELECTED_VIDEO_QUALITY, x.height as string);
+    sessionStorage.setItem(trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION, '1');
     saveSessionStorage({
       data: [
         {

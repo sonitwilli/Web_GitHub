@@ -4,6 +4,7 @@ import { reaction, ReactionParamsType } from '@/lib/api/reaction';
 import { useAppDispatch, useAppSelector } from '../store';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
 import { trackingLog59 } from './useTrackingAppModule';
+import { subscribeVod } from '../api/vod';
 
 interface Props {
   block?: BlockItemType;
@@ -50,20 +51,29 @@ export default function useReaction({ slide }: Props) {
           Event: isLiked ? 'Unsubscribed' : 'Subscribed',
         });
       }
-      const realId =
-        slide?.type === 'event' || slide?.type === 'eventtv'
-          ? slide?.highlight_id
-          : slide?.id || slide?._id;
-      const params: ReactionParamsType = {
-        id: realId as string,
-        type:
+      if (String(slide?.is_coming_soon) === '1') {
+        await subscribeVod({
+          id: slide?.id || '',
+          type: 'vod',
+          value: isLiked ? 'unsub' : 'sub',
+        });
+        setIsLiked((prev) => !prev);
+      } else {
+        const realId =
           slide?.type === 'event' || slide?.type === 'eventtv'
-            ? 'event'
-            : slide.type,
-        value: isLiked ? 'dislike' : 'like',
-      };
-      await reaction(params);
-      setIsLiked((prev) => !prev);
+            ? slide?.highlight_id
+            : slide?.id || slide?._id;
+        const params: ReactionParamsType = {
+          id: realId as string,
+          type:
+            slide?.type === 'event' || slide?.type === 'eventtv'
+              ? 'event'
+              : slide.type,
+          value: isLiked ? 'dislike' : 'like',
+        };
+        await reaction(params);
+        setIsLiked((prev) => !prev);
+      }
     } catch {}
   };
   return { isLiked, setIsLiked, handleReaction };

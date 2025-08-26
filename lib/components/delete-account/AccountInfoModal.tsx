@@ -119,7 +119,7 @@ export default forwardRef<AccountInfoModalRef, Props>(function AccountInfoModal(
                   <div
                     className={`rounded-[12px] bg-white-007 p-4 text-silver-chalice ${
                       activePackages.length > 1
-                        ? `min-h-[79px]  max-h-[160px] tablet:max-h-[208px] overflow-y-auto ${styles.scrollBar}`
+                        ? `min-h-[79px]  max-h-[calc(40vh-145px)] tablet:max-h-[208px] overflow-y-auto ${styles.scrollBar}`
                         : ''
                     }`}
                   >

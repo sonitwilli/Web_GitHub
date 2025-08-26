@@ -1,6 +1,32 @@
 {
     "versions": [
         {
+            "version": "8.0.31",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Tìm kiếm] Lỗi back về trang tìm kiếm trước đó khi thực hiện xóa nội dung tìm kiếm ở input",
+                "[ANRMOBI][iOS][Livechat] Lỗi thỉnh thoảng không cập nhật UI cho tin nhắn bị đánh dấu vi phạm",
+                "[WEB][Livechat] Lỗi hiển thị của icon Cài đặt bình luận",
+                "[WEB][Livechat] Lỗi hiển thị popup Xác nhận Xóa bình luận khi chọn Xóa bình luận bất kỳ",
+                "[WEB][PlayerVOD] Lỗi không hiển thị popup chặn đối với nội dung DRM ở mode mobile",
+                "[WEB][PlayerVOD]Âm lượng: Lỗi không giữ nguyên mức điều chỉnh âm lượng sau khi reload page",
+                "[WEB][ReportPlayer] Lỗi không hiển thị popup Yêu cầu đăng nhập ở player truyền hình khi chọn chức năng Báo cáo sự cố đối với kênh NonDRM",
+                "[WEB] Lỗi vỡ giao diện trang web dev.fptplay.vn trên thiết bị ios có version <15",
+                "[WEB][Trang chủ] Block Horizontal Banner with Title ở mode responsive bị lỗi size + button 'Xem thêm' bị đè lên dấu '>'",
+                "[WEB][Trang chủ] Blocks_ Lỗi image slider và title ở block Sắp công chiếu & Numberic",
+                "[WEB][Rating vod] Không hiện sao đã đánh giá và button Chỉnh sửa khi reload page",
+                "[WEB][Quicklogin] Lỗi nháy màn hình khi truy cập/reload page Đăng nhập nhanh",
+                "[WEB][Sự kiện] Lỗi bị luồng đen khi sự kiện công chiếu đến end_time",
+                "[WEB][Sự kiện] Lỗi bị detail đen khi chọn sự kiện công chiếu kết thúc",
+                "[WEB][Sự kiện] Lỗi vẫn phát tiếp luồng khi sự kiện trực tiếp đến end_time",
+                "[WEB][XoaTaiKhoan] Lỗi hiển thị sai title popup thông báo đối với tài khoản đã bị khóa/đã bị xóa/thông báo xóa thành công",
+                "[WEB][XoaTaiKhoan] Lỗi hiển thị sai số lượng item dịch vụ đã mua ở mode responsive",
+                "[WEB][XoaTaiKhoan] Lỗi không hiển thị popup Đăng nhập tài khoản khi nhấn vào btn Tiếp tục ở màn hình Điều khoản.. đối với trường hợp thiết bị đã bị đá bởi 1 thiết bị khác",
+                "[WEB][XoaTaiKhoan] Lỗi dẫn đến màn hình Điều khoản nhưng không hiển thị được nội dung ở màn hình khi mất kết nối mạng",
+                "[WEB][PlayerVOD] Phụ đề: Lỗi hiển thị phụ đề khi option đang chọn là Tắt sau khi điều chỉnh âm thanh"
+            ]
+        }, 
+        {
             "version": "8.0.30",
             "date": "Dự kiến",
             "content": [

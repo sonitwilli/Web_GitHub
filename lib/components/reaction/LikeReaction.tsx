@@ -39,9 +39,7 @@ export default function LikeReaction({
     if (isCommingSoon) {
       return <IoNotifications className="text-[24px]" />;
     }
-    return (
-      <Image src="/images/heart-fill.png" alt="like" width={24} height={24} />
-    );
+    return <CiHeart className="text-[25px]" />;
   };
 
   const renderIcon = () => {
@@ -53,7 +51,9 @@ export default function LikeReaction({
         />
       );
     }
-    return <CiHeart className="text-[25px]" />;
+    return (
+      <Image src="/images/heart-fill.png" alt="like" width={24} height={24} />
+    );
   };
 
   return (
@@ -71,14 +71,14 @@ export default function LikeReaction({
       aria-label="like"
       onClick={onClick}
     >
-      {isActive ? renderActiveIcon() : renderIcon()}
+      {isActive ? renderIcon() : renderActiveIcon()}
 
       {isChannel && (
         <span className="font-[600] text-[16px] leading-[130%] tracking-[0.32px] text-white-smoke block">
           {isActive ? (
-            <>{isCommingSoon ? TEXT.order : TEXT.follow}</>
+            <>{isCommingSoon ? TEXT.unOrder : TEXT.follow}</>
           ) : (
-            <>{isCommingSoon ? TEXT.unOrder : TEXT.unFollow}</>
+            <>{isCommingSoon ? TEXT.order : TEXT.unFollow}</>
           )}
         </span>
       )}

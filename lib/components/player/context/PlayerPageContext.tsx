@@ -32,6 +32,7 @@ import {
   PLAYER_NAME_TYPE,
   PLAYER_WRAPPER_ID,
   ROUTE_PATH_NAMES,
+  TEXT_OS_NOT_SUPPORT,
   TOKEN,
   VIDEO_ID,
 } from '@/lib/constant/texts';
@@ -48,7 +49,7 @@ import { ERROR_URL_MSG, PAGE_NOT_FOUND_MSG } from '@/lib/constant/errors';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { useAppDispatch } from '@/lib/store';
 import { useIsRevision } from '@/lib/hooks/useIsRevision';
-import { ErrorData } from 'hls.js';
+import Hls, { ErrorData } from 'hls.js';
 import {
   getPlaylistDetail,
   getPlaylistRealDetail,
@@ -201,6 +202,8 @@ type ContextType = {
   clearErrorInterRef?: () => void;
   queryEpisodeNotExist?: boolean;
   setQueryEpisodeNotExist?: (v: boolean) => void;
+  isSupportOs?: boolean;
+  setIsSupportOs?: (v: boolean) => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -218,6 +221,7 @@ type Props = {
 };
 
 export function PlayerPageContextProvider({ children }: Props) {
+  const [isSupportOs, setIsSupportOs] = useState(true);
   const [queryEpisodeNotExist, setQueryEpisodeNotExist] = useState(false);
   const isBackgroundRetryRef = useRef(false);
   const { isFullscreen } = useAppSelector((s) => s.player);
@@ -665,8 +669,7 @@ export function PlayerPageContextProvider({ children }: Props) {
           submitKey: 'on_mobile',
           content: {
             title: 'Thông báo',
-            content:
-              'Hiện tại FPT Play chỉ hỗ trợ trình phát trên ứng dụng FPT Play. Vui lòng mở ứng dụng để tiếp tục xem.',
+            content: TEXT_OS_NOT_SUPPORT,
             buttons: {
               accept: 'Mở ứng dụng',
             },
@@ -989,6 +992,30 @@ export function PlayerPageContextProvider({ children }: Props) {
       ) {
         const validBrowser = isRequiredBrowser();
         if (!validBrowser) return;
+      }
+
+      if (
+        channelDetail?.verimatrix !== '1' &&
+        channelDetail?.verimatrix !== true &&
+        channelDetail?.drm !== '1' &&
+        channelDetail?.drm !== true &&
+        (streamType === 'channel' || streamType === 'event')
+      ) {
+        if (!Hls.isSupported()) {
+          if (openPlayerNoticeModal) {
+            openPlayerNoticeModal({
+              submitKey: 'on_mobile',
+              content: {
+                title: 'Thông báo',
+                content: TEXT_OS_NOT_SUPPORT,
+                buttons: {
+                  accept: 'Mở ứng dụng',
+                },
+              },
+            });
+          }
+          return;
+        }
       }
       // playlist
       if (pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
@@ -1464,6 +1491,8 @@ export function PlayerPageContextProvider({ children }: Props) {
         // @ts-ignore
         clearErrorInterRef,
         queryEpisodeNotExist,
+        isSupportOs,
+        setIsSupportOs,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

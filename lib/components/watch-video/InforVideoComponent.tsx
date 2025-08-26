@@ -63,14 +63,14 @@ const InforVideoComponent = (props: PropsVideo) => {
       highlight_id: dataVideo?.id,
       type: dataVideo?.type ? dataVideo?.type : 'vod',
     }),
-    [dataVideo],
+    [dataVideo]
   );
 
   const [ratingInfo, setRatingInfo] = useState<RatingData | null>(null);
   const loadRating = async () => {
     const userRating = await fetchRatingData(
       dataVideo?._id || dataVideo?.id || '',
-      dataVideo?.ref_id || '',
+      dataVideo?.ref_id || ''
     );
     if (userRating) {
       setRatingInfo(userRating);
@@ -223,7 +223,7 @@ const InforVideoComponent = (props: PropsVideo) => {
   const allBlocks = useMemo(() => {
     if (streamType === 'playlist') {
       const extras = [actorsBlock, linkVideosBlock, relatedVideosBlock].filter(
-        Boolean,
+        Boolean
       );
 
       return [...extras, ...sortedBlocks];
@@ -251,7 +251,7 @@ const InforVideoComponent = (props: PropsVideo) => {
     <div className="InforVideoComponent xl:flex">
       <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
         <div className="mb-[16px] xl:mb-[24px]">
-          <h1 className="text-white-smoke text-[24px] tablet:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
+          <h1 className="text-white-smoke text-[18px] tablet:text-[20px] xl:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
             {dataVideo?.title_vie}
           </h1>
           {dataVideo?.title_origin && (

@@ -66,7 +66,7 @@ export default function AudioButton() {
           open ? 'block' : 'hidden'
         }`}
       >
-        <AudioContent onClick={() => setOpen(false)} />
+        <AudioContent onClick={() => setOpen(false)} type="default" />
       </div>
       <div onClick={click} className="c-control-button-icon">
         <img

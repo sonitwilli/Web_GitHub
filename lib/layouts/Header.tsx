@@ -28,10 +28,10 @@ import dynamic from 'next/dynamic';
 import { setCurrentProfile } from '../store/slices/multiProfiles';
 import { Profile } from '../api/user';
 import { trackingEnterFuncLog16 } from '@/lib/tracking/trackingCommon';
-import { GoSearch } from 'react-icons/go';
 import HeaderAds from '@/lib/components/ads/HeaderAds';
 import { HomepageBannerAds } from '@/lib/components/ads';
 import { useNetwork } from '../components/contexts/NetworkProvider';
+import { IoSearch } from 'react-icons/io5';
 
 interface HeaderContextType {
   menus?: MenuItem[];
@@ -200,8 +200,7 @@ export default function Header() {
               try {
                 setTimeout(() => {
                   initFn();
-                }, 1000)
-                
+                }, 1000);
               } catch {}
             } else if (attempts < 10) {
               attempts += 1;
@@ -231,7 +230,6 @@ export default function Header() {
     return () => {
       router.events.off('routeChangeComplete', handleRouteComplete);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, router.events, adsLoaded]);
 
   // Listen initBanner once globally and store isExistedAds flag
@@ -306,7 +304,7 @@ export default function Header() {
   useEffect(() => {
     const checkIOSVersion = () => {
       const userAgent = navigator.userAgent;
-      
+
       // Function để detect iPhone OS version
       function detectIPhoneVersion(userAgent: string): number | null {
         if (userAgent.includes('iPhone OS')) {
@@ -322,14 +320,14 @@ export default function Header() {
       }
 
       const iphoneVersion = detectIPhoneVersion(userAgent);
-      
+
       // Kiểm tra nếu là iPhone và version < 16
       if (iphoneVersion !== null && iphoneVersion < 1500) {
         // Hiển thị thông báo
         const confirmed = window.confirm(
-          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.'
+          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.',
         );
-        
+
         if (confirmed) {
           // Redirect khi user click OK
           window.location.href = 'https://hotro.fptplay.vn';
@@ -577,7 +575,7 @@ export default function Header() {
                 title="search"
                 onClick={() => trackingEnterFuncLog16('EnterSearch')}
               >
-                <GoSearch className="fill-white h-[24px] w-[24px] hover:cursor-pointer hover:fill-fpl" />
+                <IoSearch className="fill-white h-[24px] w-[24px] hover:cursor-pointer hover:fill-fpl" />
               </Link>
               <div className="tablet:block">
                 <Notification />

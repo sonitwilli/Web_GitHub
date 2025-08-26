@@ -7,6 +7,10 @@ import useModalToggle from '@/lib/hooks/useModalToggle';
 import { MdOutlineVolumeUp } from 'react-icons/md';
 import { MdOutlineVolumeOff } from 'react-icons/md';
 import ModalShare from '../modal/ModalShare';
+import { useMemo } from 'react';
+import { IoNotifications } from 'react-icons/io5';
+import { BiSolidBellOff } from 'react-icons/bi';
+import { viToEn } from '@/lib/utils/methods';
 
 export type ActionType = 'top-slide' | 'block-slide' | 'hovered-slide';
 
@@ -32,33 +36,73 @@ export default function VodActionButtons({
     block,
     slide,
   });
+
+  const isComingSoon = useMemo(() => {
+    const byFlag = String(slide?.is_coming_soon) === '1';
+    const byBlockName = viToEn(block?.name || '').includes('sap-cong-chieu');
+    return byFlag || byBlockName;
+  }, [slide?.is_coming_soon, block?.name]);
+
   return (
     <div>
       <div className="flex items-center gap-[16px]">
-        <div
-          className={`${
-            type === 'hovered-slide' ? 'flex-1' : ''
-          } mr-[8px] tablet:mr-[32px]`}
-        >
-          <Link
-            prefetch={false}
-            href={slideLink || ''}
-            className={`inline-flex items-center font-[500] gap-[8px] rounded-[40px] bg-linear-to-r from-portland-orange to-lust hover:to-portland-orange ease-out duration-300 ${
-              type !== 'hovered-slide'
-                ? 'px-[16px] h-[36px] tablet:h-auto py-[8px] xl:px-[24px] xl:pr-[29px] xl:py-[12px] text-[16px]'
-                : 'w-[138px] h-[40px] px-[16px]'
-            }`}
+        {isComingSoon ? (
+          <div
+            className={`${
+              type === 'hovered-slide' ? 'flex-1' : ''
+            } mr-[8px] tablet:mr-[32px]`}
           >
-            <img
-              src="/images/xem_ngay.png"
-              alt="play"
-              width={24}
-              height={24}
-              className="w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px]"
-            />
-            <span className="">Xem ngay</span>
-          </Link>
-        </div>
+            <button
+              aria-label="schedule"
+              onClick={handleReaction}
+              className={`inline-flex items-center font-[500] gap-[8px] rounded-[40px] bg-linear-to-r from-portland-orange to-lust hover:to-portland-orange ease-out duration-300 ${
+                type !== 'hovered-slide'
+                  ? 'px-[16px] h-[36px] tablet:h-auto py-[8px] xl:px-[24px] xl:pr-[29px] xl:py-[12px] text-[16px]'
+                  : 'w-[138px] h-[40px] px-[16px]'
+              }`}
+            >
+              {isLiked ? (
+                <>
+                  <BiSolidBellOff
+                    style={{ transform: 'scaleX(-1)' }}
+                    className="text-[20px] tablet:text-[24px]"
+                  />
+                  <span>Hủy đặt lịch</span>
+                </>
+              ) : (
+                <>
+                  <IoNotifications className="text-[20px] tablet:text-[24px]" />
+                  <span>Đặt lịch</span>
+                </>
+              )}
+            </button>
+          </div>
+        ) : (
+          <div
+            className={`${
+              type === 'hovered-slide' ? 'flex-1' : ''
+            } mr-[8px] tablet:mr-[32px]`}
+          >
+            <Link
+              prefetch={false}
+              href={slideLink || ''}
+              className={`inline-flex items-center font-[500] gap-[8px] rounded-[40px] bg-linear-to-r from-portland-orange to-lust hover:to-portland-orange ease-out duration-300 ${
+                type !== 'hovered-slide'
+                  ? 'px-[16px] h-[36px] tablet:h-auto py-[8px] xl:px-[24px] xl:pr-[29px] xl:py-[12px] text-[16px]'
+                  : 'w-[138px] h-[40px] px-[16px]'
+              }`}
+            >
+              <img
+                src="/images/xem_ngay.png"
+                alt="play"
+                width={24}
+                height={24}
+                className="w-[20px] h-[20px] tablet:w-[24px] tablet:h-[24px]"
+              />
+              <span className="">Xem ngay</span>
+            </Link>
+          </div>
+        )}
 
         {/* TODO: lắng nghe từ firebase để biết isActive hay không */}
         <LikeReaction isActive={isLiked} onClick={handleReaction} type={type} />

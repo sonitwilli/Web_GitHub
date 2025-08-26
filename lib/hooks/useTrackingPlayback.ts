@@ -9,6 +9,7 @@ import {
 } from '../tracking/tracking-types';
 import { getContentData, getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
+import { getSeekEvent } from '../utils/seekTracking';
 
 const getPlaybackParams = (): TrackingParams => {
   const detectScreen = sessionStorage?.getItem(IS_NEXT_FROM_PLAYER)
@@ -174,7 +175,7 @@ export const trackingNextMovieLog55 = () => {
   } catch {}
 };
 
-export const trackingSeekVideoLog514 = ({ Event }: TrackingParams) => {
+export const trackingSeekVideoLog514 = () => {
   // Log514 : SeekVideo
   try {
     if (typeof window === 'undefined') {
@@ -182,13 +183,24 @@ export const trackingSeekVideoLog514 = ({ Event }: TrackingParams) => {
     }
     const playerParams = getPlayerParams();
     const playbackTrackingParams = getPlaybackParams();
-
+    // Determine the appropriate event name based on direction
+    let Event: TrackingEvent = 'Seek';
+    const seekEvent = getSeekEvent();
+    if (seekEvent?.direction === 'forward') {
+      Event = 'SkipForward';
+    } else if (seekEvent?.direction === 'backward') {
+      Event = 'SkipBack';
+    }
+    const RealTimePlaying = seekEvent?.timestamp
+      ? new Date().getTime() - seekEvent?.timestamp
+      : 0;
     /*@ts-ignore*/
     return tracking({
       LogId: '514',
       Event: Event || 'Seek',
       ...playerParams,
       ...playbackTrackingParams,
+      RealTimePlaying: RealTimePlaying.toString() || '0',
     });
   } catch {}
 };
@@ -285,6 +297,30 @@ export const trackingShareCommentLikeLog516 = ({ Event }: TrackingParams) => {
       Event: Event,
       ...playerParams,
       ...playbackTrackingParams,
+    });
+  } catch {}
+};
+
+export const trackingLogChangeResolutionLog113 = ({
+  Resolution,
+  isManual,
+}: TrackingParams) => {
+  // Log113 : ChangeResolution
+  try {
+    if (typeof window === 'undefined' || !Event) {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    const playbackTrackingParams = getPlaybackParams();
+
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '113',
+      Event: 'ChangeResolution',
+      ...playerParams,
+      ...playbackTrackingParams,
+      Resolution,
+      isManual,
     });
   } catch {}
 };
