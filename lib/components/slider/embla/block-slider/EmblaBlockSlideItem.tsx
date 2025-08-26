@@ -155,13 +155,16 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
   return (
     <div
       ref={slideRef}
-      className={getClassName()}
+      className={`${getClassName()} group`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div
         ref={slideChildRef}
-        className={`nvm-${block?.block_type} ${
+        className={`nvm-${block?.block_type} transform transition-transform duration-300 group-hover:scale-[1.075] ${
+          // apply constant scale if selected in addition to hover-scale
+          slide?.id === selectedSlide?.id ? 'scale-[1.075]' : ''
+        } ${
           block?.block_type === 'auto_expansion' &&
           slide?.id === selectedSlide?.id
             ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-white rounded-[12px]'
