@@ -13,10 +13,17 @@ export default function ChannelSearch() {
     channelPageData,
     setIsSearch,
     setSearchKey,
-    channelsBySearchKey,
     setChannelsBySearchKeyShown,
   } = ctx;
+  
+  // Separate input value from search key that drives results
+  const [inputValue, setInputValue] = useState(searchKey || '');
   const [canShowDropdown, setCanShowDropdown] = useState(false);
+
+  // Sync input value with search key when search key changes externally
+  useEffect(() => {
+    setInputValue(searchKey || '');
+  }, [searchKey]);
 
   // Kiểm tra input có hợp lệ không (không chỉ có space hoặc special characters)
   const isValidSearchInput = (input: string) => {
@@ -28,13 +35,14 @@ export default function ChannelSearch() {
     return validPattern.test(input);
   };
 
+  // Use inputValue for dropdown filtering, not searchKey
   const channelsBySearchKeyForDropdown = useMemo(() => {
-    if (!searchKey || !isValidSearchInput(searchKey)) {
+    if (!inputValue || !isValidSearchInput(inputValue)) {
       return [];
     } else {
-      const slugSearchKey = slug(searchKey, '-');
-      const plusSearchKey = slug(searchKey, '+');
-      const searchKeyNoWhiteSpace = slug(searchKey, '');
+      const slugSearchKey = slug(inputValue, '-');
+      const plusSearchKey = slug(inputValue, '+');
+      const searchKeyNoWhiteSpace = slug(inputValue, '');
       return channelPageData?.channels?.filter((cn) => {
         return (
           cn?.slugName?.includes(slugSearchKey) ||
@@ -43,7 +51,7 @@ export default function ChannelSearch() {
         );
       });
     }
-  }, [searchKey, channelPageData]);
+  }, [inputValue, channelPageData]);
 
   useEffect(() => {
     if (inputRef.current) {
@@ -55,31 +63,23 @@ export default function ChannelSearch() {
   const onKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
       setCanShowDropdown(false);
-      if (setChannelsBySearchKeyShown && channelsBySearchKey) {
-        setChannelsBySearchKeyShown(channelsBySearchKey);
+      
+      // Update search key and results only on Enter
+      if (setSearchKey) {
+        setSearchKey(inputValue);
+      }
+      
+      if (setChannelsBySearchKeyShown) {
+        const results = channelsBySearchKeyForDropdown || [];
+        setChannelsBySearchKeyShown(results);
       }
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    setInputValue(value); // Only update input value, not search key
     setCanShowDropdown(true);
-
-    if (setSearchKey) {
-      setSearchKey(value);
-    }
-
-    // Nếu input không hợp lệ hoặc rỗng, hiện tất cả kênh
-    if (!isValidSearchInput(value)) {
-      if (setChannelsBySearchKeyShown && channelPageData?.channels) {
-        setChannelsBySearchKeyShown(channelPageData.channels);
-      }
-    } else {
-      // Nếu có kết quả search, hiện kết quả đó
-      if (setChannelsBySearchKeyShown && channelsBySearchKeyForDropdown) {
-        setChannelsBySearchKeyShown(channelsBySearchKeyForDropdown);
-      }
-    }
   };
 
   return (
@@ -104,7 +104,7 @@ export default function ChannelSearch() {
           type="text"
           placeholder="Tìm kiếm kênh"
           className="nvm-input w-full px-[40px] py-[12px] text-[18px] font-[500] leading-[130%] tracking-[0.36px] text-white-smoke placeholder:font-[400] placeholder:text-spanish-gray"
-          value={searchKey}
+          value={inputValue}
           onChange={handleInputChange}
           onKeyUp={onKeyUp}
         />
