@@ -70,8 +70,13 @@ export default function ChannelSearch() {
       }
       
       if (setChannelsBySearchKeyShown) {
-        const results = channelsBySearchKeyForDropdown || [];
-        setChannelsBySearchKeyShown(results);
+        // If empty string, show all channels
+        if (!inputValue || inputValue.trim() === '') {
+          setChannelsBySearchKeyShown(channelPageData?.channels || []);
+        } else {
+          const results = channelsBySearchKeyForDropdown || [];
+          setChannelsBySearchKeyShown(results);
+        }
       }
     }
   };

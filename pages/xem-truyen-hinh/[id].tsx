@@ -436,7 +436,8 @@ function ChannelPageContent() {
                       <ChannelsByGroup channels={channelsBySearchKeyShown} />
                     )}
 
-                    {channelsBySearchKeyShown?.length === 0 ? (
+                    {/* Only show empty search result if searchKey is not empty */}
+                    {searchKey && channelsBySearchKeyShown?.length === 0 ? (
                       <div className="flex flex-col gap-[16px] items-center mt-[8px] mb-[40px] tablet:mb-[60px] xl:mb-[432px]">
                         <img
                           src="/images/empty_search.png"
