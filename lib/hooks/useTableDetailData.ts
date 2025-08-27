@@ -53,6 +53,27 @@ export const useTableDetailData = (
   // Hàm changeGroupByData
   const changeGroupByData = (rawData: HighlightBlock): HighlightBlock => {
     if (tagSelect !== '' && rawData?.list_items) {
+      // Special case: show only ranking when tagSelect === 'bang-xep-hang'
+      if (tagSelect === 'bang-xep-hang') {
+        // Collect all ranking arrays from list_items
+        const rankingLists: BlockSlideItemType[] = [];
+        rawData.list_items.forEach((item: BlockSlideItemType) => {
+          const league = (item as BlockSlideItemType)?.league;
+          if (league && Array.isArray(league.ranking) && league.ranking.length)
+            rankingLists.push({ ...item, league: { ...league, matches: [], ranking: league.ranking } });
+        });
+
+        const newSportSide: HighlightBlock = {
+          list_items: rankingLists,
+          block_type: 'sport_sidebyside',
+          id: 'none_sport',
+          name: rawData.name || 'Sport SideBySide',
+          type: rawData.type || 'league',
+        };
+
+        return newSportSide;
+      }
+
       const index = rawData.list_items.findIndex(
         (item: BlockSlideItemType) => viToEn(item.title || '') === tagSelect,
       );

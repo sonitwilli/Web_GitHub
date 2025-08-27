@@ -57,6 +57,10 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
       date: 'ket-qua',
       title: 'Kết quả',
     },
+    {
+      date: 'bang-xep-hang',
+      title: 'Bảng xếp hạng',
+    },
   ]);
 
   const [blockSport, setBlockSport] = useState<HighlightBlock>({
@@ -154,8 +158,8 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
     }
     router.replace(
       {
-        pathname: router.pathname,
-        query: { ...router.query, tab: tagDate },
+        pathname: `/trang/${data?.id}`,
+        query: { tab: tagDate },
       },
       undefined,
       { shallow: true },
