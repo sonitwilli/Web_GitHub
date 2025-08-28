@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react';
+import { getUserAgent } from '@/lib/utils/methods';
 
 type Orientation = 'portrait' | 'landscape';
 
 type Options = {
-  /** Max width to consider as mobile/tablet (default 1024) */
-  mobileMaxWidth?: number;
   /** If true, the popup starts open */
   initialOpen?: boolean;
 };
 
 export default function useOrientationPopup(options: Options = {}) {
-  const { mobileMaxWidth = 1024} = options;
+  // UA-based detection decides mobile vs tablet/desktop; no width option needed.
   const getInitial = (): Orientation =>
     typeof window !== 'undefined' && window.innerWidth > window.innerHeight
       ? 'landscape'
@@ -20,7 +19,14 @@ export default function useOrientationPopup(options: Options = {}) {
   const [open, setOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;
     const now = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
-    return now === 'landscape' && window.innerWidth < mobileMaxWidth;
+    // Use UA to determine if device is mobile (not tablet/desktop)
+    try {
+      const ua = getUserAgent();
+      const isMobile = ua?.device?.type === 'mobile';
+      return isMobile && now === 'landscape';
+    } catch {
+      return false;
+    }
   });
 
   useEffect(() => {
@@ -33,19 +39,29 @@ export default function useOrientationPopup(options: Options = {}) {
       if (now !== last) {
         last = now;
         setOrientation(now as Orientation);
-        // open only when in landscape on mobile widths
-        setOpen(now === 'landscape' && window.innerWidth < mobileMaxWidth);
-      }
-      // also update if width crosses mobile threshold
-      else {
-        // if width changed but orientation same, re-evaluate open
-        setOpen(now === 'landscape' && window.innerWidth < mobileMaxWidth);
+        // open only when in landscape on mobile devices (UA-based)
+        try {
+          const ua = getUserAgent();
+          const isMobile = ua?.device?.type === 'mobile';
+          setOpen(isMobile && now === 'landscape');
+        } catch {
+          setOpen(false);
+        }
+      } else {
+        // if width changed but orientation same, re-evaluate open using UA
+        try {
+          const ua = getUserAgent();
+          const isMobile = ua?.device?.type === 'mobile';
+          setOpen(isMobile && now === 'landscape');
+        } catch {
+          setOpen(false);
+        }
       }
     };
 
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [mobileMaxWidth]);
+  }, []);
 
   const close = () => setOpen(false);
 
