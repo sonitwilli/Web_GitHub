@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import SideTagButton from '@/lib/components/buttons/SideTagButton';
 import { useNetwork } from '@/lib/components/contexts';
 import { NetworkError } from '@/lib/components/error';
+import OrientationChangePopup from '@/lib/components/overlay/OrientationChangePopup';
 // import { getUserAgent } from '../utils/methods';
 import MonitorLayout from './MonitorLayout';
 
@@ -153,6 +154,7 @@ function DefaultLayoutContent({ children }: Props) {
         {scrollDistance > 0 && !hasBlockedRoute && <ScrollTop />}
         <PreventKidModal />
         <DownloadAppControlBar />
+        <OrientationChangePopup />
       </main>
       <Footer />
       <SideTagButton />
