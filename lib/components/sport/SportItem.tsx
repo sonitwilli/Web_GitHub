@@ -59,6 +59,11 @@ const SportItem: FC<SportItemProps> = ({
   const permissionShow = [MATCH_RANKING, TABLE_LEAGUE_DETAIL];
   const sportItemRef = useRef<HTMLDivElement>(null);
 
+  // Normalize matches so that null/undefined becomes an empty array
+  const matches: Match[] = Array.isArray(data?.league?.matches)
+    ? (data?.league?.matches as Match[])
+    : [];
+
   // Tính toán leagueLogo
   const leagueLogo =
     (getAllBlocksCategoriesData[0]?.list_items?.[0] as BlockSlideItemType)
@@ -79,18 +84,19 @@ const SportItem: FC<SportItemProps> = ({
   // Tính toán dataListRender
   const dataListRender = tagSelect
     ? data
-    : (data?.league?.matches || []).filter((_, index: number) => index < 5);
+    : matches.filter((_, index: number) => index < 5);
 
-  // Tính toán finalDataRenderring
+  // Tính toán finalDataRenderring (use matches when available)
   const finalDataRenderring =
-    Array.isArray(dataListRender) && dataListRender?.length > 0
-      ? dataListRender[dataListRender?.length - 1]
-      : null;
+    (Array.isArray(matches) && matches.length > 0
+      ? matches[matches.length - 1]
+      : Array.isArray(dataListRender) && dataListRender.length > 0
+      ? dataListRender[dataListRender.length - 1]
+      : null) as Match | null;
 
   // Kiểm tra hasMore
   const hasMore =
-    ((Array.isArray(data?.league?.matches) &&
-      data?.league?.matches?.length > 5) ||
+    ((matches.length > 5) ||
       (Array.isArray(data?.league?.ranking) &&
         data?.league?.ranking?.length > 5)) ??
     false;
@@ -153,10 +159,9 @@ const SportItem: FC<SportItemProps> = ({
         {data && (
           <div className="flex-1 bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black rounded-lg">
             {/* Lịch chiếu & kết quả */}
-            {Array.isArray(data?.league?.matches) &&
-              data?.league?.matches?.length > 0 && (
+            {Array.isArray(matches) && matches.length > 0 && (
                 <div className={isCollapsed ? '' : 'h-[80%]'}>
-                  {data?.league.matches.map((itemRow: Match, index: number) => (
+                  {matches.map((itemRow: Match, index: number) => (
                     <div
                       key={index}
                       className={
@@ -173,14 +178,10 @@ const SportItem: FC<SportItemProps> = ({
                         leagueLogo={leagueLogo}
                         noMarginBottom={itemRow?.id === finalDataRenderring?.id}
                         preRoundName={
-                          index > 0
-                            ? data?.league?.matches?.[index - 1]?.round_name
-                            : ''
+                          index > 0 ? matches[index - 1]?.round_name : ''
                         }
                         preMatchDate={
-                          index > 0
-                            ? data?.league?.matches?.[index - 1]?.match_date
-                            : ''
+                          index > 0 ? matches[index - 1]?.match_date : ''
                         }
                         className="bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black"
                       />
@@ -233,10 +234,10 @@ const SportItem: FC<SportItemProps> = ({
               )}
 
             {/* Cập nhật sau */}
-            {data?.league?.matches?.length === 0 &&
-              data?.league?.ranking?.length === 0 && (
+            {data?.league && matches.length === 0 &&
+              (Array.isArray(data?.league?.ranking) ? data?.league?.ranking.length === 0 : true) && (
                 <div>
-                  <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2">
+                  <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2 h-[56px]">
                     <div className="hidden">
                       {data?.league?.right_name || getMetaData?.name}
                     </div>
@@ -250,7 +251,7 @@ const SportItem: FC<SportItemProps> = ({
                     )}
                   </div>
                   <div className="bg-gradient-to-b from-black-035 pt-[56px] pb-[233px] to-black-035 bg-raisin-black text-center text-white rounded-b-lg">
-                    {data?.league.name} đang được cập nhật
+                    {data?.league?.name || ''} đang được cập nhật
                   </div>
                 </div>
               )}
@@ -258,7 +259,7 @@ const SportItem: FC<SportItemProps> = ({
             {/* Cập nhật sau */}
             {data?.length === 0 && (
               <div>
-                <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2">
+                <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2 h-[56px]">
                   <div className="hidden"></div>
                   <div></div>
                   {leagueLogo && leagueLogo !== 'None' && (
@@ -296,7 +297,7 @@ const SportItem: FC<SportItemProps> = ({
             {(Array.isArray(data) && data?.length === 0) ||
               (!data && (
                 <div>
-                  <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2">
+                  <div className="flex items-center justify-between bg-charleston-green rounded-t-lg p-2 h-[56px]">
                     <div className="hidden">League</div>
                     {leagueLogo && leagueLogo !== 'None' && (
                       <img

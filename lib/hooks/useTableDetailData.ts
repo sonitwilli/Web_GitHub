@@ -8,6 +8,7 @@ import {
   getTableDetailData,
   PageDataResponseType,
   BlockSlideItemType,
+  Match,
 } from '@/lib/api/sport';
 
 interface HighlightBlock {
@@ -53,37 +54,16 @@ export const useTableDetailData = (
   // Hàm changeGroupByData
   const changeGroupByData = (rawData: HighlightBlock): HighlightBlock => {
     if (tagSelect !== '' && rawData?.list_items) {
-      // Special case: show only ranking when tagSelect === 'bang-xep-hang'
-      if (tagSelect === 'bang-xep-hang') {
-        // Collect all ranking arrays from list_items
-        const rankingLists: BlockSlideItemType[] = [];
-        rawData.list_items.forEach((item: BlockSlideItemType) => {
-          const league = (item as BlockSlideItemType)?.league;
-          if (league && Array.isArray(league.ranking) && league.ranking.length)
-            rankingLists.push({ ...item, league: { ...league, matches: [], ranking: league.ranking } });
-        });
-
-        const newSportSide: HighlightBlock = {
-          list_items: rankingLists,
-          block_type: 'sport_sidebyside',
-          id: 'none_sport',
-          name: rawData.name || 'Sport SideBySide',
-          type: rawData.type || 'league',
-        };
-
-        return newSportSide;
-      }
-
       const index = rawData.list_items.findIndex(
         (item: BlockSlideItemType) => viToEn(item.title || '') === tagSelect,
       );
 
-      if (
-        index !== -1 &&
-        (rawData.list_items[index] as BlockSlideItemType)?.league?.matches
-      ) {
-        const matches = (rawData.list_items[index] as BlockSlideItemType)
-          ?.league?.matches;
+      if (index !== -1) {
+        // Allow league.matches to be null or undefined — treat as empty array
+        const league = (rawData.list_items[index] as BlockSlideItemType)
+          ?.league;
+  // league.matches may be null — normalize to an array.
+  const matches: Match[] = league?.matches ?? [];
         const groupKey =
           matches?.[0]?.id === 'match_date' ? 'match_date' : 'round_name';
 
