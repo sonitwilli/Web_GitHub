@@ -1,7 +1,7 @@
 import { ChannelItemType, SuggestChannelItemType } from '@/lib/api/channel';
 import { useRouter } from 'next/router';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState, useEffect } from 'react';
 import PosterOverlays from '../overlays/PosterOverlays';
 import HandleImage from '../slider/HandleImage';
 import { scaleImageUrl } from '@/lib/utils/methods';
@@ -18,6 +18,11 @@ export default function ChannelItem({
   const { dataChannel } = usePlayerPageContext();
   const router = useRouter();
   const [posterOverlaysReady, setPosterOverlaysReady] = useState<string[]>([]);
+
+  // Reset posterOverlaysReady khi channel thay đổi
+  useEffect(() => {
+    setPosterOverlaysReady([]);
+  }, [channel?.id]);
 
   const handleClick = ({
     channel,
@@ -46,6 +51,13 @@ export default function ChannelItem({
   const handlePosterOverlays = useCallback((positionRibbons: string[]) => {
     setPosterOverlaysReady(positionRibbons);
   }, []);
+
+  // Khi channel không có poster_overlays, đảm bảo clear state
+  useEffect(() => {
+    if (!channel?.poster_overlays || channel.poster_overlays.length === 0) {
+      setPosterOverlaysReady([]);
+    }
+  }, [channel?.poster_overlays]);
 
   if (!channel) {
     return <></>;
@@ -76,12 +88,11 @@ export default function ChannelItem({
         <HandleImage
           isChannel
           imageAlt={channel?.title}
-          imageUrl={
-            scaleImageUrl({ 
-              imageUrl: channel?.image?.portrait || channel?.image?.portrait_mobile, 
-              width: 200 
-            })
-          }
+          imageUrl={scaleImageUrl({
+            imageUrl:
+              channel?.image?.portrait || channel?.image?.portrait_mobile,
+            width: 200,
+          })}
           type="horizontal"
           blockDirection="horizontal"
           imageRadius="rounded-[12px]"
@@ -90,12 +101,10 @@ export default function ChannelItem({
         <HandleImage
           isChannel
           imageAlt={channel?.id}
-          imageUrl={
-            scaleImageUrl({ 
-              imageUrl: channel?.thumb, 
-              width: 200 
-            })
-          }
+          imageUrl={scaleImageUrl({
+            imageUrl: channel?.thumb,
+            width: 200,
+          })}
           type="horizontal"
           blockDirection="horizontal"
           imageRadius="rounded-[12px]"
@@ -123,9 +132,9 @@ export default function ChannelItem({
       )}
 
       {/* Poster Overlays Area */}
-      {channel?.poster_overlays && (
+      {channel?.poster_overlays && channel.poster_overlays.length > 0 && (
         <PosterOverlays
-          posterOverlays={channel?.poster_overlays}
+          posterOverlays={channel.poster_overlays}
           blockType={'horizontal_slider'} // add block_type to show same Figma UI
           positionLabelsStatus={[positionLabelsStatus]}
           onHandlePosterOverlays={handlePosterOverlays}

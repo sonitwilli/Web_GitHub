@@ -179,6 +179,8 @@ type ContextType = {
     thumb?: string;
     duration?: string;
     description?: string;
+    type?: string;
+    is_subscribed?: boolean;
   };
   nextPlaylistVideo?: {
     id: string;

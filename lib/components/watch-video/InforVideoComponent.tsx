@@ -52,25 +52,43 @@ const desiredOrder = [
 
 const InforVideoComponent = (props: PropsVideo) => {
   const { viewportType } = useScreenSize();
-  const { isExpanded, dataChannel, streamType, dataPlaylist } =
-    usePlayerPageContext();
+  const {
+    isExpanded,
+    dataChannel,
+    streamType,
+    dataPlaylist,
+    currentPlaylistVideo,
+  } = usePlayerPageContext();
   const { dataVideo } = props;
   const { showModalShare, setShowModalShare } = useModalToggle({});
   const slide = useMemo<BlockSlideItemType>(
     /*@ts-ignore*/
-    () => ({
-      ...dataVideo,
-      highlight_id: dataVideo?.id,
-      type: dataVideo?.type ? dataVideo?.type : 'vod',
-    }),
-    [dataVideo]
+    () => {
+      // Nếu đang ở playlist page, dùng thông tin playlist để follow (không phải tập hiện tại)
+      if (streamType === 'playlist' && currentPlaylistVideo) {
+        return {
+          ...currentPlaylistVideo,
+          highlight_id: currentPlaylistVideo?.id,
+          // Giữ lại is_subscribed từ playlist data để follow playlist
+          type: currentPlaylistVideo?.type ? currentPlaylistVideo?.type : 'vod',
+        };
+      }
+
+      // Với các loại khác (VOD, channel, etc.), dùng dataVideo như cũ
+      return {
+        ...dataVideo,
+        highlight_id: dataVideo?.id,
+        type: dataVideo?.type ? dataVideo?.type : 'vod',
+      };
+    },
+    [streamType, currentPlaylistVideo, dataVideo],
   );
 
   const [ratingInfo, setRatingInfo] = useState<RatingData | null>(null);
   const loadRating = async () => {
     const userRating = await fetchRatingData(
       dataVideo?._id || dataVideo?.id || '',
-      dataVideo?.ref_id || ''
+      dataVideo?.ref_id || '',
     );
     if (userRating) {
       setRatingInfo(userRating);
@@ -85,13 +103,28 @@ const InforVideoComponent = (props: PropsVideo) => {
 
   const { isLiked, handleReaction } = useReaction({ slide });
   const slideFromVod = {
-    _id: dataVideo?._id ?? dataVideo?.id ?? '',
-    // slug: dataVideo?.slug ?? '',
-    title: dataVideo?.title ?? '',
-    title_vie: dataVideo?.title ?? '',
-    description: dataVideo?.description ?? '',
+    _id:
+      streamType === 'playlist' && currentPlaylistVideo
+        ? currentPlaylistVideo.id
+        : dataVideo?._id ?? dataVideo?.id ?? '',
+    // slug: currentEpisodeInfo?.slug ?? dataVideo?.slug ?? '',
+    title:
+      streamType === 'playlist' && currentPlaylistVideo?.title
+        ? currentPlaylistVideo.title
+        : dataVideo?.title ?? '',
+    title_vie:
+      streamType === 'playlist' && currentPlaylistVideo?.title
+        ? currentPlaylistVideo.title
+        : dataVideo?.title ?? '',
+    description:
+      streamType === 'playlist' && currentPlaylistVideo?.description
+        ? currentPlaylistVideo.description
+        : dataVideo?.description ?? '',
     detail: {
-      description: dataVideo?.description ?? '',
+      description:
+        streamType === 'playlist' && currentPlaylistVideo?.description
+          ? currentPlaylistVideo.description
+          : dataVideo?.description ?? '',
     },
   };
 
@@ -223,7 +256,7 @@ const InforVideoComponent = (props: PropsVideo) => {
   const allBlocks = useMemo(() => {
     if (streamType === 'playlist') {
       const extras = [actorsBlock, linkVideosBlock, relatedVideosBlock].filter(
-        Boolean
+        Boolean,
       );
 
       return [...extras, ...sortedBlocks];
@@ -252,7 +285,10 @@ const InforVideoComponent = (props: PropsVideo) => {
       <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
         <div className="mb-[16px] xl:mb-[24px]">
           <h1 className="text-white-smoke text-[18px] tablet:text-[20px] xl:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
-            {dataVideo?.title_vie}
+            {/* Hiển thị title của tập hiện tại (cho playlist) hoặc dataVideo (cho VOD) */}
+            {streamType === 'playlist' && currentPlaylistVideo?.title
+              ? currentPlaylistVideo.title
+              : dataVideo?.title_vie}
           </h1>
           {dataVideo?.title_origin && (
             <h2 className="text-white-smoke text-[14px] tablet:text-[16px] xl:text-[18px] font-[500] leading-[130%] line-clamp-2 mt-[8px]">

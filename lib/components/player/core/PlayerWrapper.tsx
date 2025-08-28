@@ -539,7 +539,10 @@ export default function PlayerWrapper({ children, eventId }: Props) {
             isPreviewActive={isPreviewActive}
             isPreviewEnded={false}
             currentUser={null}
-            isTvod={Boolean(dataChannel?.is_tvod === '1')}
+            isTvod={Boolean(
+              dataChannel?.is_tvod === '1' ||
+                String(dataChannel?.is_tvod) === 'true',
+            )}
             requireVipPlan=""
             paymentData={null}
             currentStream={dataStream}

@@ -28,6 +28,7 @@ export default function useAudio() {
     usePlayerPageContext();
 
   const [selectedAudio, setSelectedAudio] = useState<AudioItemType>();
+
   const turnOffPlayerSub = () => {
     try {
       const selectedSub = localStorage.getItem(SELECTED_SUBTITLE);
@@ -258,9 +259,14 @@ export default function useAudio() {
         } else {
           saved = localStorage.getItem(SELECTED_AUDIO_LABEL) || '';
         }
-        const matched = filterdAudios?.find((y) => y.X_NAME === saved);
+        const matched = filterdAudios?.find(
+          (y) => y.X_NAME === saved || y.X_LABEL === saved,
+        );
         if (matched) {
-          return x.X_NAME === matched.X_NAME;
+          return (
+            (x.X_NAME === matched.X_NAME && x.X_NAME) ||
+            (x.X_LABEL === matched.X_LABEL && x.X_LABEL)
+          );
         } else {
           if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {
             const audioList = window.hlsPlayer.audioTracks;
@@ -277,7 +283,7 @@ export default function useAudio() {
             const audioList = window.shakaPlayer.getAudioTracks();
             if (audioList?.length) {
               const f = audioList?.find((x: any) => x?.active);
-              if (f) {
+              if (f && f.label) {
                 return f.label === x.X_NAME;
               } else {
                 return index === 0;
@@ -286,6 +292,7 @@ export default function useAudio() {
           }
         }
       });
+      console.log('found :>> ', found);
       if (found) {
         setSelectedAudio(found);
         if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {
@@ -296,7 +303,15 @@ export default function useAudio() {
           }
         } else if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
           const audioList = window.shakaPlayer.getAudioTracks();
-          const f = audioList?.find((x: any) => x?.label === found.X_NAME);
+          const f = audioList?.find(
+            (x: any) =>
+              (x?.label && x?.label === found.X_NAME) ||
+              (x?.originalLanguage &&
+                x?.originalLanguage === found.X_LANGUAGE) ||
+              (x?.language &&
+                found.X_LANGUAGE &&
+                found.X_LANGUAGE.includes(x?.language)),
+          );
           if (f) {
             // window.shakaPlayer.selectAudioTrack(f);
             // window.shakaPlayer.selectAudioLanguage(found?.X_SHORT_LANGUAGE);
@@ -305,6 +320,10 @@ export default function useAudio() {
           }
         }
       }
+
+      setTimeout(() => {
+        turnOffPlayerSub();
+      }, 500);
     } catch {}
   };
 
@@ -322,24 +341,27 @@ export default function useAudio() {
 
   const clickAudio = (a: AudioItemType) => {
     setSelectedAudio(a);
-    if (a.X_NAME) {
+    if (a.X_NAME || a.X_LABEL) {
       if (streamType === 'channel' || streamType === 'event') {
-        localStorage.setItem(SELECTED_AUDIO_LABEL_LIVE, a.X_NAME || '');
+        localStorage.setItem(
+          SELECTED_AUDIO_LABEL_LIVE,
+          a.X_NAME || a.X_LABEL || '',
+        );
         saveSessionStorage({
           data: [
             {
               key: SELECTED_AUDIO_LABEL_LIVE,
-              value: a.X_NAME,
+              value: a.X_NAME || a.X_LABEL,
             },
           ],
         });
       } else {
-        localStorage.setItem(SELECTED_AUDIO_LABEL, a.X_NAME || '');
+        localStorage.setItem(SELECTED_AUDIO_LABEL, a.X_NAME || a.X_LABEL || '');
         saveSessionStorage({
           data: [
             {
               key: SELECTED_AUDIO_LABEL,
-              value: a.X_NAME,
+              value: a.X_NAME || a.X_LABEL,
             },
           ],
         });

@@ -582,3 +582,7 @@ export const MQTT_PUBLISH_STREAM_DATA = 'MQTT_PUBLISH_STREAM_DATA';
 export const PLAYER_BOOKMARK_SECOND = 'PLAYER_BOOKMARK_SECOND';
 export const TEXT_OS_NOT_SUPPORT =
   'Hiện tại FPT Play chỉ hỗ trợ trình phát trên ứng dụng FPT Play. Vui lòng mở ứng dụng để tiếp tục xem.';
+export const LINK_TEXT = {
+  HLS: 'https://vodcdn.fptplay.net/POVOD/encoded/2024/03/31/loveatnight-2021-cn-20m-as-001-1711868593/master.m3u8',
+  DASH: 'https://vodcdn.fptplay.net/POVOD/encoded/2025/06/02/tm-cordialcompanions-2023-cn-001-272422cb29d08d32/H264/stream.mpd',
+};

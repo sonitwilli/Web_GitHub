@@ -33,7 +33,11 @@ import {
 } from '@/lib/constant/errors';
 import { onLoginSuccess } from '../../utils/loginSuccessHandlers/onLoginSuccess';
 import { handleUserInfo } from '../../utils/loginSuccessHandlers/handleUserInfo';
-import { closeLoginModal, setVerifyToken } from '@/lib/store/slices/loginSlice';
+import {
+  closeLoginModal,
+  setVerifyToken,
+  setVerifyTokenGetDevicesLimit,
+} from '@/lib/store/slices/loginSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '@/lib/store';
 import {
@@ -93,6 +97,9 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   const dispatch = useDispatch();
   const storeVerifyToken = useSelector(
     (state: RootState) => state.loginSlice.storeVerifyToken,
+  );
+  const storeVerifyTokenGetDevicesLimit = useSelector(
+    (state: RootState) => state.loginSlice.storeVerifyTokenGetDevicesLimit,
   );
   const [step, setStep] = useState<LoginStep>('phone');
 
@@ -514,6 +521,9 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
 
         if (data?.error_code === '0') {
           setDeviceLimitData(data);
+          if (data?.data?.verify_token) {
+            dispatch(setVerifyToken(data?.data?.verify_token));
+          }
           goToStep('deviceLimit');
         } else {
           showNotificationModal(data);
@@ -569,7 +579,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         const verifyTokenNextStep = resLogin?.data?.data?.verify_token;
 
         if (verifyTokenNextStep) {
-          dispatch(setVerifyToken(verifyTokenNextStep));
+          dispatch(setVerifyTokenGetDevicesLimit(verifyTokenNextStep));
         }
 
         switch (caseAction) {
@@ -582,7 +592,11 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             showNotificationModal(data);
             break;
           case '7':
-            handleGetDevicesLimit(storeVerifyToken);
+            if (verifyTokenNextStep) {
+              handleGetDevicesLimit(verifyTokenNextStep);
+            } else {
+              handleGetDevicesLimit(storeVerifyToken);
+            }
             break;
           default:
             showToast({
@@ -775,12 +789,12 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         });
       }
     },
-    [storeVerifyToken, showNotificationModal],
+    [storeVerifyToken, storeVerifyTokenGetDevicesLimit, showNotificationModal],
   );
 
   const handleCallback = useCallback(() => {
     if (reloadDeviceLimit) {
-      handleGetDevicesLimit(storeVerifyToken);
+      handleGetDevicesLimit(storeVerifyTokenGetDevicesLimit);
       setReloadDeviceLimit(false);
       return;
     }
@@ -788,7 +802,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   }, [
     goToStep,
     reloadDeviceLimit,
-    storeVerifyToken,
+    storeVerifyTokenGetDevicesLimit,
     handleGetDevicesLimit,
     dispatch,
   ]);
@@ -830,16 +844,15 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
       return;
     }
 
-    if (verifyToken) {
-      dispatch(setVerifyToken(verifyToken));
-    }
-
     try {
       const res = await getDevicesLimit({ verify_token: verifyToken });
       const data = res?.data;
 
       if (data?.error_code === '0') {
         setDeviceLimitData(data);
+        if (data?.data?.verify_token) {
+          dispatch(setVerifyToken(data?.data?.verify_token));
+        }
         goToStep('deviceLimit');
       } else {
         showNotificationModal(data);

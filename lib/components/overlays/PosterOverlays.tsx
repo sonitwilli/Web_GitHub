@@ -374,6 +374,10 @@ const PosterOverlay: React.FC<Props> = ({
     if (posterOverlays.length) {
       setListPoster(posterOverlays);
       setIsReady(true);
+    } else {
+      // Nếu không có posterOverlays, reset state và gọi callback với empty array
+      setListPoster([]);
+      setIsReady(true);
     }
   }, [posterOverlays]);
 
