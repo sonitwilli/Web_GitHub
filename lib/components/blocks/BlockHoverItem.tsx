@@ -216,9 +216,9 @@ export default function BlockHoverItem({}: Props) {
             ""
           )}
 
-          {slide?.detail?.description && (
+          {slide?.detail?.short_description && (
             <p className="font-[400] line-clamp-3">
-              {slide?.detail?.description}
+              {slide?.detail?.short_description}
             </p>
           )}
         </div>

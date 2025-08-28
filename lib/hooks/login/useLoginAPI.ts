@@ -29,12 +29,13 @@ import {
   TITLE_SYSTEM_ERROR,
   ERROR_OCCURRED_MESSAGE,
   INVALID_PHONE_MESSAGE,
-  PLEASE_CHECK_NETWORK_ERROR,
+  TITLE_SERVICE_ERROR,
 } from '@/lib/constant/errors';
 import { onLoginSuccess } from '../../utils/loginSuccessHandlers/onLoginSuccess';
 import { handleUserInfo } from '../../utils/loginSuccessHandlers/handleUserInfo';
-import { closeLoginModal } from '@/lib/store/slices/loginSlice';
-import { useDispatch } from 'react-redux';
+import { closeLoginModal, setVerifyToken } from '@/lib/store/slices/loginSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/lib/store';
 import {
   CONFIRM_BUTTON_TEXT,
   CONTINUE_BUTTON_TEXT,
@@ -90,6 +91,9 @@ function buildNotificationContent(res?: NotificationInput) {
 export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   // State --------------------
   const dispatch = useDispatch();
+  const storeVerifyToken = useSelector(
+    (state: RootState) => state.loginSlice.storeVerifyToken,
+  );
   const [step, setStep] = useState<LoginStep>('phone');
 
   // Phone --------------------
@@ -111,9 +115,6 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   // Noti --------------------
   const [notificationContent, setNotificationContent] =
     useState<NotificationInput | null>(null);
-
-  // Login Case
-  const [verifyTokenState, setVerifyTokenState] = useState<string>('');
 
   // Devices Limit --------------------
   const [deviceLimitData, setDeviceLimitData] =
@@ -291,17 +292,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
@@ -346,8 +343,18 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
 
         switch (caseAction) {
           case '0':
+            setResponseSendOTP(dataSendOTP);
+            // Set countdown from successful OTP response
+            if (dataSendOTP?.data?.seconds) {
+              setOtpCountdown(Number(dataSendOTP.data.seconds));
+            }
+            break;
           case '2':
             setResponseSendOTP(dataSendOTP);
+            // Set countdown from rate limit response
+            if (dataSendOTP?.data?.seconds) {
+              setOtpCountdown(Number(dataSendOTP.data.seconds));
+            }
             break;
           case '1':
             showToast({
@@ -386,26 +393,22 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
 
+          setErrorOtp(fallback);
+
           if (data?.data?.seconds) {
             setOtpCountdown(Number(data?.data?.seconds));
           }
-
-          setErrorOtp(fallback);
 
           showToast({
             title: data?.data?.title || TITLE_SEND_OTP_FAIL,
@@ -427,13 +430,23 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           type_otp: 'login_fpl',
         });
 
-        const dataReSendOTP = resReSendOTP.data;
+        const dataReSendOTP = resReSendOTP?.data;
         const caseAction = dataReSendOTP?.error_code;
 
         switch (caseAction) {
           case '0':
+            setResponseSendOTP(dataReSendOTP || null);
+            // Set countdown from successful resend OTP response
+            if (dataReSendOTP?.data?.seconds) {
+              setOtpCountdown(Number(dataReSendOTP.data.seconds));
+            }
+            break;
           case '2':
-            setResponseSendOTP(dataReSendOTP);
+            setResponseSendOTP(dataReSendOTP || null);
+            // Set countdown from rate limit resend response
+            if (dataReSendOTP?.data?.seconds) {
+              setOtpCountdown(Number(dataReSendOTP.data.seconds));
+            }
             break;
           case '1':
             showToast({
@@ -471,27 +484,11 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             data?.detail ||
             fallback;
 
-          fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
-
-          if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
-            });
-            return;
-          }
-
+          // Set countdown from error response (for any error with seconds)
+          setErrorOtp(fallback);
           if (data?.data?.seconds) {
             setOtpCountdown(Number(data?.data?.seconds));
           }
-
-          setErrorOtp(fallback);
 
           showToast({
             title: data?.data?.title || TITLE_SEND_OTP_FAIL,
@@ -519,7 +516,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           setDeviceLimitData(data);
           const token = data?.data?.verify_token?.toString();
           if (token) {
-            setVerifyTokenState(token);
+            dispatch(setVerifyToken(token));
           }
           goToStep('deviceLimit');
         } else {
@@ -537,17 +534,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
@@ -580,7 +573,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         const verifyTokenNextStep = resLogin?.data?.data?.verify_token;
 
         if (verifyTokenNextStep) {
-          setVerifyTokenState(verifyTokenNextStep);
+          dispatch(setVerifyToken(verifyTokenNextStep));
         }
 
         switch (caseAction) {
@@ -596,7 +589,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             if (verifyTokenNextStep) {
               handleGetDevicesLimit(verifyTokenNextStep);
             } else {
-              handleGetDevicesLimit(verifyTokenState); // fallback nếu không có token mới
+              handleGetDevicesLimit(storeVerifyToken); // fallback nếu không có token mới
             }
             break;
           default:
@@ -619,17 +612,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
@@ -642,7 +631,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         });
       }
     },
-    [handleGetDevicesLimit, showNotificationModal, verifyTokenState],
+    [handleGetDevicesLimit, showNotificationModal, storeVerifyToken],
   );
 
   const handleVerifyOTP = useCallback(
@@ -698,17 +687,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
@@ -731,7 +716,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
       try {
         const responseRemove = await removeDevicesLimit({
           list_ids: deviceIds,
-          verify_token: verifyTokenState,
+          verify_token: storeVerifyToken,
           ignore_token: '0',
           required_login: '0',
         });
@@ -779,17 +764,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             fallback;
 
           fallback =
-            err.message === 'Network Error'
-              ? PLEASE_CHECK_NETWORK_ERROR
-              : fallback;
+            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
           if (err.message === 'Network Error') {
-            showNotificationModal({
-              msg: fallback,
-              buttons: {
-                accept: 'Đóng',
-              },
-              action_callback: true,
+            showToast({
+              title: TITLE_SERVICE_ERROR,
+              desc: DEFAULT_ERROR_MSG,
+              timeout: 5000,
             });
             return;
           }
@@ -802,17 +783,23 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         });
       }
     },
-    [verifyTokenState, showNotificationModal],
+    [storeVerifyToken, showNotificationModal],
   );
 
   const handleCallback = useCallback(() => {
     if (reloadDeviceLimit) {
-      handleGetDevicesLimit(verifyTokenState);
+      handleGetDevicesLimit(storeVerifyToken);
       setReloadDeviceLimit(false);
       return;
     }
     goToStep('phone');
-  }, [goToStep, reloadDeviceLimit, verifyTokenState]);
+  }, [
+    goToStep,
+    reloadDeviceLimit,
+    storeVerifyToken,
+    handleGetDevicesLimit,
+    dispatch,
+  ]);
 
   const backToDefault = useCallback(() => {
     trackingCancelLoginLog145({
@@ -859,7 +846,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         setDeviceLimitData(data);
         const token = data?.data?.verify_token?.toString();
         if (token) {
-          setVerifyTokenState(token);
+          dispatch(setVerifyToken(token));
         }
 
         goToStep('deviceLimit');
@@ -878,17 +865,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           fallback;
 
         fallback =
-          err.message === 'Network Error'
-            ? PLEASE_CHECK_NETWORK_ERROR
-            : fallback;
+          err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
 
         if (err.message === 'Network Error') {
-          showNotificationModal({
-            msg: fallback,
-            buttons: {
-              accept: 'Đóng',
-            },
-            action_callback: true,
+          showToast({
+            title: TITLE_SERVICE_ERROR,
+            desc: DEFAULT_ERROR_MSG,
+            timeout: 5000,
           });
           return;
         }
@@ -1015,5 +998,6 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
     notificationContent,
     deviceLimitData,
     reset,
+    otpCountdown,
   };
 }

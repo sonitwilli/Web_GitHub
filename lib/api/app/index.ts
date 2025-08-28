@@ -20,6 +20,10 @@ export interface MessageConfigDataType {
   chat?: Chat;
   rating_content?: RatingContent;
   playzone?: Playzone;
+  unsupport_video_codec?: {
+    title?: string;
+    description?: string;
+  };
 }
 
 export interface Profile {

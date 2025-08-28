@@ -22,6 +22,7 @@ import { useWatchAndSkipCredit } from '@/lib/hooks/useWatchAndSkipCredit';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useRouter } from 'next/router';
 import { setSituationWarningVisible } from '@/lib/hooks/useSituationWarningVisibility';
+import useCodec from '@/lib/hooks/useCodec';
 
 // Raw warning data from server (with string timestamps)
 interface RawWarningData {
@@ -89,7 +90,11 @@ const WatchVideoComponent = () => {
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
   const router = useRouter();
-
+  const { isVideoCodecNotSupported } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const { isFinalEpisode } = useVodPageContext();
   const { isHeaderAdsClosed } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
@@ -344,14 +349,19 @@ const WatchVideoComponent = () => {
                               dataStream={dataStream}
                               queryEpisodeNotExist={queryEpisodeNotExist}
                             />
-                            <LimitAgeOverlay
-                              maturityRating={
-                                dataChannel?.maturity_rating as MaturityRating
-                              }
-                              videoRef={videoRef.current as HTMLVideoElement}
-                              currentTime={videoCurrentTime ?? 0}
-                              duration={videoDuration ?? 0}
-                            />
+                            {!isVideoCodecNotSupported ? (
+                              <LimitAgeOverlay
+                                maturityRating={
+                                  dataChannel?.maturity_rating as MaturityRating
+                                }
+                                videoRef={videoRef.current as HTMLVideoElement}
+                                currentTime={videoCurrentTime ?? 0}
+                                duration={videoDuration ?? 0}
+                              />
+                            ) : (
+                              ''
+                            )}
+
                             {warningData && warningData.length > 0 && (
                               <SituationWarning
                                 warningData={warningData}

@@ -46,7 +46,7 @@ export type TrackingScreen =
   | 'StartApplication'
   | 'Login'
   | 'ResumeApplication'
-  | 'Nofitication'
+  | 'Notification'
   | 'Payment'
   | 'QRCode'
   | 'Search'

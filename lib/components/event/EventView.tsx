@@ -17,6 +17,7 @@ import { MaturityRating } from '@/lib/api/vod';
 import { useAppSelector } from '@/lib/store';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
+import useCodec from '@/lib/hooks/useCodec';
 
 const ShareReaction = dynamic(() => import('../reaction/ShareReaction'), {
   ssr: false,
@@ -58,7 +59,11 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     videoHeight,
     queryEpisodeNotExist,
   } = usePlayerPageContext();
-
+  const { isVideoCodecNotSupported } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const { showModalShare, setShowModalShare } = useModalToggle({});
 
   const [liveChatHeight, setLiveChatHeight] = useState<string>('');
@@ -335,7 +340,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
 
   // Extract LimitAgeOverlay rendering
   const renderLimitAgeOverlay = () =>
-    isEventPremier ? (
+    isEventPremier && !isVideoCodecNotSupported ? (
       <LimitAgeOverlay
         maturityRating={dataChannel?.maturity_rating as MaturityRating}
         videoRef={

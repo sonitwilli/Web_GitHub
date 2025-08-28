@@ -107,7 +107,7 @@ export default function usePageApi({ currentId }: { currentId?: string }) {
     return (blocksSortedRecommend || [])
       .filter(
         (block) =>
-          // block.block_type === 'horizontal_banner_with_title' &&
+          // block.block_type === 'auto_expansion' &&
           block.block_type &&
           !block?.block_type?.toUpperCase().includes('HIGHLIGHT') &&
           validBlockTypes.includes(block.block_type),

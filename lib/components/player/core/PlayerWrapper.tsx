@@ -52,6 +52,7 @@ import { trackingShowPopupLog191 } from '@/lib/tracking/trackingCommon';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
 import { trackingPlaybackErrorLog515 } from '@/lib/hooks/useTrackingPlayback';
 import axios from 'axios';
+import useCodec from '@/lib/hooks/useCodec';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -139,7 +140,13 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     isLastPlaylistVideo,
     dataPlaylist,
     showModalNotice,
+    queryEpisodeNotExist,
   } = usePlayerPageContext();
+  const { isVideoCodecNotSupported } = useCodec({
+    dataChannel,
+    dataStream,
+    queryEpisodeNotExist,
+  });
   const { viewportType } = useScreenSize();
   const {
     episodeTypeName,
@@ -242,6 +249,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
 
   // check ẩn hiện nút expand
   const isShowExpandButton = useMemo(() => {
+    if (isVideoCodecNotSupported) {
+      return false;
+    }
     if (streamType === 'channel') {
       return true;
     }

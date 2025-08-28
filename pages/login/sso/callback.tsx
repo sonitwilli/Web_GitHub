@@ -64,6 +64,18 @@ export default function SSOCallbackPage() {
         title: 'Đăng nhập thành công',
         desc: 'Bạn đã đăng nhập thành công. Chúc bạn có trải nghiệm tuyệt vời trên FPT Play.',
       });
+      // Redirect to previous path after successful login
+      setTimeout(() => {
+        // Clean up path and redirect
+        const previousPath = localStorage.getItem(PATH_BEFORE_LOGIN_SSO);
+        localStorage.removeItem(PATH_BEFORE_LOGIN_SSO);
+
+        if (previousPath && !previousPath.includes('sso')) {
+          window.location.href = previousPath;
+        } else {
+          window.location.href = '/';
+        }
+      }, 1000); // Small delay to let toast show
     }
   }, []);
 

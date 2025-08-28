@@ -564,7 +564,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
             <CodecNotSupport />
           </div>
         )}
-        <OverlayLogo />
+        {!isVideoCodecNotSupported && <OverlayLogo />}
+
         {(streamType === 'channel' ||
           streamType === 'event' ||
           streamType === 'premiere') && (

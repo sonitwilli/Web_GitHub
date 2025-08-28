@@ -250,13 +250,7 @@ export const useNoAdsGuide = ({
         // Mark that ads tracking is running
         setHadSessionAdsTracking(true);
       } else if (hadSessionAdsTracking) {
-        // Ads tracking stopped, check if can show guide
-        // If logo animation ads is currently playing in session, do NOT show guide
-        const isLogoPlaying =
-          typeof sessionStorage !== 'undefined' &&
-          !!sessionStorage.getItem('session_ads_logo_playing');
-
-        if (canShowGuide() && !isLogoPlaying) {
+        if (canShowGuide()) {
           // Only count when guide is actually shown
           handleCount();
           setShowNoAdsGuide(true);
@@ -296,11 +290,27 @@ export const useNoAdsGuide = ({
         return;
       }
 
-      setTimeout(() => {
+      const hideTimer = setTimeout(() => {
         setShowNoAdsGuide(false);
       }, AUTO_HIDE_DELAY);
+
+      return () => {
+        clearTimeout(hideTimer);
+      };
     }
   }, [showNoAdsGuide, clearMonitoringInterval]);
+
+  // Continuous monitoring for logo playing when guide is shown
+  useEffect(() => {
+    if (showNoAdsGuide) {
+      if (
+        typeof sessionStorage !== 'undefined' &&
+        sessionStorage?.getItem('session_ads_logo_playing')
+      ) {
+        setShowNoAdsGuide(false);
+      }
+    }
+  }, [showNoAdsGuide]);
 
   // Hide NoAdsGuide if any blocking UI is visible
   useEffect(() => {

@@ -422,7 +422,7 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   LoginSuccess: 'Login',
   ResumeApplication: 'ResumeApplication',
   RefreshPage: 'ResumeApplication',
-  EnterNotification: 'Nofitication',
+  EnterNotification: 'Notification',
   EnterPayment: 'Payment',
   EnterQRCode: 'QRCode',
   EnterSearch: 'Search',

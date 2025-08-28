@@ -199,12 +199,12 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
           </div>
           {/* labels */}
           {((vodDetailHighlight && vodDetailHighlight?.length > 0) ||
-            slide?.detail?.description) && (
+            slide?.detail?.short_description) && (
             <div className="hidden sm:flex items-center gap-[2px] md:gap-[6px] mt-[8px]">
               {vodDetailHighlight && vodDetailHighlight?.length > 0 && (
                 <VodMetaData metaData={vodDetailHighlight} type="top-slide" />
               )}
-              {slide?.detail?.description && (
+              {slide?.detail?.short_description && (
                 <button
                   aria-label="show more"
                   className={`hidden xl:flex transition-all duration-300 ease-in w-[24px] h-[24px] rounded-full items-center justify-center bg-white-007 border border-white-016 ${
@@ -223,7 +223,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
           )}
 
           {/* Description */}
-          {slide?.detail?.description && (
+          {slide?.detail?.short_description && (
             <>
               {viewportType === VIEWPORT_TYPE.DESKTOP ? (
                 <div
@@ -234,7 +234,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                   <p
                     className={`font-[500] text-[18px] line-clamp-3 w-full text-shadow-top-slide`}
                   >
-                    {slide?.detail?.description}
+                    {slide?.detail?.short_description}
                   </p>
                 </div>
               ) : (
@@ -242,7 +242,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                   <p
                     className={`mt-[8px] font-[500] text-[12px] tablet:text-[14px] leading-[130%] line-clamp-3 w-full text-shadow-top-slide`}
                   >
-                    {slide?.detail?.description}
+                    {slide?.detail?.short_description}
                   </p>
                 </div>
               )}

@@ -35,7 +35,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
     if (isOffline) {
       const handleRouteChangeStart = (url: string) => {
         // Prevent navigation if offline
-        if (router.asPath !== url) {          
+        if (router.asPath !== url) {
           setHasBlockedRoute(true);
 
           // Restore URL to current/original state
@@ -67,7 +67,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         const target = event.target as HTMLElement;
         const link = target.closest('a, [href]') as HTMLAnchorElement;
 
-        if (link && link.href && link.href !== window.location.href) {          
+        if (link && link.href && link.href !== window.location.href) {
           event.preventDefault();
           event.stopPropagation();
           setHasBlockedRoute(true);

@@ -43,6 +43,7 @@ export default function PageBlockItem({
   const { streamType } = usePlayerPageContext();
   const router = useRouter();
   const [blockData, setBlockData] = useState<BlockItemResponseType>({});
+  const [dataBlock, setDataBlock] = useState<BlockSlideItemType[]>([]);
   const { info } = useAppSelector((state) => state.user);
   const [isFetchDefaultDataCompleted, setIsFetchDefaultDataCompleted] =
     useState(false);
@@ -97,6 +98,15 @@ export default function PageBlockItem({
       isLogged: info?.user_id_str !== '' || false,
     },
   );
+
+  useEffect(()=>{
+    if(data && data?.length > 0){
+      const pageSize = parseInt(configs?.number_item_of_page || '30')
+      const list = data.slice(0, pageSize - 1)
+      setDataBlock([...list])
+    } 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   const isFetchAllCompleted = useMemo(() => {
     if (!blockData?.data?.length) {
@@ -297,7 +307,7 @@ export default function PageBlockItem({
       </div>
       <div className={`${useContainer ? 'f-container' : ''}`}>
         <EmblaBlockSlider
-          slidesItems={data || []}
+          slidesItems={dataBlock || []}
           block={block}
           slideClassName={`block-slider-${block?.block_type} block-type-${block?.type}`}
         />

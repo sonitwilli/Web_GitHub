@@ -19,6 +19,7 @@ type Props = {
   handleReSendOTP: (phone?: string) => void;
   handleVerifyOTP: (phone?: string, otpCode?: string) => void;
   onClose: () => void;
+  otpCountdown: number;
 };
 
 export default function OTPInputModal({
@@ -28,6 +29,7 @@ export default function OTPInputModal({
   handleReSendOTP,
   handleVerifyOTP,
   error,
+  otpCountdown,
 }: Props) {
   const { register, handleSubmit, watch, setValue } = useForm<{ otp: string }>({
     defaultValues: { otp: '' },
@@ -64,6 +66,12 @@ export default function OTPInputModal({
       setResponseMsg(resSendOTP.msg);
     }
   }, [resSendOTP]);
+
+  useEffect(() => {
+    if (otpCountdown > 0) {
+      setCountdown(otpCountdown);
+    }
+  }, [otpCountdown]);
 
   useEffect(() => {
     if (countdown > 0) {

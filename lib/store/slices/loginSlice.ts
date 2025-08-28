@@ -1,12 +1,14 @@
 // store/slices/loginSlide.ts
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface LoginState {
   visible: boolean;
+  storeVerifyToken: string;
 }
 
 const initialState: LoginState = {
   visible: false,
+  storeVerifyToken: '',
 };
 
 export const loginSlice = createSlice({
@@ -19,8 +21,11 @@ export const loginSlice = createSlice({
     closeLoginModal: (state) => {
       state.visible = false;
     },
+    setVerifyToken: (state, action: PayloadAction<string>) => {
+      state.storeVerifyToken = action.payload;
+    },
   },
 });
 
-export const { openLoginModal, closeLoginModal } = loginSlice.actions;
+export const { openLoginModal, closeLoginModal, setVerifyToken } = loginSlice.actions;
 export default loginSlice.reducer;
