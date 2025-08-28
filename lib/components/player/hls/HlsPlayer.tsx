@@ -157,22 +157,25 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         //   }
         // }
         // --- Keep only AAC audio tracks ---
-        try {
-          for (let i = data.audioTracks.length - 1; i >= 0; i--) {
-            const track = data.audioTracks[i];
-            if (!track.audioCodec || !track.audioCodec.includes('mp4a')) {
-              data.audioTracks.splice(i, 1);
+        if (streamType !== 'timeshift') {
+          try {
+            for (let i = data.audioTracks.length - 1; i >= 0; i--) {
+              const track = data.audioTracks[i];
+              if (!track.audioCodec || !track.audioCodec.includes('mp4a')) {
+                data.audioTracks.splice(i, 1);
+              }
             }
-          }
 
-          // --- Keep only AAC levels (video+audio) ---
-          for (let i = data.levels.length - 1; i >= 0; i--) {
-            const level = data.levels[i];
-            if (!level.audioCodec || !level.audioCodec.includes('mp4a')) {
-              data.levels.splice(i, 1);
+            // --- Keep only AAC levels (video+audio) ---
+            for (let i = data.levels.length - 1; i >= 0; i--) {
+              const level = data.levels[i];
+              if (!level.audioCodec || !level.audioCodec.includes('mp4a')) {
+                data.levels.splice(i, 1);
+              }
             }
-          }
-        } catch {}
+          } catch {}
+        }
+
         autoplay();
       });
       window.hlsPlayer = hls;
