@@ -10,7 +10,7 @@ type Options = {
 };
 
 export default function useOrientationPopup(options: Options = {}) {
-  const { mobileMaxWidth = 1024, initialOpen = false } = options;
+  const { mobileMaxWidth = 1024} = options;
   const getInitial = (): Orientation =>
     typeof window !== 'undefined' && window.innerWidth > window.innerHeight
       ? 'landscape'
