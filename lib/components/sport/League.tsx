@@ -71,7 +71,8 @@ const League: React.FC<Props> = ({
             <div className="text-sm font-semibold min-w-[55px]">
               {data?.home.short_name}
             </div>
-            <div className="flex items-center justify-around w-1/2 gap-5">
+
+            <div className="flex items-center justify-center w-1/2 gap-5">
               {data?.home.logo && (
                 <div className="w-6 h-6 flex items-center justify-center">
                   <img
@@ -81,10 +82,9 @@ const League: React.FC<Props> = ({
                   />
                 </div>
               )}
+
               <div className="text-center flex items-center">
-                {data?.home.score &&
-                !isLive &&
-                parseInt(data?.is_finished as string) ? (
+                {data?.home.score != null && !isLive && Number(data?.is_finished) === 1 ? (
                   <span className="bg-white text-dark-purple text-base font-bold px-2 py-1 rounded w-[70px] h-[24px] leading-[1.1]">
                     {data?.home.score} - {data?.away?.score}
                   </span>
@@ -102,6 +102,7 @@ const League: React.FC<Props> = ({
                   </span>
                 )}
               </div>
+
               {data?.away?.logo && (
                 <div className="w-6 h-6 flex items-center justify-center">
                   <img
@@ -112,33 +113,31 @@ const League: React.FC<Props> = ({
                 </div>
               )}
             </div>
+
             <div className="text-sm font-semibold min-w-[55px]">
               {data?.away?.short_name}
             </div>
-            {data?.highlight_id &&
-              data?.type &&
-              !parseInt(data?.is_finished as string) && (
-                <div className="w-[14%] pl-4 absolute right-[35px]">
-                  <Link
-                    href={`/su-kien/${data?.highlight_id}?event=${data?.type}`}
+
+            {(Boolean(data?.highlight_id) && Boolean(data?.type) && !parseInt(data?.is_finished as string)) ? (
+              <div className="flex-none ml-4">
+                <Link href={`/su-kien/${data?.highlight_id}?event=${data?.type}`}>
+                  <svg
+                    viewBox="0 0 16 16"
+                    width="1em"
+                    height="1em"
+                    focusable="false"
+                    role="img"
+                    aria-label="play fill"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
                   >
-                    <svg
-                      viewBox="0 0 16 16"
-                      width="1em"
-                      height="1em"
-                      focusable="false"
-                      role="img"
-                      aria-label="play fill"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="currentColor"
-                    >
-                      <g transform="translate(8 8) scale(1.5 1.5) translate(-8 -8)">
-                        <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
-                      </g>
-                    </svg>
-                  </Link>
-                </div>
-              )}
+                    <g transform="translate(8 8) scale(1.5 1.5) translate(-8 -8)">
+                      <path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393z"></path>
+                    </g>
+                  </svg>
+                </Link>
+              </div>
+            ) : null}
           </div>
         </div>
       ) : (
