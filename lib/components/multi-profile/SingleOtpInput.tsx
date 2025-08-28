@@ -27,6 +27,7 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
   onKeyDown,
 }) => {
   const [model, setModel] = useState<string>(value);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -48,6 +49,19 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
       setModel('');
     }
   }, [inputClasses]);
+
+  useEffect(() => {
+    if (model) {
+      setShowPassword(false);
+      const timer = setTimeout(() => {
+        setShowPassword(true);
+      }, 500);
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowPassword(false);
+    }
+  }, [model]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow numeric input
@@ -98,7 +112,7 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
         id={focus ? 'otp-input-focus' : undefined}
         ref={inputRef}
         value={model}
-        type="tel"
+        type={showPassword ? 'password' : 'tel'}
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"

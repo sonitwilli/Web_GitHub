@@ -430,7 +430,7 @@ const Preview: React.FC<PreviewProps> = ({
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
       // Reset manual close state when preview ends
       setIsPopupManuallyClosed(false);
-    } else if (isPreviewActive && !isPopupManuallyClosed) {
+    } else if (isPreviewActive && !isPopupManuallyClosed && !isLiveEnded) {
       if (isLiveType && !isLogged) {
         onExitPreviewLive?.(dataStream?.trailer_url || '');
         setPreviewState(null);

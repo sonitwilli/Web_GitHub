@@ -165,7 +165,7 @@ export default function UserDropdownMenu({
     // Cập nhật profile (bao gồm cả thiết lập PIN mới và kiểm tra PIN cũ)
     const updateResult = await updateProfile(
       { pin, type: pinModalType },
-      selectedProfile
+      selectedProfile,
     );
     setLoading(false);
 
@@ -186,7 +186,7 @@ export default function UserDropdownMenu({
         return;
       } else {
         profilePinModalRef.current?.setError(
-          updateResult?.data?.msg || DEFAULT_ERROR_MSG
+          updateResult?.data?.msg || DEFAULT_ERROR_MSG,
         );
         setIsForgotPin(false);
         return;
@@ -210,7 +210,7 @@ export default function UserDropdownMenu({
       setShowPinModal(true);
       setPinModalTitle('Nhập mã PIN hồ sơ');
       setSubTitle(
-        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng'
+        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng',
       );
       setPinModalType('access');
     } else if (isKidProfile && selectedProfile?.profile_type === '1') {
@@ -306,7 +306,7 @@ export default function UserDropdownMenu({
       const response = await getUserInfo();
       const data = response?.data;
       setSubTitle(
-        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng'
+        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng',
       );
       setLoading(false);
       setIsForgotPin(true);
@@ -374,7 +374,7 @@ export default function UserDropdownMenu({
   const handleRestep = () => {
     setPinModalTitle('Thiết lập mã PIN hồ sơ');
     setSubTitle(
-      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ'
+      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ',
     );
     setPinModalType('edit');
     setShowPinModal(true);
@@ -512,6 +512,7 @@ export default function UserDropdownMenu({
                     href="/tai-khoan?tab=ho-so"
                     prefetch={false}
                     className="flex items-center pl-[16px] tablet:pl-[24px] pr-[10px] tablet:pr-[12px] py-3 gap-4 transition cursor-pointer text-white-smoke hover:bg-charleston-green"
+                    onClick={() => trackingEnterFuncLog16('EnterAccount')}
                   >
                     <MdOutlineGroup
                       fontSize={isTablet ? 20.5 : 24}
@@ -526,7 +527,7 @@ export default function UserDropdownMenu({
                     href="/tai-khoan?tab=tong-quan"
                     prefetch={false}
                     className="flex items-center  pl-[16px] tablet:pl-[24px] pr-[10px] tablet:pr-[12px] py-3 gap-4 transition cursor-pointer text-white-smoke hover:bg-charleston-green"
-                    onClick={() => trackingEnterFuncLog16('EnterAccount')}
+                    onClick={() => trackingEnterFuncLog16('EnterSetting')}
                   >
                     <IoSettingsOutline fontSize={isTablet ? 20.5 : 24} />
                     <span className="flex-1 text-[13.65px] tablet:text-[16px]">

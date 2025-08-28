@@ -3,7 +3,7 @@ import useOrientationPopup from '@/lib/hooks/useOrientationPopup';
 
 const OrientationChangePopup: React.FC = () => {
   const {open} = useOrientationPopup();
-
+  
   if (!open) return null;
 
   return (

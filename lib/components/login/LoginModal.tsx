@@ -53,6 +53,7 @@ export default function LoginModal({ visible, onClose }: Props) {
     resVerifyOTP,
     notificationContent,
     deviceLimitData,
+    otpCountdown,
   } = useLoginAPI({ visible, onClose });
 
   const phoneRef = useRef<PhoneInputModalRef>(null);
@@ -242,6 +243,7 @@ export default function LoginModal({ visible, onClose }: Props) {
               handlers.handleVerifyOTP({ phone, otpCode })
             }
             onClose={onClose}
+            otpCountdown={otpCountdown}
           />
         )}
 

@@ -31,7 +31,7 @@ export default function VodActionButtons({
   onClickVolume,
   isMuted,
 }: Props) {
-  const { isLiked, handleReaction } = useReaction({ slide });
+  const { isLiked, handleReaction } = useReaction({ slide, block });
   const { showModalShare, setShowModalShare } = useModalToggle({
     block,
     slide,
@@ -105,7 +105,11 @@ export default function VodActionButtons({
         )}
 
         {block?.block_type !== 'auto_expansion' && (
-          <LikeReaction isActive={isLiked} onClick={handleReaction} type={type} />
+          <LikeReaction
+            isActive={isLiked}
+            onClick={handleReaction}
+            type={type}
+          />
         )}
 
         <ShareReaction onClick={() => setShowModalShare(true)} type={type} />

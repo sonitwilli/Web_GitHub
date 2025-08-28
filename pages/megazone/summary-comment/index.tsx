@@ -86,7 +86,7 @@ const SummaryCommentPage: React.FC = () => {
     if (typingIntervalRef.current) {
       clearInterval(typingIntervalRef.current);
       typingIntervalRef.current = null;
-    } 
+    }
     isTypingRef.current = false;
   };
 
@@ -214,8 +214,16 @@ const SummaryCommentPage: React.FC = () => {
   }, [router.query, router.isReady]);
 
   useEffect(() => {
+    if (idMovie !== null) {
+      console.log('idMovie', idMovie);
+
+      setRouteBred('default');
+      localStorage.removeItem('tabsSum');
+    }
+  }, [idMovie]);
+
+  useEffect(() => {
     if (!isSdkLoaded) return;
-    console.log(11111111111111, idMovie);
     const getUserInfo = async () => {
       if (typeof window !== 'undefined') {
         try {
@@ -573,12 +581,19 @@ const SummaryCommentPage: React.FC = () => {
   const fetchDataMessage = async (id: string) => {
     try {
       setLoading(true);
-      const tabs = await getWithExpiry('tabsSum') || [];
-      const isActivedTab = await getWithExpiry('isActived') || [];
+      const tabs = (await getWithExpiry('tabsSum')) || [];
+      const isActivedTab = (await getWithExpiry('isActived')) || [];
       const firstLoad = (router.query['first-load'] as string) || '1';
-      const activeTabIndex = (activeTab <= -1) ? 0 : activeTab;
+      const activeTabIndex = activeTab <= -1 ? 0 : activeTab;
 
-      if ((tabs !== null && firstLoad === '0') ||  isActivedTab && isActivedTab.length > 0 && tabs && tabs.length > 0 && isActivedTab.length >= tabs.length ) {
+      if (
+        (tabs !== null && firstLoad === '0') ||
+        (isActivedTab &&
+          isActivedTab.length > 0 &&
+          tabs &&
+          tabs.length > 0 &&
+          isActivedTab.length >= tabs.length)
+      ) {
         setTabs(tabs);
         setLoading(false);
         setIsReport(true);
@@ -594,6 +609,8 @@ const SummaryCommentPage: React.FC = () => {
       );
 
       if (!response.data?.data) {
+        console.log('no item');
+        
         setRouteBred('error');
         return;
       }
@@ -622,20 +639,25 @@ const SummaryCommentPage: React.FC = () => {
 
         if (router.query['first-load'] === '1') {
           console.log('first load', router.query['first-load']);
-          
+
           typingEffect(newTabs[activeTabIndex]?.html || '', 1);
         } else {
           console.log('first load 2', router.query['first-load']);
 
-          setMessages([{ text: newTabs[activeTabIndex]?.html || '', loading: false }]);
+          setMessages([
+            { text: newTabs[activeTabIndex]?.html || '', loading: false },
+          ]);
           setIsReport(true);
         }
       } else {
         setLoading(false);
+        console.log("error", status);
         setRouteBred('error');
         console.error('Lỗi tải dữ liệu:', response);
       }
     } catch (error) {
+      console.log('error 3', error);
+
       setLoading(false);
       setRouteBred('error');
       console.error('Lỗi tải dữ liệu:', error);

@@ -428,8 +428,8 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
           onPause={handlePaused}
         />
       </div>
+      {!isVideoCodecNotSupported && <OverlayLogo />}
 
-      <OverlayLogo />
       <PlayerControlBar />
     </>
   );
