@@ -102,7 +102,7 @@ export default function PageBlockItem({
   useEffect(()=>{
     if(data && data?.length > 0){
       const pageSize = parseInt(configs?.number_item_of_page || '30')
-      const list = data.slice(0, pageSize - 1)
+      const list = data.slice(0, pageSize)
       setDataBlock([...list])
     } 
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -514,10 +514,6 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
 
         if (data?.error_code === '0') {
           setDeviceLimitData(data);
-          const token = data?.data?.verify_token?.toString();
-          if (token) {
-            dispatch(setVerifyToken(token));
-          }
           goToStep('deviceLimit');
         } else {
           showNotificationModal(data);
@@ -586,11 +582,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             showNotificationModal(data);
             break;
           case '7':
-            if (verifyTokenNextStep) {
-              handleGetDevicesLimit(verifyTokenNextStep);
-            } else {
-              handleGetDevicesLimit(storeVerifyToken); // fallback nếu không có token mới
-            }
+            handleGetDevicesLimit(storeVerifyToken);
             break;
           default:
             showToast({
@@ -838,17 +830,16 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
       return;
     }
 
+    if (verifyToken) {
+      dispatch(setVerifyToken(verifyToken));
+    }
+
     try {
       const res = await getDevicesLimit({ verify_token: verifyToken });
       const data = res?.data;
 
       if (data?.error_code === '0') {
         setDeviceLimitData(data);
-        const token = data?.data?.verify_token?.toString();
-        if (token) {
-          dispatch(setVerifyToken(token));
-        }
-
         goToStep('deviceLimit');
       } else {
         showNotificationModal(data);

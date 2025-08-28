@@ -39,7 +39,7 @@
 @media screen and (min-width: 1280px) {
   .numberContainer {
     height: 60%;
-    padding-top: calc(100% - 90%);
+    padding-top: calc(100% - 85%);
   }
 }
 
@@ -51,10 +51,17 @@
 
   .numberContainer {
     height: 60%;
-    padding-top: calc(100% - 68%);
+    padding-top: calc(100% - 80%);
   }
 
   .slideTitle {
     top: 85%;
+  }
+}
+
+@media screen and (min-width: 1920px) {
+  .numberContainer {
+    height: 60%;
+    padding-top: calc(100% - 66%);
   }
 }

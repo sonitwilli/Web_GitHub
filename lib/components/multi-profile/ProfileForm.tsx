@@ -610,6 +610,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 {errorUpdate}
               </div>
             )}
+            {errorUpdate && validNameChange && (
+              <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
+                {errorUpdate}
+              </div>
+            )}
             {createError && (
               <div className="mt-3 text-[#ef1348] text-base leading-6">
                 {createError.message}

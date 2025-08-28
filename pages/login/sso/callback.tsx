@@ -11,6 +11,7 @@ import {
   NO_ACCESS_TOKEN_OIDC,
   NO_API_RESPONSE_LOGIN_3RD,
   LOGIN_PHONE_NUMBER,
+  TYPE_LOGIN,
 } from '@/lib/constant/texts';
 import { showToast } from '@/lib/utils/globalToast';
 import {
@@ -58,24 +59,17 @@ export default function SSOCallbackPage() {
   const handleLoginSuccess = useCallback((result: onLogin3rdResponse) => {
     const token = result?.data?.access_token;
     if (token) {
-      handleUserInfo(token);
+      // Set login type for loginSuccess function to handle redirect properly
+      localStorage.setItem(TYPE_LOGIN, 'fid');
       localStorage.setItem(TOKEN, token);
+
       showToast({
         title: 'Đăng nhập thành công',
         desc: 'Bạn đã đăng nhập thành công. Chúc bạn có trải nghiệm tuyệt vời trên FPT Play.',
       });
-      // Redirect to previous path after successful login
-      setTimeout(() => {
-        // Clean up path and redirect
-        const previousPath = localStorage.getItem(PATH_BEFORE_LOGIN_SSO);
-        localStorage.removeItem(PATH_BEFORE_LOGIN_SSO);
 
-        if (previousPath && !previousPath.includes('sso')) {
-          window.location.href = previousPath;
-        } else {
-          window.location.href = '/';
-        }
-      }, 1000); // Small delay to let toast show
+      // This prevents double redirect issues
+      handleUserInfo(token);
     }
   }, []);
 

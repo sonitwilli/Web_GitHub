@@ -320,6 +320,12 @@ const InforVideoComponent = (props: PropsVideo) => {
           <div>{dataVideo?.maturity_rating?.advisories}</div>
         </div>
 
+        {dataVideo?.short_description ? 
+        <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
+          <p>{dataVideo?.short_description}</p>
+        </div>
+        : ""}
+
         <HandleLongText
           text={dataVideo?.description}
           className="HandleLongText max-w-full mb-[16px] xl:mb-[24px]"

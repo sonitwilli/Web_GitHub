@@ -307,15 +307,21 @@ export default function Header() {
 
       // Function để detect iPhone OS version
       function detectIPhoneVersion(userAgent: string): number | null {
-        if (userAgent.includes('iPhone OS')) {
-          const match = userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
-          if (match) {
-            const major = parseInt(match[1]);
-            const minor = parseInt(match[2]);
-            const version = major * 100 + minor;
-            return version;
-          }
+        // Check for both old format (iPhone OS) and new format (OS) for iOS 13+
+        let match = userAgent.match(/iPhone OS (\d+)_(\d+)_?(\d+)?/);
+
+        if (!match) {
+          // Try new format for iOS 13+ (OS 13_0_0)
+          match = userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
         }
+
+        if (match) {
+          const major = parseInt(match[1]);
+          const minor = parseInt(match[2]);
+          const version = major * 100 + minor;
+          return version;
+        }
+
         return null;
       }
 

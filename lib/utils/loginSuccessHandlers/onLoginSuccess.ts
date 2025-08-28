@@ -22,6 +22,5 @@ export const onLoginSuccess = async (
     return;
   }
 
-  // await wait();
   await handleUserInfo(token);
 };

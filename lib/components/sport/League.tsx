@@ -1,4 +1,5 @@
 // components/League.tsx
+import Link from 'next/link';
 import { useMemo } from 'react';
 import { convertTimeStandardVN } from '@/lib/utils/sport';
 import { Match } from '@/lib/api/blocks';
@@ -114,7 +115,7 @@ const League: React.FC<Props> = ({
             <div className="text-sm font-semibold min-w-[55px]">
               {data?.away?.short_name}
             </div>
-            {/* {data?.highlight_id &&
+            {data?.highlight_id &&
               data?.type &&
               !parseInt(data?.is_finished as string) && (
                 <div className="w-[14%] pl-4 absolute right-[35px]">
@@ -137,7 +138,7 @@ const League: React.FC<Props> = ({
                     </svg>
                   </Link>
                 </div>
-              )} */}
+              )}
           </div>
         </div>
       ) : (

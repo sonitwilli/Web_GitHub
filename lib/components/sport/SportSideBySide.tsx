@@ -57,10 +57,6 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
       date: 'ket-qua',
       title: 'Kết quả',
     },
-    {
-      date: 'bang-xep-hang',
-      title: 'Bảng xếp hạng',
-    },
   ]);
 
   const [blockSport, setBlockSport] = useState<HighlightBlock>({

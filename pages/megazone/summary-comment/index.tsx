@@ -214,12 +214,13 @@ const SummaryCommentPage: React.FC = () => {
   }, [router.query, router.isReady]);
 
   useEffect(() => {
-    if (idMovie !== null) {
+    if (idMovie !== null && (router.query['first-load'] as string) === '1') {
       console.log('idMovie', idMovie);
 
       setRouteBred('default');
       localStorage.removeItem('tabsSum');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idMovie]);
 
   useEffect(() => {
@@ -581,6 +582,8 @@ const SummaryCommentPage: React.FC = () => {
   const fetchDataMessage = async (id: string) => {
     try {
       setLoading(true);
+      console.log('fetching message');
+
       const tabs = (await getWithExpiry('tabsSum')) || [];
       const isActivedTab = (await getWithExpiry('isActived')) || [];
       const firstLoad = (router.query['first-load'] as string) || '1';
@@ -610,7 +613,7 @@ const SummaryCommentPage: React.FC = () => {
 
       if (!response.data?.data) {
         console.log('no item');
-        
+
         setRouteBred('error');
         return;
       }
@@ -651,7 +654,7 @@ const SummaryCommentPage: React.FC = () => {
         }
       } else {
         setLoading(false);
-        console.log("error", status);
+        console.log('error', status);
         setRouteBred('error');
         console.error('Lỗi tải dữ liệu:', response);
       }
