@@ -3,12 +3,7 @@ import { getUserAgent } from '@/lib/utils/methods';
 
 type Orientation = 'portrait' | 'landscape';
 
-type Options = {
-  /** If true, the popup starts open */
-  initialOpen?: boolean;
-};
-
-export default function useOrientationPopup(options: Options = {}) {
+export default function useOrientationPopup() {
   // UA-based detection decides mobile vs tablet/desktop; no width option needed.
   const getInitial = (): Orientation =>
     typeof window !== 'undefined' && window.innerWidth > window.innerHeight
