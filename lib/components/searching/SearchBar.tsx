@@ -85,7 +85,11 @@ const SearchingBar = ({
       <div className="min-w-[18px] h-[18px] 2xl:w-[24px] 2xl:h-[24px]">
         {isActive && (
           <div
-            onClick={resetInput}
+            onClick={() => {
+              resetInput();
+              // keep focus in the input after clearing
+              inputRef.current?.focus();
+            }}
             className="cursor-pointer text-spanish-gray"
           >
             <IoClose className="w-[18px] h-[18px] lg:w-[24px] lg:h-[24px] shrink-0" />
