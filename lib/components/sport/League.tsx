@@ -63,7 +63,7 @@ const League: React.FC<Props> = ({
       {data?.home?.short_name ? (
         <div
           id="league"
-          className={`bg-raisin-black flex items-center justify-center px-4 py-3 text-white ${
+          className={`bg-raisin-black relative flex items-center justify-center px-4 py-3 text-white ${
             noMarginBottom ? 'mb-0' : 'mb-2'
           }`}
         >
@@ -119,7 +119,7 @@ const League: React.FC<Props> = ({
             </div>
 
             {(Boolean(data?.highlight_id) && Boolean(data?.type) && !parseInt(data?.is_finished as string)) ? (
-              <div className="flex-none ml-4">
+              <div className="absolute right-4 top-1/2 -translate-y-1/2">
                 <Link href={`/su-kien/${data?.highlight_id}?event=${data?.type}`}>
                   <svg
                     viewBox="0 0 16 16"
