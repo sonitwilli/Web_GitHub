@@ -135,11 +135,8 @@ function ChannelPageContent() {
   );
 
   const selectedTimeShift = useMemo(() => {
-    const {
-      activeScheduleId: reduxActiveScheduleId,
-      scheduleList,
-      allTimeShiftItems,
-    } = broadcastScheduleState;
+    const { activeScheduleId: reduxActiveScheduleId, scheduleList } =
+      broadcastScheduleState;
 
     if (!reduxActiveScheduleId) {
       return undefined;
@@ -156,6 +153,7 @@ function ChannelPageContent() {
 
     // Nếu không tìm thấy trong schedule_list hiện tại, tìm trong allTimeShiftItems
     return allTimeShiftItems?.find((item) => item.id === reduxActiveScheduleId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [broadcastScheduleState]);
 
   const channelsBySearchKey = useMemo(() => {

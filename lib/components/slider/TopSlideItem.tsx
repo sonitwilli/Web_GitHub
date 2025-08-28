@@ -1,24 +1,24 @@
-import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
-import { createLink, scaleImageUrl } from "@/lib/utils/methods";
-import HandleImage from "./HandleImage";
-import { useEffect, useMemo, useState } from "react";
-import styles from "./TopSlideItem.module.css";
-import useEvent from "@/lib/hooks/useEvent";
-import { FaCaretDown } from "react-icons/fa";
-import VodActionButtons from "../vod/VodActionButtons";
-import VodMetaData from "../vod/VodMetaData";
-import VodHighlightInfo from "../vod/VodHighlightInfo";
-import { BlockPlayerTypes } from "@/lib/components/player/hls/BlockPlayerShaka";
-import useBlockPlayer from "@/lib/hooks/useBlockPlayer";
-import { useAppDispatch, useAppSelector } from "@/lib/store";
-import { changeIsMutedTrailerPlayer } from "@/lib/store/slices/appSlice";
-import useScreenSize, { VIEWPORT_TYPE } from "@/lib/hooks/useScreenSize";
-import dynamic from "next/dynamic";
+import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
+import { createLink, scaleImageUrl } from '@/lib/utils/methods';
+import HandleImage from './HandleImage';
+import { useEffect, useMemo, useState } from 'react';
+import styles from './TopSlideItem.module.css';
+import useEvent from '@/lib/hooks/useEvent';
+import { FaCaretDown } from 'react-icons/fa';
+import VodActionButtons from '../vod/VodActionButtons';
+import VodMetaData from '../vod/VodMetaData';
+import VodHighlightInfo from '../vod/VodHighlightInfo';
+import { BlockPlayerTypes } from '@/lib/components/player/hls/BlockPlayerShaka';
+import useBlockPlayer from '@/lib/hooks/useBlockPlayer';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
+import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
+import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
+import dynamic from 'next/dynamic';
 const BlockPlayerShaka = dynamic(
-  () => import("@/lib/components/player/hls/BlockPlayerShaka"),
+  () => import('@/lib/components/player/hls/BlockPlayerShaka'),
   {
     ssr: false,
-  }
+  },
 );
 interface Props {
   block?: BlockItemType;
@@ -68,18 +68,18 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
   const slideLink = useMemo(() => {
     const result = `${createLink({
       data: slide || {},
-      type: block?.type || "",
+      type: block?.type || '',
     })}?block_index=0`;
-    return result || "/";
+    return result || '/';
   }, [slide, block]);
 
   const isValidCountdown = useMemo(() => {
     return (
       (preSecond || preSecond || nextSecond || nextMin) &&
-      typeof preSecond !== "undefined" &&
-      typeof nextSecond !== "undefined" &&
-      typeof preMin !== "undefined" &&
-      typeof nextMin !== "undefined"
+      typeof preSecond !== 'undefined' &&
+      typeof nextSecond !== 'undefined' &&
+      typeof preMin !== 'undefined' &&
+      typeof nextMin !== 'undefined'
     );
   }, [preSecond, nextSecond, preMin, nextMin]);
 
@@ -149,11 +149,11 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
         )}
         <div
           className={`ease-out duration-1000 relative z-[1] ${
-            isPlaySuccess ? "opacity-0" : "opacity-100"
+            isPlaySuccess ? 'opacity-0' : 'opacity-100'
           }`}
         >
           <HandleImage
-            imageAlt={slide?.title_vie || slide?.title || ""}
+            imageAlt={slide?.title_vie || slide?.title || ''}
             imageClassName="w-full min-w-full max-w-full"
             imageUrl={scaleImageUrl({
               imageUrl:
@@ -175,14 +175,14 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
       {isInview && (
         <div
           onMouseLeave={() => setIsHoveredDescription(false)}
-          className={`${styles.infoContainer} mb-[32px] tablet:mb-0 px-[16px] tablet:px-0 z-[1] tablet:absolute tablet:left-[24px] xl:left-[48px] tablet:right-[16px] bigscreen:left-[104px] tablet:bottom-[24px] tablet:w-1/2 xl:w-[632px] xl:bottom-[280px] 2xl:bottom-[380px]`}
+          className={`${styles.infoContainer} mt-[24px] tablet:mt-0 mb-[32px] tablet:mb-0 px-[16px] tablet:px-0 z-[1] tablet:absolute tablet:left-[24px] xl:left-[48px] tablet:right-[16px] bigscreen:left-[104px] tablet:bottom-[24px] tablet:w-1/2 xl:w-[632px] xl:bottom-[280px] 2xl:bottom-[380px]`}
         >
           {/* title image */}
           <div>
             <div className="w-full">
               {slide?.image?.title ? (
                 <img
-                  src={slide.image?.title || ""}
+                  src={slide.image?.title || ''}
                   alt="title image"
                   className="max-w-full max-h-[74px] tablet:max-h-[48px] xl:max-h-[120px] xl:max-w-[632px] "
                 />
@@ -208,11 +208,11 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                 <button
                   aria-label="show more"
                   className={`hidden xl:flex transition-all duration-300 ease-in w-[24px] h-[24px] rounded-full items-center justify-center bg-white-007 border border-white-016 ${
-                    isHoveredDescription ? "opacity-0" : "opacity-100"
+                    isHoveredDescription ? 'opacity-0' : 'opacity-100'
                   } ${
                     vodDetailHighlight && vodDetailHighlight?.length > 0
-                      ? "ml-[18px]"
-                      : ""
+                      ? 'ml-[18px]'
+                      : ''
                   }`}
                   onMouseEnter={() => setIsHoveredDescription(true)}
                 >
@@ -228,7 +228,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
               {viewportType === VIEWPORT_TYPE.DESKTOP ? (
                 <div
                   className={`mt-[8px] max-h-0 overflow-hidden transition-all duration-300 ease-in ${
-                    isHoveredDescription ? "max-h-[100px]" : ""
+                    isHoveredDescription ? 'max-h-[100px]' : ''
                   }`}
                 >
                   <p
@@ -260,7 +260,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                   <div className="inline-flex items-center gap-[6px] mt-[12px]">
                     <div className={styles.countdown_container}>
                       <div
-                        className={styles["move-number"]}
+                        className={styles['move-number']}
                         key={`s-${preMin}-${nextMin}`}
                       >
                         <div className="flex items-center justify-center">
@@ -274,7 +274,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                     <span>:</span>
                     <div className={styles.countdown_container}>
                       <div
-                        className={styles["move-number"]}
+                        className={styles['move-number']}
                         key={`m-${preSecond}-${nextSecond}`}
                       >
                         <div className="flex items-center justify-center">
@@ -289,21 +289,21 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
                 ) : (
                   <div className="bg-vivid-red inline-block px-[8px] py-[1px] text-[14px] rounded-[4px] font-[500] mt-[12px]">
                     {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === "CÔNG CHIẾU"
-                      ? "Công chiếu"
-                      : ""}
+                    slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU'
+                      ? 'Công chiếu'
+                      : ''}
 
                     {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === "LIVE"
-                      ? "LIVE"
-                      : ""}
+                    slide?.label_event?.toUpperCase() === 'LIVE'
+                      ? 'LIVE'
+                      : ''}
 
                     {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === "ĐANG PHÁT"
-                      ? "Đang phát"
-                      : ""}
+                    slide?.label_event?.toUpperCase() === 'ĐANG PHÁT'
+                      ? 'Đang phát'
+                      : ''}
 
-                    {slide && !slide?.label_event ? "LIVE" : ""}
+                    {slide && !slide?.label_event ? 'LIVE' : ''}
                   </div>
                 )}
               </>

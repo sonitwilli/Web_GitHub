@@ -30,6 +30,7 @@ import {
 } from '@/lib/hooks/useTrackingPlayback';
 import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
 import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
+import CodecNotSupport from '../core/CodecNotSupport';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -94,17 +95,20 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     handleEnd,
     handlePaused,
   } = usePlayer();
-  const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
+  const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
+    dataChannel,
+    dataStream,
+  });
 
   const playVideo = () => {
     try {
       const finalUrl = previewHandled
-        ? getUrlToPlay() || dataStream?.trailer_url
+        ? getUrlToPlayH264() || dataStream?.trailer_url
         : showLoginPlayer && loginManifestUrl
         ? loginManifestUrl
         : isTimeShift && srcTimeShift
         ? srcTimeShift
-        : getUrlToPlay();
+        : getUrlToPlayH264();
       // const finalUrl =
       //   "https://vodcdn.fptplay.net/POVOD/encoded/2023/11/18/multi-legend-of-zhuohua-the-2023-cnf-001-1700300658/master.m3u8";
       if (finalUrl && window.hlsPlayer && videoRef?.current) {
@@ -122,7 +126,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         ? loginManifestUrl
         : isTimeShift && srcTimeShift
         ? srcTimeShift
-        : getUrlToPlay();
+        : getUrlToPlayH264();
     if (!videoRef.current || !url) return;
     let hls: Hls | null = null;
     if (Hls.isSupported()) {
@@ -131,7 +135,44 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         lowLatencyMode: true,
       });
       hls.attachMedia(videoRef.current);
-      hls.on(Hls.Events.MANIFEST_PARSED, () => {
+      hls.on(Hls.Events.MANIFEST_PARSED, (event, data) => {
+        // const lengthHAAC = data.levels.filter(
+        //   (a) => a.audioCodec && a.audioCodec.includes('mp4a'),
+        // ).length;
+        // const regex = /(ac-3|ac3|ec3|ac-4|ac4)/;
+        // for (let index = data.audioTracks.length - 1; index >= 0; index--) {
+        //   if (regex.test(data.audioTracks[index].url)) {
+        //     data.audioTracks.splice(index, 1);
+        //   }
+        // }
+
+        // if (lengthHAAC && data.levels.length) {
+        //   data.levels.sort(
+        //     (a, b) =>
+        //       (a.audioCodec && a.audioCodec.includes('mp4a') ? 0 : 1) -
+        //       (b.audioCodec && b.audioCodec.includes('mp4a') ? 0 : 1),
+        //   );
+        //   if (data.levels.length > lengthHAAC) {
+        //     data.levels.splice(lengthHAAC, data.levels.length - lengthHAAC);
+        //   }
+        // }
+        // --- Keep only AAC audio tracks ---
+        try {
+          for (let i = data.audioTracks.length - 1; i >= 0; i--) {
+            const track = data.audioTracks[i];
+            if (!track.audioCodec || !track.audioCodec.includes('mp4a')) {
+              data.audioTracks.splice(i, 1);
+            }
+          }
+
+          // --- Keep only AAC levels (video+audio) ---
+          for (let i = data.levels.length - 1; i >= 0; i--) {
+            const level = data.levels[i];
+            if (!level.audioCodec || !level.audioCodec.includes('mp4a')) {
+              data.levels.splice(i, 1);
+            }
+          }
+        } catch {}
         autoplay();
       });
       window.hlsPlayer = hls;
@@ -292,7 +333,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
   useEffect(() => {
     if (fromTimeshiftToLive) {
       try {
-        const url = getUrlToPlay();
+        const url = getUrlToPlayH264();
         if (url && window.hlsPlayer && videoRef?.current) {
           window.hlsPlayer.loadSource(url);
           if (setPlayingUrl) {
@@ -310,7 +351,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       return;
     }
     destroyHls();
-    const url = getUrlToPlay();
+    const url = getUrlToPlayH264();
     if (
       url ||
       srcTimeShift ||
@@ -360,6 +401,11 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         className="hls-video-container w-full h-full flex items-center justify-center"
         id="hls-video-container"
       >
+        {isVideoCodecNotSupported && (
+          <div className="absolute left-0 top-0 w-full h-full">
+            <CodecNotSupport />
+          </div>
+        )}
         <video
           id={VIDEO_ID}
           ref={videoRef}

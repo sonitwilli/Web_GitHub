@@ -335,7 +335,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       }
       const response = await deleteProfile(
         profile.profile_id || '',
-        profile?.name || '',
+        profile?.name || ''
       );
       if (response?.data?.status === '0') {
         switch (response?.data?.error_code) {
@@ -897,9 +897,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 loadingCreate ||
                 isLoading ||
                 isCreating
-                // nicknameErrors.length > 0 ||
-                // displayNameErrors.length > 0
-                  ? styles.disabledButton
+                  ? // nicknameErrors.length > 0 ||
+                    // displayNameErrors.length > 0
+                    styles.disabledButton
                   : styles.enabledButton
               }`}
               disabled={

@@ -306,6 +306,7 @@ export interface BlockSlideItemType {
   bg_color?: string;
   need_recommend?: string;
   description?: string;
+  is_recommend?: boolean;
   is_coming_soon?: string;
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
@@ -18,8 +18,13 @@ export const useWatchAndSkipCredit = (
   hasNextEpisode?: boolean,
   onPlayNext?: () => void,
 ): UseWatchAndSkipCreditReturn => {
-  const { videoCurrentTime, videoDuration, previewHandled } =
-    usePlayerPageContext();
+  const {
+    videoCurrentTime,
+    videoDuration,
+    previewHandled,
+    hasWatchedCredit,
+    setHasWatchedCredit,
+  } = usePlayerPageContext();
   const { nextEpisode, routerChapterId } = useVodPageContext();
   const router = useRouter();
 
@@ -31,12 +36,19 @@ export const useWatchAndSkipCredit = (
 
   const [isVisible, setIsVisible] = useState(false);
   const [isNavigating, setIsNavigating] = useState(false);
-  const [hasWatchedCredit, setHasWatchedCredit] = useState(false);
   const [showAnimation, setShowAnimation] = useState(false);
   const [countdown, setCountdown] = useState(AUTO_NEXT_COUNTDOWN_SECONDS);
   const [autoNextTimer, setAutoNextTimer] = useState<NodeJS.Timeout | null>(
     null,
   );
+
+  // Use ref to track real-time hasWatchedCredit value in timer callback
+  const hasWatchedCreditRef = useRef(hasWatchedCredit);
+
+  // Update ref when context state changes
+  useEffect(() => {
+    hasWatchedCreditRef.current = hasWatchedCredit || false;
+  }, [hasWatchedCredit]);
 
   // Check if we should show the watch and skip credit buttons
   useEffect(() => {
@@ -73,8 +85,8 @@ export const useWatchAndSkipCredit = (
   // Reset navigation state when URL changes
   useEffect(() => {
     setIsNavigating(false);
-    setHasWatchedCredit(false);
-  }, [router.asPath]);
+    setHasWatchedCredit?.(false);
+  }, [router.asPath, setHasWatchedCredit]);
 
   // Clear timers helper
   const clearTimers = useCallback(() => {
@@ -115,12 +127,22 @@ export const useWatchAndSkipCredit = (
 
   // Start auto-next timer when animation starts - like useAutoNextVideo
   useEffect(() => {
-    if (isVisible && showAnimation && !autoNextTimer && !isNavigating) {
+    if (
+      isVisible &&
+      showAnimation &&
+      !autoNextTimer &&
+      !isNavigating &&
+      !hasWatchedCredit
+    ) {
       // Auto next after 6 seconds - same as animation duration
       const timer = setTimeout(() => {
-        navigateToNextEpisode();
-        if (onPlayNext) {
-          onPlayNext();
+        // Use ref to get real-time value (fixes closure issue)
+        const currentHasWatchedCredit = hasWatchedCreditRef.current;
+        if (!currentHasWatchedCredit && !isNavigating) {
+          navigateToNextEpisode();
+          if (onPlayNext) {
+            onPlayNext();
+          }
         }
       }, AUTO_NEXT_COUNTDOWN_SECONDS * 1000);
 
@@ -131,9 +153,16 @@ export const useWatchAndSkipCredit = (
     showAnimation,
     autoNextTimer,
     isNavigating,
+    hasWatchedCredit,
     navigateToNextEpisode,
     onPlayNext,
   ]);
+
+  useEffect(() => {
+    if (hasWatchedCredit) {
+      clearTimers();
+    }
+  }, [hasWatchedCredit, clearTimers]);
 
   // Clear timer when component becomes invisible or navigating
   useEffect(() => {
@@ -145,12 +174,13 @@ export const useWatchAndSkipCredit = (
 
   // Handle watch credit button click
   const watchCredit = useCallback(() => {
-    setHasWatchedCredit(true);
+    // Clear timer FIRST to prevent race condition
+    clearTimers();
+    setHasWatchedCredit?.(true);
     setIsVisible(false);
     setShowAnimation(false);
     setCountdown(AUTO_NEXT_COUNTDOWN_SECONDS);
-    clearTimers();
-  }, [clearTimers]);
+  }, [clearTimers, setHasWatchedCredit]);
 
   // Handle skip to next episode
   const skipToNext = useCallback(() => {
@@ -164,10 +194,10 @@ export const useWatchAndSkipCredit = (
   // Reset state when video changes or when going back before end_content
   useEffect(() => {
     if (videoCurrentTime && endContent && videoCurrentTime < endContent) {
-      setHasWatchedCredit(false);
+      setHasWatchedCredit?.(false);
       clearTimers();
     }
-  }, [videoCurrentTime, endContent, clearTimers]);
+  }, [videoCurrentTime, endContent, clearTimers, setHasWatchedCredit]);
 
   // Cleanup on unmount
   useEffect(() => {

@@ -204,6 +204,11 @@ type ContextType = {
   setQueryEpisodeNotExist?: (v: boolean) => void;
   isSupportOs?: boolean;
   setIsSupportOs?: (v: boolean) => void;
+  hasWatchedCredit?: boolean;
+  setHasWatchedCredit?: (v: boolean) => void;
+  nextRecommendCancelled?: boolean;
+  setNextRecommendCancelled?: (v: boolean) => void;
+  isVideoCodecNotSupported?: boolean;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -223,6 +228,8 @@ type Props = {
 export function PlayerPageContextProvider({ children }: Props) {
   const [isSupportOs, setIsSupportOs] = useState(true);
   const [queryEpisodeNotExist, setQueryEpisodeNotExist] = useState(false);
+  const [hasWatchedCredit, setHasWatchedCredit] = useState(false);
+  const [nextRecommendCancelled, setNextRecommendCancelled] = useState(false);
   const isBackgroundRetryRef = useRef(false);
   const { isFullscreen } = useAppSelector((s) => s.player);
   const [hlsErrors, setHlsErrors] = useState<ErrorData[]>([]);
@@ -322,6 +329,7 @@ export function PlayerPageContextProvider({ children }: Props) {
     }
   }, [dataStream, dataChannel]);
   const [fetchChannelCompleted, setFetchChannelCompleted] = useState(false);
+
   const [showLoginPlayer, setShowLoginPlayer] = useState(false);
   const [loginManifestUrl, setLoginManifestUrl] = useState('');
   const router = useRouter();
@@ -565,7 +573,7 @@ export function PlayerPageContextProvider({ children }: Props) {
 
       let previewStreamData = {};
       if (['event', 'channel'].includes(streamType)) {
-        previewStreamData = responseData?.data || {};
+        previewStreamData = responseData?.data || responseData || {};
       } else {
         previewStreamData = responseData || {};
       }
@@ -678,7 +686,12 @@ export function PlayerPageContextProvider({ children }: Props) {
       }
       return false;
     }
-    if (statusWatch === false && isFromPc) {
+    if (
+      statusWatch === false &&
+      isFromPc &&
+      (router.asPath.includes('xem-truyen-hinh') ||
+        router.asPath.includes('su-kien'))
+    ) {
       let browsersSupport = '';
       if (isWindows || isFromAndroidOs) {
         browsersSupport = `<a href="https://www.microsoft.com/vi-vn/edge" target="_blank" style="color: #ff6500">Microsoft Edge</a>`;
@@ -1493,6 +1506,10 @@ export function PlayerPageContextProvider({ children }: Props) {
         queryEpisodeNotExist,
         isSupportOs,
         setIsSupportOs,
+        hasWatchedCredit,
+        setHasWatchedCredit,
+        nextRecommendCancelled,
+        setNextRecommendCancelled,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

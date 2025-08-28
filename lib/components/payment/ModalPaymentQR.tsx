@@ -3,12 +3,10 @@ import ModalWrapper from '@/lib/components/modal/ModalWrapper';
 import { useRouter } from 'next/router';
 import { checkTransactionStatusApi } from '@/lib/api/payment';
 import { IoCloseCircle } from 'react-icons/io5';
-
-// Stub tracking functions (replace with real ones if available)
-const trackingCancelExtraRegister = () => {};
-const trackingTimeOut = () => {};
-const trackingGameTimeOut = () => {};
-const trackingGameCancelExtraRegister = () => {};
+import {
+  trackingCancelExtraRegisterLog418,
+  trackingRegisterPaymentLog417,
+} from '@/lib/hooks/useTrackingPayment';
 
 interface Step {
   title: string;
@@ -47,7 +45,6 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
   onClose,
   data,
   gateway = '',
-  isGamePayment = false,
 }) => {
   const router = useRouter();
   const [countDown, setCountDown] = useState('10:00');
@@ -80,11 +77,7 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
       );
       if (minutes === 0 && seconds === 0 && !expired) {
         expired = true;
-        if (isGamePayment) {
-          trackingGameTimeOut();
-        } else {
-          trackingTimeOut();
-        }
+        trackingRegisterPaymentLog417({ Event: 'TimeOut' });
         handleClose();
       }
       if (distance < 1000) {
@@ -160,12 +153,8 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
   const handleClose = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     onClose();
-    if (isGamePayment) {
-      trackingGameCancelExtraRegister();
-    } else {
-      trackingCancelExtraRegister();
-    }
-  }, [onClose, isGamePayment]);
+    trackingCancelExtraRegisterLog418({});
+  }, [onClose]);
 
   if (!data) {
     return null;

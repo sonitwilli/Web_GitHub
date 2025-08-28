@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
-import { useAppDispatch } from "@/lib/store";
-import { changeTimeStartBlockPlayer } from "@/lib/store/slices/blockSlice";
-import React, { useCallback, useContext, useEffect, useRef } from "react";
-import { TopSliderContext } from "../../slider/embla/top-slider/EmblaTopSlider";
-import { NewVodContext } from "../../slider/embla/new-vod-detail-slider/NewVodDetail";
+import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
+import { useAppDispatch } from '@/lib/store';
+import { changeTimeStartBlockPlayer } from '@/lib/store/slices/blockSlice';
+import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import { TopSliderContext } from '../../slider/embla/top-slider/EmblaTopSlider';
+import { NewVodContext } from '../../slider/embla/new-vod-detail-slider/NewVodDetail';
+import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
 
 export enum BlockPlayerTypes {
-  top_slider = "top_slider",
-  block_slider = "block_slider",
-  auto_expansion = "auto_expansion",
+  top_slider = 'top_slider',
+  block_slider = 'block_slider',
+  auto_expansion = 'auto_expansion',
 }
 
 interface Props {
@@ -50,24 +51,33 @@ const BlockPlayerShaka = ({
           .then(() => {})
           .catch((e) => {
             console.log(e);
+            if (videoRef.current) {
+              videoRef.current.volume = 0;
+              videoRef.current.muted = true;
+              dispatch(changeIsMutedTrailerPlayer(true));
+              videoRef.current
+                .play()
+                .then(() => {})
+                .catch(() => {});
+            }
           });
       }
     }
   };
 
   const initPlayer = () => {
-    if (type === "block_slider") {
-      const hoverItem = document.getElementById("hover_slide_card");
+    if (type === 'block_slider') {
+      const hoverItem = document.getElementById('hover_slide_card');
       if (hoverItem) {
         const styles = getComputedStyle(hoverItem);
-        if (styles.opacity === "0") {
+        if (styles.opacity === '0') {
           // khúc này hover card chưa xuất hiện thì ko play
           return;
         }
       }
     }
 
-    initHls({ src: url || "" });
+    initHls({ src: url || '' });
   };
 
   const initWindowPlayer = useCallback(
@@ -82,7 +92,7 @@ const BlockPlayerShaka = ({
         window.newVodPlayer = player;
       }
     },
-    [type]
+    [type],
   );
   const pausePlayer = useCallback(() => {
     let video: HTMLMediaElement | null = null;
@@ -143,15 +153,15 @@ const BlockPlayerShaka = ({
     pausePlayer();
     if (!videoRef.current) return;
     window.blockPlayerVideo = videoRef.current;
-    if (type !== "top_slider" || block?.block_type === "auto_expansion") {
+    if (type !== 'top_slider' || block?.block_type === 'auto_expansion') {
       dispatch(changeTimeStartBlockPlayer(new Date().getTime()));
     }
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const shaka = require("shaka-player");
+    const shaka = require('shaka-player');
     const player = new shaka.Player(videoRef.current);
     playerRef.current = player;
-    player.addEventListener("error", (event: any) => {
-      console.log("--- BLOCK PLAYER ERROR", event);
+    player.addEventListener('error', (event: any) => {
+      console.log('--- BLOCK PLAYER ERROR', event);
       if (onError) {
         onError(event);
       }

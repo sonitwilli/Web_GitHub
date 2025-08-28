@@ -60,7 +60,7 @@ export default function DeleteAccountPage() {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
 
-  const { width } = useScreenSize();
+  const { width, height } = useScreenSize();
   const isTablet = useMemo(() => {
     return width <= 1280;
   }, [width]);
@@ -68,6 +68,10 @@ export default function DeleteAccountPage() {
   const isMobile = useMemo(() => {
     return width <= 768;
   }, [width]);
+
+  const isPortrait = useMemo(() => {
+    return height < 512;
+  }, [height]);
 
   // --- Effects ---
   useEffect(() => {
@@ -92,16 +96,16 @@ export default function DeleteAccountPage() {
 
   // Preload background image
   useEffect(() => {
-    if (backgroundImage && !isTablet && !isMobile) {
+    if (backgroundImage && !isTablet && !isMobile && !isPortrait) {
       const img = new Image();
       img.onload = () => setImageLoaded(true);
       img.onerror = () => setImageError(true);
       img.src = backgroundImage;
-    } else if (backgroundImage && (isTablet || isMobile)) {
+    } else if (backgroundImage && (isTablet || isMobile || isPortrait)) {
       // For mobile/tablet, we load the image directly in img tag
       setImageLoaded(true);
     }
-  }, [backgroundImage, isTablet, isMobile]);
+  }, [backgroundImage, isTablet, isMobile, isPortrait]);
 
   const isLogged = useSelector((state: RootState) => !!state.user.info);
 
@@ -442,15 +446,19 @@ export default function DeleteAccountPage() {
         {/* Mask overlay */}
         <div
           className={`absolute inset-0 z-[2] bg-cover ${
-            isTablet || isMobile ? styles.bgMaskMobile : styles.bgMask
+            isTablet || isMobile || isPortrait
+              ? styles.bgMaskMobile
+              : styles.bgMask
           }`}
         />
         {/* Background image */}
-        {isTablet || isMobile ? (
+        {isTablet || isMobile || isPortrait ? (
           <div className="absolute inset-0 z-[1] opacity-100">
             <img
               src={`${
-                isMobile ? '/images/mobile-mask.png' : '/images/mask-tablet.png'
+                isMobile || isPortrait
+                  ? '/images/mobile-mask.png'
+                  : '/images/mask-tablet.png'
               }`}
               alt="shadow"
               className="absolute inset-0 z-[1] top-[10px] left-0 w-full h-auto object-cover"
@@ -496,7 +504,7 @@ export default function DeleteAccountPage() {
           }}
           className="absolute z-[10000] top-[40px] tablet:top-12 left-1/2 -translate-x-1/2"
         >
-          {isMobile ? (
+          {isMobile || isPortrait ? (
             <img
               src="/images/logo.png"
               alt="logo"

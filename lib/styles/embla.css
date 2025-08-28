@@ -85,13 +85,6 @@
 .block-slider-auto_expansion .embla__slide {
   flex: 0 0 calc(100% / 5);
   padding-left: 8px;
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.block-slider-auto_expansion .embla__container {
-  padding-left: 8px;
-  padding-right: 8px;
 }
 
 @media (max-width: 1279px) {

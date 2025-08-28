@@ -388,11 +388,11 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
           ''
         )}
       </div>
-      {/* <div className="mt-2 px-1">
-        <p className="font-[600] text-[18px] leading-[130%] tracking-[2%] text-white-smoke line-clamp-3 overflow-hidden">
+      <div className="mt-2 px-1">
+        <p className="mt-[8px] mb-0 line-clamp-2 w-full text-[14px] md:text-[16px] font-[500] px-[4px] leading-[130%] tracking-[2%] overflow-hidden">
           {slide?.title_vie || slide?.title}
         </p>
-      </div> */}
+      </div>
     </div>
   );
 }

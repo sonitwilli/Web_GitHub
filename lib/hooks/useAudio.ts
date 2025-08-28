@@ -14,6 +14,7 @@ import {
   RUNNING_MANIFEST_TYPE,
   SELECTED_AUDIO_LABEL,
   SELECTED_AUDIO_LABEL_LIVE,
+  SELECTED_SUBTITLE,
 } from '@/lib/constant/texts';
 import useClickOutside from '@/lib/hooks/useClickOutside';
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
@@ -27,7 +28,17 @@ export default function useAudio() {
     usePlayerPageContext();
 
   const [selectedAudio, setSelectedAudio] = useState<AudioItemType>();
-
+  const turnOffPlayerSub = () => {
+    try {
+      const selectedSub = localStorage.getItem(SELECTED_SUBTITLE);
+      if (selectedSub === 'Off-Sub') {
+        if (window.shakaPlayer) {
+          window.shakaPlayer.setTextTrackVisibility(false);
+          window.shakaPlayer.selectTextLanguage(null);
+        }
+      }
+    } catch {}
+  };
   const [open, setOpen] = useState(false);
   const [audioNameList, setAudioNameList] = useState<string[]>([]);
   const generateAudioText = ({
@@ -344,6 +355,9 @@ export default function useAudio() {
     } else if (playerName === PLAYER_NAME.SHAKA && window.shakaPlayer) {
       window.shakaPlayer.selectAudioLanguage(a?.X_LANGUAGE);
     }
+    setTimeout(() => {
+      turnOffPlayerSub();
+    }, 500);
     setOpen(false);
   };
 

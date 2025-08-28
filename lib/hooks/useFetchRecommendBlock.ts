@@ -7,6 +7,7 @@ import {
 } from '@/lib/api/blocks';
 import { useGetRecommendBlock } from './useGetRecommendBlock';
 import { ConfigDataType } from '@/lib/api/main';
+import { trackingLoadHighlightItemLog522 } from './useTrackingHome';
 
 interface UseFetchRecommendBlockProps {
   dataIndex: BlockItemType;
@@ -40,7 +41,6 @@ export const useFetchRecommendBlock = ({
   const { getBlockData } = useGetRecommendBlock({
     block: dataIndex,
   });
-
   const mergeAndSortArrays = useCallback(
     (
       a: BlockSlideItemType[],
@@ -126,7 +126,7 @@ export const useFetchRecommendBlock = ({
         const { data: dataDf } = dataClone;
         let dataRes: BlockItemResponseType | null = null;
         const cacheBlock: CacheBlock | null = getItem();
-
+        let dataTracking: BlockSlideItemType[] = [];
         if (!isLogged && typeof localStorage !== 'undefined') {
           setData(dataDf || []);
           setIsSortCompleted(true);
@@ -146,11 +146,22 @@ export const useFetchRecommendBlock = ({
 
         if (cacheBlock?.[`${blockId}`]) {
           dataRes = cacheBlock[`${blockId}`];
-        } else if(dataIndex?.need_recommend === '1') {
+          if (dataRes?.data?.length) {
+            dataRes.data = dataRes.data.map((item) => ({
+              ...item,
+              is_recommend: true,
+            }));
+          }
+        } else if (dataIndex?.need_recommend === '1') {
           const response = await getBlockData();
 
           dataRes = response || null;
-
+          if (dataRes?.data?.length) {
+            dataRes.data = dataRes.data.map((item) => ({
+              ...item,
+              is_recommend: true,
+            }));
+          }
           if (!dataRes?.data) {
             setData(dataDf || []);
             setIsSortCompleted(true);
@@ -165,6 +176,8 @@ export const useFetchRecommendBlock = ({
 
             setItem(temp, +cache_time);
           }
+        } else if (dataIndex.need_recommend === '2') {
+          dataTracking = dataDf || [];
         }
 
         const { data: dataRcmBlc } = dataRes || {};
@@ -177,9 +190,10 @@ export const useFetchRecommendBlock = ({
             dataRcmBlc || [],
             currentConfig,
           );
-
+          dataTracking = dataMerged;
           setData(dataMerged);
         }
+        trackingLoadHighlightItemLog522(dataTracking);
       } catch (error) {
         console.log(error);
         const { data: dataDf } = dataDefault;
@@ -192,6 +206,5 @@ export const useFetchRecommendBlock = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [dataIndex, dataDefault, blockId],
   );
-
   return { data, fetchRecommendBlock, isSortCompleted };
 };

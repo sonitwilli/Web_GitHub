@@ -100,6 +100,7 @@ const PreventKidModal: React.FC = () => {
           overlayClassName="fixed inset-0 bg-black/50 flex justify-center items-center z-[9999]"
           shouldCloseOnEsc={false}
           shouldCloseOnOverlayClick={false}
+          htmlOpenClassName="overflow-hidden"
         >
           <div className="text-center">
             <h2 className="text-2xl font-semibold leading-[1.3] mb-4">Hồ sơ không phù hợp</h2>

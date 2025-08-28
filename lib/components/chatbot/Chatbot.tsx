@@ -23,7 +23,7 @@ const CHATBOT_DOMAIN_ORIGIN = process.env.NEXT_PUBLIC_CHATBOT_DOMAIN_URL ?? '';
 // const CHATBOT_DOMAIN_ORIGIN = 'https://dev.fptplay.vn';
 const CHATBOT_DOMAIN_FULL_URL = `${CHATBOT_DOMAIN_ORIGIN}/chatbot-ai`;
 
-const showPopup = false;
+const showPopup = true;
 
 const Chatbot = () => {
   const { timeOpenPopupLostNetwork, popupData } = useAppSelector(

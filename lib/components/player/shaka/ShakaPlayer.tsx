@@ -49,6 +49,7 @@ import {
   trackingLogChangeResolutionLog113,
   trackingPlayAttempLog521,
 } from '@/lib/hooks/useTrackingPlayback';
+import CodecNotSupport from '../core/CodecNotSupport';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -113,7 +114,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isValidForProfileType,
   } = usePlayer();
 
-  const { getUrlToPlay } = useCodec({
+  const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
     dataChannel,
     dataStream,
     queryEpisodeNotExist,
@@ -200,10 +201,10 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   const playVideo = useCallback(
     ({ newUrl }: { newUrl?: string } = {}) => {
       const finalUrl = previewHandled
-        ? getUrlToPlay() || dataStream?.trailer_url
+        ? getUrlToPlayH264() || dataStream?.trailer_url
         : showLoginPlayer && loginManifestUrl
         ? loginManifestUrl
-        : newUrl || getUrlToPlay();
+        : newUrl || getUrlToPlayH264();
 
       // const finalUrl =
       //   'https://vodcdn.fptplay.net/POVOD/encoded/2024/07/11/asbeautifulasyou-2024-cn-003-1720705086/H264/stream.mpd';
@@ -245,7 +246,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       previewHandled,
       showLoginPlayer,
       loginManifestUrl,
-      getUrlToPlay,
+      getUrlToPlayH264,
       setPlayingUrl,
       autoplay,
       observeControlbarShown,
@@ -514,10 +515,10 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
   }, [dataChannel, queryEpisodeNotExist]);
   useEffect(() => {
     const finalUrl = previewHandled
-      ? getUrlToPlay() || dataStream?.trailer_url
+      ? getUrlToPlayH264() || dataStream?.trailer_url
       : showLoginPlayer && loginManifestUrl
       ? loginManifestUrl
-      : getUrlToPlay();
+      : getUrlToPlayH264();
 
     if (finalUrl) {
       if (typeof window.shaka !== 'undefined') {
@@ -558,6 +559,11 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           isFullscreen ? 'shaka-fullscreen' : ''
         } ${isUserInteractive ? 'shaka-user-active' : 'shaka-user-inactive'}`}
       >
+        {isVideoCodecNotSupported && (
+          <div className="absolute left-0 top-0 w-full h-full">
+            <CodecNotSupport />
+          </div>
+        )}
         <OverlayLogo />
         {(streamType === 'channel' ||
           streamType === 'event' ||
@@ -603,7 +609,9 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         />
         <div
           className={`ads-instream absolute w-full h-full top-0 left-0 overflow-hidden ${
-            isFullscreen ? 'rounded-none' : 'rounded-[16px]'
+            isFullscreen || isExpanded || viewportType !== VIEWPORT_TYPE.DESKTOP
+              ? 'rounded-none'
+              : 'rounded-[16px]'
           }`}
         ></div>
         <PlayerControlBar />

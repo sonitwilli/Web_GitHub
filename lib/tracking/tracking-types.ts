@@ -172,6 +172,7 @@ export type TrackingEvent =
   | 'RegisteredSuccess'
   | 'RegisteredFailed'
   | 'TimeOut'
+  | 'Pending'
   | 'EnrolledSuccess'
   | 'EnrolledFailed'
   | 'EnrolledTimeOut'

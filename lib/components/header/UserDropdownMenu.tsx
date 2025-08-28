@@ -128,14 +128,12 @@ export default function UserDropdownMenu({
   const [subTitle, setSubTitle] = useState<string>('');
   const [isErrorCode, setIsErrorCode] = useState<string>('');
 
-  const handleConfirmPin = (pin: string) => {
-    setPin(pin);
-  };
-
   const confirmAddPin = async (pin: string) => {
     setLoading(true);
     profilePinModalRef.current?.setError('');
-    if (!isForgotPin) {
+
+    // Chỉ kiểm tra PIN khi không phải quên PIN và đang truy cập profile
+    if (!isForgotPin && pinModalType === 'access') {
       const checkPinResult = await checkProfilePin({
         profile: selectedProfile || {},
         pin,
@@ -155,15 +153,19 @@ export default function UserDropdownMenu({
         });
         setShowPinModal(false);
         setIsConfirmModalOpen(true);
+        setLoading(false);
         return;
       } else if (checkPinResult.error) {
         profilePinModalRef.current?.setError(checkPinResult.error);
+        setLoading(false);
         return;
       }
     }
+
+    // Cập nhật profile (bao gồm cả thiết lập PIN mới và kiểm tra PIN cũ)
     const updateResult = await updateProfile(
       { pin, type: pinModalType },
-      selectedProfile,
+      selectedProfile
     );
     setLoading(false);
 
@@ -184,7 +186,7 @@ export default function UserDropdownMenu({
         return;
       } else {
         profilePinModalRef.current?.setError(
-          updateResult?.data?.msg || DEFAULT_ERROR_MSG,
+          updateResult?.data?.msg || DEFAULT_ERROR_MSG
         );
         setIsForgotPin(false);
         return;
@@ -208,7 +210,7 @@ export default function UserDropdownMenu({
       setShowPinModal(true);
       setPinModalTitle('Nhập mã PIN hồ sơ');
       setSubTitle(
-        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng',
+        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng'
       );
       setPinModalType('access');
     } else if (isKidProfile && selectedProfile?.profile_type === '1') {
@@ -234,10 +236,11 @@ export default function UserDropdownMenu({
       return;
     }
     if (loginResult?.success) {
-      console.log(1111111111, loginResult);
-      
       trackingLoginProfileLog104({
-        Status: loginResult?.data?.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+        Status:
+          loginResult?.data?.profile_type === PROFILE_TYPES.KID_PROFILE
+            ? 'Kid'
+            : 'Normal',
         ItemName: selectedProfile?.name,
         isLandingPage: '1',
       });
@@ -291,13 +294,6 @@ export default function UserDropdownMenu({
     setShowModalManagementCode(false);
   };
 
-  useEffect(() => {
-    if (pin) {
-      confirmAddPin(pin);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pin]);
-
   // ✅ useEffect để lắng nghe sự thay đổi của disableDropdown
   useEffect(() => {
     if (disableDropdown) {
@@ -310,7 +306,7 @@ export default function UserDropdownMenu({
       const response = await getUserInfo();
       const data = response?.data;
       setSubTitle(
-        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng',
+        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng'
       );
       setLoading(false);
       setIsForgotPin(true);
@@ -378,7 +374,7 @@ export default function UserDropdownMenu({
   const handleRestep = () => {
     setPinModalTitle('Thiết lập mã PIN hồ sơ');
     setSubTitle(
-      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ',
+      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ'
     );
     setPinModalType('edit');
     setShowPinModal(true);
@@ -427,7 +423,7 @@ export default function UserDropdownMenu({
           }}
         />
 
-        {isKidProfile && (  
+        {isKidProfile && (
           <img
             className="absolute bottom-[4px] left-0 right-[4px] pl-[4px] pr-[8px]"
             src={scaleImageUrl({
@@ -562,7 +558,7 @@ export default function UserDropdownMenu({
                 loading={false}
                 type={pinModalType}
                 profile={selectedProfile}
-                onConfirm={handleConfirmPin}
+                onConfirm={confirmAddPin}
                 onForget={handleForgetPin}
                 onCancel={handleCancelPinModal}
               />

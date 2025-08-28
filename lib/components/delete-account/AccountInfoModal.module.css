@@ -55,3 +55,247 @@
 .servicesContainer::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0;
 }
+
+/* Landscape mode responsive styles for mobile AccountInfoModal */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .accountInfoModalWrapper {
+    max-width: 90vw !important;
+    max-height: 85vh !important;
+  }
+
+  .modalContainer {
+    padding: 12px !important;
+    gap: 16px !important;
+  }
+
+  .headerSection {
+    gap: 12px !important;
+  }
+
+  .headerTitle {
+    font-size: 18px !important;
+    line-height: 130% !important;
+  }
+
+  .headerDescription {
+    font-size: 14px !important;
+    line-height: 130% !important;
+  }
+
+  .contentSection {
+    gap: 12px !important;
+    max-width: 100% !important;
+  }
+
+  .infoRow {
+    gap: 8px !important;
+  }
+
+  .labelText {
+    font-size: 14px !important;
+    width: 100px !important;
+  }
+
+  .valueText {
+    font-size: 14px !important;
+  }
+
+  .servicesLabel {
+    font-size: 14px !important;
+    width: 100px !important;
+  }
+
+  .servicesContainer {
+    min-height: 60px !important;
+    max-height: calc(30vh - 80px) !important;
+    padding: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .serviceItem {
+    margin-top: 12px !important;
+  }
+
+  .serviceName {
+    font-size: 14px !important;
+  }
+
+  .serviceDetails {
+    margin-top: 8px !important;
+    padding-bottom: 8px !important;
+  }
+
+  .serviceDetailText {
+    font-size: 12px !important;
+  }
+
+  .buttonSection {
+    max-width: 100% !important;
+  }
+
+  .continueButton {
+    height: 36px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+  }
+}
+
+@media screen and (orientation: landscape) and (max-height: 400px) {
+  .accountInfoModalWrapper {
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+  }
+
+  .modalContainer {
+    padding: 8px !important;
+    gap: 12px !important;
+  }
+
+  .headerSection {
+    gap: 8px !important;
+  }
+
+  .headerTitle {
+    font-size: 16px !important;
+  }
+
+  .headerDescription {
+    font-size: 12px !important;
+  }
+
+  .contentSection {
+    gap: 8px !important;
+  }
+
+  .servicesContainer {
+    min-height: 50px !important;
+    max-height: calc(25vh - 60px) !important;
+    padding: 8px !important;
+    overflow: hidden !important;
+  }
+
+  .serviceItem {
+    margin-top: 8px !important;
+  }
+
+  .serviceDetails {
+    margin-top: 6px !important;
+    padding-bottom: 6px !important;
+  }
+
+  .continueButton {
+    height: 32px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Landscape mode responsive styles for mobile DeleteAccountPolicyModal */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .policyModalWrapper {
+    max-width: 90vw !important;
+    max-height: 85vh !important;
+    min-height: auto !important;
+  }
+
+  .policyModalContainer {
+    padding: 12px !important;
+    gap: 16px !important;
+  }
+
+  .policyHeaderSection {
+    gap: 12px !important;
+  }
+
+  .policyHeaderTitle {
+    font-size: 18px !important;
+    line-height: 130% !important;
+  }
+
+  .policyContentSection {
+    gap: 12px !important;
+    max-width: 100% !important;
+  }
+
+  .policyContentContainer {
+    min-height: 120px !important;
+    max-height: calc(30vh - 60px) !important;
+    padding: 12px !important;
+    font-size: 12px !important;
+    overflow: hidden !important;
+  }
+
+  .policyButtonSection {
+    gap: 12px !important;
+    max-width: 100% !important;
+  }
+
+  .policyContinueButton {
+    height: 36px !important;
+    padding: 8px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .policyCheckboxSection {
+    gap: 8px !important;
+  }
+
+  .policyCheckboxLabel {
+    font-size: 11px !important;
+  }
+
+  .policySpinner {
+    height: 120px !important;
+  }
+}
+
+@media screen and (orientation: landscape) and (max-height: 400px) {
+  .policyModalWrapper {
+    max-width: 95vw !important;
+    max-height: 90vh !important;
+    min-height: auto !important;
+  }
+
+  .policyModalContainer {
+    padding: 8px !important;
+    gap: 12px !important;
+  }
+
+  .policyHeaderSection {
+    gap: 8px !important;
+  }
+
+  .policyHeaderTitle {
+    font-size: 16px !important;
+  }
+
+  .policyContentSection {
+    gap: 8px !important;
+  }
+
+  .policyContentContainer {
+    min-height: 100px !important;
+    max-height: calc(25vh - 50px) !important;
+    padding: 8px !important;
+    font-size: 11px !important;
+    overflow: hidden !important;
+  }
+
+  .policyButtonSection {
+    gap: 8px !important;
+  }
+
+  .policyContinueButton {
+    height: 32px !important;
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+  }
+
+  .policyCheckboxLabel {
+    font-size: 10px !important;
+  }
+
+  .policySpinner {
+    height: 100px !important;
+  }
+}

@@ -6,6 +6,7 @@ import {
   PaymentResultDetail,
 } from '@/lib/components/payment/PaymentResultCard';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { trackingRegisterPaymentLog417 } from '@/lib/hooks/useTrackingPayment';
 
 function numberWithCommas(x: string | number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -106,6 +107,7 @@ const PaymentSuccessPage: React.FC = () => {
       },
       { label: 'Mã giao dịch', value: text.transId as string | null },
     ]);
+    trackingRegisterPaymentLog417({ Status: 'Success' });
   }, [router.isReady, router.query]);
 
   const linkBackDetail = useMemo(() => {

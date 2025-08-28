@@ -251,7 +251,12 @@ export const useNoAdsGuide = ({
         setHadSessionAdsTracking(true);
       } else if (hadSessionAdsTracking) {
         // Ads tracking stopped, check if can show guide
-        if (canShowGuide()) {
+        // If logo animation ads is currently playing in session, do NOT show guide
+        const isLogoPlaying =
+          typeof sessionStorage !== 'undefined' &&
+          !!sessionStorage.getItem('session_ads_logo_playing');
+
+        if (canShowGuide() && !isLogoPlaying) {
           // Only count when guide is actually shown
           handleCount();
           setShowNoAdsGuide(true);

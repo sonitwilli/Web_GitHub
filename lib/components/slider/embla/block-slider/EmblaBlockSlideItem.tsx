@@ -152,34 +152,24 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
     return 'embla__slide';
   };
 
-  const slideChildClass = useMemo(() => {
-    const base = `nvm-${block?.block_type} transform transition-transform duration-300`;
-    // Only apply scaling on hover/selected for auto_expansion block type
-    const hoverScale = block?.block_type === 'auto_expansion' ? 'group-hover:scale-[1.075]' : '';
-    const selectedScale =
-      block?.block_type === 'auto_expansion' && slide?.id === selectedSlide?.id
-        ? 'scale-[1.075]'
-        : '';
-    let borderClass = '';
-    if (block?.block_type === 'auto_expansion') {
-      borderClass =
-        slide?.id === selectedSlide?.id
-          ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-white rounded-[12px]'
-          : 'border-[1px] tablet:border-[2px] xl:border-[3px] border-transparent rounded-[12px]';
-    }
-    return `${base} ${hoverScale} ${selectedScale} ${borderClass} ${block?.block_type === 'participant' ? '' : ''}`.trim();
-  }, [block?.block_type, slide?.id, selectedSlide?.id]);
-
   return (
     <div
       ref={slideRef}
-      className={`${getClassName()} group`}
+      className={getClassName()}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
       <div
         ref={slideChildRef}
-        className={slideChildClass}
+        className={`nvm-${block?.block_type} ${
+          block?.block_type === 'auto_expansion' &&
+          slide?.id === selectedSlide?.id
+            ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-white rounded-[12px]'
+            : block?.block_type === 'auto_expansion' &&
+              slide?.id !== selectedSlide?.id
+            ? 'border-[1px] tablet:border-[2px] xl:border-[3px] border-transparent rounded-[12px]'
+            : ''
+        } ${block?.block_type === 'participant' ? '' : ''}`}
       >
         <BlockSlideItem
           block={block}

@@ -59,15 +59,15 @@ export default function PlayerControlBar() {
   const { width } = useScreenSize();
   const { viewportInfo } = useUA();
   // Attach handler to parent and delegate to buttons
-  const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
+  const { getUrlToPlayH264 } = useCodec({ dataChannel, dataStream });
 
   const hiddenControlBarPreview = useMemo(() => {
     return (
-      !getUrlToPlay() &&
+      !getUrlToPlayH264() &&
       previewHandled &&
       isPlaySuccess &&
       dataStream?.trailer_url &&
-      dataStream?.trailer_url !== getUrlToPlay() &&
+      dataStream?.trailer_url !== getUrlToPlayH264() &&
       ['playlist', 'vod'].includes(streamType as StreamType)
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +119,8 @@ export default function PlayerControlBar() {
           <div className="flex items-center justify-center gap-[16px] tablet:gap-[24px]">
             <Report />
             <ChatButton />
-            <Subtitles />
+
+            {isPlaySuccess ? <Subtitles /> : ''}
             {isPlaySuccess ? <AudioButton /> : ''}
 
             <Resolution />

@@ -108,7 +108,7 @@ export default function usePlayer() {
   const { trackingStartFirstFrameLog520 } = useTrackingPlayback();
   const { trackingStartLiveShowLog171 } = useTrackingEvent();
   const { trackingStartFirstFrameLog413 } = useTrackingIPTV();
-  const { getUrlToPlay } = useCodec({
+  const { getUrlToPlayH264 } = useCodec({
     dataChannel,
     dataStream,
     queryEpisodeNotExist,
@@ -689,7 +689,7 @@ export default function usePlayer() {
             const newStream = await getStream({
               channelDetailData: dataChannel,
             });
-            const newUrl = getUrlToPlay({ dataStream: newStream });
+            const newUrl = getUrlToPlayH264({ dataStream: newStream });
             if (newUrl) {
               if (clearErrorInterRef) clearErrorInterRef();
               playVideoWithUrl({ url: newUrl });
@@ -731,7 +731,7 @@ export default function usePlayer() {
         // switch video codec
         if (playingVideoCodec !== VIDEO_CODEC_NAMES.H264_CODEC) {
           dispatch(setCodecError({ codec: playingVideoCodec, value: true }));
-          const nextUrl = getUrlToPlay();
+          const nextUrl = getUrlToPlayH264();
           if (nextUrl) {
             playVideoWithUrl({ url: nextUrl });
           }
@@ -780,7 +780,7 @@ export default function usePlayer() {
           ErrCode: error?.type,
           ErrMessage: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
           ItemName: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
-          Url: getUrlToPlay(),
+          Url: getUrlToPlayH264(),
           ItemId: dataChannel?._id,
         });
         if (setHlsErrors) {

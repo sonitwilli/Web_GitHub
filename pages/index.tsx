@@ -8,6 +8,8 @@ import { createSeoPropsFromMeta } from '@/lib/utils/seo';
 import { useAppSelector } from '@/lib/store';
 import type { GetServerSideProps } from 'next';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
+import { useEffect } from 'react';
+import { trackingLoadBlockDisplayLog511 } from '@/lib/hooks/useTrackingHome';
 
 export const getServerSideProps = (async () => {
   const seoProps = await createSeoPropsFromMeta({
@@ -26,9 +28,14 @@ export default function HomePage() {
   const {
     highLightBlockData,
     highLightBlock,
+    blocksSortedRecommend,
     blocksSortedRecommendNotHighlight,
   } = usePageApi({});
-
+  useEffect(() => {
+    if (blocksSortedRecommend?.length > 0) {
+      trackingLoadBlockDisplayLog511(blocksSortedRecommend);
+    }
+  }, [blocksSortedRecommend]);
   const { isExistedAds } = useAppSelector((state) => state.app);
   useEventConfig();
 

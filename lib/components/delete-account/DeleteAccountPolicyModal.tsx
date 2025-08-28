@@ -59,25 +59,35 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
         onHidden={() => setOpen(false)}
         shouldCloseOnEsc={false}
         shouldCloseOnOverlayClick={false}
-        contentClassName="w-full max-w-[343px] min-h-[400px] max-h-[90vh] tablet:max-w-[576px] tablet:min-h-[540px] tablet:max-h-[90vh] bg-eerie-black rounded-[12px] tablet:rounded-[16px]"
+        contentClassName={`w-full max-w-[343px] min-h-[400px] max-h-[90vh] tablet:max-w-[576px] tablet:min-h-[540px] tablet:max-h-[90vh] bg-eerie-black rounded-[12px] tablet:rounded-[16px] ${styles.policyModalWrapper}`}
         overlayClassName="fixed inset-0 flex justify-center items-center z-[9999] p-4"
       >
         {/* Mobile: 343x400+, Tablet/PC: 576x540 */}
-        <div className="flex flex-col justify-center items-center p-6 tablet:p-8 gap-6 tablet:gap-8 max-h-full overflow-y-auto">
+        <div
+          className={`flex flex-col justify-center items-center p-6 tablet:p-8 gap-6 tablet:gap-8 max-h-full overflow-y-auto ${styles.policyModalContainer}`}
+        >
           {/* Header Section */}
-          <div className="flex flex-col items-center gap-4 w-full max-w-[311px] tablet:max-w-[386px]">
+          <div
+            className={`flex flex-col items-center gap-4 w-full max-w-[311px] tablet:max-w-[386px] ${styles.policyHeaderSection}`}
+          >
             {/* Title */}
-            <h2 className="text-white-smoke font-semibold text-[20px] tablet:text-[24px] leading-[130%] tracking-[0.02em] text-center w-full">
+            <h2
+              className={`text-white-smoke font-semibold text-[20px] tablet:text-[24px] leading-[130%] tracking-[0.02em] text-center w-full ${styles.policyHeaderTitle}`}
+            >
               Điều khoản nội dung khi thực hiện xóa tài khoản
             </h2>
           </div>
 
           {/* Content Section */}
-          <div className="flex flex-col gap-4 w-full max-w-[311px] tablet:max-w-[512px]">
+          <div
+            className={`flex flex-col gap-4 w-full max-w-[311px] tablet:max-w-[512px] ${styles.policyContentSection}`}
+          >
             {/* Policy Content Container */}
             <div className="relative">
               {loading ? (
-                <div className="flex justify-center items-center h-[200px] bg-white-007 rounded-[12px] p-4">
+                <div
+                  className={`flex justify-center items-center min-h-[200px] bg-white-007 rounded-[12px] p-4 ${styles.policySpinner}`}
+                >
                   <div className="icon-spin">
                     <Spinner />
                   </div>
@@ -85,8 +95,10 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
               ) : (
                 <div
                   className={`bg-white-007 rounded-[12px] p-4 text-white-smoke font-normal text-[14px] tablet:text-[16px] leading-[130%] tracking-[0.02em] ${
+                    styles.policyContentContainer
+                  } ${
                     policy.length > 500
-                      ? `min-h-[200px] max-h-[263px] overflow-y-auto ${styles.scrollBar} ${styles.policyContent}`
+                      ? `min-h-[200px] max-h-[calc(50vh-80px)] tablet:max-h-[263px] overflow-y-auto ${styles.scrollBar} ${styles.policyContent}`
                       : 'min-h-[200px]'
                   }`}
                   dangerouslySetInnerHTML={{ __html: policy }}
@@ -96,12 +108,16 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
           </div>
 
           {/* Button Section */}
-          <div className="flex flex-col justify-center items-start gap-4 w-full max-w-[311px] tablet:max-w-[512px]">
+          <div
+            className={`flex flex-col justify-center items-start gap-4 w-full max-w-[311px] tablet:max-w-[512px] ${styles.policyButtonSection}`}
+          >
             {/* Continue Button */}
             <button
               onClick={onSubmit}
               disabled={!checked || loading}
               className={`flex flex-row justify-center items-center px-4 tablet:px-6 py-2 tablet:py-3 gap-2 w-full h-[40px] tablet:h-[47px] rounded-[40px] font-semibold text-[16px] leading-[130%] tracking-[0.02em] transition-all duration-200 ${
+                styles.policyContinueButton
+              } ${
                 checked && !loading
                   ? 'bg-gradient-to-r from-portland-orange to-lust text-white-smoke cursor-pointer hover:opacity-90'
                   : 'bg-charleston-green text-spanish-gray cursor-not-allowed'
@@ -111,7 +127,9 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
             </button>
 
             {/* Checkbox Section */}
-            <div className="flex flex-row items-center gap-2 w-full">
+            <div
+              className={`flex flex-row items-center gap-2 w-full ${styles.policyCheckboxSection}`}
+            >
               <div className="flex flex-row items-center gap-2">
                 {/* Custom Checkbox */}
                 <div className="relative w-6 h-6 flex items-center justify-center">
@@ -152,7 +170,9 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
                 </div>
 
                 {/* Checkbox Label */}
-                <span className="text-white-06 font-normal text-[12px] tablet:text-[14px] leading-[130%] tracking-[0.02em] flex-1">
+                <span
+                  className={`text-white-06 font-normal text-[12px] tablet:text-[14px] leading-[130%] tracking-[0.02em] flex-1 ${styles.policyCheckboxLabel}`}
+                >
                   Tôi đã đọc và đồng ý với{' '}
                   <Link
                     prefetch={false}

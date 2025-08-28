@@ -7,6 +7,9 @@ import {
 } from '@/lib/api/account';
 import { showToast } from '@/lib/utils/globalToast';
 import { TITLE_SEND_OTP_FAIL, DEFAULT_ERROR_MSG } from '@/lib/constant/texts';
+import { AxiosError } from 'axios';
+import { useDispatch } from 'react-redux';
+import { openLoginModal } from '@/lib/store/slices/loginSlice';
 
 export interface PackageItem {
   plan_name?: string;
@@ -23,6 +26,7 @@ interface DeleteAccountStatusResponse {
 }
 
 export function useDeleteAccount() {
+  const dispatch = useDispatch();
   const checkStatus =
     useCallback(async (): Promise<DeleteAccountStatusResponse> => {
       try {
@@ -57,10 +61,15 @@ export function useDeleteAccount() {
         };
       }
       return {};
-    } catch {
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          dispatch(openLoginModal());
+        }
+      }
       return {};
     }
-  }, []);
+  }, [dispatch]);
 
   const sendOtp = useCallback(async (phone: string, verify_token: string) => {
     try {

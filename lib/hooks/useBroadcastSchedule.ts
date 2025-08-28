@@ -6,7 +6,7 @@ import {
   ScheduleItem,
   ChannelDetailType,
 } from '@/lib/api/channel';
-import { getVietnamTime, formatVietnamDateKey } from '@/lib/utils/timeUtilsVN';
+
 import { usePlayerPageContext } from '@/lib/components/player/context/PlayerPageContext';
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
@@ -18,7 +18,6 @@ import {
   setCurrentTime,
   setScheduleList,
   setStateErrorBroadcastSchedule,
-  setAllTimeShiftItems,
 } from '../store/slices/broadcastScheduleSlice';
 
 export function useBroadcastSchedule(
@@ -40,11 +39,8 @@ export function useBroadcastSchedule(
     currentTime,
     scheduleList,
     stateErrorBroadcastSchedule,
-    allTimeShiftItems,
   } = broadcastScheduleState;
 
-  // Auto timeshift state
-  const lastEndVideoTimeRef = useRef<number>(0);
   const hasHandledQuery = useRef(false);
 
   // Check if item is currently live
@@ -56,12 +52,9 @@ export function useBroadcastSchedule(
   // Find item by schedule ID
   const findItemById = useCallback(
     (scheduleId: string) => {
-      return (
-        scheduleList.find((i) => i.id === scheduleId) ||
-        allTimeShiftItems.find((i) => i.id === scheduleId)
-      );
+      return scheduleList.find((i) => i.id === scheduleId);
     },
-    [scheduleList, allTimeShiftItems],
+    [scheduleList],
   );
 
   // Clear timeshift from URL
@@ -74,14 +67,8 @@ export function useBroadcastSchedule(
   }, [router]);
 
   // Get context from PlayerPageContext
-  const {
-    isEndVideo,
-    setFromTimeshiftToLive,
-    streamType,
-    showLoginPlayer,
-    setShowLoginPlayer,
-    setIsPlaySuccess,
-  } = usePlayerPageContext();
+  const { setFromTimeshiftToLive, setShowLoginPlayer, setIsPlaySuccess } =
+    usePlayerPageContext();
 
   // Update current time every minute
   useEffect(() => {
@@ -144,51 +131,6 @@ export function useBroadcastSchedule(
     fetchBroadcastSchedule(selectedDate);
   }, [selectedDate, channelId, fetchBroadcastSchedule]);
 
-  // Fetch all timeshift items for auto next functionality
-  const fetchAllTimeShiftItems = useCallback(async () => {
-    if (!channelId || !dataChannel) return;
-
-    try {
-      const allItems: ScheduleItem[] = [];
-      const surroundingDates = [];
-
-      // Generate surrounding dates (-2 to +4 days)
-      for (let i = -2; i <= 4; i++) {
-        const date = new Date(getVietnamTime());
-        date.setDate(date.getDate() + i);
-        surroundingDates.push(formatVietnamDateKey(date));
-      }
-
-      // Fetch schedule for all surrounding dates
-      for (const date of surroundingDates) {
-        try {
-          const res = await getBroadcastSchedule({ channelId, daily: date });
-          if (res?.data?.data?.schedule_list?.length) {
-            allItems.push(...res.data.data.schedule_list);
-          }
-        } catch {
-          return;
-        }
-      }
-
-      if (allItems.length > 0) {
-        dispatch(setAllTimeShiftItems(allItems));
-      }
-    } catch {
-      return;
-    }
-  }, [channelId, dataChannel, dispatch]);
-
-  useEffect(() => {
-    if (channelId !== router?.query?.id) {
-      dispatch(setAllTimeShiftItems([]));
-      fetchAllTimeShiftItems();
-    } else if (!allTimeShiftItems.length) {
-      fetchAllTimeShiftItems();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fetchAllTimeShiftItems, channelId, router?.query?.id, dispatch]);
-
   // Handle timeshift selection
   const handleTimeShiftSelect = useCallback(
     async (scheduleId?: string) => {
@@ -230,10 +172,6 @@ export function useBroadcastSchedule(
           dispatch(setActiveScheduleId(scheduleId));
           onScheduleSelect?.(res.data.data.url);
         } else {
-          // API returned success but no URL - treat as error
-          console.warn(
-            `Timeshift API returned no URL for schedule: ${scheduleId}`,
-          );
           // Clear timeshift state and URL
           clearTimeshiftFromUrl();
           dispatch(setActiveScheduleId(''));
@@ -262,11 +200,6 @@ export function useBroadcastSchedule(
           }
         }
 
-        // For any other error, clear timeshift state and return to live
-        console.error(
-          `Failed to get timeshift stream for schedule: ${scheduleId}`,
-          err,
-        );
         clearTimeshiftFromUrl();
         dispatch(setActiveScheduleId(''));
         onScheduleSelect?.('');
@@ -287,68 +220,6 @@ export function useBroadcastSchedule(
     ],
   );
 
-  // Check for live program when schedule data is loaded
-  useEffect(() => {
-    if (!activeScheduleId || !allTimeShiftItems.length) return;
-
-    const item = findItemById(activeScheduleId);
-    if (item && isItemLive(item)) {
-      // Clear timeshift and switch to live
-      dispatch(setActiveScheduleId(''));
-      onScheduleSelect?.('');
-      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-      if (setIsPlaySuccess) setIsPlaySuccess(false);
-      clearTimeshiftFromUrl();
-    }
-  }, [
-    allTimeShiftItems,
-    activeScheduleId,
-    findItemById,
-    isItemLive,
-    dispatch,
-    onScheduleSelect,
-    setFromTimeshiftToLive,
-    setIsPlaySuccess,
-    clearTimeshiftFromUrl,
-  ]);
-
-  // Handle deferred timeshift when allTimeShiftItems gets populated
-  useEffect(() => {
-    if (!router.isReady || !allTimeShiftItems.length) return;
-
-    const urlScheduleId = router.query?.time_shift_id as string;
-    // Only handle if we have URL parameter but no active schedule (missed in initial load)
-    if (urlScheduleId && !activeScheduleId && hasHandledQuery.current) {
-      const item = findItemById(urlScheduleId);
-      if (item) {
-        if (isItemLive(item)) {
-          // Clear URL and switch to live
-          clearTimeshiftFromUrl();
-          dispatch(setActiveScheduleId(''));
-          onScheduleSelect?.('');
-          if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-          if (setIsPlaySuccess) setIsPlaySuccess(false);
-        } else {
-          // Proceed with timeshift
-          handleTimeShiftSelect(urlScheduleId);
-        }
-      }
-    }
-  }, [
-    router.isReady,
-    router.query?.time_shift_id,
-    allTimeShiftItems,
-    activeScheduleId,
-    findItemById,
-    isItemLive,
-    handleTimeShiftSelect,
-    clearTimeshiftFromUrl,
-    dispatch,
-    onScheduleSelect,
-    setFromTimeshiftToLive,
-    setIsPlaySuccess,
-  ]);
-
   // Reset all stores when channel changes
   useEffect(() => {
     // Clear timeshift from URL without triggering re-render
@@ -358,145 +229,17 @@ export function useBroadcastSchedule(
         delete q.time_shift_id;
         router.replace({ query: { ...q } }, undefined, { shallow: true });
       }
-      // Reset the hasHandledQuery flag for new channel
       hasHandledQuery.current = false;
     }
   }, [channelId, router]);
 
-  // Check if item is replayable
-  const isItemReplayable = useCallback(
-    (item: ScheduleItem) => {
-      const nowTime = currentTime * 1000;
-      const end = Number(item.end_time) * 1000;
-
-      // Use timeshift_limit from dataChannel to determine replay window
-      // Default to 24 hours if timeshift_limit is not available
-      const timeshiftLimitHours = dataChannel?.timeshift_limit || 24;
-      const replayWindowStart = nowTime - timeshiftLimitHours * 60 * 60 * 1000;
-
-      const isReplayable = end >= replayWindowStart && end < nowTime;
-      const isTimeshiftDisabled = dataChannel?.timeshift === 0;
-
-      return isReplayable && !isTimeshiftDisabled;
-    },
-    [currentTime, dataChannel],
-  );
-
-  // Find live item
-  const findLiveItem = useCallback(() => {
-    return allTimeShiftItems.find((item: ScheduleItem) => {
-      const nowTime = currentTime * 1000;
-      const end = Number(item.end_time) * 1000;
-      return nowTime >= Number(item.start_time) * 1000 && nowTime < end;
-    });
-  }, [allTimeShiftItems, currentTime]);
-
-  // Auto timeshift functionality
-  const handleAutoNextItem = useCallback(() => {
-    if (!allTimeShiftItems.length || !activeScheduleId) {
-      return;
-    }
-
-    const currentIndex = allTimeShiftItems.findIndex(
-      (item: ScheduleItem) => item.id === activeScheduleId,
-    );
-
-    if (currentIndex === -1) {
-      return;
-    }
-
-    // Find next available timeshift item
-    let nextIndex = currentIndex + 1;
-    let nextItem: ScheduleItem | null = null;
-
-    // Look for next timeshift item
-    while (nextIndex < allTimeShiftItems.length) {
-      const item = allTimeShiftItems[nextIndex];
-      if (isItemReplayable(item)) {
-        nextItem = item;
-        break;
-      }
-      nextIndex++;
-    }
-
-    // If no next timeshift item, check if there's a live item
-    if (!nextItem) {
-      const liveItem = findLiveItem();
-
-      if (liveItem) {
-        try {
-          // Switch to live
-          if (setFromTimeshiftToLive && streamType === 'timeshift') {
-            if (showLoginPlayer && setShowLoginPlayer) {
-              setShowLoginPlayer(false);
-            }
-            if (window.hlsPlayer || window.shakaPlayer) {
-              setFromTimeshiftToLive(new Date().getTime());
-            }
-          }
-
-          // Update URL and state
-          clearTimeshiftFromUrl();
-          dispatch(setActiveScheduleId(''));
-          onScheduleSelect?.('');
-        } catch {
-          return;
-        }
-        return;
-      }
-    }
-
-    // Switch to next timeshift item
-    if (nextItem) {
-      try {
-        handleTimeShiftSelect(nextItem.id);
-      } catch {
-        return;
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    allTimeShiftItems,
-    activeScheduleId,
-    currentTime,
-    dataChannel,
-    handleTimeShiftSelect,
-    isItemReplayable,
-    findLiveItem,
-    setFromTimeshiftToLive,
-    streamType,
-    showLoginPlayer,
-    setShowLoginPlayer,
-    clearTimeshiftFromUrl,
-    onScheduleSelect,
-    dispatch,
-  ]);
-
-  // Listen for video ended event via isEndVideo
-  useEffect(() => {
-    if (isEndVideo && isEndVideo > lastEndVideoTimeRef.current) {
-      lastEndVideoTimeRef.current = isEndVideo;
-
-      // Only auto next if we're in timeshift mode
-      if (activeScheduleId) {
-        // Add a small delay to ensure the video has fully ended
-        setTimeout(() => {
-          try {
-            handleAutoNextItem();
-          } catch {
-            return;
-          }
-        }, 1000);
-      }
-    } else if (isEndVideo === 0) {
-      // Reset the last end video time when isEndVideo is reset to 0
-      lastEndVideoTimeRef.current = 0;
-    }
-  }, [isEndVideo, activeScheduleId, handleAutoNextItem]);
-
   // Auto handle timeshift when reload page with param time_shift_id
   useEffect(() => {
     if (!router.isReady || hasHandledQuery.current) return;
+
+    // Wait for schedule API to complete (either with data or error state)
+    if (!scheduleList.length && !stateErrorBroadcastSchedule) return;
+
     const urlScheduleId = router.query?.time_shift_id as string;
     if (
       urlScheduleId &&
@@ -505,55 +248,30 @@ export function useBroadcastSchedule(
     ) {
       hasHandledQuery.current = true;
 
-      // Check if this schedule is currently live before setting timeshift
+      // Only search in current scheduleList (today's schedule)
       const item = findItemById(urlScheduleId);
+
       if (item && isItemLive(item)) {
-        // Clear URL and switch to live
+        // Schedule found and currently live, switch to live
         clearTimeshiftFromUrl();
         dispatch(setActiveScheduleId(''));
         onScheduleSelect?.('');
         if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
         if (setIsPlaySuccess) setIsPlaySuccess(false);
-      } else if (item) {
-        // Item found and not live, proceed with timeshift
-        handleTimeShiftSelect(urlScheduleId);
-      } else {
-        // Item not found yet - either schedule data not loaded or invalid ID
-        // Wait for allTimeShiftItems to be populated and retry
-        const retryTimeshift = () => {
-          const foundItem = findItemById(urlScheduleId);
-          if (foundItem) {
-            if (isItemLive(foundItem)) {
-              // Clear URL and switch to live
-              clearTimeshiftFromUrl();
-              dispatch(setActiveScheduleId(''));
-              onScheduleSelect?.('');
-              if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-              if (setIsPlaySuccess) setIsPlaySuccess(false);
-            } else {
-              // Proceed with timeshift
-              handleTimeShiftSelect(urlScheduleId);
-            }
-          } else {
-            // Item still not found after data loaded - invalid schedule ID
-            console.warn(`Invalid timeshift schedule ID: ${urlScheduleId}`);
-            clearTimeshiftFromUrl();
-            dispatch(setActiveScheduleId(''));
-            onScheduleSelect?.('');
-          }
-        };
-
-        // Set a timeout to retry after schedule data loads
-        const timeoutId = setTimeout(retryTimeshift, 2000);
-
-        // Store cleanup function
-        return () => clearTimeout(timeoutId);
+      } else if (!item) {
+        clearTimeshiftFromUrl();
+        dispatch(setActiveScheduleId(''));
+        onScheduleSelect?.('');
+        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+        if (setIsPlaySuccess) setIsPlaySuccess(false);
       }
     }
   }, [
     router.isReady,
     router.query?.time_shift_id,
     activeScheduleId,
+    scheduleList, // Wait for scheduleList to be populated
+    stateErrorBroadcastSchedule, // Also wait for API completion (error state)
     handleTimeShiftSelect,
     findItemById,
     isItemLive,
@@ -563,6 +281,13 @@ export function useBroadcastSchedule(
     setFromTimeshiftToLive,
     setIsPlaySuccess,
   ]);
+
+  useEffect(() => {
+    if (router.query?.time_shift_id) {
+      handleTimeShiftSelect(router.query?.time_shift_id as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Setter functions
   const setSelectedDateCallback = useCallback(
@@ -589,6 +314,5 @@ export function useBroadcastSchedule(
     activeScheduleId,
     setActiveScheduleId: setActiveScheduleIdCallback,
     dataChannel,
-    allTimeShiftItems,
   };
 }

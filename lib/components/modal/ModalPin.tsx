@@ -43,19 +43,12 @@ const ModalPin = forwardRef<ModalPinRef, ModalPinProps>(
       onConfirm,
       onForget,
     },
-    ref,
+    ref
   ) => {
     const [otp, setOtp] = useState<string[]>(defaultValue);
     const [error, setError] = useState<string>('');
 
     const otpComputed = useMemo(() => otp.join(''), [otp]);
-
-    useEffect(() => {
-      if (otpComputed.length === 4 && type === 'access') {
-        handleConfirm();
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [otpComputed]);
 
     // Sử dụng useImperativeHandle để định nghĩa các phương thức của ref
     useImperativeHandle(ref, () => ({
@@ -70,12 +63,13 @@ const ModalPin = forwardRef<ModalPinRef, ModalPinProps>(
       }
     }, [defaultValue]);
 
+    // Chỉ gọi onConfirm một lần khi đủ 4 số PIN cho type 'access'
     useEffect(() => {
-      if (type === 'access' && otp.join('').length === 4) {
-        onConfirm?.(otp.join(''));
+      if (type === 'access' && otpComputed.length === 4) {
+        onConfirm?.(otpComputed);
       }
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [otp]);
+    }, [otpComputed, type]);
 
     const disabledConfirm = () => {
       const otpValue = otp.join('');
@@ -165,7 +159,7 @@ const ModalPin = forwardRef<ModalPinRef, ModalPinProps>(
         </div>
       </div>
     );
-  },
+  }
 );
 
 // Đặt tên hiển thị cho component để dễ debug

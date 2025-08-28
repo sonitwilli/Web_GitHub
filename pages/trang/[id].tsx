@@ -17,6 +17,7 @@ import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
 import { loadJsScript } from '@/lib/utils/methods';
 import { HISTORY_TEXT } from '@/lib/constant/texts';
+import { trackingLoadBlockDisplayLog511 } from '@/lib/hooks/useTrackingHome';
 
 export const getServerSideProps = (async (context) => {
   const { id } = context.params as { id: string };
@@ -52,8 +53,18 @@ export default function CategoryPage() {
     highLightBlockData,
     highLightBlock,
     blocksSortedRecommendNotHighlight,
+    blocksSortedRecommend,
   } = usePageApi({});
-
+  useEffect(() => {
+    if (blocksSortedRecommend?.length > 0) {
+      trackingLoadBlockDisplayLog511(
+        blocksSortedRecommend.filter(
+          (item) =>
+            item?.need_recommend === '1' || item?.need_recommend === '2',
+        ),
+      );
+    }
+  }, [blocksSortedRecommend]);
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { isExistedAds } = useAppSelector((state) => state.app);

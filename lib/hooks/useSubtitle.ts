@@ -98,6 +98,7 @@ export default function useSubtitle() {
           }
           if (playerName === 'shaka' && window.shakaPlayer) {
             window.shakaPlayer.setTextTrackVisibility(false);
+            window.shakaPlayer.selectTextLanguage(null);
           }
           return;
         }

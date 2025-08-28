@@ -7,6 +7,7 @@ import {
 } from '@/lib/components/payment/PaymentResultCard';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { trackingPaymentObj } from './thanh-cong';
+import { trackingRegisterPaymentLog417 } from '@/lib/hooks/useTrackingPayment';
 
 function numberWithCommas(x: string | number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -96,6 +97,7 @@ const PaymentFailPage: React.FC = () => {
       },
       { label: 'Mã giao dịch', value: text.transId as string | null },
     ]);
+    trackingRegisterPaymentLog417({ Status: 'Failed' });
   }, [router.isReady, router.query]);
 
   const handleRetry = useCallback(() => {

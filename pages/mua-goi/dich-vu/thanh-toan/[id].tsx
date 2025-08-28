@@ -11,6 +11,7 @@ import {
 } from '@/lib/constant/paymentMethods';
 import { checkTransactionStatusApi } from '@/lib/api/payment';
 import { trackingPaymentObj } from './thanh-cong';
+import { trackingRegisterPaymentLog417 } from '@/lib/hooks/useTrackingPayment';
 
 function numberWithCommas(x: string | number) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -172,6 +173,7 @@ const PendingPaymentPage: React.FC = () => {
             : null,
       },
     ]);
+    trackingRegisterPaymentLog417({ Event: 'Pending' });
   }, [router.isReady, router.query, redirectUrl]);
 
   // Polling logic (simulate startChecking)

@@ -35,8 +35,8 @@ export default function useCodec({
 }: Props) {
   // const { codecError } = useAppSelector((s) => s.player);
   const dispatch = useAppDispatch();
-    const { previewHandled } = usePlayerPageContext(); 
-    const getCodecUrls = useCallback(
+  const { previewHandled, fetchChannelCompleted } = usePlayerPageContext();
+  const getCodecUrls = useCallback(
     ({ dataChannel: channelParam, dataStream: streamParam }: Props = {}) => {
       const channelInfo = channelParam || dataChannel || {};
       const streamInfo = streamParam || dataStream || {};
@@ -314,13 +314,104 @@ export default function useCodec({
     [dataChannel, dataStream, getCodecUrls, dispatch, queryEpisodeNotExist],
   );
 
+  const getCodecUrlsH264 = useCallback(
+    ({ dataChannel: channelParam, dataStream: streamParam }: Props = {}) => {
+      const channelInfo = channelParam || dataChannel || {};
+      const streamInfo = streamParam || dataStream || {};
+      const {
+        url_dash,
+        url_hls,
+        url_dash_drm,
+        url_hls_drm,
+        url_dash_no_drm,
+        url_sub,
+        url_clean,
+        url,
+      } = streamInfo || {};
+      const href = window.location.href;
+      const isLive =
+        href.includes('/xem-truyen-hinh/') ||
+        href.includes('/su-kien/') ||
+        href.includes('/cong-chieu/');
+      const isDrm =
+        channelInfo.verimatrix === true ||
+        channelInfo.verimatrix == '1' ||
+        channelInfo.drm === true ||
+        channelInfo.drm == '1';
+
+      let h264;
+      const parser = new UAParser(navigator.userAgent);
+      const browser = parser.getBrowser().name;
+
+      if (browser?.toUpperCase()?.includes('SAFARI') || (isLive && !isDrm)) {
+        // safari chỉ chạy HLS
+        h264 = isDrm
+          ? url_hls_drm || (previewHandled && url_hls)
+          : url_hls || url;
+      } else {
+        h264 = isDrm
+          ? url_dash_drm || url_hls_drm || url_dash || url_hls
+          : url_dash_no_drm || url_hls || url_sub || url_clean || url;
+      }
+      return {
+        H264_CODEC: h264 || url,
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [dataChannel, dataStream],
+  );
+
+  const getUrlToPlayH264 = useCallback(
+    ({ dataChannel: channelParam, dataStream: streamParam }: Props = {}) => {
+      // https://fptplay.vn/xem-video/multicodecs-revision-nondrm-6733306f5b1076410fee34ed
+      if (typeof window === 'undefined') {
+        return;
+      }
+      const channelInfo = channelParam || dataChannel || {};
+      if (queryEpisodeNotExist && channelInfo?.trailer_info?.url) {
+        return channelInfo?.trailer_info?.url;
+      }
+      const streamInfo = streamParam || dataStream || {};
+      const codecUrls =
+        getCodecUrlsH264({
+          dataChannel: channelInfo,
+          dataStream: streamInfo,
+        }) || {};
+      const result = codecUrls?.H264_CODEC;
+      dispatch(setPlayingVideoCodec(VIDEO_CODEC_NAMES.H264_CODEC));
+      return result;
+    },
+    [dataChannel, dataStream, getCodecUrlsH264, dispatch, queryEpisodeNotExist],
+  );
+
   const urlToPlay = useMemo(() => {
-    return getUrlToPlay();
+    return getUrlToPlayH264();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataChannel, dataStream]);
+
+  const isVideoCodecNotSupported = useMemo(() => {
+    if (!fetchChannelCompleted) {
+      return false;
+    }
+    if (!dataChannel) {
+      return false;
+    }
+    if (!dataStream) {
+      return false;
+    }
+    const keysChannel = Object.keys(dataChannel);
+    const keysStream = Object.keys(dataStream);
+    if (!keysChannel?.length || !keysStream?.length) {
+      return false;
+    }
+    return !getUrlToPlayH264({ dataChannel, dataStream });
+  }, [fetchChannelCompleted, dataStream, dataChannel, getUrlToPlayH264]);
 
   return {
     getUrlToPlay,
     urlToPlay,
+    getCodecUrlsH264,
+    getUrlToPlayH264,
+    isVideoCodecNotSupported,
   };
 }

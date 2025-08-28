@@ -94,7 +94,7 @@ const BroadcastSchedule: FC<Props> = ({
   );
   const surroundingDates = useMemo(() => {
     const result: string[] = [];
-    for (let i = -2; i <= 4; i++) {
+    for (let i = -3; i <= 3; i++) {
       const date = new Date(currentDate);
       date.setDate(currentDate.getDate() + i);
       result.push(formatVietnamDateKey(date));

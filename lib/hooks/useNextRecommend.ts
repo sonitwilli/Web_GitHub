@@ -85,6 +85,8 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     dataStream,
     videoCurrentTime,
     isLastPlaylistVideo,
+    nextRecommendCancelled,
+    setNextRecommendCancelled,
   } = usePlayerPageContext();
   const { isFinalEpisode, vodId } = useVodPageContext();
 
@@ -106,7 +108,15 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   // Reset cancelled state when URL changes (new episode)
   useEffect(() => {
     setIsCancelled(false);
-  }, [router.asPath]);
+    setNextRecommendCancelled?.(false);
+  }, [router.asPath, setNextRecommendCancelled]);
+
+  // Sync local cancelled state with context
+  useEffect(() => {
+    if (nextRecommendCancelled && !isCancelled) {
+      setIsCancelled(true);
+    }
+  }, [nextRecommendCancelled, isCancelled]);
 
   // Generate recommend data - ONLY from API, no fallback
   const recommendData = useMemo((): NextRecommendData | null => {
@@ -126,36 +136,38 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
 
       try {
         let res;
-
         // Check if this is a playlist
-        if (streamType === 'playlist' && dataPlaylist?.data?.id) {
+        if (streamType === 'playlist' && vodId) {
           // For playlists, use playlist API
           const structureId = dataChannel?.list_structure_id?.[0];
-          res = await getPlaylistNextVideos(dataPlaylist.data.id, structureId);
+          res = await getPlaylistNextVideos(vodId, structureId);
 
           if (res.data?.data?.[0]) {
-            const nextVideo = res.data.data[0];
+            const nextVideo = res.data.data[0] as ExtendedBlockSlideItemType;
             setApiRecommendData({
-              _id: String(nextVideo.id || ''),
-              id: String(nextVideo.id || ''),
+              _id: String(nextVideo._id || nextVideo.id || ''),
+              id: String(nextVideo.id || nextVideo._id || ''),
               title: nextVideo.title,
-              title_vie: nextVideo.title,
+              title_vie: nextVideo.title_vie || nextVideo.title,
               image: {
-                landscape_title: nextVideo.landscape,
-                landscape: nextVideo.landscape,
+                landscape_title: nextVideo.image?.landscape_title,
+                landscape: nextVideo.image?.landscape,
               },
               detail: {
-                priority_tag: nextVideo.priority_tag,
-                meta_data: nextVideo.meta_data || [],
-                description: '', // PlayListVideo doesn't have description
-                country: '', // PlayListVideo doesn't have country
-                duration_s: nextVideo.duration_s,
-                release: '', // PlayListVideo doesn't have release
+                priority_tag: nextVideo.detail?.priority_tag,
+                meta_data:
+                  nextVideo.detail?.meta_data || nextVideo.meta_data || [],
+                description:
+                  nextVideo.detail?.description || nextVideo.description,
+                country: nextVideo.detail?.country,
+                duration_s: nextVideo.detail?.duration_s,
+                release: nextVideo.detail?.release,
               },
-              is_trailer: '', // PlayListVideo doesn't have is_trailer
-              type: 'vod_playlist',
-              id_trailer: '', // PlayListVideo doesn't have id_trailer
-              poster_overlays: [],
+              is_trailer: nextVideo.is_trailer,
+              type: nextVideo.type || 'vod',
+              id_trailer: nextVideo.id_trailer,
+              poster_overlays:
+                (nextVideo.poster_overlays as PosterOverlayItem[]) || [],
             });
           }
         } else if (vodId) {
@@ -370,6 +382,7 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   const onClose = () => {
     setIsCancelled(true);
     setIsVisible(false);
+    setNextRecommendCancelled?.(true);
   };
 
   return {

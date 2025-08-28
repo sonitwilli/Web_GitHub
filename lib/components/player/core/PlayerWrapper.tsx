@@ -398,7 +398,10 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   );
 
   // Enable keyboard controls for player
-  useKeyboardControls();
+  if (window.location.pathname.includes('/xem-video')) {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    useKeyboardControls();
+  }
 
   const handleExitPreviewEvent = useCallback(() => {}, []);
   const handleBuyPackage = useCallback(() => {}, []);
@@ -492,13 +495,13 @@ export default function PlayerWrapper({ children, eventId }: Props) {
                 type="fullcreen"
               />
             )}
-            {controlPopupType === 'subtile' && (
+            {controlPopupType === 'subtile' && isPlaySuccess && (
               <SubtitleContent
                 onClick={() => setControlPopupType(null)}
                 type="fullcreen"
               />
             )}
-            {controlPopupType === 'audio' && (
+            {controlPopupType === 'audio' && isPlaySuccess && (
               <AudioContent
                 onClick={() => setControlPopupType(null)}
                 type="fullcreen"

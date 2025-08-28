@@ -1,6 +1,35 @@
 {
     "versions": [
         {
+            "version": "8.0.33",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Deeplink] Hiển thị sai format deeplink các giải đấu",
+                "[WEB][Truyền hình] Lỗi chỉ enable timeshift 24h cho kênh set timeshift 48h/ 72h",
+                "[WEB][Playlist] Lỗi không hiển thị màn hình nextmovie khi xem hết item cuối cùng danh sách",
+                "[WEB][XoaTaiKhoan] Lỗi không hiển thị popup Đăng nhập tài khoản khi nhấn vào btn Tiếp tục ở màn hình Điều khoản.. đối với trường hợp thiết bị đã bị đá bởi 1 thiết bị khác",
+                "[WEB][Preview kênh] Lỗi hiện popup còn lượt xem khi chưa login",
+                "[WEB][Preview kênh] Lỗi play preview > 5p",
+                "[WEB][PlayerVOD] NextChapter/NextMovie: Lỗi autonext qua tập/phim tiếp theo khi đã nhấn xem danh đề/tắt màn hình nextmovie",
+                "[WEB][Player][Keyboard shortcut] Sự kiện, Truyền hình play/ pause được khi nhấn phím trên keyboard",
+                "[WEB][ChatbotAI] Lỗi UI khung input trường hợp đạt giới hạn lượt hỏi trong ngày",
+                "[WEB][Sự kiện] Reponsive mode_ Lỗi không hiện thông báo không hỗ trợ xem DRM trên mobile mode",
+                "[WEB][Highlight] Lỗi không auto play nội dung có video trailer ở highlight",
+                "[Web][Truyền hình] Không hiển thị màn hình block danh sách Tất cả các kênh khi search"
+            ]
+        }, 
+        {
+            "version": "8.0.32",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][ProfileKID] Lỗi không hiển thị popup chặn đối với nội dung VOD/Truyền hình/Sự kiện (profile thường) khi sử dụng hồ sơ trẻ em",
+                "[WEB][V5][ABR] Lỗi chỉ play chất lượng thấp nhất không switch lên chất lượng cao hơn khi chọn Auto ở luồng H265",
+                "[WEB][XoaTaiKhoan] Lỗi hiển thị sai số lượng item dịch vụ đã mua ở mode responsive",
+                "[WEB][Truyền hình] Hiển thị sai tên chương trình timeshift khi phát lại lần nữa",
+                "[WEB][Page] Lỗi hiển thị tên category dài"
+            ]
+        }, 
+        {
             "version": "8.0.31",
             "date": "Dự kiến",
             "content": [
