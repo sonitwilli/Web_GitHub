@@ -491,7 +491,7 @@ const NoticeModal = forwardRef<NoticeModalRef, NoticeModalProps>(
             {standardNoticeContent.title}
           </h4>
           <div
-            className={`text-center mb-[32px] modal-content ${ModalContentClass}`}
+            className={`text-center mb-[32px] modal-content-tracking ${ModalContentClass}`}
             dangerouslySetInnerHTML={{ __html: standardNoticeContent.content }}
           />
           {state.error && (

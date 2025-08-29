@@ -113,7 +113,7 @@ export default function ModalShare({
       </button>
 
       <div className="w-full  ">
-        <div className="text-center font-[500] text-[20px] mb-[24px]">
+        <div className="text-center font-[500] text-[20px] mb-[24px] modal-content-tracking">
           Chia sẻ
         </div>
         <div className="flex gap-[16px] mb-[32px] justify-around">

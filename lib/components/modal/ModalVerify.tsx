@@ -554,7 +554,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
           shouldCloseOnOverlayClick={false}
         >
           <div className="content-verify">
-            <h4 className="text-center text-[20px] mt-4 xl:mt-0 sm:text-[24px] leading-[1.3] font-semibold">
+            <h4 className="text-center text-[20px] mt-4 xl:mt-0 sm:text-[24px] leading-[1.3] font-semibold modal-content-tracking">
               {verifyContent.title}
             </h4>
             <div>

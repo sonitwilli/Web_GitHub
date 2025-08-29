@@ -133,7 +133,6 @@ export const Commands: LivechatMethods = {
         showToast({
           title: args?.data?.[0]?.title || '',
           desc: args?.data?.[0]?.desc || '',
-          wrapperStyle: 'w-[480px]',
           styleData: 'rounded-lg bg-black-olive-404040',
           icon: args?.data?.[0]?.icon || '/images/logo/logo-fptplay-mini.png',
         });

@@ -35,7 +35,13 @@ export default function useCodec({
 }: Props) {
   // const { codecError } = useAppSelector((s) => s.player);
   const dispatch = useAppDispatch();
-  const { previewHandled, fetchChannelCompleted } = usePlayerPageContext();
+  const {
+    previewHandled,
+    fetchChannelCompleted,
+    loginManifestUrl,
+    showModalLogin,
+    showLoginPlayer,
+  } = usePlayerPageContext();
   const getCodecUrls = useCallback(
     ({ dataChannel: channelParam, dataStream: streamParam }: Props = {}) => {
       const channelInfo = channelParam || dataChannel || {};
@@ -390,7 +396,13 @@ export default function useCodec({
   }, [dataChannel, dataStream]);
 
   const isVideoCodecNotSupported = useMemo(() => {
-    if (!fetchChannelCompleted) {
+    if (
+      !fetchChannelCompleted ||
+      previewHandled ||
+      loginManifestUrl ||
+      showModalLogin ||
+      showLoginPlayer
+    ) {
       return false;
     }
     if (!dataChannel) {
@@ -405,7 +417,16 @@ export default function useCodec({
       return false;
     }
     return !getUrlToPlayH264({ dataChannel, dataStream });
-  }, [fetchChannelCompleted, dataStream, dataChannel, getUrlToPlayH264]);
+  }, [
+    fetchChannelCompleted,
+    dataStream,
+    dataChannel,
+    getUrlToPlayH264,
+    previewHandled,
+    loginManifestUrl,
+    showModalLogin,
+    showLoginPlayer,
+  ]);
 
   return {
     getUrlToPlay,

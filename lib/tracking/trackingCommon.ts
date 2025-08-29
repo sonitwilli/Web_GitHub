@@ -94,7 +94,7 @@ export const trackingShowPopupLog191 = ({ ItemName }: TrackingParams = {}) => {
   }
   let itemId = '';
   let itemName = ItemName || '';
-  const content = document.querySelector('.modal-content');
+  const content = document.querySelector('.modal-content-tracking');
   if (content) {
     itemName = content.textContent || '';
   }

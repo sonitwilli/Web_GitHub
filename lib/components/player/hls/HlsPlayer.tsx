@@ -380,6 +380,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 
   useEffect(() => {
     if (srcTimeShift) {
+      initHls();
       playVideo();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

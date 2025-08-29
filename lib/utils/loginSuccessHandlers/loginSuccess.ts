@@ -1,4 +1,4 @@
-import { PATH_BEFORE_LOGIN_SSO, TYPE_LOGIN } from '@/lib/constant/texts';
+import { TYPE_LOGIN } from '@/lib/constant/texts';
 import { reloadPreviousPath } from './reloadPreviousPath';
 
 export const loginSuccess = () => {
@@ -20,10 +20,6 @@ export const loginSuccess = () => {
     if (typeLogin === 'fid' && shouldRedirectToHome) {
       window.location.href = '/';
       return;
-    }
-
-    if (localStorage.getItem(PATH_BEFORE_LOGIN_SSO)) {
-      localStorage.removeItem(PATH_BEFORE_LOGIN_SSO);
     }
 
     window.location.reload();

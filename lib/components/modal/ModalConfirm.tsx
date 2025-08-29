@@ -126,7 +126,7 @@ const ConfirmDialog = forwardRef<ConfirmDialogRef, ConfirmDialogProps>(
             }`}
           >
             <span
-              className="modal-content"
+              className="modal-content-tracking"
               dangerouslySetInnerHTML={{
                 __html: modalContent?.content as string,
               }}

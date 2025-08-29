@@ -134,6 +134,7 @@ export default function Header() {
       'tim-kiem',
       'short-videos',
       'thong-tin',
+      'release'
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -449,6 +450,7 @@ export default function Header() {
         'tim-kiem',
         'short-videos',
         'thong-tin',
+        'release'
       ];
       const pathSegment = pathName?.split('/')[1];
       return (

@@ -1,6 +1,48 @@
 {
     "versions": [
         {
+            "version": "8.0.35",
+            "date": "Dự kiến",
+            "content": [
+                "Cập nhật thông báo không hỗ trợ màn hình ngang trên mobile"
+            ]
+        }, 
+        {
+            "version": "8.0.34",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Thể Thao] Lỗi hiển thị thiếu Bảng xếp hạng ở tab Tất cả ở block Lịch thi đấu, kết quả, BXH",
+                "[WEB][DetailVOD] Lỗi không hiển thị Title description dự kiến công chiếu/thông báo dừng chiếu",
+                "[WEB][Thể thao] Không hiện button Play ở Lịch thi đấu",
+                "[WEB][Thể thao] Lỗi label ở trận đấu Lịch thi đấu có set sự kiện",
+                "[WEB][Comment] Lỗi cho phép nhập > 300 kí tự, không hiện thông báo quá ký tự",
+                "[WEB][Comment] Lỗi không sent comment sau khi nhấn Trả lời, xóa comment",
+                "[WEB][Comment] Lỗi gửi bình luận cấp 2 khi gửi comment cấp 1",
+                "[Web][TrackingLog][Common] Không ghi nhận thông số user_id, user_session của log 25 khi system gửi thông tin thông báo trên góc phải màn hình",
+                "[Web][TrackingLog][Common] Ghi nhận sai thông số Event, Screen của log 16 khi user bấm submenu 'Tài khoản và cài đặt'",
+                "[Web][TrackingLog][Common] Không ghi nhận log 16 khi user bấm submenu 'Quản lý hồ sơ'",
+                "[WEB][Comment] Lỗi không thể phản hồi bình luận khi chọn vào button Trả lời",
+                "[WEB][Sự kiện] Không tick audio đối với sự kiện trực tiếp multi-audio",
+                "[WEB][Trang chủ] Block sắp công chiếu: Lỗi không lưu và đồng bộ khi thực hiện nhấn Đặt lịch/Hủy đặt lịch",
+                "[WEB][MultiProfile]Tạo/Chỉnh sửa hồ sơ: Lỗi hiển thị thông báo đối với trường nhập tên hồ sơ",
+                "[WEB] Lỗi vỡ giao diện trang web dev.fptplay.vn trên thiết bị ios có version <15",
+                "[WEB][Trang chủ] Blocks_ Lỗi image slider và title ở block Sắp công chiếu & Numberic",
+                "[WEB][Login] Lỗi hiển thị của popup Đăng xuất không thành công",
+                "[WEB][Login] Lỗi đăng nhập với tài khoản FID",
+                "[WEB][Login] Lỗi hiển thị sai popup đối với trường hợp mất mạng khi bấm btn Tiếp tục/Nhận mã OTP/Xác nhận/Tiếp tục (ở popup vượt giới hạn thiết bị)",
+                "[WEB][Quicklogin] Lỗi hiển thị sai popup khi chọn đăng xuất thiết bị đã được đăng xuất trước đó bởi 1 thiết bị khác",
+                "[WEB][V5][Guide mua gói] Lỗi hiển thị guide mua gói trùng với button Bỏ qua giới thiệu",
+                "[WEB][Playlist] Lỗi hiển thị khi nhấn vào item TVOD có preview/không có preview ở playlist",
+                "[WEB][Playlist] Lỗi không thao tác được với btn Theo dõi đối với item thuộc playlist",
+                "[WEB][Truyền hình] Lỗi hiện card label các kênh không được set",
+                "[WEB][Playlist] Lỗi phim TVOD có preview trong Playlist",
+                "[WEB][Comment] Lỗi không tắt khung reaction và phóng to icon reaction",
+                "[WEB][Comment] Lỗi không hiển thị reaction khi nhấn giữ",
+                "[ANRMOBI][iOS][CommentByAI] Lỗi hiển thị sai nội dung summary comment cho VOD",
+                "[WEB][PlayerVOD] Âm thanh: Lỗi phát không đúng âm thanh đã chọn popup cài đặt âm thanh"
+            ]
+        }, 
+        {
             "version": "8.0.33",
             "date": "Dự kiến",
             "content": [

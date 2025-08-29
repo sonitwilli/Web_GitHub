@@ -844,7 +844,7 @@ export default function usePlayer() {
           setRetryCount(0);
         }
         previousCurrentTimeRef.current = currentTime;
-      }, 10000);
+      }, 5000);
     }
   };
 

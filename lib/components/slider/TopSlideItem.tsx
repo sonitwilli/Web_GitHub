@@ -175,7 +175,7 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
       {isInview && (
         <div
           onMouseLeave={() => setIsHoveredDescription(false)}
-          className={`${styles.infoContainer} mt-[24px] tablet:mt-0 mb-[32px] tablet:mb-0 px-[16px] tablet:px-0 z-[1] tablet:absolute tablet:left-[24px] xl:left-[48px] tablet:right-[16px] bigscreen:left-[104px] tablet:bottom-[24px] tablet:w-1/2 xl:w-[632px] xl:bottom-[280px] 2xl:bottom-[380px]`}
+          className={`${styles.infoContainer} mt-[24px] tablet:mt-0 mb-[32px] tablet:mb-0 px-[16px] tablet:px-0 z-[1] tablet:absolute tablet:left-[24px] xl:left-[48px] tablet:right-[16px] bigscreen:left-[104px] tablet:bottom-[24px] tablet:w-1/2 xl:w-[632px] xl:bottom-[280px] 2xl:bottom-[340px]`}
         >
           {/* title image */}
           <div>

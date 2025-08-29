@@ -48,28 +48,24 @@ export default function SSOCallbackPage() {
     const prePath = localStorage.getItem(PATH_BEFORE_LOGIN_SSO);
 
     if (prePath && !prePath.includes('sso')) {
-      localStorage.removeItem(PATH_BEFORE_LOGIN_SSO);
       window.location.href = prePath;
     } else {
-      localStorage.removeItem(PATH_BEFORE_LOGIN_SSO);
       window.location.href = '/';
     }
   }, [hasRedirected]);
 
-  const handleLoginSuccess = useCallback((result: onLogin3rdResponse) => {
+  const handleLoginSuccess = useCallback(async (result: onLogin3rdResponse) => {
     const token = result?.data?.access_token;
     if (token) {
-      // Set login type for loginSuccess function to handle redirect properly
       localStorage.setItem(TYPE_LOGIN, 'fid');
+      await handleUserInfo(token);
+      // Set login type for loginSuccess function to handle redirect properly
       localStorage.setItem(TOKEN, token);
 
       showToast({
         title: 'Đăng nhập thành công',
         desc: 'Bạn đã đăng nhập thành công. Chúc bạn có trải nghiệm tuyệt vời trên FPT Play.',
       });
-
-      // This prevents double redirect issues
-      handleUserInfo(token);
     }
   }, []);
 

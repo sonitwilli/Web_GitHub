@@ -68,7 +68,7 @@ export default function PlayerError() {
           Lỗi kết nối dịch vụ
         </div>
         <div className="text-center text-white-smoke leading-[130%] tracking-[0.32px] mb-[16px]">
-          <span className="text-spanish-gray modal-content">
+          <span className="text-spanish-gray modal-content-tracking">
             {playerError?.content ||
               'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.'}
           </span>{' '}
