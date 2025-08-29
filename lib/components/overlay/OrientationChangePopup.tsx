@@ -2,7 +2,7 @@ import React from 'react';
 import useOrientationPopup from '@/lib/hooks/useOrientationPopup';
 
 const OrientationChangePopup: React.FC = () => {
-  const {open} = useOrientationPopup({ mobileMaxWidth: 1024 });
+  const {open} = useOrientationPopup();
 
   if (!open) return null;
 
