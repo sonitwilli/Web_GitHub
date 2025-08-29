@@ -1198,11 +1198,10 @@ export function PlayerPageContextProvider({ children }: Props) {
 
     const now = Math.floor(Date.now() / 1000);
     const isBeforeStart = now < start;
-
     // 🚫 Bỏ qua countdown nếu eventtv ( sự kiện dẫn kênh )
+
     const skipPrepare =
-      dataEvent?.is_premier === '1' ||
-      (dataEvent?.is_premier === '0' && dataEvent?.type === 'eventtv');
+      dataEvent?.is_premier === '1' && dataEvent?.type === 'eventtv';
 
     if (skipPrepare) {
       setIsPrepareLive(false);

@@ -18,6 +18,7 @@ import {
   setCurrentTime,
   setScheduleList,
   setStateErrorBroadcastSchedule,
+  clearCurrentTimeShiftProgram,
 } from '../store/slices/broadcastScheduleSlice';
 
 export function useBroadcastSchedule(
@@ -137,6 +138,7 @@ export function useBroadcastSchedule(
       if (!scheduleId) {
         clearTimeshiftFromUrl();
         dispatch(setActiveScheduleId(''));
+        dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when going back to live
         onScheduleSelect?.('');
         return;
       }
@@ -202,6 +204,7 @@ export function useBroadcastSchedule(
 
         clearTimeshiftFromUrl();
         dispatch(setActiveScheduleId(''));
+        dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when error occurred
         onScheduleSelect?.('');
         return;
       }
@@ -255,6 +258,7 @@ export function useBroadcastSchedule(
         // Schedule found and currently live, switch to live
         clearTimeshiftFromUrl();
         dispatch(setActiveScheduleId(''));
+        dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when switching to live
         onScheduleSelect?.('');
         if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
         if (setIsPlaySuccess) setIsPlaySuccess(false);

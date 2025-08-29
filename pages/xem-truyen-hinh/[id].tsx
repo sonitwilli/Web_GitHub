@@ -44,7 +44,11 @@ import ErrorComponent from '@/lib/components/error/ErrorComponent';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/lib/store';
-import { resetBroadcastSchedule } from '@/lib/store/slices/broadcastScheduleSlice';
+import {
+  resetBroadcastSchedule,
+  setCurrentTimeShiftProgram,
+  clearCurrentTimeShiftProgram,
+} from '@/lib/store/slices/broadcastScheduleSlice';
 import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
 
 const RequirePurchase = dynamic(
@@ -148,13 +152,22 @@ function ChannelPageContent() {
     );
 
     if (fromCurrentSchedule) {
+      dispatch(setCurrentTimeShiftProgram(fromCurrentSchedule));
       return fromCurrentSchedule;
     }
 
     // Nếu không tìm thấy trong schedule_list hiện tại, tìm trong allTimeShiftItems
     return allTimeShiftItems?.find((item) => item.id === reduxActiveScheduleId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [broadcastScheduleState]);
+  }, [broadcastScheduleState, allTimeShiftItems]);
+
+  // Separate effect to handle clearing currentTimeShiftProgram only when really leaving timeshift
+  useEffect(() => {
+    const urlTimeShiftId = router.query?.time_shift_id as string;
+    if (!urlTimeShiftId) {
+      dispatch(clearCurrentTimeShiftProgram());
+    }
+  }, [router.query?.time_shift_id, dispatch]);
 
   const channelsBySearchKey = useMemo(() => {
     if (!searchKey) {
@@ -218,6 +231,7 @@ function ChannelPageContent() {
   useEffect(() => {
     if (router?.isReady && router?.query?.id) {
       dispatch(resetBroadcastSchedule());
+      dispatch(clearCurrentTimeShiftProgram());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.query?.id, dispatch]);

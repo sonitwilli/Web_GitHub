@@ -1,7 +1,6 @@
 import {
   useEffect,
   useCallback,
-  useContext,
   useState,
   useLayoutEffect,
   useMemo,
@@ -16,23 +15,15 @@ import {
   DRM_CONFIG_SIGMA,
   DRM_CONFIG_SIGMA_VOD,
 } from '@/lib/constant/shaka';
-import { store, useAppSelector } from '@/lib/store';
-import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
+import { RootState, store, useAppSelector } from '@/lib/store';
 import { useDrmPlayer } from '@/lib/hooks/useDrmPlayer';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { userAgentInfo } from '@/lib/utils/ua';
 import OverlayLogo from '../core/OverlayLogo';
-import {
-  BOOLEAN_TEXTS,
-  HISTORY_TEXT,
-  PLAYER_BOOKMARK_SECOND,
-  PLAYER_NAME,
-  VIDEO_ID,
-} from '@/lib/constant/texts';
+import { PLAYER_NAME, VIDEO_ID } from '@/lib/constant/texts';
 import dynamic from 'next/dynamic';
 import styles from '../core/Text.module.css';
-import { useRouter } from 'next/router';
-import { useVodPageContext } from '../context/VodPageContext';
+// import { useRouter } from 'next/router';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import {
   removePlayerSessionStorageWhenRender,
@@ -50,6 +41,7 @@ import {
   trackingPlayAttempLog521,
 } from '@/lib/hooks/useTrackingPlayback';
 import CodecNotSupport from '../core/CodecNotSupport';
+import { useSelector } from 'react-redux';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -91,7 +83,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     }
   }, []);
   const { viewportType } = useScreenSize();
-  const vodCtx = useVodPageContext();
+  // const vodCtx = useVodPageContext();
   const {
     isHboGo,
     isQNet,
@@ -112,6 +104,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     handleIntervalCheckErrors,
     convertShakaError,
     isValidForProfileType,
+    handleBookmark,
   } = usePlayer();
 
   const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
@@ -120,10 +113,12 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     queryEpisodeNotExist,
   });
   const { isFullscreen } = useAppSelector((s) => s.player);
-  const { historyData } = useAppSelector((s) => s.vod);
+  // const { historyData } = useAppSelector((s) => s.vod);
   const [isUserInteractive, setIsUserInteractive] = useState(false);
-  const pageCtx = useContext(ChannelPageContext);
-  const { selectedTimeShift } = pageCtx;
+  const { currentTimeShiftProgram } = useSelector(
+    (state: RootState) => state.broadcastSchedule,
+  );
+
   const {
     videoRef,
     autoplay,
@@ -136,7 +131,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     handleEnd,
     handlePaused,
   } = usePlayer();
-  const router = useRouter();
+  // const router = useRouter();
 
   const observeControlbarShown = useCallback(() => {
     const controlsContainer = document.querySelector(
@@ -162,41 +157,41 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     const isInitiallyShown = controlsContainer.getAttribute('shown') === 'true';
     setIsUserInteractive(isInitiallyShown);
   }, []);
-  const handleBookmark = () => {
-    try {
-      // chỉ bookmark nếu:
-      // không có bookmark=false
-      // id tập khác routerChapterId
+  // const handleBookmark = () => {
+  //   try {
+  //     // chỉ bookmark nếu:
+  //     // không có bookmark=false
+  //     // id tập khác routerChapterId
 
-      if (
-        typeof historyData?.chapter_id !== 'undefined' &&
-        vodCtx.routerChapterId !== 'undefined'
-      ) {
-        if (
-          String(historyData?.chapter_id) !== String(vodCtx.routerChapterId)
-        ) {
-          return;
-        }
-      }
-      if (streamType !== 'vod' && streamType !== 'playlist') {
-        return;
-      }
-      const bookmark = router.query[HISTORY_TEXT.BOOK_MARK];
-      if (bookmark === BOOLEAN_TEXTS.FALSE) {
-        return;
-      }
-      if (historyData?.timeplayed && historyData?.timeplayed !== '0') {
-        const t = Number(historyData?.timeplayed);
-        if (typeof sessionStorage !== 'undefined') {
-          sessionStorage.setItem(PLAYER_BOOKMARK_SECOND, t.toString());
-        }
-        const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-        if (video) {
-          video.currentTime = t;
-        }
-      }
-    } catch {}
-  };
+  //     if (
+  //       typeof historyData?.chapter_id !== 'undefined' &&
+  //       vodCtx.routerChapterId !== 'undefined'
+  //     ) {
+  //       if (
+  //         String(historyData?.chapter_id) !== String(vodCtx.routerChapterId)
+  //       ) {
+  //         return;
+  //       }
+  //     }
+  //     if (streamType !== 'vod' && streamType !== 'playlist') {
+  //       return;
+  //     }
+  //     const bookmark = router.query[HISTORY_TEXT.BOOK_MARK];
+  //     if (bookmark === BOOLEAN_TEXTS.FALSE) {
+  //       return;
+  //     }
+  //     if (historyData?.timeplayed && historyData?.timeplayed !== '0') {
+  //       const t = Number(historyData?.timeplayed);
+  //       if (typeof sessionStorage !== 'undefined') {
+  //         sessionStorage.setItem(PLAYER_BOOKMARK_SECOND, t.toString());
+  //       }
+  //       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+  //       if (video) {
+  //         video.currentTime = t;
+  //       }
+  //     }
+  //   } catch {}
+  // };
   // Phát video với src (ưu tiên props.src)
   const playVideo = useCallback(
     ({ newUrl }: { newUrl?: string } = {}) => {
@@ -568,19 +563,20 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
 
         {(streamType === 'channel' ||
           streamType === 'event' ||
-          streamType === 'premiere') && (
+          streamType === 'premiere' ||
+          streamType === 'timeshift') && (
           <div
             id="player_top_mask"
             className="opacity-0 player_mask top_mask ease-out duration-500 bg-linear-to-b from-[rgba(13,13,12,0.6)] to-[rgba(13,13,12,0.001)] h-[136px] w-full absolute top-0 left-0 z-[1]"
           >
             {(dataChannel?.name ||
-              selectedTimeShift?.title ||
+              currentTimeShiftProgram?.title ||
               dataChannel?.title) && (
               <div
                 id="player_title"
                 className="mt-[49px] mx-[32px] font-[500] leading-[150%] text-[28px] text-white line-clamp-1 max-w-1/2"
               >
-                {selectedTimeShift?.title ||
+                {currentTimeShiftProgram?.title ||
                   dataChannel?.name ||
                   dataChannel?.title}
               </div>

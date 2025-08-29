@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 import { useMemo } from 'react';
-import { VIDEO_ID } from '@/lib/constant/texts';
+import { PAUSE_PLAYER_MANUAL, VIDEO_ID } from '@/lib/constant/texts';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
+import { saveSessionStorage } from '@/lib/utils/storage';
 
 export default function PlayPause() {
   const { isVideoPaused } = usePlayerPageContext();
@@ -22,6 +23,14 @@ export default function PlayPause() {
           video.play();
         } else {
           video.pause();
+          saveSessionStorage({
+            data: [
+              {
+                key: PAUSE_PLAYER_MANUAL,
+                value: 'true',
+              },
+            ],
+          });
         }
       }
     } catch {}

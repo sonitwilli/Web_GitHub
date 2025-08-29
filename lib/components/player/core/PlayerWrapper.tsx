@@ -19,6 +19,7 @@ import dynamic from 'next/dynamic';
 import {
   DEFAULT_IP_ADDRESS,
   IP_ADDRESS,
+  PAUSE_PLAYER_MANUAL,
   PLAYER_WRAPPER,
   SHOW_REAL_TIME_CHAT,
   VIDEO_ID,
@@ -53,6 +54,7 @@ import { EpisodeTypeEnum } from '@/lib/api/vod';
 import { trackingPlaybackErrorLog515 } from '@/lib/hooks/useTrackingPlayback';
 import axios from 'axios';
 import useCodec from '@/lib/hooks/useCodec';
+import { saveSessionStorage } from '@/lib/utils/storage';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -141,6 +143,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     dataPlaylist,
     showModalNotice,
     queryEpisodeNotExist,
+    loginManifestUrl,
   } = usePlayerPageContext();
   const { isVideoCodecNotSupported } = useCodec({
     dataChannel,
@@ -269,7 +272,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
       return true;
     }
     return false;
-  }, [dataChannel, streamType]);
+  }, [dataChannel, streamType, isVideoCodecNotSupported]);
 
   // trang vod nếu danh sách tập < 2 thì bật chế độ mở rộng
   useEffect(() => {
@@ -361,6 +364,14 @@ export default function PlayerWrapper({ children, eventId }: Props) {
             .catch(() => {});
         } else {
           video.pause();
+          saveSessionStorage({
+            data: [
+              {
+                key: PAUSE_PLAYER_MANUAL,
+                value: 'true',
+              },
+            ],
+          });
         }
       }
     }
@@ -448,7 +459,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
         } player-wrapper-${streamType} ${
           isPlaySuccess ? 'player-wrapper-play-success' : ''
         } ${isExpanded ? 'player-wrapper-expanded bg-black' : ''} ${
-          showLoginPlayer ? 'player-wrapper-login' : ''
+          showLoginPlayer || showModalLogin || loginManifestUrl
+            ? 'player-wrapper-login'
+            : ''
         } ${
           isDrm ? 'player-wrapper-drm' : ''
         } player-wrapper-${episodeTypeName} ${

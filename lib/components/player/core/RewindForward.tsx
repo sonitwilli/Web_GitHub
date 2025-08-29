@@ -1,8 +1,9 @@
-import { VIDEO_ID } from '@/lib/constant/texts';
+import { PAUSE_PLAYER_MANUAL, VIDEO_ID } from '@/lib/constant/texts';
 import { ControlPopupType } from './MobilePopup';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { playerButtonProps } from '../common/playerButtonProps';
 import { saveSeekEvent } from '@/lib/utils/seekTracking';
+import { saveSessionStorage } from '@/lib/utils/storage';
 
 interface Props {
   type?: ControlPopupType;
@@ -56,6 +57,14 @@ export default function RewindForward({ type }: Props) {
           .catch(() => {});
       } else {
         video.pause();
+        saveSessionStorage({
+          data: [
+            {
+              key: PAUSE_PLAYER_MANUAL,
+              value: 'true',
+            },
+          ],
+        });
       }
     }
   };

@@ -15,7 +15,7 @@ import { useRouter } from 'next/router';
 import SideTagButton from '@/lib/components/buttons/SideTagButton';
 import { useNetwork } from '@/lib/components/contexts';
 import { NetworkError } from '@/lib/components/error';
-import OrientationChangePopup from '@/lib/components/overlays/OrientationChangePopup';
+// import OrientationChangePopup from '@/lib/components/overlays/OrientationChangePopup';
 import MonitorLayout from './MonitorLayout';
 
 const Viewport = dynamic(() => import('../components/debug/Viewport'), {
@@ -153,7 +153,7 @@ function DefaultLayoutContent({ children }: Props) {
         {scrollDistance > 0 && !hasBlockedRoute && <ScrollTop />}
         <PreventKidModal />
         <DownloadAppControlBar />
-        <OrientationChangePopup />
+        {/* <OrientationChangePopup /> */}
       </main>
       <Footer />
       <SideTagButton />

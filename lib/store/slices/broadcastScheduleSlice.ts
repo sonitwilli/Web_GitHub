@@ -8,6 +8,7 @@ interface BroadcastScheduleState {
   currentTime: number;
   scheduleList: ScheduleItem[];
   stateErrorBroadcastSchedule: string | 'error-api' | 'no-data';
+  currentTimeShiftProgram: ScheduleItem | null;
 }
 
 const initialState: BroadcastScheduleState = {
@@ -16,6 +17,7 @@ const initialState: BroadcastScheduleState = {
   currentTime: Math.floor(Date.now() / 1000),
   scheduleList: [],
   stateErrorBroadcastSchedule: '',
+  currentTimeShiftProgram: null,
 };
 
 const broadcastScheduleSlice = createSlice({
@@ -40,7 +42,15 @@ const broadcastScheduleSlice = createSlice({
     ) => {
       state.stateErrorBroadcastSchedule = action.payload;
     },
-
+    setCurrentTimeShiftProgram: (
+      state,
+      action: PayloadAction<ScheduleItem | null>,
+    ) => {
+      state.currentTimeShiftProgram = action.payload;
+    },
+    clearCurrentTimeShiftProgram: (state) => {
+      state.currentTimeShiftProgram = null;
+    },
     resetBroadcastSchedule: (state) => {
       state.selectedDate = formatVietnamDateKey(getVietnamTime());
       state.activeScheduleId = '';
@@ -58,6 +68,8 @@ export const {
   setScheduleList,
   setStateErrorBroadcastSchedule,
   resetBroadcastSchedule,
+  setCurrentTimeShiftProgram,
+  clearCurrentTimeShiftProgram,
 } = broadcastScheduleSlice.actions;
 
 export default broadcastScheduleSlice.reducer;

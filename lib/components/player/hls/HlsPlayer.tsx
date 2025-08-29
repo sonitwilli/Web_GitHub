@@ -400,7 +400,8 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     <>
       {(streamType === 'channel' ||
         streamType === 'event' ||
-        streamType === 'premiere') && <PlayerTopMask />}
+        streamType === 'premiere' ||
+        streamType === 'timeshift') && <PlayerTopMask />}
       <div
         className="hls-video-container w-full h-full flex items-center justify-center"
         id="hls-video-container"

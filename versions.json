@@ -1,13 +1,6 @@
 {
     "versions": [
         {
-            "version": "8.0.35",
-            "date": "Dự kiến",
-            "content": [
-                "Cập nhật thông báo không hỗ trợ màn hình ngang trên mobile"
-            ]
-        }, 
-        {
             "version": "8.0.34",
             "date": "Dự kiến",
             "content": [

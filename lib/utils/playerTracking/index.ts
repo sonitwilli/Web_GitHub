@@ -4,6 +4,7 @@ import { removeSessionStorage, saveSessionStorage } from '../storage';
 import {
   KEY_LANGUAGES_AUDIO_CODECS,
   PLAYER_BOOKMARK_SECOND,
+  PLAYER_IS_RETRYING,
   SELECTED_AUDIO_LABEL,
   SELECTED_AUDIO_LABEL_LIVE,
   SELECTED_SUBTITLE,
@@ -11,6 +12,7 @@ import {
   SELECTED_VIDEO_QUALITY,
   VIDEO_CURRENT_TIME,
   VIDEO_ID,
+  VIDEO_TIME_BEFORE_ERROR,
 } from '@/lib/constant/texts';
 import { ChannelDetailType, StreamErrorType } from '@/lib/api/channel';
 import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
@@ -360,6 +362,8 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.PLAYER_DURATION,
       trackingStoreKey.PLAYER_START_BUFFER_TIME,
       trackingStoreKey.PLAYER_FIRST_LOAD,
+      VIDEO_TIME_BEFORE_ERROR,
+      PLAYER_IS_RETRYING,
     ],
   });
 };
@@ -412,6 +416,8 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.PLAYER_VOD_ID,
       trackingStoreKey.PLAYER_TRACKING_STATE,
       trackingStoreKey.BLOCK_INDEX,
+      VIDEO_TIME_BEFORE_ERROR,
+      PLAYER_IS_RETRYING,
     ],
   });
 };

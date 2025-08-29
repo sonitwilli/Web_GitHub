@@ -2,10 +2,12 @@ import { useCallback, useEffect, useRef } from 'react';
 import { usePlayerPageContext } from '@/lib/components/player/context/PlayerPageContext';
 import {
   MUTE_VOLUME_PLAYER,
+  PAUSE_PLAYER_MANUAL,
   VIDEO_ID,
   VOLUME_PLAYER,
 } from '@/lib/constant/texts';
 import { saveSeekEvent } from '@/lib/utils/seekTracking';
+import { saveSessionStorage } from '../utils/storage';
 
 // Keyboard shortcuts configuration
 const KEYBOARD_SHORTCUTS = {
@@ -60,6 +62,14 @@ export function useKeyboardControls() {
       video.play().catch(() => {});
     } else {
       video.pause();
+      saveSessionStorage({
+        data: [
+          {
+            key: PAUSE_PLAYER_MANUAL,
+            value: 'true',
+          },
+        ],
+      });
     }
   }, []);
 

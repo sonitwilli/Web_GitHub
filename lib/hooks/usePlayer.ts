@@ -2,7 +2,10 @@
 import { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { store, useAppDispatch, useAppSelector } from '../store';
 import {
+  BOOLEAN_TEXTS,
   ERROR_PLAYER_FPT_PLAY,
+  HISTORY_TEXT,
+  PAUSE_PLAYER_MANUAL,
   PLAYER_BOOKMARK_SECOND,
   PLAYER_IS_RETRYING,
   PLAYER_NAME,
@@ -34,7 +37,7 @@ import {
   trackPlayerChange,
 } from '../utils/playerTracking';
 import { trackingStoreKey } from '../constant/tracking';
-import { saveSessionStorage } from '../utils/storage';
+import { removeSessionStorage, saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
 import {
   trackingPauseMovieLog53,
@@ -56,6 +59,7 @@ import { UAParser } from 'ua-parser-js';
 import { userAgentInfo } from '@/lib/utils/ua';
 import { trackingSeekVideoLog514 } from './useTrackingPlayback';
 import { getSeekEvent, clearSeekEvent } from '@/lib/utils/seekTracking';
+import { useVodPageContext } from '../components/player/context/VodPageContext';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -133,6 +137,9 @@ export default function usePlayer() {
   const retryBackgroundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [isPlayingHandled, setIsPlayingHandled] = useState(false);
   const [isInitAds, setIsInitAds] = useState(false);
+  const { historyData } = useAppSelector((s) => s.vod);
+  const vodCtx = useVodPageContext();
+
   const { handlePingPlayer } = useTrackingPing();
   useEffect(() => {
     retryCountRef.current = retryCount;
@@ -281,7 +288,49 @@ export default function usePlayer() {
     } catch {}
   };
 
+  const handleBookmark = () => {
+    try {
+      // chỉ bookmark nếu:
+      // không có bookmark=false
+      // id tập khác routerChapterId
+
+      if (
+        typeof historyData?.chapter_id !== 'undefined' &&
+        vodCtx.routerChapterId !== 'undefined'
+      ) {
+        if (
+          String(historyData?.chapter_id) !== String(vodCtx.routerChapterId)
+        ) {
+          return;
+        }
+      }
+      if (streamType !== 'vod' && streamType !== 'playlist') {
+        return;
+      }
+      const bookmark = router.query[HISTORY_TEXT.BOOK_MARK];
+      if (bookmark === BOOLEAN_TEXTS.FALSE) {
+        return;
+      }
+      if (historyData?.timeplayed && historyData?.timeplayed !== '0') {
+        const t = Number(historyData?.timeplayed);
+        if (typeof sessionStorage !== 'undefined') {
+          sessionStorage.setItem(PLAYER_BOOKMARK_SECOND, t.toString());
+        }
+        const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+        if (video) {
+          video.currentTime = t;
+        }
+      }
+    } catch {}
+  };
+
   const handlePlaying = async () => {
+    removeSessionStorage({ data: [PAUSE_PLAYER_MANUAL] });
+    const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
+    console.log('--- PLAYER VIDEO PLAY SUCCESS', {
+      count: retryCountRef.current,
+      retrying,
+    });
     checkVolumeOnLoaded();
 
     // Check and tracking seek event
@@ -296,6 +345,9 @@ export default function usePlayer() {
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
     );
     if (!firstPlay) {
+      if (retrying === 'true') {
+        handleBookmark();
+      }
       saveSessionStorage({
         data: [
           {
@@ -369,12 +421,9 @@ export default function usePlayer() {
       }
     }
     trackPlayerChange();
-    const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
-    console.log('--- PLAYER VIDEO PLAY SUCCESS', {
-      count: retryCountRef.current,
-      retrying,
-    });
+
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    // play lại mốc thời gian trước khi retry
     if (
       (streamType === 'vod' || streamType === 'timeshift') &&
       retrying === 'true'
@@ -783,12 +832,18 @@ export default function usePlayer() {
           Url: getUrlToPlayH264(),
           ItemId: dataChannel?._id,
         });
+        const pl = sessionStorage.getItem(trackingStoreKey.PLAYER_NAME);
+        let code = error.details;
+        if (pl === PLAYER_NAME.SHAKA) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          code = error.type as any;
+        }
         if (setHlsErrors) {
           /*@ts-ignore*/
           setHlsErrors((prev) => [
             ...(prev || []),
             {
-              type: error.type,
+              type: code,
               fatal: error.fatal,
               details: error.details,
               url: error.url,
@@ -849,15 +904,24 @@ export default function usePlayer() {
   };
 
   const handleIntervalCheckErrorsSafari = () => {
+    const paused = sessionStorage.getItem(PAUSE_PLAYER_MANUAL);
+    if (paused === 'true') {
+      return;
+    }
     console.log('--- PLAYER handleIntervalCheckErrorsSafari', {
       safariCheckErrorInterRef: window.safariCheckErrorInterRef,
     });
     if (!window.safariCheckErrorInterRef) {
       window.safariCheckErrorInterRef = setInterval(() => {
+        const paused2 = sessionStorage.getItem(PAUSE_PLAYER_MANUAL);
+        if (paused2 === 'true') {
+          return;
+        }
         console.log('--- PLAYER handleIntervalCheckErrorsSafari START', {
           safariCheckErrorInterRef: window.safariCheckErrorInterRef,
           checkErrorInterRef: window.checkErrorInterRef,
         });
+
         if (window.checkErrorInterRef) {
           return;
         }
@@ -983,5 +1047,6 @@ export default function usePlayer() {
     checkSafariError,
     clearIntervalErrorSafari,
     isValidForProfileType,
+    handleBookmark,
   };
 }
