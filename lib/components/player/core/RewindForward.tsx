@@ -10,8 +10,13 @@ interface Props {
 }
 
 export default function RewindForward({ type }: Props) {
-  const { isVideoPaused, isEndVideo, videoCurrentTime, videoDuration } =
-    usePlayerPageContext();
+  const {
+    isVideoPaused,
+    isEndVideo,
+    videoCurrentTime,
+    videoDuration,
+    streamType,
+  } = usePlayerPageContext();
   const rewind = () => {
     try {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
@@ -33,7 +38,20 @@ export default function RewindForward({ type }: Props) {
     try {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
       if (video) {
-        video.currentTime = Math.max(video.currentTime + 10, 0);
+        const currentTime = video.currentTime;
+        const duration = video.duration || 0;
+        const newTime = Math.min(currentTime + 10, duration);
+
+        // For timeshift: prevent seeking forward if already at or near the end
+        if (streamType === 'timeshift') {
+          const timeThreshold = 2; // 2 seconds threshold near end
+          if (currentTime >= duration - timeThreshold) {
+            // Don't seek if we're already near the end of timeshift
+            return;
+          }
+        }
+
+        video.currentTime = newTime;
         if (video.paused) {
           video.play().catch(() => {});
         }

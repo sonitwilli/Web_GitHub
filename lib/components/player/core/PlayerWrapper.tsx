@@ -408,7 +408,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
 
   const playVideoWithUrl = usePlayVideoWithUrl({
     playerType: streamType === 'vod' ? 'hls' : 'shaka',
-    setPlayingUrl,
+    setPlayingUrl: setPlayingUrl || (() => {}),
   });
 
   const handleExitPreviewLive = useCallback(
@@ -419,13 +419,10 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   );
 
   // Enable keyboard controls for player
-  if (window.location.pathname.includes('/xem-video')) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useKeyboardControls();
-  }
-
-  const handleExitPreviewEvent = useCallback(() => {}, []);
-  const handleBuyPackage = useCallback(() => {}, []);
+  const isVideoPage =
+    typeof window !== 'undefined' &&
+    window.location.pathname.includes('/xem-video');
+  useKeyboardControls(isVideoPage);
 
   return (
     <PlayerWrapperContext
@@ -562,8 +559,6 @@ export default function PlayerWrapper({ children, eventId }: Props) {
             playerError={playerError}
             dataEndedPreviewEvent={null}
             onExitPreviewLive={handleExitPreviewLive}
-            onExitPreviewEvent={handleExitPreviewEvent}
-            onBuyPackage={handleBuyPackage}
           />
         )}
 

@@ -320,7 +320,7 @@ const Preview: React.FC<PreviewProps> = ({
     // Show background overlay with time limit message
     setPreviewState('background');
     sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [type, PREVIEW_TIME_LIMIT, setIsVideoPaused, stopPlayerStream]);
+  }, [setIsVideoPaused, stopPlayerStream]);
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {
@@ -436,7 +436,7 @@ const Preview: React.FC<PreviewProps> = ({
     const shouldShowBackground =
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
-      (hlsErrors && hlsErrors.length > 0) ||
+      (hlsErrors && Array.isArray(hlsErrors) && hlsErrors.length > 0) ||
       (playerError && isLiveType) ||
       isLiveEnded;
 
@@ -447,9 +447,15 @@ const Preview: React.FC<PreviewProps> = ({
       setIsPopupManuallyClosed(false);
     } else if (isPreviewActive && !isPopupManuallyClosed && !isLiveEnded) {
       if (isLiveType && !isLogged) {
-        onExitPreviewLive?.(dataStream?.trailer_url || '');
-        setPreviewState(null);
-        sessionStorage.removeItem(IS_PREVIEW_LIVE);
+        const hasPreviewUrl = !!getUrlToPlayH264();
+        if (hasPreviewUrl) {
+          setPreviewState('popup');
+          sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
+        } else {
+          onExitPreviewLive?.(dataStream?.trailer_url || '');
+          setPreviewState(null);
+          sessionStorage.removeItem(IS_PREVIEW_LIVE);
+        }
       } else {
         setPreviewState('popup');
         sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
@@ -472,6 +478,7 @@ const Preview: React.FC<PreviewProps> = ({
     isLogged,
     onExitPreviewLive,
     dataStream,
+    getUrlToPlayH264,
   ]);
 
   // --- RENDER ---

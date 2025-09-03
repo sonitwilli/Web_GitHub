@@ -1201,8 +1201,7 @@ export function PlayerPageContextProvider({ children }: Props) {
     const isBeforeStart = now < start;
     // 🚫 Bỏ qua countdown nếu eventtv ( sự kiện dẫn kênh )
 
-    const skipPrepare =
-      dataEvent?.is_premier === '1' && dataEvent?.type === 'eventtv';
+    const skipPrepare = dataEvent?.type === 'eventtv';
 
     if (skipPrepare) {
       setIsPrepareLive(false);

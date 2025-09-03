@@ -108,7 +108,8 @@ const getDefaultParams = async (): Promise<TrackingParams> => {
     timestamp: moment().unix().toString(),
     FPTPlay_version: APP_VERSION,
     Firmware_version: '',
-    environment: process.env.NEXT_PUBLIC_ENVIRONMENT,
+    environment:
+      process.env.NEXT_PUBLIC_ENVIRONMENT === 'dev' ? 'dev' : 'production',
     os_version: browser?.version || '',
     Netmode: '',
     Session: Session || '',

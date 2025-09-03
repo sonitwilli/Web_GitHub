@@ -217,10 +217,14 @@ export default function LibraryBlockItem({
             {data?.length ? blockData?.meta?.name || block?.name : ''}
           </h2>
         }
-        {Array.isArray(data) &&
+        {((Array.isArray(data) &&
           data?.length > 0 &&
           data?.length > Number(block?.redirect?.view_more_limit) &&
-          !isShowMore && <ShowMore onClick={handleShowMoreClick} />}
+          !isShowMore) ||
+          (Array.isArray(data) &&
+            data?.length === 0 &&
+            data?.length > Number(configs?.number_item_of_page) &&
+            !isShowMore)) && <ShowMore onClick={handleShowMoreClick} />}
       </div>
       <LibrarySlide
         key={queryId}

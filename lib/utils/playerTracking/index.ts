@@ -257,6 +257,8 @@ export const getPlayerActiveTrack = () => {
   };
   let activeTrack: any = {};
   let activeAudioLabel = '';
+  let audioMimeType = 'audio/mp4';
+  let audioCodec = 'mp4a.40.2';
   const s = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_SUB_OBJECT);
   const a = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_OBJECT);
   const selectedSubParsed = (s ? JSON.parse(s) : {}) as SubtitleItemType;
@@ -283,6 +285,8 @@ export const getPlayerActiveTrack = () => {
         width: activeTrack.width,
       };
       activeAudioLabel = activeTrack?.label || activeTrack?.language;
+      audioMimeType = activeTrack?.audioMimeType;
+      audioCodec = activeTrack?.audioCodec;
     } else if (window?.hlsPlayer) {
       const levelIndex = window.hlsPlayer.currentLevel; // index in hls.levels array
       const activeTrack = window.hlsPlayer.levels[levelIndex];
@@ -297,6 +301,7 @@ export const getPlayerActiveTrack = () => {
       // Get the track info from hls.js
       const track = window.hlsPlayer.audioTracks[currentTrackId];
       activeAudioLabel = track?.name || track?.lang || '';
+      audioCodec = track?.audioCodec || 'mp4a.40.2';
     }
   } catch {
     //
@@ -326,6 +331,14 @@ export const getPlayerActiveTrack = () => {
         {
           key: trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL,
           value: activeAudioLabel,
+        },
+        {
+          key: trackingStoreKey.PLAYER_AUDIO_CODEC,
+          value: audioCodec,
+        },
+        {
+          key: trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
+          value: audioMimeType,
         },
       ],
     });
@@ -418,6 +431,8 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.BLOCK_INDEX,
       VIDEO_TIME_BEFORE_ERROR,
       PLAYER_IS_RETRYING,
+      trackingStoreKey.PLAYER_AUDIO_CODEC,
+      trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
     ],
   });
 };
@@ -647,6 +662,10 @@ export const getPlayerParams = () => {
         .join(',') || '',
     Country: dataChannel?.nation || '',
     FType: dataChannel?.is_tvod ? '2' : '1',
+    AudioMimeType: sessionStorage.getItem(
+      trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
+    ),
+    CodecAudio: sessionStorage.getItem(trackingStoreKey.PLAYER_AUDIO_CODEC),
   };
 };
 
@@ -667,6 +686,7 @@ export const trackingStartBuffering = async () => {
     console.log('--- TRACKING StartBuffering', new Date().toISOString(), {
       pParams,
     });
+    /*@ts-ignore*/
     return await tracking({
       LogId: '112',
       /*@ts-ignore*/
@@ -697,6 +717,7 @@ export const trackingEndBuffering = async () => {
     console.log('--- TRACKING EndBuffering', new Date().toISOString(), {
       pParams,
     });
+    /*@ts-ignore*/
     await tracking({
       LogId: '112',
       /*@ts-ignore*/

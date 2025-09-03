@@ -4,7 +4,6 @@ import { getUserAgent } from '@/lib/utils/methods';
 import Image from 'next/image';
 import { HeaderContext } from '@/lib/layouts/Header';
 import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
-import useScreenSize from '@/lib/hooks/useScreenSize';
 
 interface DownloadAppProps {
   className?: string;
@@ -23,19 +22,17 @@ export default function DownloadApp({ className }: DownloadAppProps) {
   const headerCtx = useContext(HeaderContext);
   const { openMobileMenu } = headerCtx;
   const { isHidden: isManuallyHidden } = useDownloadBarControl();
-  const { width } = useScreenSize();
 
   const [dynamicLink, setDynamicLink] = useState({
     url: `${process.env.NEXT_PUBLIC_BASE_URL}/ung-dung/download`,
     text: 'Tải xuống',
   });
 
+  const userAgentInfo = getUserAgent();
+  const deviceType = userAgentInfo.device?.type;
   // Lấy dynamic link từ API
   const getDynamicLink = useCallback(async () => {
     if (typeof window === 'undefined') return;
-
-    const userAgentInfo = getUserAgent();
-    const deviceType = userAgentInfo.device?.type;
 
     // Chỉ lấy dynamic link cho mobile/tablet
     if (deviceType !== 'mobile' && deviceType !== 'tablet') return;
@@ -64,7 +61,7 @@ export default function DownloadApp({ className }: DownloadAppProps) {
   }, []);
 
   // Only show on screens smaller than 1280px (mobile + tablet)
-  if (width >= 1280) {
+  if (deviceType !== 'mobile' && deviceType !== 'tablet') {
     return null;
   }
 

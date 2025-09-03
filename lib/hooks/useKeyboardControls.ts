@@ -30,7 +30,7 @@ const STREAM_TYPE_SUPPORT = {
 const VOLUME_STEP = 0.05;
 const SEEK_STEP = 10;
 
-export function useKeyboardControls() {
+export function useKeyboardControls(enabled: boolean = true) {
   const { isPlaySuccess, streamType } = usePlayerPageContext();
   const eventListenerRef = useRef<((event: KeyboardEvent) => void) | null>(
     null,
@@ -99,21 +99,44 @@ export function useKeyboardControls() {
     [],
   );
 
-  const handleSeek = useCallback((video: HTMLVideoElement, seconds: number) => {
-    const newTime = Math.max(video.currentTime + seconds, 0);
-    video.currentTime = newTime;
+  const handleSeek = useCallback(
+    (video: HTMLVideoElement, seconds: number) => {
+      const currentTime = video.currentTime;
+      const duration = video.duration || 0;
+      let newTime;
 
-    if (video.paused) {
-      video.play().catch(() => {});
-    }
+      if (seconds > 0) {
+        // Forward seek - clamp to duration
+        newTime = Math.min(currentTime + seconds, duration);
 
-    // Track seek event
-    saveSeekEvent({
-      timestamp: Date.now(),
-      direction: seconds > 0 ? 'forward' : 'backward',
-      method: 'keyboard',
-    });
-  }, []);
+        // For timeshift: prevent seeking forward if already at or near the end
+        if (streamType === 'timeshift') {
+          const timeThreshold = 2; // 2 seconds threshold near end
+          if (currentTime >= duration - timeThreshold) {
+            // Don't seek if we're already near the end of timeshift
+            return;
+          }
+        }
+      } else {
+        // Backward seek - clamp to 0
+        newTime = Math.max(currentTime + seconds, 0);
+      }
+
+      video.currentTime = newTime;
+
+      if (video.paused) {
+        video.play().catch(() => {});
+      }
+
+      // Track seek event
+      saveSeekEvent({
+        timestamp: Date.now(),
+        direction: seconds > 0 ? 'forward' : 'backward',
+        method: 'keyboard',
+      });
+    },
+    [streamType],
+  );
 
   const handleNavigation = useCallback(
     (video: HTMLVideoElement, key: string) => {
@@ -224,9 +247,11 @@ export function useKeyboardControls() {
       document.removeEventListener('keydown', eventListenerRef.current, true);
     }
 
-    // Add new listener
-    eventListenerRef.current = handleKeyboardShortcut;
-    document.addEventListener('keydown', handleKeyboardShortcut, true);
+    // Only add listener if enabled
+    if (enabled) {
+      eventListenerRef.current = handleKeyboardShortcut;
+      document.addEventListener('keydown', handleKeyboardShortcut, true);
+    }
 
     return () => {
       if (eventListenerRef.current) {
@@ -234,5 +259,5 @@ export function useKeyboardControls() {
         eventListenerRef.current = null;
       }
     };
-  }, [handleKeyboardShortcut]);
+  }, [handleKeyboardShortcut, enabled]);
 }

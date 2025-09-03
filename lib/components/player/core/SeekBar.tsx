@@ -33,11 +33,19 @@ export default function SeekBar() {
     setVideoCurrentTime,
     bufferedTime,
     dataStream,
+    streamType,
   } = usePlayerPageContext();
   const change = (v: number) => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
-      const newTime = v / 1000;
+      let newTime = v / 1000;
+      const duration = video.duration || 0;
+
+      // For timeshift: ensure we don't seek beyond available content
+      if (streamType === 'timeshift') {
+        const timeThreshold = 1; // 1 second threshold near end
+        newTime = Math.min(newTime, duration - timeThreshold);
+      }
 
       if (setVideoCurrentTime) {
         setVideoCurrentTime(newTime);

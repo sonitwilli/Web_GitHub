@@ -28,11 +28,11 @@ export default function Volume({}: VolumeControlProps) {
   const [sliderValue, setSliderValue] = useState(0);
 
   // Enable keyboard controls for volume
-  // Enable keyboard controls for player
-  if (window.location.pathname.includes('/xem-video')) {
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    useKeyboardControls();
-  }
+  const isVideoPage =
+    typeof window !== 'undefined' &&
+    window.location.pathname.includes('/xem-video');
+  useKeyboardControls(isVideoPage);
+
   const handleChange = (value: number | number[]) => {
     try {
       setSliderValue(value as number);
