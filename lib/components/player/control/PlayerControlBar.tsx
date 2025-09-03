@@ -83,7 +83,11 @@ export default function PlayerControlBar() {
         isPlaySuccess ? '' : 'hidden'
       }${
         isOpenLiveChat && isFullscreen
-          ? ' max-w-[calc(100% - 290px)] w-[75.6441%]'
+          ? `w-[calc(100% - 290px)] ${
+              viewportInfo?.browser?.toLowerCase() === 'edge'
+                ? 'w-full'
+                : 'w-[75.6441%]'
+            }`
           : ' w-full'
       }`}
       id="nvm_player_control"

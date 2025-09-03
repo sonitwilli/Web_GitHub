@@ -211,6 +211,7 @@ type ContextType = {
   nextRecommendCancelled?: boolean;
   setNextRecommendCancelled?: (v: boolean) => void;
   isVideoCodecNotSupported?: boolean;
+  stopPlayerStream?: () => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -1352,10 +1353,22 @@ export function PlayerPageContextProvider({ children }: Props) {
   useEffect(() => {
     if (isPlaySuccess) {
       const offset = getSeekPremier(dataEvent);
-      setSeekOffsetInSeconds(offset || 0);
+      if (offset && offset > 0) {
+        setSeekOffsetInSeconds(offset);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaySuccess]);
+
+  // Utility function to stop player stream
+  const stopPlayerStream = useCallback(() => {
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (video) {
+      video.pause();
+      video.src = '';
+      video.load(); // Reset video element
+    }
+  }, []);
 
   const seekToOffset = useCallback(() => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
@@ -1368,7 +1381,8 @@ export function PlayerPageContextProvider({ children }: Props) {
     if (
       dataEvent?.type === 'event' &&
       dataEvent?.is_premier === '1' &&
-      seekOffsetInSeconds
+      seekOffsetInSeconds &&
+      seekOffsetInSeconds > 0
     ) {
       seekToOffset();
     }
@@ -1511,6 +1525,7 @@ export function PlayerPageContextProvider({ children }: Props) {
         setHasWatchedCredit,
         nextRecommendCancelled,
         setNextRecommendCancelled,
+        stopPlayerStream,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

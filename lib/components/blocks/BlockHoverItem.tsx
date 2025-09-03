@@ -1,23 +1,24 @@
-import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
-import { useAppDispatch, useAppSelector } from "@/lib/store";
-import React, { useContext, useEffect, useMemo, useRef, useState } from "react";
-import VodRating from "../rating/VodRating";
-import { createLink, scaleImageUrl } from "@/lib/utils/methods";
-import styles from "./BlockHoverItem.module.css";
-import VodActionButtons from "../vod/VodActionButtons";
-import VodMetaData from "../vod/VodMetaData";
-import { MdOutlineVolumeOff, MdOutlineVolumeUp } from "react-icons/md";
-import dynamic from "next/dynamic";
-import { changeIsMutedTrailerPlayer } from "@/lib/store/slices/appSlice";
-import { AppContext } from "../container/AppContainer";
-import { useRouter } from "next/router";
-import { BlockPlayerTypes } from "@/lib/components/player/hls/BlockPlayer";
-import useBlock from "@/lib/hooks/useBlock";
+import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import VodRating from '../rating/VodRating';
+import { createLink, scaleImageUrl } from '@/lib/utils/methods';
+import styles from './BlockHoverItem.module.css';
+import VodActionButtons from '../vod/VodActionButtons';
+import VodMetaData from '../vod/VodMetaData';
+import { MdOutlineVolumeOff, MdOutlineVolumeUp } from 'react-icons/md';
+import dynamic from 'next/dynamic';
+import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
+import { AppContext } from '../container/AppContainer';
+import { useRouter } from 'next/router';
+import { BlockPlayerTypes } from '@/lib/components/player/hls/BlockPlayer';
+import useBlock from '@/lib/hooks/useBlock';
+import { MOUSE_CLIENT_X, MOUSE_CLIENT_Y } from '@/lib/constant/texts';
 const BlockPlayerShaka = dynamic(
-  () => import("@/lib/components/player/hls/BlockPlayerShaka"),
+  () => import('@/lib/components/player/hls/BlockPlayerShaka'),
   {
     ssr: false,
-  }
+  },
 );
 interface Props {
   block?: BlockItemType;
@@ -41,12 +42,12 @@ export default function BlockHoverItem({}: Props) {
   const slideLink = useMemo(() => {
     const result = createLink({
       data: slide || {},
-      type: block?.type || "",
+      type: block?.type || '',
     });
     if (blockIndex > -1) {
       return `${result}?block_index=${blockIndex}`;
     }
-    return result || "/";
+    return result || '/';
   }, [slide, block, blockIndex]);
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);
@@ -70,14 +71,14 @@ export default function BlockHoverItem({}: Props) {
   }, [slide]);
 
   const handleOnMouseLeave = () => {
-    const hoverItem = document.getElementById("hover_slide_card");
+    const hoverItem = document.getElementById('hover_slide_card');
     if (hoverItem) {
       hoverItem.style.opacity = `0`;
       hoverItem.style.zIndex = `-1`;
       hoverItem.style.pointerEvents = `none`;
     }
     if (playerContainerRef.current)
-      playerContainerRef.current.classList.remove("!scale-100");
+      playerContainerRef.current.classList.remove('!scale-100');
 
     if (setHoveredBlock && setHoveredSlide) {
       setHoveredBlock({});
@@ -93,7 +94,7 @@ export default function BlockHoverItem({}: Props) {
 
   const ratingInfo = useMemo(() => {
     return (
-      slide?.highlighted_info?.filter((item) => item?.type === "rating") || []
+      slide?.highlighted_info?.filter((item) => item?.type === 'rating') || []
     );
   }, [slide]);
 
@@ -108,7 +109,7 @@ export default function BlockHoverItem({}: Props) {
       if (playerContainerRef?.current) {
         timeoutZoom = setTimeout(() => {
           if (playerContainerRef.current)
-            playerContainerRef.current.classList.add("!scale-100");
+            playerContainerRef.current.classList.add('!scale-100');
         }, 500);
       }
       if (slide?.trailer_info?.url) {
@@ -120,7 +121,7 @@ export default function BlockHoverItem({}: Props) {
       }
     } else {
       if (playerContainerRef.current)
-        playerContainerRef.current.classList.remove("!scale-100");
+        playerContainerRef.current.classList.remove('!scale-100');
     }
     return () => {
       clearTimeout(timeoutZoom);
@@ -133,17 +134,43 @@ export default function BlockHoverItem({}: Props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  const handleTimeUpdate = () => {
+    try {
+      if (cardRef.current) {
+        const rect = cardRef.current.getBoundingClientRect();
+        const mouseX = Number(sessionStorage.getItem(MOUSE_CLIENT_X));
+        const mouseY = Number(sessionStorage.getItem(MOUSE_CLIENT_Y));
+        const inside =
+          mouseX >= rect.left &&
+          mouseX <= rect.right &&
+          mouseY >= rect.top &&
+          mouseY <= rect.bottom;
+        if (!inside && window.blockPlayer) {
+          const video =
+            window.blockPlayer?.getMediaElement() as HTMLVideoElement;
+          if (video) {
+            video.pause();
+          }
+          handleOnMouseLeave();
+        }
+      }
+    } catch {}
+  };
+
   return (
     <div
       id="hover_slide_card"
       className={`${styles.hoveredItem} rounded-[16px] absolute top-[50%] left-[50%] w-[354px] shadow-2xs z-[-1] -translate-x-1/2 -translate-y-1/2 opacity-1`}
       onMouseLeave={handleOnMouseLeave}
+      ref={cardRef}
     >
       <div
         ref={playerContainerRef}
         className="w-full absolute z-[1] top-0 left-0 ease-out duration-400 scale-0 bg-eerie-black rounded-[16px]"
         style={{
-          boxShadow: "0px 6px 20px 0px rgba(0, 0, 0, 0.5)",
+          boxShadow: '0px 6px 20px 0px rgba(0, 0, 0, 0.5)',
         }}
       >
         <div className="w-full relative">
@@ -156,6 +183,7 @@ export default function BlockHoverItem({}: Props) {
                 loop
                 type={BlockPlayerTypes.block_slider}
                 onError={() => setIsShowPlayer(false)}
+                onTimeUpdate={handleTimeUpdate}
               />
             </div>
           )}
@@ -169,7 +197,7 @@ export default function BlockHoverItem({}: Props) {
             })}
             alt={slide?.title_vie || slide?.title}
             className={`w-[354px] h-[199px] rounded-t-[16px] ${
-              isShowPlayer ? "opacity-0" : "opacity-100"
+              isShowPlayer ? 'opacity-0' : 'opacity-100'
             }`}
           />
           {slide?.trailer_info?.url && (
@@ -213,7 +241,7 @@ export default function BlockHoverItem({}: Props) {
               <VodMetaData metaData={vodDetailHighlight} type="hovered-slide" />
             </div>
           ) : (
-            ""
+            ''
           )}
 
           {slide?.detail?.short_description && (
@@ -277,7 +305,7 @@ export default function BlockHoverItem({}: Props) {
               <VodMetaData metaData={vodDetailHighlight} type="hovered-slide" />
             </div>
           ) : (
-            ""
+            ''
           )}
 
           {slide?.detail?.description && (

@@ -258,7 +258,8 @@ export type TrackingEvent =
   | 'ButtonClick'
   | 'AccessItem'
   | 'ModifiedInformation'
-  | 'DeactivateSuccess';
+  | 'DeactivateSuccess'
+  | 'ShowSidebar';
 
 export interface TrackingParams {
   platform?: string;

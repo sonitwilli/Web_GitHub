@@ -1,6 +1,29 @@
 {
     "versions": [
         {
+            "version": "8.0.36",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Popup thông báo lỗi] Lỗi hiển thị của trường Nội dung ở popup Lỗi kết nối dịch vụ",
+                "[WEB][Comment] Lỗi không hiển thị reaction khi nhấn giữ",
+                "[WEB][Comment] Không hiển thị popup yêu cầu đăng nhập khi chọn 1 reaction bất kỳ",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 42 Khi người dùng ngừng xem một kênh cụ thể",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 44 Khi người dùng ngừng xem timeshift",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 45 Khi người dùng nhấn hiển thị danh sách kênh/Nhấn Xem thêm trên mỗi cụm danh sách kênh",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 415 Khi người dùng jump qua 1 đọan phim/truyện đang xem hoặc khi người dùng tua nhanh 1 đọan phim/truyện đang xem",
+                "[WEB][Player] Lỗi tự động play VOD/Timeshift sau khi đã pause lại trên trình duyệt safari",
+                "[WEB][Trang chủ] Lỗi không phát âm thanh nội dung block New detail vod",
+                "[WEB][Truyền hình] Lỗi không hiện logo FPT Play + tên kênh/ tên chương trình trên playback",
+                "[WEB][Sự kiện] Lỗi luôn play từ đầu sự kiện công chiếu",
+                "[WEB][Sự kiện] Lỗi không hiển thị popup Thông báo thời gian bắt đầu trên banner mua gói",
+                "[WEB][Truyền hình] Lỗi không play được timeshift đầu tiên",
+                "[WEB][Livechat] Lỗi hiển thị khi mở fullscreen + livechat",
+                "[WEB][Trang chủ] Lỗi auto phát âm thanh khi scroll page",
+                "[WEB][Preview kênh] Lỗi play preview > 5p",
+                "[WEB][Preview SK] không xem lại được preview lần 2 Sk K+"
+            ]
+        }, 
+        {
             "version": "8.0.34",
             "date": "Dự kiến",
             "content": [

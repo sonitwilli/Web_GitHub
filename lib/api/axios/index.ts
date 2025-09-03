@@ -87,6 +87,10 @@ axiosInstance.interceptors.request.use(
     const fullUrl = $config.url || '';
     uriSend = fullUrl || '';
     if (uriSend[0] === '/') uriSend = uriSend.slice(1)
+    if (uriSend.includes("?")) {
+      const uriSendSplit = uriSend.split("?")
+      uriSend = uriSendSplit[0]
+    }
 
     const expireTime = Math.floor(new Date().getTime() / 1000) + 3600;
     const neKeyUser =

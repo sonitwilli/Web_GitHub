@@ -12,8 +12,8 @@ import { RootState } from '@/lib/store';
 import { useRouter } from 'next/router';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import {
-  trackingExitScheduleLog461,
   trackingShowScheduleLog46,
+  trackingShowSidebarLog45,
 } from '@/lib/hooks/useTrackingIPTV';
 
 type Props = {
@@ -56,7 +56,7 @@ export default function ChannelRightBar({
     if (tab === 'schedule') {
       trackingShowScheduleLog46();
     } else {
-      trackingExitScheduleLog461();
+      trackingShowSidebarLog45();
     }
   }, [tab]);
 

@@ -11,6 +11,7 @@ import { usePlayerPageContext } from '@/lib/components/player/context/PlayerPage
 import axios from 'axios';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
+import { showToast } from '../utils/globalToast';
 import { RootState } from '../store';
 import {
   setSelectedDate,
@@ -20,6 +21,7 @@ import {
   setStateErrorBroadcastSchedule,
   clearCurrentTimeShiftProgram,
 } from '../store/slices/broadcastScheduleSlice';
+import { DEFAULT_ERROR_MSG, TITLE_SERVICE_ERROR } from '../constant/errors';
 
 export function useBroadcastSchedule(
   channelId: string,
@@ -178,6 +180,13 @@ export function useBroadcastSchedule(
           clearTimeshiftFromUrl();
           dispatch(setActiveScheduleId(''));
           onScheduleSelect?.('');
+
+          // Show toast error when no URL returned
+          showToast({
+            title: TITLE_SERVICE_ERROR,
+            desc: DEFAULT_ERROR_MSG,
+            timeout: 5000,
+          });
         }
       } catch (err) {
         if (axios.isAxiosError(err)) {
@@ -206,6 +215,13 @@ export function useBroadcastSchedule(
         dispatch(setActiveScheduleId(''));
         dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when error occurred
         onScheduleSelect?.('');
+
+        // Show toast error when timeshift fails
+        showToast({
+          title: TITLE_SERVICE_ERROR,
+          desc: DEFAULT_ERROR_MSG,
+          timeout: 5000,
+        });
         return;
       }
     },

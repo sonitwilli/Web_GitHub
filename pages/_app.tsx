@@ -88,7 +88,7 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
-    const handleStart = () => {
+    const handleStart = (urlTo: string) => {
       setLoading(true);
       const newRouteFrom: RouteInfo = {
         path: router.asPath,
@@ -97,6 +97,32 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
         full: typeof window !== 'undefined' ? window.location.href : '',
       };
       setRouteFrom(newRouteFrom);
+      const vodPage = ['xem-video', 'playlist'];
+      const eventPage = ['su-kien', 'cong-chieu'];
+      const channelPage = ['xem-truyen-hinh'];
+      const timeshiftPage = channelPage && newRouteFrom.params.time_shift_id;
+      console.log('changeRoute', newRouteFrom.path !== urlTo);
+
+      console.log('--- newRouteFrom', newRouteFrom);
+      console.log('timeshiftPage', timeshiftPage);
+
+      if (newRouteFrom.path !== urlTo) {
+        // Gọi log Stop khi chuyển trang từ player page
+        // vod gửi log 52, event gửi log 172, channel gửi log 42, timeshift gửi log 44
+        if (vodPage.some((keyword) => newRouteFrom.full.includes(keyword))) {
+          trackingStopMovieLog52();
+        } else if (
+          eventPage.some((keyword) => newRouteFrom.full.includes(keyword))
+        ) {
+          trackingStopLiveShowLog172();
+        } else if (timeshiftPage) {
+          trackingStopTimeshiftLog44();
+        } else if (
+          channelPage.some((keyword) => newRouteFrom.full.includes(keyword))
+        ) {
+          trackingStopChannelLog42();
+        }
+      }
     };
     const handleStop = () => {
       setLoading(false);
@@ -108,30 +134,6 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
       };
       if (routeFrom) {
         setAppNameAppId(newRouteTo, routeFrom);
-        const vodPage = ['xem-video', 'playlist'];
-        const eventPage = ['su-kien', 'cong-chieu'];
-        const channelPage = ['xem-truyen-hinh'];
-        const timeshiftPage = channelPage && routeFrom.params.timeshift_id;
-        const isPageMatching = vodPage.some((keyword) =>
-          routeFrom.full.includes(keyword),
-        );
-        if (routeFrom.path !== newRouteTo.path && isPageMatching) {
-          // Gọi log Stop khi chuyển trang từ player page
-          // vod gửi log 52, event gửi log 172, channel gửi log 42, timeshift gửi log 44
-          if (vodPage.some((keyword) => routeFrom.full.includes(keyword))) {
-            trackingStopMovieLog52();
-          } else if (
-            eventPage.some((keyword) => routeFrom.full.includes(keyword))
-          ) {
-            trackingStopLiveShowLog172();
-          } else if (timeshiftPage) {
-            trackingStopTimeshiftLog44();
-          } else if (
-            channelPage.some((keyword) => routeFrom.full.includes(keyword))
-          ) {
-            trackingStopChannelLog42();
-          }
-        }
       }
       trackingChangeModuleLog18();
       trackingAccessLog50();

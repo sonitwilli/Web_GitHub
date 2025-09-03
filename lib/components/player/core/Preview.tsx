@@ -29,6 +29,7 @@ import { useAppDispatch } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import useCodec from '@/lib/hooks/useCodec';
 
 export type PreviewType = 'vod' | 'playlist' | 'live' | 'event' | 'channel';
 
@@ -94,8 +95,14 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds } =
-    usePlayerPageContext();
+  const {
+    isEndVideo,
+    hlsErrors,
+    dataStream,
+    dataChannel,
+    realPlaySeconds,
+    stopPlayerStream,
+  } = usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
@@ -119,9 +126,18 @@ const Preview: React.FC<PreviewProps> = ({
     },
   });
 
-  // Derived: hết lượt preview live
-  const isLiveEnded =
-    isLiveType && dataStream?.require_obj_msg?.available === '0';
+  const { getUrlToPlayH264 } = useCodec({
+    dataChannel,
+    dataStream,
+  });
+
+  const isLiveEnded = useMemo(() => {
+    return (
+      isLiveType &&
+      currentStream?.require_obj_msg?.available === '0' &&
+      !getUrlToPlayH264()
+    );
+  }, [isLiveType, currentStream, getUrlToPlayH264]);
 
   // Single preview state
   const [previewState, setPreviewState] = useState<
@@ -205,12 +221,6 @@ const Preview: React.FC<PreviewProps> = ({
     setIsPopupManuallyClosed(false);
   }, [router.asPath]);
 
-  useEffect(() => {
-    if (currentStream?.require_obj_msg?.available === '0') {
-      setPreviewState('background');
-    }
-  }, [currentStream?.require_obj_msg?.available]);
-
   // --- TEXT FROM CONFIGS (preview) ---
   const previewConfig = messageConfigs?.preview || {};
 
@@ -292,7 +302,12 @@ const Preview: React.FC<PreviewProps> = ({
 
   // --- HANDLERS ---
   const handleAutoStopPreview = useCallback(() => {
-    // Pause the video
+    // Stop player stream
+    if (stopPlayerStream) {
+      stopPlayerStream();
+    }
+
+    // Pause the video context state
     if (setIsVideoPaused) {
       setIsVideoPaused(true);
     }
@@ -305,7 +320,7 @@ const Preview: React.FC<PreviewProps> = ({
     // Show background overlay with time limit message
     setPreviewState('background');
     sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [type, PREVIEW_TIME_LIMIT, setIsVideoPaused]);
+  }, [type, PREVIEW_TIME_LIMIT, setIsVideoPaused, stopPlayerStream]);
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {

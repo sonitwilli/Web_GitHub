@@ -23,6 +23,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     case 'quan-li-gia-han-dich-vu':
         tab = 'quan-ly-gia-han-dich-vu';
         break
+    case 'dich-vu-da-mua':
+        tab = 'goi-dang-su-dung';
+        break
     default:
         tab = raw;
   }

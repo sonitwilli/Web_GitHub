@@ -12,14 +12,13 @@ import BlockItemMetaData from '../blocks/BlockItemMetaData';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import Hls from 'hls.js';
 import { MdOutlineVolumeOff, MdOutlineVolumeUp } from 'react-icons/md';
-import {
-  changeIsMutedTrailerPlayer,
-} from '@/lib/store/slices/appSlice';
+import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
 import { BlockContext } from './embla/block-slider/EmblaBlockSlider';
 import PosterOverlays from '../overlays/PosterOverlays';
 import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { useIntersectionObserver } from '@/lib/hooks/useIntersectionObserver';
+import { MOUSE_CLIENT_X, MOUSE_CLIENT_Y } from '@/lib/constant/texts';
 
 interface Props {
   block?: BlockItemType;
@@ -31,6 +30,7 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
   const { width } = useScreenSize();
   const blockCtx = useContext(BlockContext);
   const dispatch = useAppDispatch();
+  const isPlaySuccessRef = useRef(false);
   const { isMutedTrailerPlayer } = useAppSelector((s) => s.app);
   const { isInViewport, targetElement } = useIntersectionObserver({
     threshold: 0.3,
@@ -195,19 +195,45 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
     setIsHover(false);
   };
 
+  const handleTimeUpdate = () => {
+    if (targetElement.current) {
+      const rect = targetElement.current.getBoundingClientRect();
+      const mouseX = Number(sessionStorage.getItem(MOUSE_CLIENT_X));
+      const mouseY = Number(sessionStorage.getItem(MOUSE_CLIENT_Y));
+      const inside =
+        mouseX >= rect.left &&
+        mouseX <= rect.right &&
+        mouseY >= rect.top &&
+        mouseY <= rect.bottom;
+      if (!inside) {
+        if (videoRef.current) {
+          videoRef.current.volume = 0;
+          videoRef.current.muted = true;
+          videoRef.current.pause();
+          setIsHover(false);
+        }
+      }
+    }
+  };
+
   // mute/ muted
 
   useEffect(() => {
+    if (!isPlaySuccessRef.current) {
+      return;
+    }
     if (isMutedTrailerPlayer) {
       if (videoRef.current) {
+        videoRef.current.volume = 0;
         videoRef.current.muted = true;
       }
     } else {
       if (videoRef.current) {
+        videoRef.current.volume = 1;
         videoRef.current.muted = false;
       }
     }
-  }, [isMutedTrailerPlayer, videoRef]);
+  }, [isMutedTrailerPlayer, videoRef, isPlaySuccessRef]);
 
   useEffect(() => {
     return () => {
@@ -234,6 +260,18 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
   const handlePlaying = () => {
     setIsPlaying(true);
     setIsPaused(false);
+    if (isMutedTrailerPlayer) {
+      if (videoRef.current) {
+        videoRef.current.volume = 0;
+        videoRef.current.muted = true;
+      }
+    } else {
+      if (videoRef.current) {
+        videoRef.current.volume = 1;
+        videoRef.current.muted = false;
+      }
+    }
+    isPlaySuccessRef.current = true;
   };
   const handlePaused = () => {
     setIsPlaying(false);
@@ -259,6 +297,7 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
       pauseOtherPlayers();
     }
   }, [isInViewport]);
+
   return (
     <div
       className={`w-full rounded-[16px] ${
@@ -368,6 +407,7 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
               loop
               onPlaying={handlePlaying}
               onPause={handlePaused}
+              onTimeUpdate={handleTimeUpdate}
             ></video>
           </div>
         ) : (

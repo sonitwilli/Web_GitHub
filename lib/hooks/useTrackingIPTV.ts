@@ -143,6 +143,22 @@ export const trackingStopTimeshiftLog44 = () => {
   } catch {}
 };
 
+export const trackingShowSidebarLog45 = () => {
+  // Log45 : ShowSidebar
+  try {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const playerParams = getPlayerParams();
+    /*@ts-ignore*/
+    return tracking({
+      LogId: '45',
+      Event: 'ShowSidebar',
+      ...playerParams,
+    });
+  } catch {}
+};
+
 export const trackingShowScheduleLog46 = () => {
   // Log46 : ShowSchedule
   try {

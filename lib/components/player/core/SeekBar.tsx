@@ -37,7 +37,6 @@ export default function SeekBar() {
   const change = (v: number) => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
-      const oldTime = video.currentTime;
       const newTime = v / 1000;
 
       if (setVideoCurrentTime) {
@@ -46,13 +45,11 @@ export default function SeekBar() {
       video.currentTime = newTime;
 
       // Track seek event if there's a significant time change
-      if (Math.abs(newTime - oldTime) > 1) {
-        saveSeekEvent({
-          timestamp: Date.now(),
-          direction: 'seekbar',
-          method: 'seekbar',
-        });
-      }
+      saveSeekEvent({
+        timestamp: Date.now(),
+        direction: 'seekbar',
+        method: 'seekbar',
+      });
     }
   };
 

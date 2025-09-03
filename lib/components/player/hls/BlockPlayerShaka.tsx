@@ -24,6 +24,7 @@ interface Props {
   onEnded?: () => void;
   block?: BlockItemType;
   slide?: BlockSlideItemType;
+  onTimeUpdate?: () => void;
 }
 
 const BlockPlayerShaka = ({
@@ -35,6 +36,7 @@ const BlockPlayerShaka = ({
   onPlaySuccess,
   onEnded,
   block,
+  onTimeUpdate,
 }: Props) => {
   const newVodCtx = useContext(NewVodContext);
   const topCtx = useContext(TopSliderContext);
@@ -239,6 +241,7 @@ const BlockPlayerShaka = ({
           loop={loop}
           onPlaying={onPlaySuccess}
           onEnded={onEnded}
+          onTimeUpdate={onTimeUpdate}
           poster="/images/default-poster-horizontal.png"
         />
       </div>

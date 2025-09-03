@@ -138,6 +138,7 @@ export const TRACKING_LOG_ID: Record<TrackingEvent, number> = {
   ModifiedInformation: 198,
   DeactivateSuccess: 198,
   Pending: 417,
+  ShowSidebar: 45,
 };
 
 export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
@@ -273,6 +274,7 @@ export const TRACKING_APP_ID: Record<TrackingEvent, TrackingAppId> = {
   ModifiedInformation: 'dynamic',
   DeactivateSuccess: 'dynamic',
   Pending: 'dynamic',
+  ShowSidebar: 'dynamic',
 };
 
 export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
@@ -408,6 +410,7 @@ export const TRACKING_APP_NAME: Record<TrackingEvent, TrackingAppName> = {
   ModifiedInformation: 'dynamic',
   DeactivateSuccess: 'dynamic',
   Pending: 'dynamic',
+  ShowSidebar: 'dynamic',
 };
 
 export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
@@ -543,6 +546,7 @@ export const TRACKING_SCREEN: Record<TrackingEvent, TrackingScreen> = {
   ModifiedInformation: 'Function',
   DeactivateSuccess: 'Function',
   Pending: '',
+  ShowSidebar: 'ChannelList',
 };
 
 export const TRACKING_URL = 'https://logs-ott.fbox.fpt.vn/topics/web-ott';

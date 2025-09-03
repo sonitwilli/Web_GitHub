@@ -491,9 +491,9 @@ export const getTrackingParamIsLive = () => {
     if (isPreview) {
       return 5;
     }
-    // check query timeshift_id has value
+    // check query time_shift_id has value
     const urlParams = new URLSearchParams(window.location.search);
-    const timeshiftId = urlParams.get('timeshift_id');
+    const timeshiftId = urlParams.get('time_shift_id');
     if (timeshiftId) {
       return 10;
     }

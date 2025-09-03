@@ -31,6 +31,7 @@ import { handleDeepLink } from '@/lib/utils/deepLinkHandler';
 import { getMessageConfigs } from '@/lib/api/app';
 import { handleClearStrorage } from '@/utils/common/handleClearStrorage';
 import useTabActivity from '@/lib/hooks/useTabActivity';
+import { saveSessionStorage } from '@/lib/utils/storage';
 const Chatbot = dynamic(() => import('@/lib/components/chatbot/Chatbot'), {
   ssr: false,
 });
@@ -170,6 +171,18 @@ export default function AppContainer({ children }: Props) {
       const { clientX, clientY } = event;
       localStorage.setItem(MOUSE_CLIENT_X, clientX.toString());
       localStorage.setItem(MOUSE_CLIENT_Y, clientY.toString());
+      saveSessionStorage({
+        data: [
+          {
+            key: MOUSE_CLIENT_X,
+            value: clientX.toString(),
+          },
+          {
+            key: MOUSE_CLIENT_Y,
+            value: clientY.toString(),
+          },
+        ],
+      });
     });
 
     return () => {

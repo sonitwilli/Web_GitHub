@@ -51,6 +51,7 @@ import {
 import {
   trackingPauseTimeshiftLog431,
   trackingResumeTimeshiftLog432,
+  trackingSeekTimeshiftLog415,
   trackingStartChannelLog41,
   trackingStartTimeshiftLog43,
   useTrackingIPTV,
@@ -96,6 +97,7 @@ export default function usePlayer() {
     fetchChannelCompleted,
     isPlaySuccess,
     isEndedLive,
+    previewHandled,
   } = usePlayerPageContext();
   const isValidForProfileType = useMemo(() => {
     if (!fetchChannelCompleted) {
@@ -336,7 +338,11 @@ export default function usePlayer() {
     // Check and tracking seek event
     const seekEvent = getSeekEvent();
     if (seekEvent) {
-      trackingSeekVideoLog514();
+      if (streamType === 'timeshift') {
+        trackingSeekTimeshiftLog415();
+      } else {
+        trackingSeekVideoLog514();
+      }
       // Clear the seek event after logging
       clearSeekEvent();
     }
@@ -876,6 +882,10 @@ export default function usePlayer() {
     console.log('--- PLAYER handleIntervalCheckErrors', {
       checkErrorInterRef: window.checkErrorInterRef,
     });
+    // không chạy khi preview
+    if (previewHandled) {
+      return;
+    }
     // chạy sau khi load source
     if (!window.checkErrorInterRef) {
       // @ts-ignore
