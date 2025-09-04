@@ -50,7 +50,8 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
     if (isSearchingPage) return;
 
     if (appCtx?.setHoveredSlide && appCtx?.setHoveredBlock && slide && block) {
-      appCtx.setHoveredBlock(block);
+      const blockItem = { ...block, index };
+      appCtx.setHoveredBlock(blockItem);
       appCtx.setHoveredSlide(slide);
     }
     timeRef.current = setTimeout(() => {

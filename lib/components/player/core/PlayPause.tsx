@@ -6,7 +6,7 @@ import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { saveSessionStorage } from '@/lib/utils/storage';
 
 export default function PlayPause() {
-  const { isVideoPaused } = usePlayerPageContext();
+  const { isVideoPaused, setIsPauseClick } = usePlayerPageContext();
   const text = useMemo(() => {
     if (isVideoPaused) {
       return 'Tiếp tục phát';
@@ -19,6 +19,9 @@ export default function PlayPause() {
     try {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
       if (video) {
+        if (setIsPauseClick) {
+          setIsPauseClick(new Date().getTime());
+        }
         if (isVideoPaused) {
           video.play();
         } else {

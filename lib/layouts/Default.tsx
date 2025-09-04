@@ -145,7 +145,11 @@ function DefaultLayoutContent({ children }: Props) {
         {width >= 1280 ? (
           <div className={`${block?.id && slide?.id ? '' : 'hidden'}`}>
             <div>
-              <BlockHoverItem block={block} slide={slide} index={0} />
+              <BlockHoverItem
+                block={block}
+                slide={slide}
+                index={block?.index}
+              />
             </div>
           </div>
         ) : null}

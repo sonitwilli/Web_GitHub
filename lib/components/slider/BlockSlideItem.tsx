@@ -29,6 +29,7 @@ import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
 import { NewVodContext } from './embla/new-vod-detail-slider/NewVodDetail';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import useBlock from '@/lib/hooks/useBlock';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 const VodProgress = dynamic(() => import('../vod/VodProgress'), {
   ssr: false,
@@ -159,7 +160,7 @@ export default function BlockSlideItem({
             '',
         )}-${dataChannel?.id}/tap-${
           Number(slide?.id_trailer) + 1
-        }?block_index=${blockIndex}`;
+        }?block_index=${blockIndex}&position_index=${index}`;
       }
       return `/xem-video/${viToEn(
         dataChannel?.title ||
@@ -172,11 +173,19 @@ export default function BlockSlideItem({
       data: slide || {},
       type: block?.type || '',
     });
+    const isSearchPage = router.pathname.includes('/tim-kiem');
     if (blockIndex > -1) {
-      return `${result}?block_index=${blockIndex}`;
+      return `${result}?block_index=${blockIndex}&position_index=${index}${
+        isSearchPage ? '&from=Search' : ''
+      }`;
     }
-    return result || '/';
-  }, [slide, block, dataChannel, blockIndex]);
+    return (
+      `${result}?position_index=${index}${
+        isSearchPage ? '&from=Search' : ''
+      }` || '/'
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slide, block, dataChannel, blockIndex, index]);
 
   const linearGradient = useMemo(() => {
     if (!slide?.bg_color || block?.block_type !== 'numeric_rank') {
@@ -213,6 +222,26 @@ export default function BlockSlideItem({
     );
   }
 
+  const handleItemClick = () => {
+    console.log('--- TRACKING handleItemClick', block, slide);
+    sessionStorage.setItem(
+      trackingStoreKey.APP_MODULE_SCREEN,
+      block?.block_type || '',
+    );
+    sessionStorage.setItem(
+      trackingStoreKey.APP_MODULE_SUBMENU_ID,
+      block?.name || '',
+    );
+    sessionStorage.setItem(
+      trackingStoreKey.IS_RECOMMEND_ITEM,
+      slide?.is_recommend ? '1' : '0',
+    );
+
+    if (block?.type === 'vod_related') {
+      sessionStorage.setItem(trackingStoreKey.SCREEN_ITEM, 'Related');
+    }
+  };
+
   return (
     <div
     // className={`${
@@ -234,6 +263,7 @@ export default function BlockSlideItem({
             : ''
         }`}
         onClick={(ev) => {
+          handleItemClick();
           if (block?.block_type === 'auto_expansion') {
             ev.preventDefault(); // Disable navigation
             if (newVodCtx?.setSelectedSlide) {
@@ -432,7 +462,7 @@ export default function BlockSlideItem({
           slide?.type !== 'livetv' &&
           slide?.type !== 'page' &&
           block?.block_type !== 'horizontal_slider_with_background' &&
-          block?.block_type !== 'category' && 
+          block?.block_type !== 'category' &&
           block?.block_type !== 'auto_expansion') ||
         router?.pathname.includes('/su-kien/') ? (
           <h3

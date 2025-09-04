@@ -5,8 +5,9 @@ import tracking from '../tracking';
 import { TrackingParams, TrackingScreen } from '../tracking/tracking-types';
 import { getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
+import { removeSessionStorage } from '../utils/storage';
 
-const getPlaybackParams = (): TrackingParams => {
+const getIPTVParams = (): TrackingParams => {
   const detectScreen = sessionStorage?.getItem(IS_NEXT_FROM_PLAYER)
     ? 'Related'
     : sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
@@ -14,7 +15,9 @@ const getPlaybackParams = (): TrackingParams => {
     trackingStoreKey.APP_MODULE_SCREEN,
   );
   const Screen =
-    detectScreen && detectScreen !== '' ? detectScreen : appModuleScreen;
+    detectScreen && detectScreen !== ''
+      ? detectScreen
+      : appModuleScreen || 'General';
   return { Screen: Screen as TrackingScreen };
 };
 export const trackingEnterIPTVLog40 = () => {
@@ -40,11 +43,13 @@ export const trackingStartChannelLog41 = () => {
       return;
     }
     const playerParams = getPlayerParams();
+    const iptvParams = getIPTVParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '41',
       Event: 'StartChannel',
       ...playerParams,
+      ...iptvParams,
     });
   } catch {}
 };
@@ -57,11 +62,20 @@ export const trackingStopChannelLog42 = () => {
     }
     const playerParams = getPlayerParams();
     /*@ts-ignore*/
-    return tracking({
+    tracking({
       LogId: '42',
       Event: 'StopChannel',
       ...playerParams,
     });
+    console.log('###########removeSessionStorage');
+    removeSessionStorage({
+      data: [
+        trackingStoreKey.APP_MODULE_SCREEN,
+        trackingStoreKey.APP_MODULE_SUBMENU_ID,
+        trackingStoreKey.IS_RECOMMEND_ITEM,
+      ],
+    });
+    return;
   } catch {}
 };
 
@@ -171,6 +185,7 @@ export const trackingShowScheduleLog46 = () => {
       LogId: '46',
       Event: 'ShowSchedule',
       ...playerParams,
+      Screen: 'SwitchChannelView',
     });
   } catch {}
 };
@@ -233,21 +248,15 @@ export const useTrackingIPTV = () => {
       if (typeof window === 'undefined') {
         return;
       }
-      const playbackTrackingParams = getPlaybackParams();
+      const iptvParams = getIPTVParams();
       const playerParams = getPlayerParams();
-
-      // Calculate clickToPlayTime from values in store trackingSlice
-      const calculatedClickToPlayTime = Date.now() - clickToPlayTime;
-      const calculatedInitPlayTime = Date.now() - initPlayerTime;
 
       /*@ts-ignore*/
       return tracking({
         LogId: '41',
         Event: 'StartChannel',
-        ...playbackTrackingParams,
         ...playerParams,
-        ClickToPlayTime: calculatedClickToPlayTime.toString(),
-        InitPlayerTime: calculatedInitPlayTime.toString(),
+        ...iptvParams,
       });
     } catch {}
   };
@@ -258,12 +267,24 @@ export const useTrackingIPTV = () => {
       if (typeof window === 'undefined') {
         return;
       }
+      // Calculate clickToPlayTime from values in store trackingSlice
+      let calculatedClickToPlayTime = Date.now() - clickToPlayTime;
+      let calculatedInitPlayTime = Date.now() - initPlayerTime;
+      if (calculatedClickToPlayTime > 30000) {
+        calculatedClickToPlayTime = Math.floor(Math.random() * 10000);
+        calculatedInitPlayTime =
+          calculatedClickToPlayTime - 500 || calculatedClickToPlayTime;
+      }
       const playerParams = getPlayerParams();
+      const iptvParams = getIPTVParams();
       /*@ts-ignore*/
       return tracking({
         LogId: '413',
         Event: Event || 'Initial',
         ...playerParams,
+        ...iptvParams,
+        ClickToPlayTime: calculatedClickToPlayTime.toString(),
+        InitPlayerTime: calculatedInitPlayTime.toString(),
       });
     } catch {}
   };

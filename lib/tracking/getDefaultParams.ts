@@ -67,6 +67,11 @@ const getDefaultParams = async (): Promise<TrackingParams> => {
 
   if (Session) {
     Session = moment(parseInt(Session)).toISOString();
+  } else {
+    //Nếu chưa lưu thì tạo mới 1 chuỗi bằng random và lưu xuống
+    const tabId = new Date().getTime().toString();
+    sessionStorage.setItem('tabId', tabId);
+    Session = moment(parseInt(tabId)).toISOString();
   }
 
   if (sessionStorage && sessionStorage[trackingStoreKey.PLAYER_DATA_PLAYING]) {

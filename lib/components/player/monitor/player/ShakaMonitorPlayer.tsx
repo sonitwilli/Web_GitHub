@@ -19,6 +19,8 @@ import { store } from '@/lib/store';
 import { userAgentInfo } from '@/lib/utils/ua';
 import { VIDEO_ID } from '@/lib/constant/texts';
 import { usePlayerPageContext } from '../../context/PlayerPageContext';
+import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
+import { useDispatch } from 'react-redux';
 // Minimal Shaka player typing for monitor quality switching
 type ShakaPlayerLike = {
   getVariantTracks?: () => Array<{ height?: number; bandwidth?: number }>;
@@ -48,7 +50,7 @@ const ShakaMonitorPlayer: React.FC<Props> = ({
 }) => {
   const { isTDM, setPlayerName, setPlayingUrl, streamType } =
     usePlayerPageContext();
-
+  const dispatch = useDispatch();
   const { getUrlToPlay } = useCodec({ dataChannel, dataStream });
   const videoId = useMemo(
     () => `${VIDEO_ID}_${Math.random().toString(36).slice(2)}`,
@@ -217,6 +219,7 @@ const ShakaMonitorPlayer: React.FC<Props> = ({
   };
   async function initShaka() {
     // no-op for monitor
+    dispatch(changeInitPlayerTime(new Date().getTime()));
     initApp();
     await initDrm();
     // With per-instance player in monitor, load directly after DRM setup

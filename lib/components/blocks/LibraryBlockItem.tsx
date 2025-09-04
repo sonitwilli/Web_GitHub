@@ -190,6 +190,10 @@ export default function LibraryBlockItem({
     );
   }
 
+  if(!data || (Array.isArray(data) && data?.length === 0)) {
+    return null
+  }
+
   return (
     <div
       style={

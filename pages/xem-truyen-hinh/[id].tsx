@@ -487,7 +487,10 @@ function ChannelPageContent() {
                     )}
                     {channelsBySelectedGroup &&
                       channelsBySelectedGroup.length > 0 && (
-                        <ChannelsByGroup channels={channelsBySelectedGroup} />
+                        <ChannelsByGroup
+                          channels={channelsBySelectedGroup}
+                          selectedGroup={selectedGroup}
+                        />
                       )}
                   </>
                 )}

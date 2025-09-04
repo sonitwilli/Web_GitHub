@@ -55,6 +55,7 @@ import { trackingPlaybackErrorLog515 } from '@/lib/hooks/useTrackingPlayback';
 import axios from 'axios';
 import useCodec from '@/lib/hooks/useCodec';
 import { saveSessionStorage } from '@/lib/utils/storage';
+import PauseDesktop from './PauseDesktop';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -144,6 +145,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     showModalNotice,
     queryEpisodeNotExist,
     loginManifestUrl,
+    setIsPauseClick,
   } = usePlayerPageContext();
   const { isVideoCodecNotSupported } = useCodec({
     dataChannel,
@@ -355,6 +357,9 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   const clickMask = () => {
     const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (video) {
+      if (setIsPauseClick) {
+        setIsPauseClick(new Date().getTime());
+      }
       // pause
       if (streamType === 'vod' || streamType === 'playlist') {
         if (video.paused) {
@@ -636,7 +641,13 @@ export default function PlayerWrapper({ children, eventId }: Props) {
               <MiddleButtons />
             </div>
           )}
-
+        {viewportType !== VIEWPORT_TYPE.MOBILE &&
+        (streamType === 'vod' || streamType === 'playlist') &&
+        isPlaySuccess ? (
+          <PauseDesktop />
+        ) : (
+          ''
+        )}
         {/* Broadcast schedule chỉ show qua BroadcastScheduleWrapper khi showBroadcastSchedule && isFullscreen */}
         {showBroadcastSchedule && isFullscreen && (
           <div className="fixed z-[10] top-0 right-0 w-full h-full grid grid-cols-[1fr_min(520px,100vw)] sm:grid-cols-[1fr_520px]">

@@ -40,7 +40,7 @@ import _ from 'lodash';
 import { userAgentInfo } from '@/lib/utils/ua';
 import { Episode, getEpisodeDetail, getVodDetail } from '@/lib/api/vod';
 import { getEventDetail, getEventStreamData } from '@/lib/api/event';
-import { getSeekPremier, parseManifest } from '@/lib/utils/player';
+import { parseManifest } from '@/lib/utils/player';
 import { AudioItemType } from '../core/AudioButton';
 import { ResolutionItemType } from '../core/Resolution';
 import { useSelector } from 'react-redux';
@@ -212,6 +212,15 @@ type ContextType = {
   setNextRecommendCancelled?: (v: boolean) => void;
   isVideoCodecNotSupported?: boolean;
   stopPlayerStream?: () => void;
+  isPauseClick?: number;
+  setIsPauseClick?: (v: number) => void;
+  getSeekPremier?: (event?: {
+    is_premier?: string;
+    type?: string;
+    start_time?: string;
+    begin_time?: string;
+    end_time?: string;
+  }) => number | undefined;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -229,6 +238,7 @@ type Props = {
 };
 
 export function PlayerPageContextProvider({ children }: Props) {
+  const [isPauseClick, setIsPauseClick] = useState(0);
   const [isSupportOs, setIsSupportOs] = useState(true);
   const [queryEpisodeNotExist, setQueryEpisodeNotExist] = useState(false);
   const [hasWatchedCredit, setHasWatchedCredit] = useState(false);
@@ -1169,10 +1179,21 @@ export function PlayerPageContextProvider({ children }: Props) {
     setIsRedirecting(false);
   }, [router.asPath]);
 
+  useEffect(() => {
+    setIsPauseClick(0);
+  }, [router]);
+
   const handleParseManifest = useCallback(async () => {
     if (playingUrl) {
       const parsedData = await parseManifest({ manifestUrl: playingUrl });
-
+      saveSessionStorage({
+        data: [
+          {
+            key: trackingStoreKey.PLAYER_PARSED_DATA,
+            value: JSON.stringify(parsedData),
+          },
+        ],
+      });
       if (parsedData?.manualParseData?.audioTracks) {
         setAudios(parsedData?.manualParseData?.audioTracks);
       }
@@ -1349,15 +1370,35 @@ export function PlayerPageContextProvider({ children }: Props) {
   // --------------- If Premier (Event) -> Seek to CurrentTime ---------------
   const [seekOffsetInSeconds, setSeekOffsetInSeconds] = useState<number>(0);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const getSeekPremier = (event?: {
+    is_premier?: string;
+    type?: string;
+    start_time?: string;
+    begin_time?: string;
+    end_time?: string;
+  }): number | undefined => {
+    if (String(event?.is_premier) !== '1' || event?.type !== 'event') {
+      return undefined;
+    }
+
+    const now = Math.floor(Date.now() / 1000);
+    const start = parseInt(event?.start_time || event?.begin_time || '0', 10);
+    const end = parseInt(event?.end_time || '0', 10);
+
+    if (!start || now < start || now > end) return undefined;
+
+    return now - start;
+  };
+
   useEffect(() => {
-    if (isPlaySuccess) {
+    if (realPlaySeconds >= 1) {
       const offset = getSeekPremier(dataEvent);
       if (offset && offset > 0) {
         setSeekOffsetInSeconds(offset);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPlaySuccess]);
+  }, [dataEvent, setSeekOffsetInSeconds, getSeekPremier, realPlaySeconds]);
 
   // Utility function to stop player stream
   const stopPlayerStream = useCallback(() => {
@@ -1525,6 +1566,9 @@ export function PlayerPageContextProvider({ children }: Props) {
         nextRecommendCancelled,
         setNextRecommendCancelled,
         stopPlayerStream,
+        isPauseClick,
+        setIsPauseClick,
+        getSeekPremier,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

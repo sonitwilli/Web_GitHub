@@ -203,7 +203,8 @@
 .player-wrapper-playlist .c-control-button-next-episode {
   display: block;
 }
-.player-wrapper-playlist.player-wrapper-fullscreen .c-control-button-episode-list {
+.player-wrapper-playlist.player-wrapper-fullscreen
+  .c-control-button-episode-list {
   display: block;
 }
 .player-wrapper-playlist.player-wrapper-final-episode
@@ -211,7 +212,8 @@
   display: none;
 }
 
-.player-wrapper-user-inactive .MiddleButtons-container {
+.player-wrapper-user-inactive .MiddleButtons-container,
+.player-wrapper-user-inactive .PauseDesktop {
   display: none;
 }
 
@@ -232,7 +234,6 @@
   }
 }
 
-
 /* iOS Safari custom fullscreen to avoid native player controls taking over */
 .player-wrapper-ios-fullscreen {
   position: fixed !important;
@@ -250,4 +251,8 @@
 }
 .player-wrapper-ios-fullscreen #nvm_player_control {
   opacity: 1 !important; /* keep custom controls visible */
+}
+
+.player-wrapper-paused .PauseDesktop {
+  display: flex !important;
 }

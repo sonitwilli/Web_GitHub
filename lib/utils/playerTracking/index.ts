@@ -259,6 +259,7 @@ export const getPlayerActiveTrack = () => {
   let activeAudioLabel = '';
   let audioMimeType = 'audio/mp4';
   let audioCodec = 'mp4a.40.2';
+  let videoCodec = 'avc1.64002A';
   const s = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_SUB_OBJECT);
   const a = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_OBJECT);
   const selectedSubParsed = (s ? JSON.parse(s) : {}) as SubtitleItemType;
@@ -286,7 +287,8 @@ export const getPlayerActiveTrack = () => {
       };
       activeAudioLabel = activeTrack?.label || activeTrack?.language;
       audioMimeType = activeTrack?.audioMimeType;
-      audioCodec = activeTrack?.audioCodec;
+      audioCodec = activeTrack?.audioCodec || 'mp4a.40.2';
+      videoCodec = activeTrack?.videoCodec || 'avc1.64002A';
     } else if (window?.hlsPlayer) {
       const levelIndex = window.hlsPlayer.currentLevel; // index in hls.levels array
       const activeTrack = window.hlsPlayer.levels[levelIndex];
@@ -302,6 +304,7 @@ export const getPlayerActiveTrack = () => {
       const track = window.hlsPlayer.audioTracks[currentTrackId];
       activeAudioLabel = track?.name || track?.lang || '';
       audioCodec = track?.audioCodec || 'mp4a.40.2';
+      videoCodec = track?.videoCodec || 'avc1.64002A';
     }
   } catch {
     //
@@ -340,6 +343,10 @@ export const getPlayerActiveTrack = () => {
           key: trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
           value: audioMimeType,
         },
+        {
+          key: trackingStoreKey.PLAYER_VIDEO_CODEC,
+          value: videoCodec,
+        },
       ],
     });
     return {
@@ -377,6 +384,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.PLAYER_FIRST_LOAD,
       VIDEO_TIME_BEFORE_ERROR,
       PLAYER_IS_RETRYING,
+      trackingStoreKey.PLAYER_PARSED_DATA,
     ],
   });
 };
@@ -429,10 +437,13 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.PLAYER_VOD_ID,
       trackingStoreKey.PLAYER_TRACKING_STATE,
       trackingStoreKey.BLOCK_INDEX,
+      trackingStoreKey.POSITION_INDEX,
+      trackingStoreKey.SCREEN_ITEM,
       VIDEO_TIME_BEFORE_ERROR,
       PLAYER_IS_RETRYING,
       trackingStoreKey.PLAYER_AUDIO_CODEC,
       trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
+      trackingStoreKey.PLAYER_PARSED_DATA,
     ],
   });
 };
@@ -581,7 +592,7 @@ export const getPlayerParams = () => {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
     Bandwidth: String(Math.round(bwMbps)) || '',
-    StreamBandwidthAudio: String(Math.round(audioBwMbps)) || '',
+    StreamBandwidthAudio: audioBwMbps ? String(audioBwMbps.toFixed(2)) : '',
     StreamBandwidth: String(Math.round(streamBwMbps)) || '',
     BufferLength:
       String(
@@ -638,7 +649,7 @@ export const getPlayerParams = () => {
       '',
     isLandingPage:
       sessionStorage.getItem(trackingStoreKey.PLAYER_IS_LANDING_PAGE) || '1',
-    PlayerName: sessionStorage.getItem(trackingStoreKey.PLAYER_NAME) || '',
+    PlayerName: sessionStorage.getItem(trackingStoreKey.PLAYER_NAME) || 'Shaka',
     BusinessPlan: requirePurchaseData?.require_vip_plan || '',
     playing_session:
       sessionStorage.getItem(trackingStoreKey.PLAYER_PLAYING_SESSION || '') ||
@@ -653,6 +664,7 @@ export const getPlayerParams = () => {
         ),
       ) || '',
     BlockPosition: sessionStorage.getItem(trackingStoreKey.BLOCK_INDEX) || '',
+    Position: sessionStorage.getItem(trackingStoreKey.POSITION_INDEX) || '',
     isTrailer: dataStream?.is_trailer || '',
     isLive: isLive?.toString() || '',
     isLinkDRM: isLinkDRM ? '1' : '0',
@@ -662,10 +674,21 @@ export const getPlayerParams = () => {
         .join(',') || '',
     Country: dataChannel?.nation || '',
     FType: dataChannel?.is_tvod ? '2' : '1',
+    isPreAdv: '0',
+    is_recommend:
+      sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || '',
+    Multicast: dataStream?.url || '',
+    SubMenuId:
+      sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) ||
+      sessionStorage.getItem(trackingStoreKey.CHANNEL_SELECTED_GROUP) ||
+      '',
+    Key: sessionStorage.getItem(trackingStoreKey.CHANNEL_KEY) || '',
+    Status: dataStream?.enable_preview === '1' ? 'Preview' : 'None',
     AudioMimeType: sessionStorage.getItem(
       trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
     ),
     CodecAudio: sessionStorage.getItem(trackingStoreKey.PLAYER_AUDIO_CODEC),
+    CodecVideo: sessionStorage.getItem(trackingStoreKey.PLAYER_VIDEO_CODEC),
   };
 };
 

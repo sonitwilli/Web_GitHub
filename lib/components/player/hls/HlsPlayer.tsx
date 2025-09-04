@@ -31,6 +31,8 @@ import {
 import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
 import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
 import CodecNotSupport from '../core/CodecNotSupport';
+import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
+import { useDispatch } from 'react-redux';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -78,6 +80,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     streamType,
   } = usePlayerPageContext();
   const { isFullscreen } = useAppSelector((s) => s.player);
+  const dispatch = useDispatch();
   useLayoutEffect(() => {
     if (setPlayerName) {
       setPlayerName('hls');
@@ -121,6 +124,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
   };
 
   const initHls = useCallback(() => {
+    dispatch(changeInitPlayerTime(new Date().getTime()));
     const url =
       showLoginPlayer && loginManifestUrl
         ? loginManifestUrl

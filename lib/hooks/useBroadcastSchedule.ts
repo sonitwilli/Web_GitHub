@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useRouter } from 'next/router';
 import {
   getBroadcastSchedule,
@@ -73,6 +73,34 @@ export function useBroadcastSchedule(
   const { setFromTimeshiftToLive, setShowLoginPlayer, setIsPlaySuccess } =
     usePlayerPageContext();
 
+  // Compute boundary timeshift item (earliest replayable item within the window)
+  const boundaryTimeshiftItemId = useMemo(() => {
+    const nowMs = broadcastScheduleState.currentTime * 1000;
+    const timeshiftLimitHours = dataChannel?.timeshift_limit || 24;
+    const replayWindowStartMs =
+      nowMs - Number(timeshiftLimitHours) * 60 * 60 * 1000;
+
+    let candidateId: string | undefined;
+    let minEndWithinWindow = Number.POSITIVE_INFINITY;
+
+    for (const item of broadcastScheduleState.scheduleList) {
+      const endMs = Number(item.end_time) * 1000;
+      // past program and within allowed window
+      if (endMs <= nowMs && endMs >= replayWindowStartMs) {
+        if (endMs < minEndWithinWindow) {
+          minEndWithinWindow = endMs;
+          candidateId = item.id;
+        }
+      }
+    }
+
+    return candidateId || '';
+  }, [
+    broadcastScheduleState.currentTime,
+    broadcastScheduleState.scheduleList,
+    dataChannel?.timeshift_limit,
+  ]);
+
   // Update current time every minute
   useEffect(() => {
     const interval = setInterval(() => {
@@ -142,6 +170,11 @@ export function useBroadcastSchedule(
         dispatch(setActiveScheduleId(''));
         dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when going back to live
         onScheduleSelect?.('');
+        return;
+      }
+
+      // Block selecting boundary timeshift item (known to be problematic)
+      if (boundaryTimeshiftItemId && scheduleId === boundaryTimeshiftItemId) {
         return;
       }
 
@@ -236,6 +269,7 @@ export function useBroadcastSchedule(
       clearTimeshiftFromUrl,
       setFromTimeshiftToLive,
       setIsPlaySuccess,
+      boundaryTimeshiftItemId,
     ],
   );
 
@@ -270,6 +304,20 @@ export function useBroadcastSchedule(
       // Only search in current scheduleList (today's schedule)
       const item = findItemById(urlScheduleId);
 
+      // If URL points to boundary timeshift item, treat as not selectable
+      if (
+        boundaryTimeshiftItemId &&
+        urlScheduleId === boundaryTimeshiftItemId
+      ) {
+        clearTimeshiftFromUrl();
+        dispatch(setActiveScheduleId(''));
+        dispatch(clearCurrentTimeShiftProgram());
+        onScheduleSelect?.('');
+        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+        if (setIsPlaySuccess) setIsPlaySuccess(false);
+        return;
+      }
+
       if (item && isItemLive(item)) {
         // Schedule found and currently live, switch to live
         clearTimeshiftFromUrl();
@@ -300,6 +348,7 @@ export function useBroadcastSchedule(
     onScheduleSelect,
     setFromTimeshiftToLive,
     setIsPlaySuccess,
+    boundaryTimeshiftItemId,
   ]);
 
   useEffect(() => {
@@ -325,7 +374,11 @@ export function useBroadcastSchedule(
   );
 
   return {
-    scheduleList,
+    scheduleList: useMemo(() => {
+      // Filter out the boundary timeshift item from the returned list
+      if (!boundaryTimeshiftItemId) return scheduleList;
+      return scheduleList.filter((i) => i.id !== boundaryTimeshiftItemId);
+    }, [scheduleList, boundaryTimeshiftItemId]),
     currentTime,
     selectedDate,
     setSelectedDate: setSelectedDateCallback,

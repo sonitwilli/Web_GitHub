@@ -157,7 +157,8 @@ export default function DropdownNoti({
   const handleClickItem = async (item: InboxListItem) => {
     // Open new tab
     if (item.url) {
-      window.open(item.url, '_blank');
+      const separator = item.url.includes('?') ? '&' : '?';
+      window.open(`${item.url}${separator}from=Inbox`, '_blank');
 
       // Local update inboxList: 'read'
       setInboxList((prev) =>

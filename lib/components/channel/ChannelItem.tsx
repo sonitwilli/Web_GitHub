@@ -1,19 +1,26 @@
-import { ChannelItemType, SuggestChannelItemType } from '@/lib/api/channel';
+import {
+  ChannelGroupType,
+  ChannelItemType,
+  SuggestChannelItemType,
+} from '@/lib/api/channel';
 import { useRouter } from 'next/router';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useCallback, useMemo, useState, useEffect } from 'react';
 import PosterOverlays from '../overlays/PosterOverlays';
 import HandleImage from '../slider/HandleImage';
 import { scaleImageUrl } from '@/lib/utils/methods';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 interface SuggestChannelsProps {
   channel?: ChannelItemType;
   isSuggest?: boolean;
+  selectedGroup?: ChannelGroupType;
 }
 
 export default function ChannelItem({
   channel,
   isSuggest,
+  selectedGroup,
 }: SuggestChannelsProps) {
   const { dataChannel } = usePlayerPageContext();
   const router = useRouter();
@@ -38,6 +45,10 @@ export default function ChannelItem({
       pathname: `/xem-truyen-hinh/${channel.id}`,
       query: { group: router.query.group },
     });
+    sessionStorage.setItem(
+      trackingStoreKey.CHANNEL_SELECTED_GROUP,
+      selectedGroup?.name || '',
+    );
   };
 
   // Tổng hợp positionLabelsStatus

@@ -24,7 +24,6 @@ import { setCodecError, setFullscreen } from '../store/slices/playerSlice';
 import { trackingErrorLog17 } from '../tracking/trackingCommon';
 import { ErrorData, ErrorDetails, ErrorTypes } from 'hls.js';
 import { getTimeShiftChannel } from '../api/channel';
-import { getSeekPremier } from '../utils/player';
 import {
   ShakaErrorDetailType,
   ShakaErrorType,
@@ -61,6 +60,8 @@ import { userAgentInfo } from '@/lib/utils/ua';
 import { trackingSeekVideoLog514 } from './useTrackingPlayback';
 import { getSeekEvent, clearSeekEvent } from '@/lib/utils/seekTracking';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
+import { syncFromPlayerParams } from '../store/slices/debugSlice';
+import { getPlayerParams } from '../utils/playerTracking';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -98,6 +99,7 @@ export default function usePlayer() {
     isPlaySuccess,
     isEndedLive,
     previewHandled,
+    getSeekPremier,
   } = usePlayerPageContext();
   const isValidForProfileType = useMemo(() => {
     if (!fetchChannelCompleted) {
@@ -120,6 +122,13 @@ export default function usePlayer() {
     queryEpisodeNotExist,
   });
   const dispatch = useAppDispatch();
+
+  // Debug performance optimization
+  const debugThrottle = useRef({
+    lastUpdate: 0,
+    lastDataHash: '',
+    skipCount: 0,
+  });
   const router = useRouter();
   const { openPlayerErrorModal } = useContext(PlayerWrapperContext);
   const videoCurrentTimeRef = useRef(videoCurrentTime);
@@ -327,6 +336,9 @@ export default function usePlayer() {
   };
 
   const handlePlaying = async () => {
+    if (setIsEndVideo) {
+      setIsEndVideo(0);
+    }
     removeSessionStorage({ data: [PAUSE_PLAYER_MANUAL] });
     const retrying = sessionStorage.getItem(PLAYER_IS_RETRYING);
     console.log('--- PLAYER VIDEO PLAY SUCCESS', {
@@ -439,15 +451,23 @@ export default function usePlayer() {
         video.currentTime = time;
       }
     }
-    if (streamType === 'premiere' && retrying === 'true') {
-      const dataEvent = store.getState().player.dataEvent;
-      const offset = getSeekPremier(dataEvent);
-      const time = Number(sessionStorage.getItem(VIDEO_TIME_BEFORE_ERROR));
-      if (offset) {
-        video.currentTime = offset;
-      } else if (time && time > 0) {
-        video.currentTime = time;
-      }
+    if (streamType === 'premiere') {
+      try {
+        const dataEvent = store.getState().player.dataEvent;
+        const offset =
+          typeof getSeekPremier === 'function'
+            ? getSeekPremier(dataEvent)
+            : undefined;
+        const time = Number(sessionStorage.getItem(VIDEO_TIME_BEFORE_ERROR));
+        if (offset && offset > 0) {
+          const TOLERANCE = 0.8;
+          if (video.currentTime + TOLERANCE < offset) {
+            video.currentTime = offset;
+          }
+        } else if (retrying === 'true' && time && time > 0) {
+          video.currentTime = time;
+        }
+      } catch {}
     }
     if (setHlsErrors) setHlsErrors([]);
     if (setIsPlaySuccess) setIsPlaySuccess(true);
@@ -480,13 +500,15 @@ export default function usePlayer() {
       landing_page,
       is_from_chatbot,
       block_index,
+      position_index,
       ...restQuery
     } = router.query;
     if (
       bookmark !== undefined ||
       landing_page !== undefined ||
       is_from_chatbot !== undefined ||
-      block_index
+      block_index ||
+      position_index
     ) {
       if (landing_page) {
         saveSessionStorage({
@@ -553,6 +575,24 @@ export default function usePlayer() {
 
   const handleLoadedMetaData = () => {
     if (setIsMetaDataLoaded) setIsMetaDataLoaded(true);
+    try {
+      if (streamType === 'premiere') {
+        const dataEvent = store.getState().player.dataEvent;
+        const offset =
+          typeof getSeekPremier === 'function'
+            ? getSeekPremier(dataEvent)
+            : undefined;
+        if (offset && offset > 0) {
+          const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+          if (video) {
+            const TOLERANCE = 0.8;
+            if (video.currentTime + TOLERANCE < offset) {
+              video.currentTime = offset;
+            }
+          }
+        }
+      }
+    } catch {}
   };
 
   const handleVolumeChange = () => {
@@ -564,6 +604,61 @@ export default function usePlayer() {
       const v = video.volume;
       localStorage.setItem(VOLUME_PLAYER, v as unknown as string);
     }
+  };
+
+  /**
+   * Updates debug store with performance optimizations
+   * - Throttles to max 1 update/second
+   * - Only runs when debug overlay is active
+   * - Skips redundant updates when data unchanged
+   */
+  const updateDebugStore = () => {
+    try {
+      const now = performance.now();
+      const { lastUpdate, lastDataHash } = debugThrottle.current;
+
+      // Only check if debug is active and throttle interval passed
+      const isDebugActive =
+        typeof window !== 'undefined' &&
+        window.sessionStorage?.getItem('is_debug_player') === 'true';
+
+      const DEBUG_THROTTLE_MS = 1000;
+
+      if (!isDebugActive || now - lastUpdate < DEBUG_THROTTLE_MS) {
+        if (isDebugActive) debugThrottle.current.skipCount++;
+        return;
+      }
+
+      // Get current debug data and create hash
+      const playerParams = getPlayerParams();
+      const debugData = {
+        bandwidth: playerParams.Bandwidth,
+        streamBandwidth: playerParams.StreamBandwidth,
+        streamAudioBandwidth: playerParams.StreamBandwidthAudio,
+        resolution: playerParams.Resolution,
+        frameRate: playerParams.FrameRate,
+        codecAudio: playerParams.CodecAudio,
+        audioMimeType: playerParams.AudioMimeType,
+      };
+      const currentHash = JSON.stringify(debugData);
+
+      // Only dispatch if data changed
+      if (currentHash !== lastDataHash) {
+        dispatch(
+          syncFromPlayerParams(
+            playerParams as Record<
+              string,
+              string | number | boolean | undefined
+            >,
+          ),
+        );
+        debugThrottle.current.lastUpdate = now;
+        debugThrottle.current.lastDataHash = currentHash;
+        debugThrottle.current.skipCount = 0;
+      } else {
+        debugThrottle.current.skipCount++;
+      }
+    } catch {}
   };
 
   const checkRealTimePlaying = () => {
@@ -620,6 +715,9 @@ export default function usePlayer() {
         }
       }
       lastTimeForRealPlayRef.current = c;
+
+      // Update debug store (throttled for performance)
+      updateDebugStore();
     }
   };
 

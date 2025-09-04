@@ -27,7 +27,7 @@ interface Props {
   children?: React.ReactNode;
 }
 
-export default function BlockHoverItem({}: Props) {
+export default function BlockHoverItem({ index }: Props) {
   const appCtx = useContext(AppContext);
   const {
     hoveredBlock: block,
@@ -45,10 +45,10 @@ export default function BlockHoverItem({}: Props) {
       type: block?.type || '',
     });
     if (blockIndex > -1) {
-      return `${result}?block_index=${blockIndex}`;
+      return `${result}?block_index=${blockIndex}&position_index=${index}`;
     }
     return result || '/';
-  }, [slide, block, blockIndex]);
+  }, [slide, block, blockIndex, index]);
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const vodDetailHighlight = useMemo(() => {

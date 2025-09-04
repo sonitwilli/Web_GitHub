@@ -41,7 +41,8 @@ import {
   trackingPlayAttempLog521,
 } from '@/lib/hooks/useTrackingPlayback';
 import CodecNotSupport from '../core/CodecNotSupport';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -99,7 +100,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     queryEpisodeNotExist,
     clearErrorInterRef,
   } = usePlayerPageContext();
-
+  const dispatch = useDispatch();
   const {
     handleIntervalCheckErrors,
     convertShakaError,
@@ -459,6 +460,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     }
   };
   async function initShaka() {
+    dispatch(changeInitPlayerTime(new Date().getTime()));
     if (!isValidForProfileType) {
       return;
     }

@@ -1,6 +1,24 @@
 {
     "versions": [
         {
+            "version": "8.0.37",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Download app] Hiện popup download app khi responsive trên Desktop/PC/laptop",
+                "[WEB][Popup thông báo lỗi] Lỗi hiển thị của trường Nội dung ở popup Lỗi kết nối dịch vụ",
+                "[WEB][DetailVOD] Lỗi nháy màn hình lỗi 666 sau khi nhấn back ở trình duyệt",
+                "[WEB][Sự kiện] Lỗi không play luồng kênh đối với các sự kiện tiếp sóng chưa đến giờ phát",
+                "[WEB][Truyền hình] Sau khi phát hết chương trình timeshift tua tới 10s bị phát lại từ đầu",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 41 Khi người dùng enter vào một kênh cụ thể",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 42 Khi người dùng ngừng xem một kênh cụ thể",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 45 Khi người dùng nhấn hiển thị danh sách kênh/Nhấn Xem thêm trên mỗi cụm danh sách kênh",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số Screen của log 46 Khi người dùng mở màn hình lịch phát sóng từ màn hình SwitchChannel mới/Thanh sidebar của Danh sách kênh",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 416 Khi người dùng thực hiện thay đổi chất lượng hình ảnh",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 413 Khi player đã hoàn tất các công đoạn khởi tạo và start được frame đầu tiên",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 415 Khi người dùng jump qua 1 đọan phim/truyện đang xem hoặc khi người dùng tua nhanh 1 đọan phim/truyện đang xem"
+            ]
+        }, 
+        {
             "version": "8.0.36",
             "date": "Dự kiến",
             "content": [

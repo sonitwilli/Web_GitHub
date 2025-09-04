@@ -24,9 +24,10 @@ interface Props {
   block?: BlockItemType;
   slide?: BlockSlideItemType;
   isInview?: boolean;
+  index?: number;
 }
 
-export default function TopSlideItem({ slide, block, isInview }: Props) {
+export default function TopSlideItem({ slide, block, isInview, index }: Props) {
   const {
     checkLive,
     checkDataLive,
@@ -69,9 +70,9 @@ export default function TopSlideItem({ slide, block, isInview }: Props) {
     const result = `${createLink({
       data: slide || {},
       type: block?.type || '',
-    })}?block_index=0`;
+    })}?block_index=0&position_index=${index}`;
     return result || '/';
-  }, [slide, block]);
+  }, [slide, block, index]);
 
   const isValidCountdown = useMemo(() => {
     return (

@@ -19,6 +19,7 @@ import vodReducer from './slices/vodSlice';
 import sidetagReducer from './slices/sidetagSlice';
 import mqttReducer from './slices/mqttSlice';
 import trackingReducer from './slices/trackingSlice';
+import debugReducer from './slices/debugSlice';
 export const store = configureStore({
   reducer: {
     app: appReducer,
@@ -40,6 +41,7 @@ export const store = configureStore({
     sidetag: sidetagReducer,
     mqtt: mqttReducer,
     tracking: trackingReducer,
+    debug: debugReducer,
   },
   devTools: process.env.NODE_ENV !== 'production',
 });

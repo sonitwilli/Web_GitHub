@@ -397,8 +397,8 @@ const Preview: React.FC<PreviewProps> = ({
       // For SVOD/LIVE, show package modal
       exitFullscreen();
 
-      // Pause video when opening package modal
-      if (videoRef.current && !videoRef.current.paused) {
+      // Only pause player when opening package modal for VOD
+      if (type === 'vod' && videoRef.current && !videoRef.current.paused) {
         videoRef.current.pause();
         setIsVideoPaused?.(true);
       }
@@ -644,7 +644,7 @@ const Preview: React.FC<PreviewProps> = ({
           isCustom
           onHidden={() => {
             setShowPackageModal(false);
-            if (videoRef.current && videoRef.current.paused) {
+            if (type === 'vod' && videoRef.current && videoRef.current.paused) {
               videoRef.current.play();
               setIsVideoPaused?.(false);
             }

@@ -30,6 +30,7 @@ import {
   trackingStopChannelLog42,
   trackingStopTimeshiftLog44,
 } from '@/lib/hooks/useTrackingIPTV';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 const AppModal = dynamic(() => import('@/lib/components/modal/AppModal'), {
   ssr: false,
@@ -101,12 +102,15 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
       const eventPage = ['su-kien', 'cong-chieu'];
       const channelPage = ['xem-truyen-hinh'];
       const timeshiftPage = channelPage && newRouteFrom.params.time_shift_id;
-      console.log('changeRoute', newRouteFrom.path !== urlTo);
-
-      console.log('--- newRouteFrom', newRouteFrom);
-      console.log('timeshiftPage', timeshiftPage);
-
-      if (newRouteFrom.path !== urlTo) {
+      // check raw current path without query compare to urlTo
+      console.log('newRouteFrom', newRouteFrom);
+      const rawCurrentPath = newRouteFrom.path.split('?')[0];
+      const rawUrlTo = urlTo.split('?')[0];
+      const isTimeshiftPage = timeshiftPage || urlTo.includes('time_shift_id');
+      console.log('rawCurrentPath', rawCurrentPath);
+      console.log('rawUrlTo', rawUrlTo);
+      console.log('isTimeshiftPage', isTimeshiftPage);
+      if (rawCurrentPath !== rawUrlTo || isTimeshiftPage) {
         // Gọi log Stop khi chuyển trang từ player page
         // vod gửi log 52, event gửi log 172, channel gửi log 42, timeshift gửi log 44
         if (vodPage.some((keyword) => newRouteFrom.full.includes(keyword))) {
@@ -134,6 +138,13 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
       };
       if (routeFrom) {
         setAppNameAppId(newRouteTo, routeFrom);
+        if (newRouteTo.path.includes('xem-truyen-hinh')) {
+          if (routeFrom.path.includes('xem-truyen-hinh')) {
+            sessionStorage.setItem(trackingStoreKey.CHANNEL_KEY, 'ChannelList');
+          } else {
+            sessionStorage.setItem(trackingStoreKey.CHANNEL_KEY, 'None');
+          }
+        }
       }
       trackingChangeModuleLog18();
       trackingAccessLog50();

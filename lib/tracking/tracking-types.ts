@@ -123,7 +123,8 @@ export type TrackingScreen =
   | 'UnsubscriptionClick'
   | 'UnsubscriptionConfirm'
   | 'UnsubcribeSuccessfully'
-  | 'UnsubcribeFailed';
+  | 'UnsubcribeFailed'
+  | 'SwitchChannelView';
 
 export type TrackingEvent =
   | 'SignupSuccess'

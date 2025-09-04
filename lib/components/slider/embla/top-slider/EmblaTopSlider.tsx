@@ -169,6 +169,7 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
                     slide={slide}
                     block={block}
                     isInview={index === selectedIndex}
+                    index={index}
                   />
                 </div>
               ))}

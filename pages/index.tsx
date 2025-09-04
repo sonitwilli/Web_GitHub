@@ -33,6 +33,13 @@ export default function HomePage() {
   } = usePageApi({});
   useEffect(() => {
     if (blocksSortedRecommend?.length > 0) {
+      console.log(
+        '--- TRACKING blocksSortedRecommend',
+        blocksSortedRecommend.filter(
+          (item) =>
+            item?.need_recommend === '1' || item?.need_recommend === '2',
+        ),
+      );
       trackingLoadBlockDisplayLog511(blocksSortedRecommend);
     }
   }, [blocksSortedRecommend]);

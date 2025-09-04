@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { IoNotifications } from 'react-icons/io5';
 import { BiSolidBellOff } from 'react-icons/bi';
 import { viToEn } from '@/lib/utils/methods';
+import { trackingStoreKey } from '@/lib/constant/tracking';
 
 export type ActionType = 'top-slide' | 'block-slide' | 'hovered-slide';
 
@@ -91,6 +92,20 @@ export default function VodActionButtons({
                   ? 'px-[16px] h-[36px] tablet:h-auto py-[8px] xl:px-[24px] xl:pr-[29px] xl:py-[12px] text-[16px]'
                   : 'w-[138px] h-[40px] px-[16px]'
               }`}
+              onClick={() => {
+                sessionStorage.setItem(
+                  trackingStoreKey.APP_MODULE_SCREEN,
+                  block?.block_type || '',
+                );
+                sessionStorage.setItem(
+                  trackingStoreKey.APP_MODULE_SUBMENU_ID,
+                  block?.name || '',
+                );
+                sessionStorage.setItem(
+                  trackingStoreKey.IS_RECOMMEND_ITEM,
+                  slide?.is_recommend ? '1' : '0',
+                );
+              }}
             >
               <img
                 src="/images/xem_ngay.png"

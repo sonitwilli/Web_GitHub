@@ -52,8 +52,6 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     setIsPrepareLive,
     isEndedLive,
     setIsEndedLive,
-    seekOffsetInSeconds,
-    isPlaySuccess,
     videoCurrentTime,
     videoDuration,
     videoHeight,
@@ -300,43 +298,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     }
   }, [isEndedLiveCountdown, isEventPremier, isEventFPTLive, setIsEndedLive]);
 
-  useEffect(() => {
-    if (
-      !isPlaySuccess ||
-      isPrepareLive ||
-      isEndedLive ||
-      !fetchChannelCompleted ||
-      typeof seekOffsetInSeconds !== 'number' ||
-      seekOffsetInSeconds <= 0
-    ) {
-      return;
-    }
-    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-
-    if (!video) {
-      return;
-    }
-
-    const seekToOffset = () => {
-      video.currentTime = seekOffsetInSeconds;
-    };
-
-    if (video.readyState >= 1) {
-      seekToOffset();
-    } else {
-      const onLoaded = () => {
-        seekToOffset();
-        video.removeEventListener('loadedmetadata', onLoaded);
-      };
-      video.addEventListener('loadedmetadata', onLoaded);
-    }
-  }, [
-    isPlaySuccess,
-    fetchChannelCompleted,
-    isPrepareLive,
-    isEndedLive,
-    seekOffsetInSeconds,
-  ]);
+  // Seek logic is centralized in PlayerPageContext; avoid attaching extra listeners here
 
   // Extract LimitAgeOverlay rendering
   const renderLimitAgeOverlay = () =>

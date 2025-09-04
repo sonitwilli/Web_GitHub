@@ -16,6 +16,8 @@ import Hls, {
 } from 'hls.js';
 import { useAppSelector } from '@/lib/store';
 import { usePlayerPageContext } from '../../context/PlayerPageContext';
+import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
+import { useDispatch } from 'react-redux';
 
 type HlsPlayerProps = {
   srcTimeShift?: string; // Ưu tiên nếu có
@@ -36,6 +38,7 @@ const HlsMonitorPlayer: React.FC<HlsPlayerProps> = ({
 }) => {
   // Keep selector to align with existing hooks signature; intentionally unused here.
   useAppSelector((s) => s.user);
+  const dispatch = useDispatch();
   const {
     setPlayerName,
     fromTimeshiftToLive,
@@ -72,6 +75,7 @@ const HlsMonitorPlayer: React.FC<HlsPlayerProps> = ({
   };
 
   const initHls = useCallback(() => {
+    dispatch(changeInitPlayerTime(new Date().getTime()));
     const url = getUrlToPlay();
     if (!videoRef.current || !url) return;
     let hls: Hls | null = null;

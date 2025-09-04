@@ -292,7 +292,6 @@ export default function useAudio() {
           }
         }
       });
-      console.log('found :>> ', found);
       if (found) {
         setSelectedAudio(found);
         if (playerName === PLAYER_NAME.HLS && window.hlsPlayer) {

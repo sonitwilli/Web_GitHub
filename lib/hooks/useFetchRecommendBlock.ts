@@ -193,6 +193,10 @@ export const useFetchRecommendBlock = ({
           dataTracking = dataMerged;
           setData(dataMerged);
         }
+        console.log(
+          '--- TRACKING dataTracking',
+          dataTracking.filter((item) => item?.is_recommend),
+        );
         trackingLoadHighlightItemLog522(dataTracking);
       } catch (error) {
         console.log(error);

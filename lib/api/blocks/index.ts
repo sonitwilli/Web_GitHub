@@ -152,6 +152,7 @@ export interface BlockItemType {
   page_index?: number;
   page_size?: number;
   tracking_name?: string;
+  index?: number;
 }
 
 export interface Redirect {

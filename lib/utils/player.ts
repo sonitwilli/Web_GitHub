@@ -81,26 +81,6 @@ const supportedVideoCodecs = (): {
   }
 };
 
-export const getSeekPremier = (event?: {
-  is_premier?: string;
-  type?: string;
-  start_time?: string;
-  begin_time?: string;
-  end_time?: string;
-}): number | undefined => {
-  if (String(event?.is_premier) !== '1' || event?.type !== 'event') {
-    return undefined;
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  const start = parseInt(event?.start_time || event?.begin_time || '0', 10);
-  const end = parseInt(event?.end_time || '0', 10);
-
-  if (!start || now < start || now > end) return undefined;
-
-  return now - start;
-};
-
 export const detectHlsManifest = (manifestContent: string) => {
   try {
     const lines = manifestContent.split('\n');
