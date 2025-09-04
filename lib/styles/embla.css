@@ -20,6 +20,13 @@
   /* position: absolute; */
   /* bottom: 23px; */
 }
+
+.embla-thumbs button:focus,
+.embla-thumbs button:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 .embla-thumbs__viewport {
   overflow: hidden;
   padding-top: 5px;
