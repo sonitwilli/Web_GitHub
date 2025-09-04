@@ -25,3 +25,9 @@
     width: 576px;
   }
 }
+
+/* Remove hollow outline when focusing with mouse, but keep visible focus for keyboard users */
+.form :where(input, button) {
+  outline: none;
+}
+
