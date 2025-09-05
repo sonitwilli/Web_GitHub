@@ -52,17 +52,11 @@ export default function BlockHoverItem({ index }: Props) {
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const vodDetailHighlight = useMemo(() => {
-    const dataDetailHighlight = [];
-    if (slide?.detail?.priority_tag) {
-      dataDetailHighlight.push({
-        data: slide.detail.priority_tag,
-        color: true,
-      });
-    }
+    const dataDetailHighlight: { data: string; color: boolean }[] = [];
     if (slide?.detail?.meta_data?.length) {
       slide.detail.meta_data.forEach((element) => {
         dataDetailHighlight.push({
-          data: element,
+          data: String(element || ''),
           color: false,
         });
       });
