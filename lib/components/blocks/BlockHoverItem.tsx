@@ -52,17 +52,11 @@ export default function BlockHoverItem({ index }: Props) {
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);
   const vodDetailHighlight = useMemo(() => {
-    const dataDetailHighlight = [];
-    if (slide?.detail?.priority_tag) {
-      dataDetailHighlight.push({
-        data: slide.detail.priority_tag,
-        color: true,
-      });
-    }
+    const dataDetailHighlight: { data: string; color: boolean }[] = [];
     if (slide?.detail?.meta_data?.length) {
       slide.detail.meta_data.forEach((element) => {
         dataDetailHighlight.push({
-          data: element,
+          data: String(element || ''),
           color: false,
         });
       });
@@ -237,7 +231,7 @@ export default function BlockHoverItem({ index }: Props) {
           )}
 
           {vodDetailHighlight && vodDetailHighlight.length > 0 ? (
-            <div className="flex items-center gap-[2px] md:gap-[6px] mb-[8px]">
+            <div className="flex items-center gap-[2px] mb-[8px]">
               <VodMetaData metaData={vodDetailHighlight} type="hovered-slide" />
             </div>
           ) : (
