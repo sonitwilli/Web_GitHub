@@ -237,7 +237,7 @@ export default function BlockHoverItem({ index }: Props) {
           )}
 
           {vodDetailHighlight && vodDetailHighlight.length > 0 ? (
-            <div className="flex items-center gap-[2px] md:gap-[6px] mb-[8px]">
+            <div className="flex items-center gap-[2px] mb-[8px]">
               <VodMetaData metaData={vodDetailHighlight} type="hovered-slide" />
             </div>
           ) : (
