@@ -212,7 +212,7 @@ export default function BlockHoverItem({ index }: Props) {
         </div>
 
         <div className="bg-eerie-black p-[24px] rounded-b-[16px] block">
-          <div className="mb-[24px]">
+          <div className="mb-[16px]">
             <VodActionButtons
               block={block}
               slide={slide}
@@ -220,18 +220,18 @@ export default function BlockHoverItem({ index }: Props) {
               type="hovered-slide"
             />
           </div>
-          <p className="line-clamp-1 font-[600] text-[20px] mb-[8px] max-w-full">
+          <p className="line-clamp-1 font-[600] text-[20px] mb-[4px] max-w-full">
             {slide?.title_vie || slide?.title}
           </p>
 
           {ratingInfo && ratingInfo?.length > 0 && (
-            <div className="mb-[8px]">
+            <div className="mb-[4px]">
               <VodRating hightlightInfo={ratingInfo[0]} type="hovered-slide" />
             </div>
           )}
 
           {vodDetailHighlight && vodDetailHighlight.length > 0 ? (
-            <div className="flex items-center gap-[2px] mb-[8px]">
+            <div className="flex items-center gap-[2px] mb-[16px]">
               <VodMetaData metaData={vodDetailHighlight} type="hovered-slide" />
             </div>
           ) : (
