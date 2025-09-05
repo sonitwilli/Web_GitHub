@@ -1,5 +1,5 @@
 import { BlockItemType, BlockMetaType } from '@/lib/api/blocks';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import LibrarySlide from '../slider/embla/block-slider/LibrarySlide';
 import ShowMore from '@/lib/components/buttons/ShowMore';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
@@ -9,6 +9,8 @@ import { useGetBlockData } from '@/lib/hooks/useGetBlockData'; // Adjust the imp
 import { useFetchRecommendBlock } from '@/lib/hooks/useFetchRecommendBlock';
 import { AppContext } from '@/lib/components/container/AppContainer';
 import Loading from '../common/Loading';
+import { showToast } from '@/lib/utils/globalToast';
+import { DEFAULT_ERROR_MSG, ERROR_CONNECTION } from '@/lib/constant/texts';
 // import NoData from '@/lib/components/empty-data/NoData';
 
 interface Props {
@@ -49,6 +51,19 @@ export default function LibraryBlockItem({
     isLogged: info?.user_id_str !== '' || false,
   });
 
+  useEffect(() => {
+    if (!queryId) return;
+    showToast({
+      title: ERROR_CONNECTION,
+      desc: error?.message || DEFAULT_ERROR_MSG,
+    });
+  }, [error, queryId]);
+
+  const dataSlide = useMemo(() => {
+    return data?.slice(0, Number(configs?.number_item_of_page) || 30);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
   useEffect(
     () => {
       const fetchData = async () => {
@@ -64,9 +79,9 @@ export default function LibraryBlockItem({
 
   const handleReloadData = useCallback(() => {
     if (queryId) {
-      getBlockData(1000);
+      getBlockData(1000, 2000);
     } else {
-      getBlockData();
+      getBlockData(31, 2000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryId]);
@@ -124,9 +139,9 @@ export default function LibraryBlockItem({
 
   useEffect(() => {
     if (queryId) {
-      getBlockData(1000);
+      getBlockData(1000, 0);
     } else {
-      getBlockData();
+      getBlockData(configs?.number_item_of_page || 30, 0);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryId]);
@@ -190,8 +205,8 @@ export default function LibraryBlockItem({
     );
   }
 
-  if(!data || (Array.isArray(data) && data?.length === 0)) {
-    return null
+  if (!data || (Array.isArray(data) && data?.length === 0)) {
+    return null;
   }
 
   return (
@@ -232,7 +247,7 @@ export default function LibraryBlockItem({
       </div>
       <LibrarySlide
         key={queryId}
-        slidesItems={data || []}
+        slidesItems={dataSlide || []}
         block={block}
         slideClassName={`block-slider-${block?.block_type}`}
         blockMeta={blockMeta}

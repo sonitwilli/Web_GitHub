@@ -34,18 +34,18 @@ const PaymentRenewalTableRow: React.FC<RowProps> = ({
       }`}
     >
       <td
-        className="px-8 py-3 rounded-bl-[16px] font-semibold text-white-smoke text-base font-normal min-w-[230px]"
+        className="px-8 py-3 rounded-bl-[16px] font-semibold text-white-smoke text-base font-normal min-w-[180px] lg:min-w-[25%]"
         title={name}
       >
         <div className="line-clamp-2 overflow-hidden break-words">{name}</div>
       </td>
-      <td className="px-8 py-3 min-w-[170px] text-white-smoke text-base font-normal">
+      <td className="px-8 py-3 min-w-[195px] lg:min-w-[18%] text-white-smoke text-base font-normal">
         {startDate}
       </td>
-      <td className="px-8 py-3 min-w-[170px] text-white-smoke text-base font-normal">
+      <td className="px-8 py-3 min-w-[195px] lg:min-w-[18%] text-white-smoke text-base font-normal">
         {nextCycle}
       </td>
-      <td className="px-8 py-3 min-w-[252px]">
+      <td className="px-8 py-3 min-w-[252px] lg:min-w-[25%]">
         <div className="flex items-center gap-4">
           <PaymentMethodIcon type={method.type} iconUrl={iconUrl} />
           <div className="flex flex-col gap-1">
@@ -58,10 +58,10 @@ const PaymentRenewalTableRow: React.FC<RowProps> = ({
           </div>
         </div>
       </td>
-      <td className="px-8 py-3 min-w-[140px] text-white-smoke text-base font-normal">
+      <td className="px-8 py-3 min-w-[140px] lg:min-w-[14%] text-white-smoke text-base font-normal">
         {price}
       </td>
-      <td className="px-8 py-3 text-center relative w-10 rounded-br-[16px]">
+      <td className="px-8 py-3 text-center relative min-w-[10px] lg:min-w-[10%] rounded-br-[16px]">
         <PaymentRenewalTableMenu
           isOpen={showMenu}
           onToggle={onMenuToggle}

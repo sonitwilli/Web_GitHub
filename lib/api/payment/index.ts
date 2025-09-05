@@ -419,6 +419,9 @@ export interface CheckoutPaymentParams {
   tax_code?: string;
   affiliate_source?: string;
   traffic_id?: string;
+  utm_campaign?: string;
+  utm_medium?: string;
+  utm_source?: string;
   coupon_code?: string;
   display_mode?: string;
   payment_gateway_code?: string;

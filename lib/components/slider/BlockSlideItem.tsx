@@ -175,12 +175,12 @@ export default function BlockSlideItem({
     });
     const isSearchPage = router.pathname.includes('/tim-kiem');
     if (blockIndex > -1) {
-      return `${result}?block_index=${blockIndex}&position_index=${index}${
+      return `${result}?block_type=${block?.block_type}&block_index=${blockIndex}&position_index=${index}${
         isSearchPage ? '&from=Search' : ''
       }`;
     }
     return (
-      `${result}?position_index=${index}${
+      `${result}?block_type=${block?.block_type}&position_index=${index}${
         isSearchPage ? '&from=Search' : ''
       }` || '/'
     );

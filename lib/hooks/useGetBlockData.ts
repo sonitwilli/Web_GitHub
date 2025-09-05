@@ -6,7 +6,7 @@ import {
 } from '@/lib/api/blocks';
 import { wait } from '@/lib/utils/promise';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
-import { useAppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '../store';
 
 interface UseGetBlockDataProps {
   block?: BlockItemType;
@@ -22,9 +22,10 @@ export const useGetBlockData = ({
   const [blockData, setBlockData] = useState<BlockItemResponseType>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
+  const {configs} = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const getBlockData = useCallback(
-    async (page_size = 31) => {
+    async (page_size = configs?.number_item_of_page || 30, delay = 2000) => {
       if (!block?.type) {
         setIsEmpty?.(true);
         setIsError?.(true);
@@ -34,10 +35,10 @@ export const useGetBlockData = ({
       setError(null);
       setIsError?.(false);
       try {
-        await wait({ time: 1000 });
+        await wait({ time: delay });
         const res = await getBlockItemData({
           block: block || {},
-          page_size,
+          page_size: parseInt(page_size as string),
         });
         setBlockData(res?.data);
         if (res?.data?.code === 401) {

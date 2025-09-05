@@ -627,8 +627,9 @@ export const getPlayerParams = () => {
     Dimension: sessionStorage.getItem(trackingStoreKey.PLAYER_DIMENSION) || '',
     VideoQuality:
       sessionStorage.getItem(SELECTED_VIDEO_QUALITY) ||
-      String(getPlayerActiveTrack()?.resolutionObject?.height) ||
-      '',
+      getPlayerActiveTrack()?.resolutionObject?.height
+        ? String(getPlayerActiveTrack()?.resolutionObject?.height)
+        : '',
     Audio:
       selectedAudioParsed?.X_LABEL ||
       sessionStorage.getItem(SELECTED_AUDIO_LABEL) ||
@@ -676,7 +677,7 @@ export const getPlayerParams = () => {
     FType: dataChannel?.is_tvod ? '2' : '1',
     isPreAdv: '0',
     is_recommend:
-      sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || '',
+      sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || '0',
     Multicast: dataStream?.url || '',
     SubMenuId:
       sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) ||

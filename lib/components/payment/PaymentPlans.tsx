@@ -67,7 +67,7 @@ const PaymentPlanItem: React.FC<PaymentPlanItemProps> = ({
         <span className="PayPlan__Amount text-[12px] sm:text-[14px] font-semibold">
           {item.amount_str}
           {(showDiscountPercent(item) || showPromotionName(item)) && (
-            <span className="PayPlan__Label ml-1 sm:ml-2 text-[8px] sm:text-[10px] font-semibold rounded px-1 sm:px-2 py-0.5 sm:py-1 bg-gradient-to-r from-[#fe592a] to-[#e93013] absolute top-[-20px] sm:top-[-24px] right-[2px] sm:right-[4px]">
+            <span className="PayPlan__Label ml-1 sm:ml-2 text-[8px] sm:text-[10px] font-semibold rounded px-1 sm:px-2 py-0.5 sm:py-1 bg-gradient-to-r from-[#fe592a] to-[#e93013] absolute top-[-20px] sm:top-[-24px] right-[2px] sm:right-[4px] whitespace-nowrap">
               {getDiscountPercent(item)}
             </span>
           )}

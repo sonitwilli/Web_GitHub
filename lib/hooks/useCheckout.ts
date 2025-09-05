@@ -171,6 +171,14 @@ export function useCheckout({
         case 'QR_CODE':
           console.log('mode QR_CODE created');
           break;
+        case 'TOKENIZATION_DIRECT':
+          router.push({
+            pathname: `/mua-goi/dich-vu/thanh-toan/${method}`,
+            query: {
+              status_code: -2,
+            },
+          });
+          break;
         default:
           console.log('mode unknown');
           break;
@@ -192,29 +200,6 @@ export function useCheckout({
     const option: MethodOptions | null = getConfig(currentGateway);
     if (!option) {
       throw new Error('Phương thức thanh toán không tồn tại.');
-    }
-    // Lấy lại giá trị từ localStrorage để kiểm tra
-    const trafficId =
-      localStorage && localStorage.getItem(trackingStoreKey.UTM_LINK)
-        ? localStorage.getItem(trackingStoreKey.UTM_LINK)
-        : null;
-
-    if (trafficId) {
-      // Tạo đối tượng URLSearchParams từ phần query string của URL
-      const searchParams = new URLSearchParams(new URL(trafficId).search);
-
-      // Lấy giá trị của tham số utm_source
-      const utmSource = searchParams.get('utm_source');
-
-      if (utmSource || trafficId) {
-        data.affiliate_source = utmSource?.toString();
-        data.traffic_id = trafficId?.toString();
-      }
-
-      if (utmSource === 'masoffer') {
-        data.affiliate_source = 'masoffer';
-        data.traffic_id = trafficId;
-      }
     }
     try {
       const url = option.createTransactionUrl || '';
@@ -408,13 +393,13 @@ export function useCheckout({
       if (!user || !plan || !currentGateway)
         throw new Error('Missing payment info');
       const params: CheckoutPaymentParams = {
-        user_id: user.user_id,
+        // user_id: user.user_id,
         plan_id: plan.plan_id!,
         gateway: currentGateway,
         coupon: coupon?.code || undefined,
         amount: plan.amount! * 1000,
-        email: user.user_email,
-        phone: user.user_phone,
+        // email: user.user_email,
+        // phone: user.user_phone,
         formData: formData || undefined,
         redirect_url: `${
           process.env.NEXT_PUBLIC_BASE_URL
@@ -434,6 +419,38 @@ export function useCheckout({
         auto_pay: 0,
         device_type: 'unknown',
       };
+      // Lấy lại giá trị từ localStrorage để kiểm tra
+      const trafficId =
+        localStorage && localStorage.getItem(trackingStoreKey.UTM_LINK)
+          ? localStorage.getItem(trackingStoreKey.UTM_LINK)
+          : null;
+
+      if (trafficId) {
+        // Tạo đối tượng URLSearchParams từ phần query string của URL
+        const searchParams = new URLSearchParams(new URL(trafficId).search);
+
+        // Lấy giá trị của tham số utm_source
+        const utmSource = searchParams.get('utm_source');
+        const utm_campaign = searchParams.get('utm_campaign');
+        const utm_medium = searchParams.get('utm_medium');
+
+        if (utmSource || trafficId) {
+          params.affiliate_source = utmSource?.toString();
+          params.traffic_id = trafficId?.toString();
+          params.utm_source = utmSource?.toString();
+        }
+        if (utm_campaign) {
+          params.utm_campaign = utm_campaign?.toString();
+        }
+        if (utm_medium) {
+          params.utm_medium = utm_medium?.toString();
+        }
+
+        if (utmSource === 'masoffer') {
+          params.affiliate_source = 'masoffer';
+          params.traffic_id = trafficId;
+        }
+      }
       const dataTracking = {
         label: 'payment_result',
         payment: {

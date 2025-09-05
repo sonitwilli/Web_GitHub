@@ -417,7 +417,7 @@ const PaymentRenewalTable: React.FC = () => {
       <div
         className={`bg-raisin-black rounded-t-[16px] rounded-b-[16px] overflow-x-auto 2xl:overflow-x-hidden ${styles.customScrollbar}`}
       >
-        <table className="w-full border-collapse text-white px-4 md:min-w-0 min-w-[910px]">
+        <table className="w-full border-collapse text-white px-4">
           <PaymentRenewalTableHeader />
           <tbody className="rounded-b-[16px]">
             {(tokens as Token[])?.map((item, idx) => (

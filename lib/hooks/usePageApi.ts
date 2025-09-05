@@ -140,6 +140,8 @@ export default function usePageApi({ currentId }: { currentId?: string }) {
       pageId = 'home';
     } else if (id && !isKid) {
       pageId = id as string;
+    } else if (id && isKid) {
+      pageId = id as string;
     } else {
       pageId = 'home-kids';
     }

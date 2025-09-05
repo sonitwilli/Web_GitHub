@@ -41,6 +41,7 @@ export default function OTPInputModal({
   const [responseMsg, setResponseMsg] = useState<string>('');
   const [isOtpValid, setIsOtpValid] = useState(false);
   const [errorResponse, setErrorResponse] = useState('');
+  const [isLoadingReSendOTP, setIsLoadingReSendOTP] = useState(false);
 
   const otp = watch('otp');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,6 +66,8 @@ export default function OTPInputModal({
     if (resSendOTP.msg) {
       setResponseMsg(resSendOTP.msg);
     }
+
+    setIsLoadingReSendOTP(false);
   }, [resSendOTP]);
 
   useEffect(() => {
@@ -111,6 +114,11 @@ export default function OTPInputModal({
   };
 
   const clickReSendOTP = () => {
+    if (isLoadingReSendOTP || countdown > 0) return; // Prevent spam clicking and countdown
+
+    setIsLoadingReSendOTP(true);
+    setErrorResponse(''); // Clear previous errors
+
     handleReSendOTP(localStorage.getItem(LOGIN_PHONE_NUMBER) as string);
     setTimeout(() => inputRef.current?.focus(), 500);
   };
@@ -221,6 +229,7 @@ export default function OTPInputModal({
               <button
                 type="button"
                 onClick={clickReSendOTP}
+                disabled={isLoadingReSendOTP}
                 className="row-span-1 w-[138px] h-[48px] tablet:h-14 rounded-[52px] fpl-bg text-white-smoke text-[14px] tablet:text-base font-medium cursor-pointer hover:opacity-90 active:scale-[0.98]"
               >
                 Gửi lại OTP

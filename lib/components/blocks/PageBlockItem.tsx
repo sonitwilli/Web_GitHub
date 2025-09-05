@@ -141,7 +141,7 @@ export default function PageBlockItem({
     if (block?.type === 'page') {
       return `/trang/${block.id}`;
     } else {
-      return `/block/${block?.type}/${viToEn(block?.name || '')}-${block?.id}`;
+      return `/block/${block?.type}/${viToEn(block?.name || '')}-${block?.id}?block_type=${block?.block_type}`;
     }
   }, [block]);
 

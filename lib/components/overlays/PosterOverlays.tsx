@@ -216,9 +216,11 @@ const PosterOverlay: React.FC<Props> = ({
   const [listPoster, setListPoster] =
     useState<PosterOverlayItem[]>(posterOverlays);
   const [isReady, setIsReady] = useState(false);
+  const [forceRender, setForceRender] = useState(false);
   const { ref, inView } = useInView({
-    rootMargin: '200px',
-    triggerOnce: true,
+    rootMargin: '100px', // Reduced margin for better Safari compatibility
+    threshold: 0.1,
+    // Removed triggerOnce to allow re-triggering on resize/scroll
   });
   const [errorUrls, setErrorUrls] = useState<string[]>([]);
 
@@ -233,7 +235,8 @@ const PosterOverlay: React.FC<Props> = ({
 
   // Group overlays
   const groupedOverlays = useMemo<OverlayGroup[]>(() => {
-    if (!isBlockTypeValid || !listPoster.length || !inView) return [];
+    if (!isBlockTypeValid || !listPoster.length || (!inView && !forceRender))
+      return [];
     const status = positionLabelsStatus[0] || {};
     const orientationMap = {
       feature_horizontal_slider: 'horizontal',
@@ -368,6 +371,7 @@ const PosterOverlay: React.FC<Props> = ({
     overlaySize,
     isBlockTypeValid,
     inView,
+    forceRender,
   ]);
 
   useEffect(() => {
@@ -380,6 +384,19 @@ const PosterOverlay: React.FC<Props> = ({
       setIsReady(true);
     }
   }, [posterOverlays]);
+
+  // Safari fallback: Force render after timeout if intersection observer fails
+  useEffect(() => {
+    if (!isReady) return;
+
+    const safariFallback = setTimeout(() => {
+      if (!inView && !forceRender) {
+        setForceRender(true);
+      }
+    }, 500); // fallback for Safari
+
+    return () => clearTimeout(safariFallback);
+  }, [isReady, inView, forceRender]);
 
   useEffect(() => {
     if (!isReady || !onHandlePosterOverlays) return;
@@ -429,7 +446,7 @@ const PosterOverlay: React.FC<Props> = ({
     [],
   );
 
-  if (!isBlockTypeValid || !isReady || !inView)
+  if (!isBlockTypeValid || !isReady || (!inView && !forceRender))
     return <div ref={ref} className="w-full h-full" />;
 
   return (
@@ -459,9 +476,10 @@ const PosterOverlay: React.FC<Props> = ({
                   return (
                     <div
                       key={idx}
-                      className={`absolute z-[${overlay.zIndex}] ${
+                      className={`absolute ${
                         bannerPositionClass[group.position] ?? ''
                       }`}
+                      style={{ zIndex: overlay.zIndex }}
                     >
                       <Image
                         src={overlay.url || ''}
@@ -474,7 +492,8 @@ const PosterOverlay: React.FC<Props> = ({
                         )}`}
                         onError={handleImageError}
                         draggable={false}
-                        loading="lazy"
+                        loading="eager"
+                        priority
                         unoptimized
                       />
                     </div>
@@ -486,7 +505,7 @@ const PosterOverlay: React.FC<Props> = ({
                   return (
                     <div
                       key={idx}
-                      className={`absolute z-[${overlay.zIndex}] ${
+                      className={`absolute ${
                         ribbonPositionClass[group.position] ?? ''
                       } ${getOverlayClass(
                         overlay.type as string,
@@ -497,6 +516,7 @@ const PosterOverlay: React.FC<Props> = ({
                         overlay.marginBottom,
                         overlay.bottom,
                       )}`}
+                      style={{ zIndex: overlay.zIndex }}
                     >
                       <Image
                         src={overlay.url || ''}
@@ -511,7 +531,8 @@ const PosterOverlay: React.FC<Props> = ({
                         )}
                         onError={handleImageError}
                         draggable={false}
-                        loading="lazy"
+                        loading="eager"
+                        priority
                         unoptimized
                       />
                     </div>
@@ -522,7 +543,7 @@ const PosterOverlay: React.FC<Props> = ({
                 return (
                   <div
                     key={idx}
-                    className={`${getOverlayClass(
+                    className={getOverlayClass(
                       overlay.type as string,
                       group.groupType,
                       overlay.size as string,
@@ -530,7 +551,8 @@ const PosterOverlay: React.FC<Props> = ({
                       !!overlay.isLast,
                       overlay.marginBottom,
                       overlay.bottom,
-                    )} z-[${overlay.zIndex}]`}
+                    )}
+                    style={{ zIndex: overlay.zIndex }}
                   >
                     <Image
                       src={overlay.url || ''}
@@ -545,7 +567,8 @@ const PosterOverlay: React.FC<Props> = ({
                       )}
                       onError={handleImageError}
                       draggable={false}
-                      loading="lazy"
+                      loading="eager"
+                      priority
                       unoptimized
                     />
                   </div>

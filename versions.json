@@ -1,6 +1,27 @@
 {
     "versions": [
         {
+            "version": "8.0.38",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Thư viện] Lỗi không mất data sau khi thực hiện xóa thành công block Đang theo dõi/Lịch sử xem",
+                "[WEB][Trang chủ] Lỗi khi nhấn phím Left/Right trên keyboard",
+                "[WEB][Comment] Lỗi nhấn button Like & Reply comment",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 43 Khi người dùng sử dụng chức năng timeshift (chọn từ lịch phát sóng)",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 432 Khi người dùng thực hiện resume trong quá trình xem timeshift",
+                "[Web][TrackingLog][Truyền hình] Không ghi nhận log 44 Khi người dùng ngừng xem timeshift",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 414 Khi hệ thống gọi nạp lại link trong quá trình Init Player (Play Attempt) do lỗi phát sinh bất kỳ",
+                "[WEB][Comment] Lỗi hiện bảng Emoji đối với vod chưa có bình luận",
+                "[WEB][Login] Lỗi hiển thị sai popup khi nhấn liên tục vào btn Gửi lại OTP",
+                "[WEB][Truyền hình] Lỗi hiện card label các kênh không được set",
+                "[WEB][Sự kiện] Lỗi không hiển thị popup Thông báo thời gian bắt đầu trên banner mua gói",
+                "[WEB][Truyền hình] Lỗi enable chương trình timeshift > thời gian hiện tại",
+                "[WEB][Thư viện] Lỗi không hiển thị label đối với các item ở page Thư viện/trang xem thêm Lịch sử xem/trang xem thêm Đang theo dõi",
+                "[WEB][PREVIEW SK] Lỗi thỉnh thoảng play preview SK K+ khi hiển thị thông báo hết lượt xem",
+                "[WEB][Preview SK] Không hiển thị popup hết lần preview 1 ở tab thứ 1 khi duplicate tab"
+            ]
+        }, 
+        {
             "version": "8.0.37",
             "date": "Dự kiến",
             "content": [

@@ -1,23 +1,23 @@
-import { BlockItemType, BlockSlideItemType } from "@/lib/api/blocks";
-import { createLink, scaleImageUrl } from "@/lib/utils/methods";
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import HandleImage from "../../HandleImage";
-import VodHighlightInfo from "@/lib/components/vod/VodHighlightInfo";
-import VodMetaData from "@/lib/components/vod/VodMetaData";
-import VodActionButtons from "@/lib/components/vod/VodActionButtons";
-import { useAppDispatch, useAppSelector } from "@/lib/store";
-import useBlockPlayer from "@/lib/hooks/useBlockPlayer";
-import { changeIsMutedTrailerPlayer } from "@/lib/store/slices/appSlice";
-import { BlockPlayerTypes } from "@/lib/components/player/hls/BlockPlayerShaka";
-import PosterOverlays from "@/lib/components/overlays/PosterOverlays";
-import { PosterOverlayItem } from "@/lib/utils/posterOverlays/types";
-import { NewVodContext } from "./NewVodDetail";
-import dynamic from "next/dynamic";
+import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
+import { createLink, scaleImageUrl } from '@/lib/utils/methods';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import HandleImage from '../../HandleImage';
+import VodHighlightInfo from '@/lib/components/vod/VodHighlightInfo';
+import VodMetaData from '@/lib/components/vod/VodMetaData';
+import VodActionButtons from '@/lib/components/vod/VodActionButtons';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
+import useBlockPlayer from '@/lib/hooks/useBlockPlayer';
+import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
+import { BlockPlayerTypes } from '@/lib/components/player/hls/BlockPlayerShaka';
+import PosterOverlays from '@/lib/components/overlays/PosterOverlays';
+import { PosterOverlayItem } from '@/lib/utils/posterOverlays/types';
+import { NewVodContext } from './NewVodDetail';
+import dynamic from 'next/dynamic';
 const BlockPlayerShaka = dynamic(
-  () => import("@/lib/components/player/hls/BlockPlayerShaka"),
+  () => import('@/lib/components/player/hls/BlockPlayerShaka'),
   {
     ssr: false,
-  }
+  },
 );
 interface Props {
   block?: BlockItemType;
@@ -50,8 +50,12 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
   }, [slide]);
 
   const slideLink = useMemo(() => {
-    return createLink({ data: slide || {}, type: block?.type || "" }) || "/";
+    return createLink({ data: slide || {}, type: block?.type || '' }) || '/';
   }, [slide, block]);
+
+  const isComingSoon = useMemo(() => {
+    return slide?.type === 'coming_soon';
+  }, [slide]);
 
   useEffect(() => {
     let timeout = undefined;
@@ -95,13 +99,13 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
     <div className="relative w-full lg:flex lg:justify-end">
       <div
         className={`relative w-full lg:w-[63%] h-full block ${
-          posterOverlaysReady.includes("top-ribbon")
-            ? "overflow-visible mt-[3px]"
-            : posterOverlaysReady.includes("mid-ribbon")
-            ? "overflow-visible ml-[3px] mr-[3px]"
-            : posterOverlaysReady.includes("bottom-ribbon")
-            ? "overflow-visible mb-[3px]"
-            : "overflow-hidden"
+          posterOverlaysReady.includes('top-ribbon')
+            ? 'overflow-visible mt-[3px]'
+            : posterOverlaysReady.includes('mid-ribbon')
+            ? 'overflow-visible ml-[3px] mr-[3px]'
+            : posterOverlaysReady.includes('bottom-ribbon')
+            ? 'overflow-visible mb-[3px]'
+            : 'overflow-hidden'
         }`}
       >
         {slide?.trailer_info?.url && showPlayer && (
@@ -127,11 +131,11 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
 
         <div
           className={`ease-out duration-1000 relative z-[1] ${
-            isPlaySuccess ? "opacity-0" : "opacity-100"
+            isPlaySuccess ? 'opacity-0' : 'opacity-100'
           }`}
         >
           <HandleImage
-            imageAlt={slide?.title_vie || slide?.title || ""}
+            imageAlt={slide?.title_vie || slide?.title || ''}
             imageClassName="w-full min-w-full max-w-full"
             imageUrl={scaleImageUrl({
               imageUrl:
@@ -151,9 +155,14 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
 
         {/* show top-right poster overlays on mobile/tablet as well */}
         {(() => {
-          const list = (slide?.poster_overlays as (PosterOverlayItem | string)[]) || [];
+          const list =
+            (slide?.poster_overlays as (PosterOverlayItem | string)[]) || [];
           const topRight = Array.isArray(list)
-            ? list.filter((it): it is PosterOverlayItem => typeof it !== 'string' && (it.position || '').toLowerCase() === 'tr')
+            ? list.filter(
+                (it): it is PosterOverlayItem =>
+                  typeof it !== 'string' &&
+                  (it.position || '').toLowerCase() === 'tr',
+              )
             : [];
           if (!topRight || topRight.length === 0) return null;
           return (
@@ -169,14 +178,17 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
             </div>
           );
         })()}
-
-        {slide?.poster_overlays && (
-          <PosterOverlays
-            posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
-            blockType={block?.block_type}
-            positionLabelsStatus={[positionLabelsStatus]}
-            onHandlePosterOverlays={handlePosterOverlays}
-          />
+        {!isComingSoon && (
+          <>
+            {slide?.poster_overlays && (
+              <PosterOverlays
+                posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
+                blockType={block?.block_type}
+                positionLabelsStatus={[positionLabelsStatus]}
+                onHandlePosterOverlays={handlePosterOverlays}
+              />
+            )}
+          </>
         )}
       </div>
       <div className="xl:absolute xl:left-0 xl:bottom-[90px] lg:w-1/2 xl:w-[704px] z-[1] mt-[12px] tablet:mt-[16px] xl:mt-0">
@@ -185,7 +197,7 @@ export default function NewVodDetailSlideItem({ slide, block }: Props) {
           <div>
             {slide?.image?.title ? (
               <img
-                src={slide.image?.title || ""}
+                src={slide.image?.title || ''}
                 alt="title image"
                 className="max-w-full max-h-[64px] tablet:max-h-[80px] xl:max-h-[96px] xl:max-w-[632px]"
               />

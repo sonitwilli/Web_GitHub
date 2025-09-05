@@ -91,7 +91,7 @@ const CountdownTimer = ({
 
       const res = await subscribeEvent({
         id: eventId,
-        type: dataEvent?.type,
+        type: 'event',
         value,
       });
 

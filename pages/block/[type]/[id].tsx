@@ -76,7 +76,7 @@ const BlockDetailPage: React.FC = () => {
     : '';
 
   const block: BlockItemType = {
-    block_type: (router.query.type as BlockTypeType) || '',
+    block_type: (router.query.block_type as BlockTypeType) || '',
     custom_data: tagId === 'becauseyouwatched' ? 'None' : '',
     id: tagId || '',
     type: router.query.type as string,
@@ -170,7 +170,7 @@ const BlockDetailPage: React.FC = () => {
                 }`}
               >
                 {metaBlock?.name && (
-                  <h1 className="text-left text-white font-bold text-[18px] md:text-[40px] leading-[130%] tracking-[2%] capitalize line-clamp-2 overflow-hidden">
+                  <h1 className="text-left text-white font-bold text-[18px] md:text-[40px] leading-[130%] tracking-[2%] line-clamp-2 overflow-hidden">
                     {metaBlock.name}
                   </h1>
                 )}

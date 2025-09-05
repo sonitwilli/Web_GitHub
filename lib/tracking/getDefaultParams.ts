@@ -131,7 +131,7 @@ const getDefaultParams = async (): Promise<TrackingParams> => {
     AppSession:
       sessionStorage?.app_session || localStorage.getItem('_appSession') || '',
     AppSource: AppSource || '',
-    utm: localStorage[trackingStoreKey.UTM_LINK] || '',
+    utm: localStorage.getItem(trackingStoreKey.UTM_LINK) || '',
     utm_session: localStorage.getItem(trackingStoreKey.UTM_SESSION) || '',
     is_utm_inApp: localStorage.getItem(trackingStoreKey.UTM_IN_APP) || '',
     contract: user?.sub_contract || '',

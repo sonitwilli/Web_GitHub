@@ -1222,7 +1222,7 @@ export function PlayerPageContextProvider({ children }: Props) {
     const isBeforeStart = now < start;
     // 🚫 Bỏ qua countdown nếu eventtv ( sự kiện dẫn kênh )
 
-    const skipPrepare = dataEvent?.type === 'eventtv';
+    const skipPrepare = dataEvent?.type === 'eventtv' && !requirePurchaseData;
 
     if (skipPrepare) {
       setIsPrepareLive(false);
@@ -1240,6 +1240,7 @@ export function PlayerPageContextProvider({ children }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    requirePurchaseData,
     dataEvent?.start_time,
     dataEvent?.begin_time,
     dataEvent?.is_premier,

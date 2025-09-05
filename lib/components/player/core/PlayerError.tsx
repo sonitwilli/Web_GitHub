@@ -61,21 +61,6 @@ export default function PlayerError() {
     return '';
   }, [router, dataChannel]);
 
-  // Build a display title and truncate on the client as a fallback when CSS clamping doesn't work
-  const displayTitle = useMemo(() => {
-    const full =
-      dataChannel?.name ||
-      dataChannel?.title ||
-      dataChannel?.title_vie ||
-      dataChannel?.title_origin ||
-      '';
-    const max = 60; // reasonable default; adjust if needed
-    if (!full) return '';
-    // If it already contains an ellipsis or is short enough, return as-is
-    if (full.length <= max || /\.\.\.|…/.test(full)) return full;
-    return full.slice(0, max - 3).trimEnd() + '...';
-  }, [dataChannel]);
-
   return (
     <div className="fixed w-full h-full top-0 left-0 flex items-center justify-center z-[99] bg-black-06">
       <div className="w-[400px] max-w-full p-[32px] bg-eerie-black rounded-[16px]">
@@ -140,17 +125,11 @@ export default function PlayerError() {
             <span className="text-left text-spanish-gray leading-[130%] tracking-[0.32px] whitespace-nowrap pr-2">
               Nội dung
             </span>
-            <span
-              className="text-right text-white leading-[130%] tracking-[0.32px] line-clamp-2 overflow-hidden break-words"
-              title={
-                dataChannel?.name ||
+            <span className="text-center text-white leading-[130%] tracking-[0.32px] line-clamp-2">
+              {dataChannel?.name ||
                 dataChannel?.title ||
                 dataChannel?.title_vie ||
-                dataChannel?.title_origin ||
-                ''
-              }
-            >
-              {displayTitle}
+                dataChannel?.title_origin}
             </span>
           </div>
         </div>

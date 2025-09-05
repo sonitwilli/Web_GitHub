@@ -68,7 +68,9 @@ export default function useSubtitle() {
     }
     if (playerName === 'shaka' && window.shakaPlayer) {
       setTimeout(() => {
-        const tracks = window.shakaPlayer.getTextLanguages() || [];
+        const tracks = window.shakaPlayer?.getTextLanguages
+          ? window.shakaPlayer.getTextLanguages() || []
+          : [];
         const validTracks = tracks.filter(
           /*@ts-ignore*/
           (x) => !!KEY_LANGUAGES_AUDIO_CODECS[x],

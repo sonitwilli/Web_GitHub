@@ -40,7 +40,7 @@ export const useVodFetcher = (block: BlockItemType): UseVodFetcherResult => {
 
   const fetchData = useCallback(async () => {
     if (isFullList || isLoading) return;
-    if (!block?.id || !block?.block_type) return;
+    if (!block?.id) return;
 
     setIsLoading(true);
 

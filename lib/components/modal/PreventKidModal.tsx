@@ -26,6 +26,13 @@ const whiteListIncludes = [
   '/tim-kiem',
 ];
 
+const isWhiteListChildren = [
+  '/children',
+  '/study',
+  '/block',
+  '/search',
+];
+
 const PreventKidModal: React.FC = () => {
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -46,6 +53,7 @@ const PreventKidModal: React.FC = () => {
       const path = router.asPath;
       
       const validInclude = isWhiteListInclude(path);
+      const validChildrenInclude = isWhiteListChildrenInclude(path);
       
       if (path === '/' || validInclude) {
         return;
@@ -66,6 +74,11 @@ const PreventKidModal: React.FC = () => {
       }
 
       const type = localStorage.getItem(TYPE_PR);
+
+      if(validChildrenInclude && type === PROFILE_TYPES.KID_PROFILE) {
+        return
+      }
+
       if (type === PROFILE_TYPES.KID_PROFILE && !profilesRouteChanged) {
         setOpen(true);
       }
@@ -82,6 +95,10 @@ const PreventKidModal: React.FC = () => {
   // Hàm kiểm tra whitelist includes
   const isWhiteListInclude = (path: string): boolean => {
     return whiteListIncludes.some((item) => path.includes(item));
+  };
+
+  const isWhiteListChildrenInclude = (path: string): boolean => {
+    return isWhiteListChildren.some((item) => path.includes(item));
   };
 
   // Hàm xử lý khi nhấn nút "Về trang chủ"

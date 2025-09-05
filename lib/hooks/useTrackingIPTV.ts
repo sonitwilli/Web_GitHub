@@ -61,11 +61,13 @@ export const trackingStopChannelLog42 = () => {
       return;
     }
     const playerParams = getPlayerParams();
+    const iptvParams = getIPTVParams();
     /*@ts-ignore*/
     tracking({
       LogId: '42',
       Event: 'StopChannel',
       ...playerParams,
+      ...iptvParams,
     });
     console.log('###########removeSessionStorage');
     removeSessionStorage({
@@ -89,7 +91,7 @@ export const trackingRequestPackageLog412 = () => {
     /*@ts-ignore*/
     return tracking({
       LogId: '412',
-      Event: 'RequestPackage',
+      Event: 'IPTVRequestPackage',
       ...playerParams,
     });
   } catch {}
@@ -107,6 +109,7 @@ export const trackingStartTimeshiftLog43 = () => {
       LogId: '43',
       Event: 'StartTimeshift',
       ...playerParams,
+      Key: 'Schedule',
     });
   } catch {}
 };
@@ -153,6 +156,7 @@ export const trackingStopTimeshiftLog44 = () => {
       LogId: '44',
       Event: 'StopTimeshift',
       ...playerParams,
+      Key: 'Schedule',
     });
   } catch {}
 };
@@ -212,11 +216,13 @@ export const trackingPlayAttempLog414 = ({ Event }: TrackingParams) => {
       return;
     }
     const playerParams = getPlayerParams();
+    const iptvParams = getIPTVParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '414',
       Event: Event || 'PlayAttemp',
       ...playerParams,
+      ...iptvParams,
     });
   } catch {}
 };
@@ -228,11 +234,13 @@ export const trackingSeekTimeshiftLog415 = () => {
       return;
     }
     const playerParams = getPlayerParams();
+    const iptvParams = getIPTVParams();
     /*@ts-ignore*/
     return tracking({
       LogId: '415',
       Event: 'SeekTimeshift',
       ...playerParams,
+      ...iptvParams,
     });
   } catch {}
 };

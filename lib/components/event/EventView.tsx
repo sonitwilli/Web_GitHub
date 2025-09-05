@@ -298,8 +298,6 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     }
   }, [isEndedLiveCountdown, isEventPremier, isEventFPTLive, setIsEndedLive]);
 
-  // Seek logic is centralized in PlayerPageContext; avoid attaching extra listeners here
-
   // Extract LimitAgeOverlay rendering
   const renderLimitAgeOverlay = () =>
     isEventPremier && !isVideoCodecNotSupported ? (

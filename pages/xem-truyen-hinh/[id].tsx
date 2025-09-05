@@ -50,6 +50,8 @@ import {
   clearCurrentTimeShiftProgram,
 } from '@/lib/store/slices/broadcastScheduleSlice';
 import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
+import { trackingStoreKey } from '@/lib/constant/tracking';
+import { removeSessionStorage } from '@/lib/utils/storage';
 
 const RequirePurchase = dynamic(
   () => import('@/lib/components/player/core/RequirePurchase'),
@@ -161,6 +163,11 @@ function ChannelPageContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [broadcastScheduleState, allTimeShiftItems]);
 
+  useEffect(() => {
+    removeSessionStorage({
+      data: [trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS],
+    });
+  }, [selectedTimeShift]);
   // Separate effect to handle clearing currentTimeShiftProgram only when really leaving timeshift
   useEffect(() => {
     const urlTimeShiftId = router.query?.time_shift_id as string;
