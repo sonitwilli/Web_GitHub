@@ -71,11 +71,17 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
   });
 
   useEffect(() => {
-    if (isInViewport) {
-      autoplay.current.play();
-    } else {
-      autoplay.current.stop();
-    }
+    try {
+      if (isInViewport) {
+        if (autoplay.current && typeof autoplay.current.play === 'function') {
+          autoplay.current.play();
+        }
+      } else {
+        if (autoplay.current && typeof autoplay.current.stop === 'function') {
+          autoplay.current.stop();
+        }
+      }
+    } catch {}
   }, [isInViewport]);
 
   useEffect(() => {
@@ -130,9 +136,13 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
 
   // pause auto play khi phát trailer các block
   useEffect(() => {
-    if (timeStartBlockPlayer) {
-      autoplay.current.stop();
-    }
+    try {
+      if (timeStartBlockPlayer) {
+        if (autoplay.current && typeof autoplay.current.stop === 'function') {
+          autoplay.current.stop();
+        }
+      }
+    } catch {}
   }, [timeStartBlockPlayer]);
 
   useEffect(() => {
