@@ -221,7 +221,7 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
     : 0;
   const isSingle = totalSlides === 1;
   const slideClass = isSingle
-    ? 'flex-none w-11/12 sm:w-1/2 lg:w-1/2 xl:w-1/3 px-2 mx-auto'
+    ? 'flex-none w-11/12 sm:w-1/2 lg:w-1/2 xl:w-1/3 px-2'
     : 'flex-none w-full sm:w-1/2 lg:w-1/2 xl:w-1/3 px-2';
 
 
