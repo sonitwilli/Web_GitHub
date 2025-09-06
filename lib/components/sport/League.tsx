@@ -18,6 +18,7 @@ interface Props {
 }
 
 const League: React.FC<Props> = ({
+  typeLeague,
   data,
   preRoundName = '',
   preMatchDate = '',
@@ -40,7 +41,11 @@ const League: React.FC<Props> = ({
   if (!data || data?.id === 'loadmore') return null;
 
   // Show date whenever match_date exists and is different from the previous item's date
-  const showDate = Boolean(data?.match_date) && data?.match_date !== preMatchDate;
+  // Don't show per-item date when rendering the "today matches" table
+  const showDate =
+    Boolean(data?.match_date) &&
+    data?.match_date !== preMatchDate &&
+    typeLeague !== 'today_matches';
   const showRound =
     data?.match_type === 'round_id' &&
     data?.round_name &&
@@ -73,7 +78,7 @@ const League: React.FC<Props> = ({
       )}
       
       {/* Date and round information */}
-      {showDate && (
+      {(showDate && data?.id !== MATCH_DATE) && (
         <div className="text-center text-sm font-semibold text-white my-3">
           {convertTime(data?.match_date as string, 'DD')} -{' '}
           {convertTime(data?.match_date as string, 'dd/MM/yyyy')}
