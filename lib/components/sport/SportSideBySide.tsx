@@ -10,6 +10,12 @@ import SportItem from './SportItem';
 import { useRouter } from 'next/router';
 import { SPORT, SPORT_SIDEBYSIDE } from '@/lib/constant/texts';
 import { useTableDetailData } from '@/lib/hooks/useTableDetailData';
+import useEmblaCarousel from 'embla-carousel-react';
+import {
+  usePrevNextButtons,
+  PrevButton,
+  NextButton,
+} from '@/lib/components/slider/embla/top-slider/EmblaCarouselArrowButtons';
 
 interface GroupDataMenu {
   date?: string;
@@ -89,6 +95,12 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   const todayMatchesRef = useRef<HTMLDivElement>(null);
 
   const [height, setHeight] = useState<string>('');
+
+  // Embla carousel setup
+  const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: false });
+  // Prev/Next button state management for embla (call hooks unconditionally)
+  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
+    usePrevNextButtons(emblaApi);
 
   // Đồng bộ tagSelect với query parameter tab
   useEffect(() => {
@@ -203,8 +215,15 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   }
   if (error) return <div className="text-red-500">Error: {error}</div>;
 
-  // Determine grid layout based on selected tab
-  const gridClass = 'grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4 w-full';
+  // Determine slide classes to show 3 per view on wide screens
+  const totalSlides = Array.isArray(dataDetail?.list_items)
+    ? dataDetail!.list_items!.length
+    : 0;
+  const isSingle = totalSlides === 1;
+  const slideClass = isSingle
+    ? 'flex-none w-11/12 sm:w-1/2 lg:w-1/2 xl:w-1/3 px-2 mx-auto'
+    : 'flex-none w-full sm:w-1/2 lg:w-1/2 xl:w-1/3 px-2';
+
 
   return (
     <div id="sport-side-by-side" className="relative w-full justify-center">
@@ -239,28 +258,50 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
           </div>
         )}
       
-      <div className={gridClass}>
-        {Array.isArray(dataDetail?.list_items) &&
-          dataDetail?.list_items?.length > 0 &&
-          dataDetail?.list_items?.map((item, index) => (
-            <div
-              key={`${initKey}-${index}`}
-              className="rounded-b-lg"
-              ref={sportItemRef}
-            >
-              <SportItem
-                data={groupByRoundName(item)}
-                pageType={dataDetail?.id}
-                height={height}
-                tagSelect={tagSelect}
-                showAllMatches={showAllMatches}
-                groupDataMenu={groupDataMenu}
-                getAllBlocksCategoriesData={[blockSport]}
-                onAddHashToLocation={onAddHashToLocation}
-                onChangeTagSelected={onChangeTagSelected}
-              />
-            </div>
-          ))}
+      <div className="relative">
+  {/* Embla viewport */}
+  <div className="embla overflow-hidden" ref={emblaRef as unknown as (el: HTMLDivElement | null) => void}>
+          <div className="embla__container flex -mx-2">
+            {Array.isArray(dataDetail?.list_items) &&
+              dataDetail?.list_items?.length > 0 &&
+              dataDetail?.list_items?.map((item, index) => (
+                <div
+                  key={`${initKey}-${index}`}
+                  className={`${slideClass}`}
+                >
+                  <div className="rounded-b-lg" ref={sportItemRef}>
+                    <SportItem
+                      data={groupByRoundName(item)}
+                      pageType={dataDetail?.id}
+                      height={height}
+                      tagSelect={tagSelect}
+                      showAllMatches={showAllMatches}
+                      groupDataMenu={groupDataMenu}
+                      getAllBlocksCategoriesData={[blockSport]}
+                      onAddHashToLocation={onAddHashToLocation}
+                      onChangeTagSelected={onChangeTagSelected}
+                    />
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Prev / Next buttons using shared Embla arrow components: render only when useful */}
+        {totalSlides > 1 && (
+          <>
+            {!prevBtnDisabled && (
+              <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-full z-20 hidden md:block">
+                <PrevButton onClick={onPrevButtonClick} disabled={prevBtnDisabled} />
+              </div>
+            )}
+            {!nextBtnDisabled && (
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-full z-20 hidden md:block">
+                <NextButton onClick={onNextButtonClick} disabled={nextBtnDisabled} />
+              </div>
+            )}
+          </>
+        )}
         
         {dataDetail?.id === SPORT &&
           Array.isArray(dataDetail?.list_items) &&
@@ -295,16 +336,18 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
           )}
         
         {dataDetail?.list_items?.length === 0 && (
-          <div className="rounded-b-lg">
-            <SportItem
-              data={dataDetail?.list_items}
-              height="auto"
-              tagSelect={tagSelect}
-              groupDataMenu={groupDataMenu}
-              getAllBlocksCategoriesData={[blockSport]}
-              onAddHashToLocation={onAddHashToLocation}
-              onChangeTagSelected={onChangeTagSelected}
-            />
+          <div className={`${slideClass} rounded-b-lg`}>
+            <div className="mx-auto">
+              <SportItem
+                data={dataDetail?.list_items}
+                height="auto"
+                tagSelect={tagSelect}
+                groupDataMenu={groupDataMenu}
+                getAllBlocksCategoriesData={[blockSport]}
+                onAddHashToLocation={onAddHashToLocation}
+                onChangeTagSelected={onChangeTagSelected}
+              />
+            </div>
           </div>
         )}
       </div>
