@@ -94,12 +94,15 @@ const League: React.FC<Props> = ({
       {data?.home?.short_name && (
         <div
           id="league"
-          className={`bg-raisin-black relative flex items-center justify-center px-4 py-3 text-white ${
+          className={`bg-raisin-black relative flex items-center justify-center px-6 py-3 text-white ${
             noMarginBottom ? 'mb-0' : 'mb-2'
           }`}
         >
           <div className="w-full flex items-center justify-center">
-            <div className="text-sm font-semibold min-w-[55px]">
+            <div
+              className="text-sm font-semibold w-[55px] truncate px-2"
+              title={data?.home?.short_name}
+            >
               {data?.home.short_name}
             </div>
 
@@ -145,7 +148,10 @@ const League: React.FC<Props> = ({
               )}
             </div>
 
-            <div className="text-sm font-semibold min-w-[55px]">
+            <div
+              className="text-sm font-semibold w-[55px] truncate px-2"
+              title={data?.away?.short_name}
+            >
               {data?.away?.short_name}
             </div>
 
