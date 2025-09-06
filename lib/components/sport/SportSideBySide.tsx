@@ -96,8 +96,8 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
 
   const [height, setHeight] = useState<string>('');
 
-  // Embla carousel setup
-  const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: false });
+  // Embla carousel setup: align slides to start so first snap shows full slide on initial scroll
+  const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: false, align: 'start' });
   // Prev/Next button state management for embla (call hooks unconditionally)
   const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
     usePrevNextButtons(emblaApi);
@@ -106,6 +106,18 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   useEffect(() => {
     setTagSelect((tab as string) || 'tat-ca');
   }, [tab]);
+
+  // Recalculate embla when slides change to fix initial half-slide visible on iPad
+  useEffect(() => {
+    if (emblaApi) {
+      // reInit will force embla to recalculate sizes and snaps
+      try {
+        emblaApi.reInit();
+      } catch (e) {
+        // ignore if embla not ready
+      }
+    }
+  }, [emblaApi, dataDetail?.list_items?.length]);
 
   useEffect(() => {
     const dataTemp = {
@@ -260,15 +272,16 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
       
       <div className="relative">
   {/* Embla viewport */}
-  <div className="embla overflow-hidden" ref={emblaRef as unknown as (el: HTMLDivElement | null) => void}>
+  <div
+    className="embla overflow-hidden"
+    ref={emblaRef as unknown as (el: HTMLDivElement | null) => void}
+    style={{ WebkitOverflowScrolling: 'touch' }}
+  >
           <div className="embla__container flex -mx-2">
             {Array.isArray(dataDetail?.list_items) &&
               dataDetail?.list_items?.length > 0 &&
               dataDetail?.list_items?.map((item, index) => (
-                <div
-                  key={`${initKey}-${index}`}
-                  className={`${slideClass}`}
-                >
+                <div key={`${initKey}-${index}`} className={`${slideClass}`}>
                   <div className="rounded-b-lg" ref={sportItemRef}>
                     <SportItem
                       data={groupByRoundName(item)}
