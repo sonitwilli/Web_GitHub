@@ -39,8 +39,8 @@ const League: React.FC<Props> = ({
 
   if (!data || data?.id === 'loadmore') return null;
 
-  const showDate =
-    data?.match_type === MATCH_DATE && data?.match_date !== preMatchDate;
+  // Show date whenever match_date exists and is different from the previous item's date
+  const showDate = Boolean(data?.match_date) && data?.match_date !== preMatchDate;
   const showRound =
     data?.match_type === 'round_id' &&
     data?.round_name &&
@@ -48,6 +48,31 @@ const League: React.FC<Props> = ({
 
   return (
     <div className={lastIndex ? 'rounded-b-lg' : ''}>
+      {/* Title section displayed first */}
+      {!data?.home?.short_name && (
+        <div
+          id="title"
+          className="bg-charleston-green rounded-t-lg p-4 flex justify-between items-center h-[56px]"
+        >
+          <div className="text-white font-medium text-sm">
+            {data?.id === MATCH_DATE || !data?.round_name
+              ? `${convertTime(
+                  data?.match_date as string,
+                  'DD',
+                )} - ${convertTime(data?.match_date as string, 'dd/MM/yyyy')}`
+              : data?.round_id}
+          </div>
+          {leagueLogo && leagueLogo !== 'None' && (
+            <img
+              src={leagueLogo}
+              alt={metaDataName || ''}
+              className="w-[40px] h-[40px]"
+            />
+          )}
+        </div>
+      )}
+      
+      {/* Date and round information */}
       {showDate && (
         <div className="text-center text-sm font-semibold text-white my-3">
           {convertTime(data?.match_date as string, 'DD')} -{' '}
@@ -60,7 +85,8 @@ const League: React.FC<Props> = ({
         </div>
       )}
 
-      {data?.home?.short_name ? (
+      {/* Match content */}
+      {data?.home?.short_name && (
         <div
           id="league"
           className={`bg-raisin-black relative flex items-center justify-center px-4 py-3 text-white ${
@@ -139,27 +165,6 @@ const League: React.FC<Props> = ({
               </div>
             ) : null}
           </div>
-        </div>
-      ) : (
-        <div
-          id="title"
-          className="bg-charleston-green rounded-t-lg p-4 flex justify-between items-center h-[56px]"
-        >
-          <div className="text-white font-medium text-sm">
-            {data?.id === MATCH_DATE || !data?.round_name
-              ? `${convertTime(
-                  data?.match_date as string,
-                  'DD',
-                )} - ${convertTime(data?.match_date as string, 'dd/MM/yyyy')}`
-              : data?.round_id}
-          </div>
-          {leagueLogo && leagueLogo !== 'None' && (
-            <img
-              src={leagueLogo}
-              alt={metaDataName || ''}
-              className="w-[40px] h-[40px]"
-            />
-          )}
         </div>
       )}
     </div>
