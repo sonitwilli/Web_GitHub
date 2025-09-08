@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { trackingStoreKey } from '../constant/tracking';
-import { IS_NEXT_FROM_PLAYER } from '../constant/texts';
 import tracking from '../tracking';
 import {
   TrackingEvent,
@@ -11,16 +10,19 @@ import { getContentData, getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
 import { getSeekEvent } from '../utils/seekTracking';
 
-const getPlaybackParams = (): TrackingParams => {
-  const detectScreen = sessionStorage?.getItem(IS_NEXT_FROM_PLAYER)
-    ? 'Related'
-    : sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
+export const getPlaybackParams = (): TrackingParams => {
+  const detectScreen = sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
   const appModuleScreen = sessionStorage.getItem(
     trackingStoreKey.APP_MODULE_SCREEN,
   );
   const Screen =
     detectScreen && detectScreen !== '' ? detectScreen : appModuleScreen;
-  return { Screen: Screen as TrackingScreen };
+  const { dataStream } = getContentData();
+  const Url =
+    sessionStorage.getItem(trackingStoreKey.PLAYING_URL) ||
+    dataStream?.url ||
+    '';
+  return { Screen: Screen as TrackingScreen, Url };
 };
 export const trackingStartMovieLog51 = () => {
   // Log51 : StartMovie | StartTrailer
@@ -81,6 +83,7 @@ export const trackingPlayAttempLog521 = ({ Event }: TrackingParams) => {
 
 export const trackingStopMovieLog52 = () => {
   // Log52 : StopMovie | StopTrailer
+  console.log('--- TRACKING trackingStopMovieLog52');
   try {
     if (typeof window === 'undefined') {
       return;
@@ -171,6 +174,7 @@ export const trackingNextMovieLog55 = () => {
       Event: Event || 'NextMovie',
       ...playerParams,
       ...playbackTrackingParams,
+      Key: 'KEY_Next',
     });
   } catch {}
 };
@@ -257,6 +261,7 @@ export const trackingChangeSubAudioLog518 = ({
       ...playerParams,
       ...playbackTrackingParams,
       ItemName,
+      Key: 'Control',
     });
   } catch {}
 };
@@ -277,7 +282,9 @@ export const trackingChangeVideoQualityLog416 = ({
       Event: 'ChangeVideoQuality',
       ...playerParams,
       ...playbackTrackingParams,
+      Screen: 'ChangeVideoQuality',
       ItemName,
+      Key: 'Virtual',
     });
   } catch {}
 };
@@ -417,5 +424,6 @@ export const useTrackingPlayback = () => {
     trackingChangeVideoQualityLog416,
     trackingShareCommentLikeLog516,
     trackingGetDRMKeyLog166,
+    getPlaybackParams,
   };
 };

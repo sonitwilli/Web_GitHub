@@ -318,8 +318,8 @@ const BroadcastSchedule: FC<Props> = ({
         }`}
       >
         {isFullscreen && (
-          <div className="flex justify-between items-center px-4 py-3 bg-eerie-black">
-            <h2 className="text-white text-base font-semibold">
+          <div className="flex justify-between items-start px-4 py-3 bg-eerie-black">
+            <h2 className="text-white text-[28px] font-semibold">
               Lịch phát sóng
             </h2>
             <IoIosClose
@@ -327,7 +327,7 @@ const BroadcastSchedule: FC<Props> = ({
                 if (onClose) onClose();
                 else dispatch(setBroadcastFullscreen(false));
               }}
-              size={24}
+              size={32}
               className="text-white cursor-pointer"
             />
           </div>

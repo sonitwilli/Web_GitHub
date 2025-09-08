@@ -36,7 +36,9 @@ import {
 } from '@/lib/constant/texts';
 import { convertMsg } from '@/lib/utils/profile';
 import { changeUserInfo } from '@/lib/store/slices/userSlice';
+import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { trackingLog198 } from '@/lib/hooks/useTrackingModule';
+import { AxiosError } from 'axios';
 
 interface User {
   user_phone?: string;
@@ -122,7 +124,7 @@ const ForgetPasswordModalProfile = forwardRef<
   };
 
   const requireLogin = () => {
-    // Implement login redirect logic
+    dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
   };
 
   const openConfirmModal = (content: ModalContent) => {
@@ -410,7 +412,18 @@ const ForgetPasswordModalProfile = forwardRef<
         }
       }
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{
+          response?: { status?: number };
+        }>;
+        if (axiosError.response?.status === 401) {
+          showToast({
+            title: ERROR_CONNECTION,
+            desc: HAVING_ERROR,
+          });
+          return;
+        }
+      }
     }
   };
 
@@ -470,7 +483,18 @@ const ForgetPasswordModalProfile = forwardRef<
         }
       }
     } catch (error) {
-      console.log(error);
+      if (error instanceof AxiosError) {
+        const axiosError = error as AxiosError<{
+          response?: { status?: number };
+        }>;
+        if (axiosError.response?.status === 401) {
+          showToast({
+            title: ERROR_CONNECTION,
+            desc: HAVING_ERROR,
+          });
+          return;
+        }
+      }
     }
   };
 
@@ -529,8 +553,27 @@ const ForgetPasswordModalProfile = forwardRef<
   };
 
   useImperativeHandle(ref, () => ({
-    setOpen: (open: boolean) => {
-      setOpen(open);
+    setOpen: async (open: boolean) => {
+      try {
+        const res = await getUserInfo();
+        if (res?.status === 401) {
+          requireLogin();
+          return;
+        }
+
+        dispatch(changeUserInfo(res?.data || {}));
+        setOpen(open);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const axiosError = error as AxiosError<{
+            response?: { status?: number };
+          }>;
+          if (axiosError.response?.status === 401) {
+            requireLogin();
+            return;
+          }
+        }
+      }
     },
     openModal: () => {
       setOpen(true);

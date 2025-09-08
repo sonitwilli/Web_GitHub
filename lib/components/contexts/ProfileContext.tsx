@@ -8,7 +8,7 @@ import {
 } from 'react';
 import { useRouter } from 'next/router';
 import { Profile, UserInfoResponseType } from '@/lib/api/user';
-import {ProfileResponse} from '@/lib/api/multi-profiles';
+import { ProfileResponse } from '@/lib/api/multi-profiles';
 import {
   ProfileMetaData,
   doCreateNewProfile,
@@ -103,19 +103,25 @@ interface ProfileContextType {
     password?: string;
     version?: number;
   }) => Promise<{ success: boolean; error?: string }>;
-  loginProfile: (options?: {
-    profile_id?: string;
-    pin?: string;
-  }) => Promise<{ success: boolean; data?: Profile; error?: string; defaultData?: ProfileResponse }>;
-  checkProfilePin: (options?: {
-    profile?: Profile;
-    pin?: string;
-  }) => Promise<{ success: boolean; error?: string; defaultData?: ProfileResponse }>;
+  loginProfile: (options?: { profile_id?: string; pin?: string }) => Promise<{
+    success: boolean;
+    data?: Profile;
+    error?: string;
+    defaultData?: ProfileResponse;
+  }>;
+  checkProfilePin: (options?: { profile?: Profile; pin?: string }) => Promise<{
+    success: boolean;
+    error?: string;
+    defaultData?: ProfileResponse;
+  }>;
   updateProfile: (options?: {
     params?: ProfileUpdate;
     profile_id?: string;
   }) => Promise<{ success: boolean; error?: string }>;
-  handleLoginSuccess: (options?: { profile?: Profile }) => void;
+  handleLoginSuccess: (options?: {
+    profile?: Profile;
+    isRedirect?: boolean;
+  }) => void;
 }
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
@@ -130,7 +136,9 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
   const [defaultProfile, setDefaultProfile] = useState<Profile | null>(null);
   const [profilesMetaData, setProfilesMetaData] =
     useState<ProfileMetaData | null>(null);
-  const [profilesData, setProfilesData] = useState<UserInfoResponseType | null>(null);
+  const [profilesData, setProfilesData] = useState<UserInfoResponseType | null>(
+    null,
+  );
   const [isLogoutProfile, setIsLogoutProfile] = useState<boolean>(false);
   const [selectedProfile, setSelectedProfile] = useState<Profile | null>(null);
   const [showPinModal, setShowPinModal] = useState<boolean>(false);
@@ -212,7 +220,9 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
               profile_id: profile.profile_id,
             });
             if (loginResult?.success) {
-              handleLoginSuccess({ profile: loginResult?.data as Profile || {} });
+              handleLoginSuccess({
+                profile: (loginResult?.data as Profile) || {},
+              });
             } else {
               setProfileError(loginResult.error || DEFAULT_ERROR_MSG);
               showToast({ desc: loginResult.error || DEFAULT_ERROR_MSG });
@@ -283,8 +293,6 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
     } catch (error) {
       const errMsg = checkError({ error });
       setProfileError(errMsg);
-      console.log('error', error);
-
       if (error instanceof AxiosError && error.response?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       }
@@ -350,7 +358,11 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
           return { success: true, data: data.data };
         } else {
           setProfileError(DEFAULT_ERROR_MSG);
-          return { success: false, error: DEFAULT_ERROR_MSG, defaultData: data as ProfileResponse };
+          return {
+            success: false,
+            error: DEFAULT_ERROR_MSG,
+            defaultData: data as ProfileResponse,
+          };
         }
       } catch (error) {
         const errMsg = checkError({ error });
@@ -426,12 +438,15 @@ export const ProfileProvider: React.FC<{ children: ReactNode }> = ({
 
   // Handle login success
   const handleLoginSuccess = useCallback(
-    async ({ profile = {} as Profile } = {}) => {
+    async ({ profile = {} as Profile, isRedirect = true } = {}) => {
       saveProfile({ profile });
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      // await router.push('/');
-      // router.reload()
-      window.location.href = '/';
+
+      if (isRedirect) {
+        // await router.push('/');
+        // router.reload()
+        window.location.href = '/';
+      }
     },
     [],
   );

@@ -45,9 +45,10 @@ export default function ChannelItem({
       pathname: `/xem-truyen-hinh/${channel.id}`,
       query: { group: router.query.group },
     });
+    console.log('selectedGroup', selectedGroup, isSuggest);
     sessionStorage.setItem(
       trackingStoreKey.CHANNEL_SELECTED_GROUP,
-      selectedGroup?.name || '',
+      selectedGroup?.name || isSuggest ? 'Kênh gợi ý' : '',
     );
   };
 

@@ -5,10 +5,6 @@ import { createLink } from '@/lib/utils/methods';
 export default function Categories() {
   const { dataChannel } = usePlayerPageContext();
 
-  const createLinkUrl = (c: {id?: string, type?: string, block_type?: string}) => {
-    return `${createLink({ data: c, type: c.type as string })}?block_type=${c?.block_type}`;
-  }
-
   if (!dataChannel?.category?.length) {
     return;
   }
@@ -18,7 +14,7 @@ export default function Categories() {
       {dataChannel?.category?.map((c, index) => (
         <Link
           key={index}
-          href={createLinkUrl(c) || '#'}
+          href={createLink({ data: c, type: c.type as string }) || '#'}
           className={`block px-[8px] py-[4px] rounded-[8px] text-[14px] bg-eerie-black hover:bg-charleston-green`}
         >
           {c.title}

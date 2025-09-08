@@ -45,7 +45,7 @@ const PaymentPackageList: React.FC = () => {
   }, []);
   return (
     <div className='max-w-[856px]'>
-      <h2 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[32px]">
+      <h2 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-6 xl:mt-3">
         Quản lý thanh toán và gói
       </h2>
       <div className="flex flex-col gap-[16px]">

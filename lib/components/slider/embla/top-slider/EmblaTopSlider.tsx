@@ -7,6 +7,7 @@ import React, {
   createContext,
   useRef,
   useContext,
+  useMemo,
 } from 'react';
 import { EmblaOptionsType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -21,6 +22,7 @@ import { AppContext } from '@/lib/components/container/AppContainer';
 import { useFetchRecommendBlock } from '@/lib/hooks/useFetchRecommendBlock';
 import { useIntersectionObserver } from '@/lib/hooks/useIntersectionObserver';
 import useScreenSize from '@/lib/hooks/useScreenSize';
+import { filterEndedEvents } from '@/lib/utils/eventUtils';
 
 type PropType = {
   options?: EmblaOptionsType;
@@ -69,6 +71,10 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
     cache_time: configs?.recommend_ttl || '0',
     isLogged: info?.user_id_str !== '' || false,
   });
+
+  const filteredData = useMemo(() => {
+    return data ? filterEndedEvents(data) : [];
+  }, [data]);
 
   useEffect(() => {
     try {
@@ -166,9 +172,9 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
       <div className="embla" id="top_slider" ref={sliderRef}>
         <div className="embla__viewport" ref={emblaMainRef}>
           <div className="embla__container" ref={targetElement}>
-            {Array.isArray(data) &&
-              data.length > 0 &&
-              data.map((slide, index) => (
+            {Array.isArray(filteredData) &&
+              filteredData.length > 0 &&
+              filteredData.map((slide, index) => (
                 <div
                   className={`embla__slide ${
                     index === selectedIndex ? 'embla__slide--active' : ''
@@ -191,9 +197,9 @@ const EmblaTopSlider: React.FC<PropType> = (props) => {
         >
           <div className="embla-thumbs__viewport pb-[4px]" ref={emblaThumbsRef}>
             <div className="embla-thumbs__container">
-              {Array.isArray(data) &&
-                data.length > 0 &&
-                data.map((slide, index) => (
+              {Array.isArray(filteredData) &&
+                filteredData.length > 0 &&
+                filteredData.map((slide, index) => (
                   <EmblaTopThumbs
                     slide={slide}
                     key={index}

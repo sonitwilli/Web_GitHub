@@ -290,49 +290,55 @@ export function useBroadcastSchedule(
   useEffect(() => {
     if (!router.isReady || hasHandledQuery.current) return;
 
-    // Wait for schedule API to complete (either with data or error state)
-    if (!scheduleList.length && !stateErrorBroadcastSchedule) return;
-
     const urlScheduleId = router.query?.time_shift_id as string;
-    if (
-      urlScheduleId &&
-      typeof urlScheduleId === 'string' &&
-      urlScheduleId !== activeScheduleId
-    ) {
+    if (!urlScheduleId) {
       hasHandledQuery.current = true;
+      return;
+    }
 
-      // Only search in current scheduleList (today's schedule)
-      const item = findItemById(urlScheduleId);
+    if (activeScheduleId === urlScheduleId) {
+      hasHandledQuery.current = true;
+      return;
+    }
 
-      // If URL points to boundary timeshift item, treat as not selectable
-      if (
-        boundaryTimeshiftItemId &&
-        urlScheduleId === boundaryTimeshiftItemId
-      ) {
-        clearTimeshiftFromUrl();
-        dispatch(setActiveScheduleId(''));
-        dispatch(clearCurrentTimeShiftProgram());
-        onScheduleSelect?.('');
-        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-        if (setIsPlaySuccess) setIsPlaySuccess(false);
-        return;
-      }
+    if (!scheduleList.length && !stateErrorBroadcastSchedule) {
+      return;
+    }
 
-      if (item && isItemLive(item)) {
-        // Schedule found and currently live, switch to live
-        clearTimeshiftFromUrl();
-        dispatch(setActiveScheduleId(''));
-        dispatch(clearCurrentTimeShiftProgram()); // Clear timeshift title when switching to live
-        onScheduleSelect?.('');
-        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-        if (setIsPlaySuccess) setIsPlaySuccess(false);
-      } else if (!item) {
-        clearTimeshiftFromUrl();
-        dispatch(setActiveScheduleId(''));
-        onScheduleSelect?.('');
-        if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
-        if (setIsPlaySuccess) setIsPlaySuccess(false);
-      }
+    hasHandledQuery.current = true;
+
+    // Only search in current scheduleList (today's schedule)
+    const item = findItemById(urlScheduleId);
+
+    // If URL points to boundary timeshift item, treat as not selectable
+    if (boundaryTimeshiftItemId && urlScheduleId === boundaryTimeshiftItemId) {
+      clearTimeshiftFromUrl();
+      dispatch(setActiveScheduleId(''));
+      dispatch(clearCurrentTimeShiftProgram());
+      onScheduleSelect?.('');
+      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+      if (setIsPlaySuccess) setIsPlaySuccess(false);
+      return;
+    }
+
+    if (!item) {
+      clearTimeshiftFromUrl();
+      dispatch(setActiveScheduleId(''));
+      onScheduleSelect?.('');
+      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+      if (setIsPlaySuccess) setIsPlaySuccess(false);
+      return;
+    }
+    const itemIsLive = isItemLive(item);
+    if (itemIsLive) {
+      clearTimeshiftFromUrl();
+      dispatch(setActiveScheduleId(''));
+      dispatch(clearCurrentTimeShiftProgram());
+      onScheduleSelect?.('');
+      if (setFromTimeshiftToLive) setFromTimeshiftToLive(Date.now());
+      if (setIsPlaySuccess) setIsPlaySuccess(false);
+    } else {
+      handleTimeShiftSelect(urlScheduleId);
     }
   }, [
     router.isReady,
@@ -350,13 +356,6 @@ export function useBroadcastSchedule(
     setIsPlaySuccess,
     boundaryTimeshiftItemId,
   ]);
-
-  useEffect(() => {
-    if (router.query?.time_shift_id) {
-      handleTimeShiftSelect(router.query?.time_shift_id as string);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   // Setter functions
   const setSelectedDateCallback = useCallback(

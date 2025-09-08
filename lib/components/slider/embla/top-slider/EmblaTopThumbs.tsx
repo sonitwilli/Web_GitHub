@@ -1,6 +1,7 @@
 import { BlockSlideItemType } from '@/lib/api/blocks';
 import { scaleImageUrl } from '@/lib/utils/methods';
-import React from 'react';
+import React, { useMemo } from 'react';
+import { isEventEnded } from '@/lib/utils/eventUtils';
 
 type PropType = {
   selected: boolean;
@@ -11,6 +12,16 @@ type PropType = {
 
 export const EmblaTopThumbs: React.FC<PropType> = (props) => {
   const { selected, index, onClick, slide } = props;
+
+  // Check if this thumbnail should be hidden (ended event)
+  const shouldHideThumb = useMemo(() => {
+    return slide ? isEventEnded(slide) : false;
+  }, [slide]);
+
+  // Don't render ended events
+  if (shouldHideThumb) {
+    return null;
+  }
 
   return (
     <div

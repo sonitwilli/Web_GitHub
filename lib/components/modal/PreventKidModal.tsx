@@ -20,18 +20,9 @@ const whiteList = [
   '/tim-kiem',
 ];
 
-const whiteListIncludes = [
-  '/playlist/',
-  '/cong-chieu/',
-  '/tim-kiem',
-];
+const whiteListIncludes = ['/playlist/', '/cong-chieu/', '/tim-kiem'];
 
-const isWhiteListChildren = [
-  '/children',
-  '/study',
-  '/block',
-  '/search',
-];
+const isWhiteListChildren = ['/children', '/study', '/block', '/search'];
 
 const PreventKidModal: React.FC = () => {
   const router = useRouter();
@@ -39,7 +30,9 @@ const PreventKidModal: React.FC = () => {
   const [preventKidText, setPreventKidText] = useState('');
   const [profilesRouteChanged] = useState(false); // Giả định tạm thời, thay bằng Redux nếu cần
   const { dataChannel } = usePlayerPageContext(); // Giả định context để lấy dataChannel
-  const messageConfigs = useSelector((state: RootState) => state.app.messageConfigs);
+  const messageConfigs = useSelector(
+    (state: RootState) => state.app.messageConfigs
+  );
 
   // Lấy msg_not_support từ API
   useEffect(() => {
@@ -49,43 +42,52 @@ const PreventKidModal: React.FC = () => {
   // Kiểm tra điều kiện hiển thị modal
   useEffect(() => {
     if (!router.isReady) return;
-    const checkPreventKid = async () => {
+    const checkPreventKid = () => {
       const path = router.asPath;
-      
+
       const validInclude = isWhiteListInclude(path);
       const validChildrenInclude = isWhiteListChildrenInclude(path);
-      
+
       if (path === '/' || validInclude) {
         return;
       }
 
-      if(path.includes('/xem-video') && !dataChannel) {
-        return
+      if (path.includes('/xem-video') && !dataChannel) {
+        return;
       }
 
-      if(dataChannel?.is_kid === '1') {
-        return
+      if (dataChannel?.is_kid === '1') {
+        return;
       }
 
       const valid = isWhiteList(path);
-      
+
       if (valid) {
         return;
       }
 
       const type = localStorage.getItem(TYPE_PR);
 
-      if(validChildrenInclude && type === PROFILE_TYPES.KID_PROFILE) {
-        return
+      if (validChildrenInclude && type === PROFILE_TYPES.KID_PROFILE) {
+        return;
       }
 
       if (type === PROFILE_TYPES.KID_PROFILE && !profilesRouteChanged) {
         setOpen(true);
+        return;
       }
     };
-
-    checkPreventKid();
-  }, [router.asPath, profilesRouteChanged, router.isReady, dataChannel]);
+    setTimeout(() => {
+      checkPreventKid();
+    }, 500);
+    // checkPreventKid();
+  }, [
+    router,
+    router.asPath,
+    profilesRouteChanged,
+    router.isReady,
+    dataChannel,
+  ]);
 
   // Hàm kiểm tra whitelist
   const isWhiteList = (path: string): boolean => {
@@ -120,8 +122,12 @@ const PreventKidModal: React.FC = () => {
           htmlOpenClassName="overflow-hidden"
         >
           <div className="text-center">
-            <h2 className="text-2xl font-semibold leading-[1.3] mb-4">Hồ sơ không phù hợp</h2>
-            <p className="text-base text-spanish-gray font-normal leading-[1.3] mb-8">{preventKidText}</p>
+            <h2 className="text-2xl font-semibold leading-[1.3] mb-4">
+              Hồ sơ không phù hợp
+            </h2>
+            <p className="text-base text-spanish-gray font-normal leading-[1.3] mb-8">
+              {preventKidText}
+            </p>
             <div className="flex items-center justify-center gap-3">
               <button
                 onClick={confirm}

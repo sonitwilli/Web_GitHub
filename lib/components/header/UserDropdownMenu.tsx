@@ -6,6 +6,7 @@ import { MdOutlineGroup } from 'react-icons/md';
 import { IoSettingsOutline } from 'react-icons/io5';
 import PinModal from '@/lib/components/modal/ModalPin';
 import { IoCloseOutline } from 'react-icons/io5';
+import { getCookie } from 'cookies-next';
 import Link from 'next/link';
 import { Profile } from '@/lib/api/user';
 import {
@@ -14,6 +15,7 @@ import {
   TYPE_PR,
   ALREADY_SHOWN_MODAL_MANAGEMENT_CODE,
   PROFILE_TYPES,
+  NUMBER_PR,
 } from '@/lib/constant/texts';
 import ConfirmModal from '@/lib/components/modal/ModalConfirm';
 import { useProfileContext } from '@/lib/components/contexts/ProfileContext';
@@ -36,6 +38,7 @@ import { changeUserInfo } from '@/lib/store/slices/userSlice';
 import useScreenSize from '@/lib/hooks/useScreenSize';
 import { trackingLoginProfileLog104 } from '@/lib/tracking/trackingProfile';
 import { scaleImageUrl } from '@/lib/utils/methods';
+import { useAppSelector } from '@/lib/store';
 
 interface Props {
   profiles: Profile[];
@@ -101,6 +104,7 @@ export default function UserDropdownMenu({
   const modalFillCodeRef = useRef<IModalFillCodeRef>(null);
   const modalManagementCodeRef = useRef<ModalManagementCodeRef>(null);
   const dispatch = useDispatch();
+  const { info: userInfo } = useAppSelector((state) => state.user);
   const {
     selectedProfile,
     setSelectedProfile,
@@ -127,7 +131,7 @@ export default function UserDropdownMenu({
   const [loading, setLoading] = useState(false);
   const [subTitle, setSubTitle] = useState<string>('');
   const [isErrorCode, setIsErrorCode] = useState<string>('');
-
+  const [isDubTab, setIsDubTab] = useState(false);
   const confirmAddPin = async (pin: string) => {
     setLoading(true);
     profilePinModalRef.current?.setError('');
@@ -165,7 +169,7 @@ export default function UserDropdownMenu({
     // Cập nhật profile (bao gồm cả thiết lập PIN mới và kiểm tra PIN cũ)
     const updateResult = await updateProfile(
       { pin, type: pinModalType },
-      selectedProfile,
+      selectedProfile
     );
     setLoading(false);
 
@@ -186,7 +190,7 @@ export default function UserDropdownMenu({
         return;
       } else {
         profilePinModalRef.current?.setError(
-          updateResult?.data?.msg || DEFAULT_ERROR_MSG,
+          updateResult?.data?.msg || DEFAULT_ERROR_MSG
         );
         setIsForgotPin(false);
         return;
@@ -199,6 +203,9 @@ export default function UserDropdownMenu({
   };
 
   const isKidProfile = useMemo(() => {
+    if (currentProfile?.profile_type !== getCookie(TYPE_PR)) {
+      return false;
+    }
     if (typeof window !== 'undefined') {
       const profileType = localStorage.getItem(TYPE_PR);
       return profileType === '2';
@@ -210,7 +217,7 @@ export default function UserDropdownMenu({
       setShowPinModal(true);
       setPinModalTitle('Nhập mã PIN hồ sơ');
       setSubTitle(
-        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng',
+        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng'
       );
       setPinModalType('access');
     } else if (isKidProfile && selectedProfile?.profile_type === '1') {
@@ -226,7 +233,22 @@ export default function UserDropdownMenu({
   }, [selectedProfile?.profile_id]);
 
   async function checkLoginProfile() {
+    if (!getCookie(NUMBER_PR)) {
+      setSelectedProfile(null);
+      window.location.href = '/';
+      return;
+    }
+    if (userInfo?.profile?.profile_id !== getCookie(NUMBER_PR)) {
+      setIsDubTab(true);
+      setSelectedProfile({
+        ...currentProfile,
+        profile_id: getCookie(NUMBER_PR) as string,
+        profile_type: getCookie(TYPE_PR) as string,
+      });
+      return;
+    }
     if (!selectedProfile) return;
+
     const loginResult = await loginProfile({
       profile_id: selectedProfile?.profile_id,
     });
@@ -245,7 +267,11 @@ export default function UserDropdownMenu({
         isLandingPage: '1',
       });
 
-      handleLoginSuccess({ profile: loginResult?.data || {} });
+      handleLoginSuccess({
+        profile: loginResult?.data || {},
+        isRedirect: getCookie(TYPE_PR) === '2' ? !isDubTab : true,
+      });
+      setIsDubTab(false);
       setShowPinModal(false);
     } else if (loginResult?.defaultData?.error_code === '3') {
       setIsErrorCode('3');
@@ -306,7 +332,7 @@ export default function UserDropdownMenu({
       const response = await getUserInfo();
       const data = response?.data;
       setSubTitle(
-        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng',
+        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng'
       );
       setLoading(false);
       setIsForgotPin(true);
@@ -374,7 +400,7 @@ export default function UserDropdownMenu({
   const handleRestep = () => {
     setPinModalTitle('Thiết lập mã PIN hồ sơ');
     setSubTitle(
-      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ',
+      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ'
     );
     setPinModalType('edit');
     setShowPinModal(true);

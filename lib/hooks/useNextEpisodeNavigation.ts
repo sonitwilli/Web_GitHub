@@ -159,7 +159,9 @@ export const useNextEpisodeNavigation = ({
     }
     trackingNextMovieLog55();
     // Navigate to the next episode
-    router.push(`${url}?${HISTORY_TEXT.BOOK_MARK}=${BOOLEAN_TEXTS.FALSE}`);
+    router.push(
+      `${url}?${HISTORY_TEXT.BOOK_MARK}=${BOOLEAN_TEXTS.FALSE}&from=Related`,
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [generateNextEpisodeUrl]);
 

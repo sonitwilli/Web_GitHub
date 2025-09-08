@@ -649,7 +649,10 @@ export const doConfirmOtpChangeManagementCode = async (
       }>;
       if (apiError.response?.data) {
         if (apiError.response.status === 401) {
-          // Implement requireLogin
+          showToast({
+            title: ERROR_CONNECTION,
+            desc: HAVING_ERROR,
+          });
         } else {
           switch (apiError.response.data.error_code) {
             case '2':

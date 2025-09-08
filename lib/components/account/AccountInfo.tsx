@@ -28,7 +28,6 @@ const AccountInfo: React.FC = () => {
   const router = useRouter();
   const currentUser = useSelector((state: RootState) => state.user.info);
   const [isEditing, setIsEditing] = useState(false);
-  useState<boolean>(false);
   const [showModalFillManagementCode, setShowModalFillManagementCode] =
     useState<boolean>(false);
   const forgotPasswordModalRef = useRef<ForgetPasswordModalProfileRef>(null); // Ref for ForgetPasswordModalProfile
@@ -143,12 +142,13 @@ const AccountInfo: React.FC = () => {
       dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       return;
     }
+
     if (hasManagementCode) {
+      // Chưa có mã quản lý -> Thiết lập trực tiếp
       dispatch(setOtpType(SEND_OTP_TYPES.CREATE_MANAGEMENT_CODE));
-      setTimeout(() => {
-        forgotPasswordModalRef.current?.openModal();
-      });
+      forgotPasswordModalRef.current?.openModal();
     } else {
+      // Đã có mã quản lý -> Yêu cầu OTP trước khi thiết lập
       dispatch(setOtpType(SEND_OTP_TYPES.CHANGE_MANAGEMENT_CODE));
       forgotPasswordModalRef.current?.setOpen(true);
     }
@@ -284,6 +284,7 @@ const AccountInfo: React.FC = () => {
             onForget={handleForgetPassword}
             onHidden={() => setShowModalFillManagementCode(false)}
           />
+
 
           <ForgetPasswordModalProfile ref={forgotPasswordModalRef} />
         </>

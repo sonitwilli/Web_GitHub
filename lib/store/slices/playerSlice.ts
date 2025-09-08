@@ -11,6 +11,8 @@ interface PlayerState {
   isEndedLiveCountdown?: boolean; // New state property
   isOpenLiveChat?: boolean;
   isAutoNextDisabled?: boolean; // New state to disable autoNext
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  shakaErrorDetail?: any;
 }
 
 const initialState: PlayerState = {
@@ -31,6 +33,7 @@ const initialState: PlayerState = {
   isEndedLiveCountdown: false,
   isOpenLiveChat: false,
   isAutoNextDisabled: false, // Default to false (autoNext enabled)
+  shakaErrorDetail: undefined,
 };
 
 const playerSlice = createSlice({
@@ -71,6 +74,10 @@ const playerSlice = createSlice({
     setIsAutoNextDisabled: (state, action: PayloadAction<boolean>) => {
       state.isAutoNextDisabled = action.payload;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setShakaErrorDetail: (state, action: PayloadAction<any>) => {
+      state.shakaErrorDetail = action.payload;
+    },
   },
 });
 
@@ -84,5 +91,6 @@ export const {
   setIsEndedLiveCountdown,
   setIsOpenLiveChat,
   setIsAutoNextDisabled,
+  setShakaErrorDetail,
 } = playerSlice.actions;
 export default playerSlice.reducer;

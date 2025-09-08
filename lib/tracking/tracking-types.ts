@@ -124,7 +124,9 @@ export type TrackingScreen =
   | 'UnsubscriptionConfirm'
   | 'UnsubcribeSuccessfully'
   | 'UnsubcribeFailed'
-  | 'SwitchChannelView';
+  | 'SwitchChannelView'
+  | 'IPTVRequestPackage'
+  | 'ProfileBlocked';
 
 export type TrackingEvent =
   | 'SignupSuccess'
@@ -260,7 +262,8 @@ export type TrackingEvent =
   | 'AccessItem'
   | 'ModifiedInformation'
   | 'DeactivateSuccess'
-  | 'ShowSidebar';
+  | 'ShowSidebar'
+  | 'ProfileBlocked';
 
 export interface TrackingParams {
   platform?: string;

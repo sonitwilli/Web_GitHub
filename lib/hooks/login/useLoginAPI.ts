@@ -5,7 +5,14 @@ import {
   onDevicesLimitResponse,
   onLogin3rdResponse,
 } from './../../api/login/index';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { AppContext } from '@/lib/components/container/AppContainer';
 import {
   verifyUserWithPhoneNumber,
@@ -134,6 +141,10 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   const [showBack, setShowBack] = useState(false);
   const { configs } = useContext(AppContext);
   const { width } = useScreenSize();
+
+  // Countdown refs --------------------
+  const otpCountdownRef = useRef<number | null>(null);
+  const phoneCountdownRef = useRef<number | null>(null);
   // Check if user is mobile
   const isTablet = useMemo(() => {
     return width <= 1280;
@@ -167,10 +178,26 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
         setResVerifyOTP(null);
         setErrorOtp('');
         setNotificationContent(null);
+        setOtpCountdown(0); // Reset OTP countdown
+        // Cancel any running countdown
+        if (otpCountdownRef.current) {
+          cancelAnimationFrame(otpCountdownRef.current);
+          otpCountdownRef.current = null;
+        }
+        if (phoneCountdownRef.current) {
+          cancelAnimationFrame(phoneCountdownRef.current);
+          phoneCountdownRef.current = null;
+        }
       },
       otp: () => {
         setResponseSendOTP(null);
         setErrorOtp('');
+        setOtpCountdown(0); // Reset OTP countdown
+        // Cancel any running OTP countdown
+        if (otpCountdownRef.current) {
+          cancelAnimationFrame(otpCountdownRef.current);
+          otpCountdownRef.current = null;
+        }
       },
       verify: () => {
         setResVerifyOTP(null);
@@ -202,6 +229,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
     setResponseSendOTP(null);
     setErrorPhone('');
     setErrorOtp('');
+    setOtpCountdown(0); // Reset OTP countdown immediately
     reset.phone();
     reset.otp();
     reset.verify();
@@ -247,6 +275,16 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   const onSubmitPhone = useCallback(
     async (phone: string) => {
       setErrorPhone('');
+      setOtpCountdown(0); // Reset OTP countdown when submitting new phone
+      // Cancel any running countdown immediately
+      if (otpCountdownRef.current) {
+        cancelAnimationFrame(otpCountdownRef.current);
+        otpCountdownRef.current = null;
+      }
+      if (phoneCountdownRef.current) {
+        cancelAnimationFrame(phoneCountdownRef.current);
+        phoneCountdownRef.current = null;
+      }
       try {
         reset.phone(); // reset
 
@@ -943,36 +981,89 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
     duration: number,
     onTick: (value: number) => void,
     onDone: () => void,
+    refToUse: React.MutableRefObject<number | null>,
   ) => {
-    let time = duration;
-    const timer = setInterval(() => {
-      time -= 1;
+    // Cancel any existing countdown
+    if (refToUse.current) {
+      cancelAnimationFrame(refToUse.current);
+      refToUse.current = null;
+    }
 
-      if (time <= 0) {
-        clearInterval(timer);
+    const startTime = Date.now();
+    const totalDuration = duration * 1000;
+
+    const updateCountdown = () => {
+      const elapsed = Date.now() - startTime;
+      const remaining = Math.max(
+        0,
+        Math.ceil((totalDuration - elapsed) / 1000),
+      );
+
+      if (remaining <= 0) {
+        onTick(0);
         onDone();
-      } else {
-        onTick(time);
+        refToUse.current = null;
+        return;
       }
-    }, 1000);
+
+      onTick(remaining);
+      refToUse.current = requestAnimationFrame(updateCountdown);
+    };
+
+    refToUse.current = requestAnimationFrame(updateCountdown);
   };
 
   useEffect(() => {
+    // Always cancel existing countdown first
+    if (otpCountdownRef.current) {
+      cancelAnimationFrame(otpCountdownRef.current);
+      otpCountdownRef.current = null;
+    }
+
     if (otpCountdown > 0) {
-      startCountdown(otpCountdown, setOtpCountdown, () => {
-        setErrorOtp('');
-        setResVerifyOTP(null);
-      });
+      startCountdown(
+        otpCountdown,
+        setOtpCountdown,
+        () => {
+          setErrorOtp('');
+          setResVerifyOTP(null);
+          setOtpCountdown(0);
+        },
+        otpCountdownRef,
+      );
     }
   }, [otpCountdown]);
 
   useEffect(() => {
+    // Always cancel existing countdown first
+    if (phoneCountdownRef.current) {
+      cancelAnimationFrame(phoneCountdownRef.current);
+      phoneCountdownRef.current = null;
+    }
+
     if (phoneCountdown > 0) {
-      startCountdown(phoneCountdown, setPhoneCountdown, () => {
-        setErrorPhone('');
-      });
+      startCountdown(
+        phoneCountdown,
+        setPhoneCountdown,
+        () => {
+          setErrorPhone('');
+        },
+        phoneCountdownRef,
+      );
     }
   }, [phoneCountdown]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (otpCountdownRef.current) {
+        cancelAnimationFrame(otpCountdownRef.current);
+      }
+      if (phoneCountdownRef.current) {
+        cancelAnimationFrame(phoneCountdownRef.current);
+      }
+    };
+  }, []);
 
   return {
     step,

@@ -8,6 +8,19 @@ import { useRouter } from 'next/router';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 
 export default function PlayerError() {
+  const { shakaErrorDetail } = useAppSelector((s) => s.player);
+  const isKeyExpired = useMemo(() => {
+    if (!shakaErrorDetail) {
+      return false;
+    }
+    const parsed = JSON.parse(shakaErrorDetail);
+    return (
+      parsed?.code === 1001 &&
+      parsed?.data &&
+      parsed?.data[1] &&
+      parsed?.data[1] === 403
+    );
+  }, [shakaErrorDetail]);
   const { playerError } = useContext(PlayerWrapperContext);
   const { dataChannel } = usePlayerPageContext();
   const router = useRouter();
@@ -68,13 +81,21 @@ export default function PlayerError() {
           Lỗi kết nối dịch vụ
         </div>
         <div className="text-center text-white-smoke leading-[130%] tracking-[0.32px] mb-[16px]">
-          <span className="text-spanish-gray modal-content-tracking">
-            {playerError?.content ||
-              'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.'}
-          </span>{' '}
-          <span className="text-dodger-blue">
-            (Mã lỗi {playerError?.code || 'N/A'})
-          </span>
+          {isKeyExpired ? (
+            <span className="text-spanish-gray modal-content-tracking">
+              Phiên kết nối không hợp lệ
+            </span>
+          ) : (
+            <>
+              <span className="text-spanish-gray modal-content-tracking">
+                {playerError?.content ||
+                  'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.'}
+              </span>{' '}
+              <span className="text-dodger-blue">
+                (Mã lỗi {playerError?.code || 'N/A'})
+              </span>
+            </>
+          )}
         </div>
         {/* Thông tin chung */}
         <div className="mb-[32px] flex flex-col gap-[16px]">

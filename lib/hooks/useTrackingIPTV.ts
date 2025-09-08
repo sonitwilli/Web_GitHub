@@ -81,8 +81,11 @@ export const trackingStopChannelLog42 = () => {
   } catch {}
 };
 
-export const trackingRequestPackageLog412 = () => {
-  // Log43 : RequestPackage
+export const trackingRequestPackageLog412 = ({
+  Event,
+  Screen,
+}: TrackingParams = {}) => {
+  // Log412 : RequestPackage
   try {
     if (typeof window === 'undefined') {
       return;
@@ -91,7 +94,8 @@ export const trackingRequestPackageLog412 = () => {
     /*@ts-ignore*/
     return tracking({
       LogId: '412',
-      Event: 'IPTVRequestPackage',
+      Event: Event || 'IPTVRequestPackage',
+      Screen: Screen || 'IPTVRequestPackage',
       ...playerParams,
     });
   } catch {}
@@ -151,6 +155,14 @@ export const trackingStopTimeshiftLog44 = () => {
       return;
     }
     const playerParams = getPlayerParams();
+    const { ItemId, ItemName } = playerParams;
+    if (!ItemId || !ItemName) {
+      const url = window.location.href;
+      // split url by / and get the last part
+      const lastPart = url.split('/').pop();
+      playerParams.ItemId = lastPart;
+      playerParams.ItemName = lastPart?.toUpperCase() || '';
+    }
     /*@ts-ignore*/
     return tracking({
       LogId: '44',
@@ -241,6 +253,7 @@ export const trackingSeekTimeshiftLog415 = () => {
       Event: 'SeekTimeshift',
       ...playerParams,
       ...iptvParams,
+      Key: 'Schedule',
     });
   } catch {}
 };

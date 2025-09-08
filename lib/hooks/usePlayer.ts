@@ -20,7 +20,10 @@ import { usePlayerPageContext } from '../components/player/context/PlayerPageCon
 import { PlayerWrapperContext } from '../components/player/core/PlayerWrapper';
 import { useRouter } from 'next/router';
 import useCodec, { VIDEO_CODEC_NAMES } from './useCodec';
-import { setCodecError, setFullscreen } from '../store/slices/playerSlice';
+import {
+  setCodecError,
+  setShakaErrorDetail,
+} from '../store/slices/playerSlice';
 import { trackingErrorLog17 } from '../tracking/trackingCommon';
 import { ErrorData, ErrorDetails, ErrorTypes } from 'hls.js';
 import { getTimeShiftChannel } from '../api/channel';
@@ -202,11 +205,9 @@ export default function usePlayer() {
       if (isIosSafari && wrapper) {
         if (isFullscreen) {
           // exit custom fullscreen
-          dispatch(setFullscreen(false));
           wrapper.classList.remove('player-wrapper-ios-fullscreen');
         } else {
           // enter custom fullscreen (CSS-based)
-          dispatch(setFullscreen(true));
           wrapper.classList.add('player-wrapper-ios-fullscreen');
         }
         return;
@@ -501,6 +502,7 @@ export default function usePlayer() {
       is_from_chatbot,
       block_index,
       position_index,
+      block_type,
       ...restQuery
     } = router.query;
     if (
@@ -508,7 +510,8 @@ export default function usePlayer() {
       landing_page !== undefined ||
       is_from_chatbot !== undefined ||
       block_index ||
-      position_index
+      position_index ||
+      block_type
     ) {
       if (landing_page) {
         saveSessionStorage({
@@ -773,6 +776,7 @@ export default function usePlayer() {
     detailErrors?: ShakaErrorDetailType;
   }) => {
     const detail = allErrors?.detail || detailErrors || {};
+    dispatch(setShakaErrorDetail(detail ? JSON.stringify(detail) : '{}'));
     let code = detail?.code as unknown as ErrorTypes;
     if (detail?.data?.length) {
       if (detail?.data[1] === 403) {
@@ -807,7 +811,6 @@ export default function usePlayer() {
           })
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           .catch((error: any) => {
-            console.log(`--- PLAYER SHAKA ERROR LOAD MANIFEST RETRY`, error);
             convertShakaError({
               detailErrors: error,
             });

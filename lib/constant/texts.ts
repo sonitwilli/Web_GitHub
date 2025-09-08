@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.38';
+export const APP_VERSION = '8.0.40';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -587,3 +587,5 @@ export const LINK_TEXT = {
   DASH: 'https://vodcdn.fptplay.net/POVOD/encoded/2025/06/02/tm-cordialcompanions-2023-cn-001-272422cb29d08d32/H264/stream.mpd',
 };
 export const PAUSE_PLAYER_MANUAL = 'PAUSE_PLAYER_MANUAL';
+export const CSL_WEB = 'CSL_WEB';
+export const CSL_VALUE = 'sonsangtuantoanminh';

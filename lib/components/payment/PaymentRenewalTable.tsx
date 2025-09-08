@@ -382,7 +382,7 @@ const PaymentRenewalTable: React.FC = () => {
   if (tokens.length === 0 && !state.error) {
     return (
       <div className="text-white max-w-[1136px]">
-        <h2 className="text-2xl font-semibold mb-4 xl:mb-6">
+        <h2 className="text-2xl font-semibold mb-4 xl:mb-6 xl:mt-3">
           Quản lý gia hạn dịch vụ
         </h2>
         <div className="rounded-t-[16px] rounded-b-[16px]">
@@ -395,7 +395,7 @@ const PaymentRenewalTable: React.FC = () => {
   if (state.error && !state.loading) {
     return (
       <div className="text-white max-w-[1136px]">
-        <h2 className="text-2xl font-semibold mb-4 xl:mb-6">
+        <h2 className="text-2xl font-semibold mb-4 xl:mb-6 xl:mt-3">
           Quản lý gia hạn dịch vụ
         </h2>
         <div className="rounded-t-[16px] rounded-b-[16px]">
@@ -411,7 +411,7 @@ const PaymentRenewalTable: React.FC = () => {
 
   return (
     <div className="text-white max-w-[1136px]">
-      <h2 className="text-2xl font-semibold mb-4 xl:mb-6">
+      <h2 className="text-2xl font-semibold mb-4 xl:mb-6 xl:mt-3">
         Quản lý gia hạn dịch vụ
       </h2>
       <div

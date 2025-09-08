@@ -8,8 +8,8 @@ import Notification from '@/lib/components/notification';
 import {
   PACKAGE,
   PROFILE_TYPES,
-  TYPE_PR,
   ROUTE_PATH_NAMES,
+  TYPE_PR,
 } from '@/lib/constant/texts';
 import MenuMore from '@/lib/components/header/MenuMore';
 import MobileMenu from '@/lib/components/header/MobileMenu';
@@ -32,6 +32,7 @@ import HeaderAds from '@/lib/components/ads/HeaderAds';
 import { HomepageBannerAds } from '@/lib/components/ads';
 import { useNetwork } from '../components/contexts/NetworkProvider';
 import { IoSearch } from 'react-icons/io5';
+import { getCookie } from 'cookies-next';
 
 interface HeaderContextType {
   menus?: MenuItem[];
@@ -44,7 +45,7 @@ const UserDropdownMenu = dynamic(
   () => import('../components/header/ProfileDropdown'),
   {
     ssr: false,
-  },
+  }
 );
 export const HeaderContext = createContext<HeaderContextType>({});
 
@@ -134,7 +135,7 @@ export default function Header() {
       'tim-kiem',
       'short-videos',
       'thong-tin',
-      'release'
+      'release',
     ];
     const path = router.pathname;
     const isPageMatching = pages.some((keyword) => path.includes(keyword));
@@ -240,7 +241,7 @@ export default function Header() {
       try {
         const currentPath = window.location.pathname;
         const isPathInRouteNames = Object.values(ROUTE_PATH_NAMES).some(
-          (segment) => currentPath.includes(segment),
+          (segment) => currentPath.includes(segment)
         );
 
         let existedAds = false;
@@ -332,7 +333,7 @@ export default function Header() {
       if (iphoneVersion !== null && iphoneVersion < 1500) {
         // Hiển thị thông báo
         const confirmed = window.confirm(
-          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.',
+          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.'
         );
 
         if (confirmed) {
@@ -351,7 +352,7 @@ export default function Header() {
 
     if (
       typeof localStorage !== 'undefined' &&
-      localStorage.getItem(TYPE_PR) === PROFILE_TYPES.KID_PROFILE
+      userInfo?.info?.profile?.profile_type === PROFILE_TYPES.KID_PROFILE
     ) {
       result = menus || [];
     } else if (configs?.number_item_of_menu_web && menus?.length) {
@@ -376,18 +377,20 @@ export default function Header() {
     });
 
     return uniqueMenus;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [configs, menus, selectedMenuMoreItem]);
 
   const desktopMenusMore = useMemo(() => {
+    if (getCookie(TYPE_PR) === '2') return [];
     if (configs?.number_item_of_menu_web && menus?.length) {
       const remainingMenus = menus.slice(
-        Number(configs?.number_item_of_menu_web),
+        Number(configs?.number_item_of_menu_web)
       );
       // Filter out items that already exist in desktopMenus
       const desktopMenuIds =
         desktopMenus?.map((menu) => menu.id || menu.page_id) || [];
       return remainingMenus.filter(
-        (menu) => !desktopMenuIds.includes(menu.id || menu.page_id),
+        (menu) => !desktopMenuIds.includes(menu.id || menu.page_id)
       );
     }
     return [];
@@ -424,7 +427,7 @@ export default function Header() {
       switch (pathSegment) {
         case 'xem-truyen-hinh':
           return menus.find(
-            (item) => item.id === 'channel' || item.page_id === 'channel',
+            (item) => item.id === 'channel' || item.page_id === 'channel'
           );
 
         case 'xem-video':
@@ -450,7 +453,7 @@ export default function Header() {
         'tim-kiem',
         'short-videos',
         'thong-tin',
-        'release'
+        'release',
       ];
       const pathSegment = pathName?.split('/')[1];
       return (
@@ -464,7 +467,7 @@ export default function Header() {
     switch (true) {
       case pathName === '/':
         found = menus.find(
-          (item) => item.id === 'home' || item.id === 'home-kids',
+          (item) => item.id === 'home' || item.id === 'home-kids'
         );
         break;
 
@@ -534,7 +537,7 @@ export default function Header() {
                           if (typeof window !== 'undefined') {
                             sessionStorage.setItem(
                               'lastActiveMenu',
-                              JSON.stringify(menu),
+                              JSON.stringify(menu)
                             );
                           }
                           clickLinkItem({
@@ -585,29 +588,35 @@ export default function Header() {
               >
                 <IoSearch className="fill-white h-[24px] w-[24px] hover:cursor-pointer hover:fill-fpl" />
               </Link>
-              <div className="tablet:block">
-                <Notification />
-              </div>
+              {currentProfile?.profile_type !== PROFILE_TYPES.KID_PROFILE && (
+                <div className="tablet:block">
+                  <Notification />
+                </div>
+              )}
 
-              <div className="hidden tablet:block">
-                <DownloadApp />
-              </div>
+              {currentProfile?.profile_type !== PROFILE_TYPES.KID_PROFILE && (
+                <div className="hidden tablet:block">
+                  <DownloadApp />
+                </div>
+              )}
             </div>
             <div className="flex items-center gap-[24px]">
-              <Link
-                href="/mua-goi"
-                prefetch={false}
-                aria-label="Purchase packages"
-                title="Purchase packages"
-                onClick={() => trackingEnterFuncLog16('EnterPayment')}
-              >
-                <button className="fpl-bg font-[600] text-[14px] leading-[130%] tracking-[0.28px] rounded-[104px] hover:cursor-pointer flex items-center gap-[4px] px-[12px] py-[4px] tablet:px-[16px] tablet:py-[6px] tablet:text-[16px] xl:py-[10px]">
-                  <span className="hidden tablet:inline">
-                    <IoMdCard />
-                  </span>
-                  Mua gói
-                </button>
-              </Link>
+              {currentProfile?.profile_type !== PROFILE_TYPES.KID_PROFILE && (
+                <Link
+                  href="/mua-goi"
+                  prefetch={false}
+                  aria-label="Purchase packages"
+                  title="Purchase packages"
+                  onClick={() => trackingEnterFuncLog16('EnterPayment')}
+                >
+                  <button className="fpl-bg font-[600] text-[14px] leading-[130%] tracking-[0.28px] rounded-[104px] hover:cursor-pointer flex items-center gap-[4px] px-[12px] py-[4px] tablet:px-[16px] tablet:py-[6px] tablet:text-[16px] xl:py-[10px]">
+                    <span className="hidden tablet:inline">
+                      <IoMdCard />
+                    </span>
+                    Mua gói
+                  </button>
+                </Link>
+              )}
 
               <div className="hidden xl:block">
                 {userInfo && profiles.length && currentProfile ? (

@@ -4,7 +4,7 @@ import {
   BlockSlideItemType,
   getBlockItemData,
 } from '@/lib/api/blocks';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState, useCallback } from 'react';
 import { viToEn } from '@/lib/utils/methods';
 import { SPORT_SIDEBYSIDE } from '@/lib/constant/texts';
 import { AppContext } from '../container/AppContainer';
@@ -20,6 +20,7 @@ import useScreenSize from '@/lib/hooks/useScreenSize';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useRouter } from 'next/router';
 import { Match } from '@/lib/api/blocks';
+import { filterEndedEvents } from '@/lib/utils/eventUtils';
 
 interface Props {
   block?: BlockItemType;
@@ -51,7 +52,8 @@ export default function PageBlockItem({
   // Kiểm tra xem có đang ở trang xem-video hay không
   const isVideoWatchPage = router.pathname.includes('xem-video');
 
-  const getBlockData = async () => {
+
+  const getBlockData = useCallback(async () => {
     if (!block?.type) {
       return;
     }
@@ -64,7 +66,17 @@ export default function PageBlockItem({
           block: block || {},
           keywordSearch: keywordSearch,
         });
-        setBlockData(res?.data);
+        
+        // Filter out ended events from the response data - only if block contains events
+        if (res?.data?.data) {
+          const filteredData = filterEndedEvents(res.data.data);
+          setBlockData({
+            ...res.data,
+            data: filteredData,
+          });
+        } else {
+          setBlockData(res?.data);
+        }
       }
 
       // setBlockData({
@@ -86,7 +98,7 @@ export default function PageBlockItem({
     } finally {
       setIsFetchDefaultDataCompleted(true);
     }
-  };
+  }, [block, keywordSearch, streamType]);
 
   const { data, fetchRecommendBlock, isSortCompleted } = useFetchRecommendBlock(
     {
@@ -99,14 +111,25 @@ export default function PageBlockItem({
     },
   );
 
+  // Filter function - only applies if block contains events
+  const filteredData = useMemo(() => {
+    return data ? filterEndedEvents(data) : [];
+  }, [data]);
+
+  // Filtered block data - only applies if block contains events
+  const filteredDataBlock = useMemo(() => {
+    return dataBlock ? filterEndedEvents(dataBlock) : [];
+  }, [dataBlock]);
+
   useEffect(()=>{
     if(data && data?.length > 0){
       const pageSize = parseInt(configs?.number_item_of_page || '30')
-      const list = data.slice(0, pageSize)
+      // Filter out ended events before slicing - only if block contains events
+      const filteredData = filterEndedEvents(data);
+      const list = filteredData.slice(0, pageSize)
       setDataBlock([...list])
     } 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [data, configs?.number_item_of_page])
 
   const isFetchAllCompleted = useMemo(() => {
     if (!blockData?.data?.length) {
@@ -165,7 +188,7 @@ export default function PageBlockItem({
   if (block?.block_type === 'auto_expansion') {
     return (
       <NewVodDetail
-        data={data as BlockSlideItemType[]}
+        data={filteredData}
         block={block}
         blockData={blockData}
       />
@@ -175,7 +198,7 @@ export default function PageBlockItem({
   if (block?.block_type === 'horizontal_banner_with_title' && width >= 1280) {
     return (
       <BlockHorizontalWithTitle
-        slidesItems={data || []}
+        slidesItems={filteredData}
         block={block}
         slideClassName={`block-slider-${block?.block_type}`}
         blockData={blockData}
@@ -262,7 +285,7 @@ export default function PageBlockItem({
         </div>
         <div className={`${useContainer ? 'f-slider-container' : ''}`}>
           <EmblaBlockSlider
-            slidesItems={data || []}
+            slidesItems={filteredData}
             block={block}
             slideClassName={`block-slider-${block?.block_type}`}
           />
@@ -307,7 +330,7 @@ export default function PageBlockItem({
       </div>
       <div className={`${useContainer ? 'f-container' : ''}`}>
         <EmblaBlockSlider
-          slidesItems={dataBlock || []}
+          slidesItems={filteredDataBlock}
           block={block}
           slideClassName={`block-slider-${block?.block_type} block-type-${block?.type}`}
         />

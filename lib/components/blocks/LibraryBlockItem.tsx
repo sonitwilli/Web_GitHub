@@ -9,8 +9,6 @@ import { useGetBlockData } from '@/lib/hooks/useGetBlockData'; // Adjust the imp
 import { useFetchRecommendBlock } from '@/lib/hooks/useFetchRecommendBlock';
 import { AppContext } from '@/lib/components/container/AppContainer';
 import Loading from '../common/Loading';
-import { showToast } from '@/lib/utils/globalToast';
-import { DEFAULT_ERROR_MSG, ERROR_CONNECTION } from '@/lib/constant/texts';
 // import NoData from '@/lib/components/empty-data/NoData';
 
 interface Props {
@@ -51,14 +49,6 @@ export default function LibraryBlockItem({
     isLogged: info?.user_id_str !== '' || false,
   });
 
-  useEffect(() => {
-    if (!queryId) return;
-    showToast({
-      title: ERROR_CONNECTION,
-      desc: error?.message || DEFAULT_ERROR_MSG,
-    });
-  }, [error, queryId]);
-
   const dataSlide = useMemo(() => {
     return data?.slice(0, Number(configs?.number_item_of_page) || 30);
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,22 +88,27 @@ export default function LibraryBlockItem({
     if (blockData?.meta) {
       setBlockMeta(blockData.meta);
     }
-    if (blockData?.data?.length === 0 && setIsEmpty) {
-      setIsEmpty(true);
+    if (
+      blockData &&
+      Object.keys(blockData).length > 0 &&
+      blockData?.data?.length === 0
+    ) {
+      setIsEmpty?.(true);
     }
     if (
+      blockData &&
+      Object.keys(blockData).length > 0 &&
       Array.isArray(blockData?.data) &&
-      blockData?.data?.length > 0 &&
-      setIsEmpty
+      blockData?.data?.length > 0
     ) {
-      setIsEmpty(false);
+      setIsEmpty?.(false);
     }
 
     if (error) {
       setIsError?.(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [blockData?.data]);
+  }, [blockData?.data, error]);
 
   const handleShowMoreClick = async () => {
     setIsShowMore((prev) => !prev);

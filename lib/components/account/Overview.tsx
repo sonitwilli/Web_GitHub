@@ -68,15 +68,13 @@ const Overview: React.FC = () => {
           return;
         }
         if (String(currentUser?.allow_pin) === '1') {
+          // Chưa có mã quản lý -> Thiết lập trực tiếp
           dispatch(setOtpType(SEND_OTP_TYPES.CREATE_MANAGEMENT_CODE));
-          setTimeout(() => {
-            forgotPasswordModalRef.current?.openModal();
-          });
+          forgotPasswordModalRef.current?.openModal();
         } else {
+          // Đã có mã quản lý -> Yêu cầu OTP trước khi thiết lập
           dispatch(setOtpType(SEND_OTP_TYPES.CHANGE_MANAGEMENT_CODE));
-          setTimeout(() => {
-            forgotPasswordModalRef.current?.setOpen(true);
-          });
+          forgotPasswordModalRef.current?.setOpen(true);
         }
       },
     },

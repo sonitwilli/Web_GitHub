@@ -1,6 +1,38 @@
 {
     "versions": [
         {
+            "version": "8.0.40",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Player] Lỗi không chuyển btn Toàn màn hình thành Thoát toàn màn hình",
+                "[WEB][Page Thể loại] Lỗi đang hiển thị sai poster (đang hiển thị poster không title) + không hiển thị label",
+                "[WEB][ProfileKID] Lỗi hiển thị không đúng deeplink và thanh menu đối với profile kid",
+                "[WEB][MultiProfile/Login] Lỗi không đồng bộ avatar ở các tab khi thực hiện login/logout/chuyển đổi profile"
+            ]
+        }, 
+        {
+            "version": "8.0.39",
+            "date": "Dự kiến",
+            "content": [
+                "[Web V5] Bổ sung button Pause, Next",
+                "[Web][TrackingLog][Playback] Không ghi nhận log 52 khi người dùng thoát xem nội dung VOD",
+                "[Web][TrackingLog][Playback] Không ghi nhận log 55 khi người dùng phát nội dung tiếp theo",
+                "[WEB][Trang chủ] Lỗi auto phát âm thanh khi scroll page",
+                "[Website][V5][DRM Key] Đứng luồng, hiển thị popup lỗi khi hết Key DRM",
+                "[WEB][Label] Lỗi không hiển thị label đối với các trang xem thêm của block có > 31 item",
+                "[WEB][ProfileKID] Lỗi hiển thị không đúng deeplink và thanh menu đối với profile kid",
+                "[WEB][Thư viện] Lỗi hiển thị sai màn hình thông báo đối với trường hợp lỗi api 500 bấm btn Xem thêm ở block Đang theo dõi",
+                "[WEB][Thư viện] Đá thiết bị: Lỗi không hiển thị popup yêu cầu Đăng nhập tài khoản khi chọn vào page Thư viện/Xem thêm Lịch sử xem/Xem thêm Đang theo dõi",
+                "[WEB][Thư viện] Đá thiết bị: Lỗi không hiển thị toast thông báo lỗi (Lỗi kết dịch vụ) khi chọn vào btn Xóa tất cả ở trang Lịch sử xem/Đang theo dõi",
+                "[WEB][Thư viện] Lỗi hiển thị title 'Thư viện' ở trang chi tiết Lịch sử xem/Đang theo dõi khi page reload",
+                "[WEB][V5][Quản lý thanh toán và gói] Lỗi lệch giữa 2 text Quản lý thanh toán và gói và title của các màn hình",
+                "[WEB][Thư viện] Lỗi luôn hiển thị toast Lỗi kết nối dịch vụ khi chọn btn Xem thêm của block Lịch sử xem/Đang theo dõi",
+                "[WEB][Thông tin tài khoản] Lỗi không hiển thị popup Thiết lập mã quản lý khi chọn vào Mã quản lý và nhập đúng mã OTP",
+                "[WEB][Thông tin tài khoản/Tổng quan] Đá thiết bị: Lỗi không hiển thị popup yêu cầu Đăng nhập tài khoản khi chọn thiết lập/thay đổi mã quản lý ở tab Tổng quan/Thông tin tài khoản",
+                "[WEB][Thông tin tài khoản] Đá thiết bị: Lỗi không hiển thị toast thông báo Lỗi kết nối dịch vụ khi nhấn Xác nhận OTP/Xác nhận Thiết lập mã quản lý"
+            ]
+        }, 
+        {
             "version": "8.0.38",
             "date": "Dự kiến",
             "content": [

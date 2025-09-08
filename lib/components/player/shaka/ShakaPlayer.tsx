@@ -300,6 +300,17 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       player.configure(DRM_CONFIG);
     }
     window.shakaPlayer = player;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('expirationupdated', (event: any) => {
+      console.log('--- SHAKA: Key expiration updated:', event);
+      console.log('--- SHAKA: Expiration time (ms):', event.expiration);
+      if (event.expiration) {
+        const expirationDate = new Date(event.expiration);
+        console.log('--- SHAKA: Expires at:', expirationDate.toISOString());
+      } else {
+        console.log('--- SHAKA: The key never expires');
+      }
+    });
     player.addEventListener('adaptation', () => {
       trackPlayerChange();
     });

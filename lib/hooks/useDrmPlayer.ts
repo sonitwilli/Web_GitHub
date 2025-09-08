@@ -1,27 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useCallback, useContext, useRef, useState } from 'react';
-import { deletePingChannel, pingChannel } from '../api/channel';
-import { DRM_MERCHANT_NAMES, PING_DRM_DATA } from '../constant/texts';
-import { useAppSelector } from '../store';
-import jwt from 'jsonwebtoken';
-import axios from 'axios';
+import { useCallback, useContext, useRef, useState } from "react";
+import { deletePingChannel, pingChannel } from "../api/channel";
+import { DRM_MERCHANT_NAMES, PING_DRM_DATA } from "../constant/texts";
+import { useAppSelector } from "../store";
+import jwt from "jsonwebtoken";
+import axios from "axios";
 import {
   FingerPrintDataType,
   PlayerWrapperContext,
-} from '../components/player/core/PlayerWrapper';
-import { browserInfo } from '../utils/methods';
-import { useRouter } from 'next/router';
-import _, { isArray, isObject } from 'lodash';
-import { Secure } from '../utils/secure';
-import { getMsgErrsApi } from '../constant/msgErrors';
-import useCodec from './useCodec';
+} from "../components/player/core/PlayerWrapper";
+import { browserInfo } from "../utils/methods";
+import { useRouter } from "next/router";
+import _, { isArray, isObject } from "lodash";
+import { Secure } from "../utils/secure";
+import { getMsgErrsApi } from "../constant/msgErrors";
+import useCodec from "./useCodec";
 import {
   PlayerModalType,
   usePlayerPageContext,
-} from '../components/player/context/PlayerPageContext';
-import { trackingShowContentLog29 } from '../tracking/trackingCommon';
-import { checkShakaResponseFilter } from '../utils/player';
-import { useTrackingPlayback } from './useTrackingPlayback';
+} from "../components/player/context/PlayerPageContext";
+import { trackingShowContentLog29 } from "../tracking/trackingCommon";
+import { checkShakaResponseFilter } from "../utils/player";
+import { useTrackingPlayback } from "./useTrackingPlayback";
+import { trackingStoreKey } from "../constant/tracking";
 
 type Props = {
   eventId?: string;
@@ -54,8 +55,8 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
   const intervalPingEnc = useRef(undefined);
   const getIp = async () => {
     try {
-      const res = await axios.get('https://checkip.fptplay.net');
-      if (setIp) setIp(res?.data || '0.0.0.0');
+      const res = await axios.get("https://checkip.fptplay.net");
+      if (setIp) setIp(res?.data || "0.0.0.0");
     } catch {}
   };
   const initNetworkingEngine = useCallback(() => {
@@ -86,15 +87,15 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           reqId: packInfo.requestId,
           deviceInfo: packInfo.deviceInfo,
         };
-        request.headers['Content-Type'] = 'application/octet-stream';
-        request.headers['custom-data'] = btoa(JSON.stringify(dt));
+        request.headers["Content-Type"] = "application/octet-stream";
+        request.headers["custom-data"] = btoa(JSON.stringify(dt));
       } else {
-        request.headers['dt-custom-data'] = btoa(
+        request.headers["dt-custom-data"] = btoa(
           JSON.stringify({
             userId,
             sessionId: dataStream?.session,
             merchant: dataStream?.merchant,
-          }),
+          })
         );
       }
     });
@@ -106,15 +107,15 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
         if (type == window.shaka.net.NetworkingEngine.RequestType.LICENSE) {
           const wrappedString = StringUtils.fromUTF8(response.data);
           const wrapped = JSON.parse(wrappedString);
-          if (response.headers['client-info']) {
-            window.sigmaPacker.update(atob(response.headers['client-info']));
+          if (response.headers["client-info"]) {
+            window.sigmaPacker.update(atob(response.headers["client-info"]));
           } else if (wrapped.clientInfo) {
             window.sigmaPacker.update(JSON.stringify(wrapped.clientInfo));
           }
           const rawLicenseBase64 = wrapped.license;
           response.data = Uint8ArrayUtils.fromBase64(rawLicenseBase64);
           trackingGetDRMKeyLog166({
-            Status: response.status === 200 ? '1' : '0',
+            Status: response.status === 200 ? "1" : "0",
           });
         }
         if (type === window.shaka.net.NetworkingEngine.RequestType.SEGMENT) {
@@ -128,12 +129,19 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
   }, [dataChannel, dataStream]);
   const initFairPlay = useCallback(
     ({ cb }: { cb?: () => void }) => {
+      const isRequireLogin = sessionStorage.getItem(
+        trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN
+      );
+      if (isRequireLogin === "1") {
+        if (cb) cb();
+        return;
+      }
       axios({
-        method: 'GET',
+        method: "GET",
         url:
-          'https://lic.drmtoday.com/license-server-fairplay/cert/' +
+          "https://lic.drmtoday.com/license-server-fairplay/cert/" +
           dataStream?.merchant,
-        responseType: 'arraybuffer',
+        responseType: "arraybuffer",
       })
         .then(async (res: any) => {
           let userId = info?.user_id_str;
@@ -151,14 +159,14 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
 
           let urlSearchParams: any = null;
           window.shakaPlayer.configure(
-            'drm.advanced.com\\.apple\\.fps\\.1_0.serverCertificate',
-            cert,
+            "drm.advanced.com\\.apple\\.fps\\.1_0.serverCertificate",
+            cert
           );
           window.shakaPlayer.configure(
-            'drm.initDataTransform',
+            "drm.initDataTransform",
 
             (initData: any, initDataType: any, drmInfo: any) => {
-              if (initDataType !== 'skd') return initData;
+              if (initDataType !== "skd") return initData;
 
               // 'initData' is a buffer containing an 'skd://' URL as a UTF-8 string.
               const skdUri =
@@ -172,9 +180,9 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
               return window.shaka.util.FairPlayUtils.initDataTransform(
                 initData,
                 contentId,
-                cert,
+                cert
               );
-            },
+            }
           );
 
           const networkingEngine = window.shakaPlayer.getNetworkingEngine();
@@ -191,19 +199,19 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
             const base64Payload =
               window.shaka.util.Uint8ArrayUtils.toBase64(originalPayload);
             const params =
-              'spc=' +
+              "spc=" +
               base64Payload +
-              '&assetId=' +
-              urlSearchParams?.get('assetId');
+              "&assetId=" +
+              urlSearchParams?.get("assetId");
 
-            request.headers['Content-Type'] =
-              'application/x-www-form-urlencoded';
-            request.headers['x-dt-custom-data'] = btoa(
+            request.headers["Content-Type"] =
+              "application/x-www-form-urlencoded";
+            request.headers["x-dt-custom-data"] = btoa(
               JSON.stringify({
                 userId,
                 sessionId: dataStream?.session,
                 merchant: dataStream?.merchant,
-              }),
+              })
             );
             request.body = params;
           });
@@ -216,38 +224,45 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                 return;
               }
               let responseText = window.shaka.util.StringUtils.fromUTF8(
-                response.data,
+                response.data
               );
               responseText = responseText.trim();
               if (
-                responseText.substr(0, 5) === '<ckc>' &&
-                responseText.substr(-6) === '</ckc>'
+                responseText.substr(0, 5) === "<ckc>" &&
+                responseText.substr(-6) === "</ckc>"
               ) {
                 responseText = responseText.slice(5, -6);
               }
               response.data =
                 window.shaka.util.Uint8ArrayUtils.fromBase64(
-                  responseText,
+                  responseText
                 ).buffer;
               trackingGetDRMKeyLog166({
-                Status: response.status === 200 ? '1' : '0',
+                Status: response.status === 200 ? "1" : "0",
               });
-            },
+            }
           );
         })
 
         .catch((e: any) => {
-          console.log('GET DRMTODAY ERRORS: ', e);
+          console.log("GET DRMTODAY ERRORS: ", e);
         })
         .finally(() => {
           if (cb) cb();
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataChannel, dataStream, info, isQNet, isHboGo],
+    [dataChannel, dataStream, info, isQNet, isHboGo]
   );
   const initFairPlaySigma = useCallback(
     ({ cb }: { cb?: () => void }) => {
+      const isRequireLogin = sessionStorage.getItem(
+        trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN
+      );
+      if (isRequireLogin === "1") {
+        if (cb) cb();
+        return;
+      }
       let userId = info?.user_id_str;
       if (isHboGo || isQNet) {
         if (dataStream?.session && dataStream?.operator) {
@@ -266,12 +281,12 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           window.shakaPlayer.configure({
             drm: {
               servers: {
-                'com.apple.fps.1_0':
+                "com.apple.fps.1_0":
                   // 'https://license.sigmadrm.com/license/verify/fairplay',
                   process.env.NEXT_PUBLIC_SIGMA_FAIRPLAY_LICENSE_URL,
               },
               advanced: {
-                'com.apple.fps.1_0': {
+                "com.apple.fps.1_0": {
                   serverCertificate: new Uint8Array(res),
                 },
               },
@@ -279,21 +294,21 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
           });
 
           window.shakaPlayer.configure(
-            'drm.initDataTransform',
+            "drm.initDataTransform",
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
             (initData: any, type: any, drmInfo: any) => {
-              if (type != 'skd') return initData;
+              if (type != "skd") return initData;
               const skdURL =
                 window.shaka.util.StringUtils.fromBytesAutoDetect(initData);
-              contentId = new URL(skdURL).searchParams.get('assetId');
+              contentId = new URL(skdURL).searchParams.get("assetId");
               const cert = window.shakaPlayer.drmInfo().serverCertificate;
-              licenseURL = skdURL.replace('skd://', 'https://');
+              licenseURL = skdURL.replace("skd://", "https://");
               return window.shaka.util.FairPlayUtils.initDataTransform(
                 initData,
                 contentId,
-                cert,
+                cert
               );
-            },
+            }
           );
           const networkingEngine = window.shakaPlayer.getNetworkingEngine();
           networkingEngine.clearAllRequestFilters();
@@ -318,13 +333,13 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
               //   appId: "demo",
               // };
               request.uris = [licenseURL];
-              request.method = 'POST';
-              request.headers['Content-Type'] = 'application/json';
-              request.headers['custom-data'] = btoa(JSON.stringify(dt));
+              request.method = "POST";
+              request.headers["Content-Type"] = "application/json";
+              request.headers["custom-data"] = btoa(JSON.stringify(dt));
               const originalPayload = new Uint8Array(request.body);
               const base64Payload =
                 window.shaka.util.Uint8ArrayUtils.toStandardBase64(
-                  originalPayload,
+                  originalPayload
                 );
               request.body = JSON.stringify({
                 spc: base64Payload,
@@ -344,7 +359,7 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                 // This is the wrapped license, which is a JSON string.
                 try {
                   const wrappedString = window.shaka.util.StringUtils.fromUTF8(
-                    response.data,
+                    response.data
                   );
                   // Parse the JSON string into an object.
                   const wrapped = JSON.parse(wrappedString);
@@ -353,27 +368,27 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                   // Decode that base64 string into a Uint8Array and replace the response
                   response.data =
                     window.shaka.util.Uint8ArrayUtils.fromBase64(
-                      rawLicenseBase64,
+                      rawLicenseBase64
                     );
                   trackingGetDRMKeyLog166({
-                    Status: response.status === 200 ? '1' : '0',
+                    Status: response.status === 200 ? "1" : "0",
                   });
                 } catch {}
               }
             });
         })
         .catch((err) => {
-          console.log('ERRORS_SIGMA: ', err.message);
+          console.log("ERRORS_SIGMA: ", err.message);
         })
         .finally(() => {
           if (cb) cb();
         });
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [dataChannel, dataStream, info, isHboGo, isQNet],
+    [dataChannel, dataStream, info, isHboGo, isQNet]
   );
 
-  const [tokenPingQNet, setTokenPingQNet] = useState('');
+  const [tokenPingQNet, setTokenPingQNet] = useState("");
   const intervalPingQNet = useRef(null);
   const endPingHbo = () => {
     if (intervalPingQNet.current) {
@@ -383,15 +398,15 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
     if (tokenPingQNet) {
       axios
         .get(
-          `${process.env.NEXT_PUBLIC_API_Q_NET}/csl/end?token=${tokenPingQNet}`,
+          `${process.env.NEXT_PUBLIC_API_Q_NET}/csl/end?token=${tokenPingQNet}`
         )
         .then(() => {
-          setTokenPingQNet('');
+          setTokenPingQNet("");
         })
         .catch(() => {
-          setTokenPingQNet('');
+          setTokenPingQNet("");
         });
-      setTokenPingQNet('');
+      setTokenPingQNet("");
     }
   };
   const pingEnc = useCallback(async () => {
@@ -399,23 +414,23 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
     clearInterval(intervalPingEnc.current);
     const deviceID = browserInfo();
     const msgErrorPing: PlayerModalType = {
-      submitKey: 'on_understood',
+      submitKey: "on_understood",
       content: {
-        title: 'Thông báo',
+        title: "Thông báo",
         content:
-          '[Website] Tài khoản của quý khách hiện đang bị khóa do vi phạm tiêu chuẩn và chính sách của FPT Play. Mọi thắc mắc vui lòng gửi về email hotrofptplay@fpt.com',
+          "[Website] Tài khoản của quý khách hiện đang bị khóa do vi phạm tiêu chuẩn và chính sách của FPT Play. Mọi thắc mắc vui lòng gửi về email hotrofptplay@fpt.com",
         buttons: {
-          accept: 'Đã hiểu',
+          accept: "Đã hiểu",
         },
       },
     };
     const isNonDrm =
-      dataChannel?.verimatrix === false || dataChannel?.verimatrix === '0';
-    let srcStream = '';
+      dataChannel?.verimatrix === false || dataChannel?.verimatrix === "0";
+    let srcStream = "";
 
     let currentData: any = null;
     let playerEndTime = 0;
-    let lastPingSession = '';
+    let lastPingSession = "";
     let currentPingSession = dataStream?.ping_session;
 
     let params: any = {
@@ -437,19 +452,19 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
       }
       if (isNonDrm) {
         // truyền hình
-        if (router.pathname.includes('/xem-truyen-hinh/')) {
-          query.type = 'livetv';
+        if (router.pathname.includes("/xem-truyen-hinh/")) {
+          query.type = "livetv";
           query.event_id = dataChannel?._id || dataChannel?.id;
         }
         // sự kiện
-        if (router.pathname.includes('/su-kien/')) {
+        if (router.pathname.includes("/su-kien/")) {
           const eventType = router.query.event;
           query.type = eventType;
           query.event_id = eventId;
         }
       }
       // lưu vào storage để end ping
-      if (typeof localStorage !== 'undefined') {
+      if (typeof localStorage !== "undefined") {
         localStorage.setItem(
           PING_DRM_DATA,
           JSON.stringify({
@@ -457,13 +472,13 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
             event_id: query.event_id,
             channel_id: dataChannel?._id || dataChannel?.id,
             is_non_drm: isNonDrm,
-          }),
+          })
         );
       }
 
       const paramsData: any = {
         headers: {
-          'X-Did': deviceID,
+          "X-Did": deviceID,
         },
         params,
         query,
@@ -483,10 +498,10 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
         .then((res: any) => {
           if (!res || !isArray(res?.data) || res.code !== 200) {
             trackingShowContentLog29({
-              Event: 'ShowFailed',
+              Event: "ShowFailed",
               ItemName: msgErrorPing?.content as string,
-              ItemId: 'fingerprint',
-              Key: 'API',
+              ItemId: "fingerprint",
+              Key: "API",
             });
           }
           if (res) {
@@ -508,7 +523,7 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                     }
                     if (urlToPlay !== srcStream) {
                       if (playVideo) playVideo();
-                      srcStream = urlToPlay || '';
+                      srcStream = urlToPlay || "";
                     }
 
                     lastPingSession = currentPingSession as any;
@@ -526,17 +541,17 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
                       res.data.actions &&
                       res.data.actions.length &&
                       res.data.actions[0].type &&
-                      res.data.actions[0].type.toUpperCase() === 'SHOW_IP'
+                      res.data.actions[0].type.toUpperCase() === "SHOW_IP"
                     ) {
                       if (setFingerPrintData)
                         setFingerPrintData(
-                          res.data.actions[0] as FingerPrintDataType,
+                          res.data.actions[0] as FingerPrintDataType
                         );
                       trackingShowContentLog29({
-                        Event: 'ShowSuccessfully',
+                        Event: "ShowSuccessfully",
                         ItemName: res.data.actions[0] as string,
-                        ItemId: 'fingerprint',
-                        Key: 'API',
+                        ItemId: "fingerprint",
+                        Key: "API",
                       });
                       setTimeout(() => {
                         if (setFingerPrintData) {
@@ -581,10 +596,10 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
         })
         .catch(async (error) => {
           trackingShowContentLog29({
-            Event: 'ShowFailed',
+            Event: "ShowFailed",
             ItemName: error.message as string,
-            ItemId: 'fingerprint',
-            Key: 'API Failed',
+            ItemId: "fingerprint",
+            Key: "API Failed",
           });
           if (retryPing >= 4) {
             await getIp();
@@ -601,7 +616,7 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
             }, 60000);
           }
           const { response } = error;
-          console.log('response :>> ', response);
+          console.log("response :>> ", response);
           // if (response?.data?.trailer_url) {
           //   const dataTrailer = {
           //     src: replaceMpd(
@@ -672,15 +687,15 @@ export const useDrmPlayer = ({ eventId, playVideo, destroyPlayer }: Props) => {
   }, [dataChannel, dataStream, info]);
 
   async function checkDrmSupport() {
-    if (typeof window.shaka === 'undefined') {
+    if (typeof window.shaka === "undefined") {
       return {};
     }
     try {
       const support = await window.shaka.Player.probeSupport();
       const drmSupport = support.drm || {};
       return {
-        isSupportWidevine: !!drmSupport['com.widevine.alpha'],
-        isSupportPlayReady: !!drmSupport['com.microsoft.playready'],
+        isSupportWidevine: !!drmSupport["com.widevine.alpha"],
+        isSupportPlayReady: !!drmSupport["com.microsoft.playready"],
       };
     } catch {
       return {};

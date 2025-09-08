@@ -4,6 +4,7 @@ import HandleImage from './HandleImage';
 import { useEffect, useMemo, useState } from 'react';
 import styles from './TopSlideItem.module.css';
 import useEvent from '@/lib/hooks/useEvent';
+import { isEventEnded } from '@/lib/utils/eventUtils';
 import { FaCaretDown } from 'react-icons/fa';
 import VodActionButtons from '../vod/VodActionButtons';
 import VodMetaData from '../vod/VodMetaData';
@@ -86,6 +87,11 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
 
   const [isHoveredDescription, setIsHoveredDescription] = useState(false);
 
+  // Check if this slide is an ended event and should be hidden
+  const shouldHideSlide = useMemo(() => {
+    return slide ? isEventEnded(slide) : false;
+  }, [slide]);
+
   useEffect(() => {
     if (!isInview) {
       setIsHoveredDescription(false);
@@ -121,6 +127,11 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block]);
+
+  // Don't render ended events
+  if (shouldHideSlide) {
+    return null;
+  }
 
   return (
     <div className="relative">

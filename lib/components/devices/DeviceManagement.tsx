@@ -187,7 +187,7 @@ const DeviceManagement: React.FC = () => {
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-white">Quản lý thiết bị</h2>
         <button
-          className={`text-base font-semibold line-[1.3] px-4 py-[10px] bg-charleston-green text-white-smoke rounded-[40px] transition ${
+          className={`text-base xl:mt-4 font-semibold line-[1.3] px-4 py-[10px] bg-charleston-green text-white-smoke rounded-[40px] transition ${
             selectedDevice === null
               ? 'opacity-50 cursor-not-allowed'
               : 'cursor-pointer hover:bg-black-olive-404040'

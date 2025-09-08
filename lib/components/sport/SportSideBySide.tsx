@@ -113,7 +113,7 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
       // reInit will force embla to recalculate sizes and snaps
       try {
         emblaApi.reInit();
-      } catch (e) {
+      } catch {
         // ignore if embla not ready
       }
     }

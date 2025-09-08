@@ -18,9 +18,9 @@ import { NetworkError } from '@/lib/components/error';
 // import OrientationChangePopup from '@/lib/components/overlays/OrientationChangePopup';
 import MonitorLayout from './MonitorLayout';
 
-const Viewport = dynamic(() => import('../components/debug/Viewport'), {
-  ssr: false,
-});
+// const Viewport = dynamic(() => import('../components/debug/Viewport'), {
+//   ssr: false,
+// });
 const BlockHoverItem = dynamic(
   () => import('../components/blocks/BlockHoverItem'),
   {
@@ -127,7 +127,7 @@ function DefaultLayoutContent({ children }: Props) {
         setOpenMobileMenu,
       }}
     >
-      <Viewport />
+      {/* <Viewport /> */}
       <Header />
       <main className={`${isMinHeightScreen ? 'min-h-screen' : ''}`}>
         {children}

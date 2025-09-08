@@ -174,14 +174,23 @@ export default function BlockSlideItem({
       type: block?.type || '',
     });
     const isSearchPage = router.pathname.includes('/tim-kiem');
-    if (blockIndex > -1) {
-      return `${result}?block_type=${block?.block_type}&block_index=${blockIndex}&position_index=${index}${
-        isSearchPage ? '&from=Search' : ''
+    const isRelatedItem = block?.type === 'vod_related';
+    if (blockIndex > -1 && block?.block_type !== 'category') {
+      return `${result}?block_type=${
+        block?.block_type
+      }&block_index=${blockIndex}&position_index=${index}${
+        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+      }`;
+    }
+
+    if (block?.block_type === 'category') {
+      return `${result}?block_index=${blockIndex}&position_index=${index}${
+        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
       }`;
     }
     return (
       `${result}?block_type=${block?.block_type}&position_index=${index}${
-        isSearchPage ? '&from=Search' : ''
+        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
       }` || '/'
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -330,7 +339,12 @@ export default function BlockSlideItem({
             {slide?.poster_overlays && (
               <PosterOverlay
                 posterOverlays={slide?.poster_overlays as PosterOverlayItem[]}
-                blockType={block?.block_type}
+                blockType={
+                  block?.block_type &&
+                  String(block?.block_type).trim() !== 'undefined'
+                    ? block?.block_type
+                    : 'feature_horizontal_slider'
+                }
                 positionLabelsStatus={[positionLabelsStatus]}
                 onHandlePosterOverlays={handlePosterOverlays}
               />

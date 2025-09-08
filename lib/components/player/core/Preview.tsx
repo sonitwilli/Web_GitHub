@@ -446,13 +446,12 @@ const Preview: React.FC<PreviewProps> = ({
       // Reset manual close state when preview ends
       setIsPopupManuallyClosed(false);
     } else if (isPreviewActive && !isPopupManuallyClosed && !isLiveEnded) {
+      const finalUrl = getUrlToPlayH264();
       if (isLiveType && !isLogged) {
-        const hasPreviewUrl = !!getUrlToPlayH264();
-        if (hasPreviewUrl) {
+        if (finalUrl) {
           setPreviewState('popup');
           sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
         } else {
-          onExitPreviewLive?.(dataStream?.trailer_url || '');
           setPreviewState(null);
           sessionStorage.removeItem(IS_PREVIEW_LIVE);
         }

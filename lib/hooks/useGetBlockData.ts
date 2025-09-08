@@ -22,7 +22,7 @@ export const useGetBlockData = ({
   const [blockData, setBlockData] = useState<BlockItemResponseType>({});
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-  const {configs} = useAppSelector((state) => state.app);
+  const { configs } = useAppSelector((state) => state.app);
   const dispatch = useAppDispatch();
   const getBlockData = useCallback(
     async (page_size = configs?.number_item_of_page || 30, delay = 2000) => {
@@ -43,7 +43,7 @@ export const useGetBlockData = ({
         setBlockData(res?.data);
         if (res?.data?.code === 401) {
           dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
-          setIsEmpty?.(false);          
+          setIsEmpty?.(false);
           setIsError?.(true);
           return;
         }

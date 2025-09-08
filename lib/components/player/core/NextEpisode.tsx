@@ -6,6 +6,7 @@ import { useRouter } from 'next/router';
 import React, { useCallback } from 'react';
 import { BOOLEAN_TEXTS, HISTORY_TEXT } from '@/lib/constant/texts';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
+import { trackingNextMovieLog55 } from '@/lib/hooks/useTrackingPlayback';
 
 export default function NextEpispode() {
   const router = useRouter();
@@ -13,6 +14,7 @@ export default function NextEpispode() {
   const { nextEpisode, routerChapterId } = useVodPageContext();
   const { streamType, nextPlaylistVideo } = usePlayerPageContext();
   const click = useCallback(() => {
+    trackingNextMovieLog55();
     const slugs = router?.query.slug;
     if (streamType === 'playlist') {
       if (Array.isArray(slugs) && slugs[0]) {
@@ -29,7 +31,8 @@ export default function NextEpispode() {
   }, [router, routerChapterId, streamType, nextPlaylistVideo]);
 
   // Only show info board on desktop (width >= 768)
-  const isDesktop = typeof window !== 'undefined' ? window.innerWidth >= 768 : true;
+  const isDesktop =
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true;
 
   return (
     <div
@@ -41,8 +44,8 @@ export default function NextEpispode() {
           className="w-[24px] h-[24px] tablet:w-[32px] tablet:h-[32px]"
         />
       </div>
-      {isDesktop && (
-        nextEpisode ? (
+      {isDesktop &&
+        (nextEpisode ? (
           <div
             className={`absolute left-1/2 bottom-[calc(100%_+_28px)] -translate-x-[188px] bg-eerie-black-09 rounded-[12px] p-[16px] ease-out duration-300 opacity-0 -z-[1] ${styles.content} pointer-events-none`}
           >
@@ -124,8 +127,7 @@ export default function NextEpispode() {
           </div>
         ) : (
           ''
-        )
-      )}
+        ))}
     </div>
   );
 }

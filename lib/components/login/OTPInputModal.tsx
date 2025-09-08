@@ -49,7 +49,7 @@ export default function OTPInputModal({
   useEffect(() => {
     if (!resSendOTP?.data) return;
 
-    const { title, otp_length, seconds } = resSendOTP.data;
+    const { title, otp_length } = resSendOTP.data;
 
     if (title != null) {
       setTitle(title);
@@ -57,10 +57,6 @@ export default function OTPInputModal({
 
     if (otp_length != null) {
       setOtpLength(Number(otp_length));
-    }
-
-    if (seconds != null) {
-      setCountdown(Number(seconds));
     }
 
     if (resSendOTP.msg) {
@@ -71,19 +67,8 @@ export default function OTPInputModal({
   }, [resSendOTP]);
 
   useEffect(() => {
-    if (otpCountdown > 0) {
-      setCountdown(otpCountdown);
-    }
+    setCountdown(otpCountdown);
   }, [otpCountdown]);
-
-  useEffect(() => {
-    if (countdown > 0) {
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev <= 1 ? 0 : prev - 1));
-      }, 1000);
-      return () => clearInterval(timer);
-    }
-  }, [countdown]);
 
   useEffect(() => {
     if (typeof otp === 'string' && otpLength > 0) {

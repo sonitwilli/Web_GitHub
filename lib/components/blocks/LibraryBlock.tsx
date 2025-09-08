@@ -40,13 +40,13 @@ export default function LibraryBlock() {
   useEffect(() => {
     if (blocksSortedRecommendNotHighlight) {
       setIsEmpty(
-        new Array(blocksSortedRecommendNotHighlight.length).fill(false),
+        new Array(blocksSortedRecommendNotHighlight.length).fill(false)
       );
       setIsError(
-        new Array(blocksSortedRecommendNotHighlight.length).fill(false),
+        new Array(blocksSortedRecommendNotHighlight.length).fill(false)
       );
       reloadRefs.current = new Array(
-        blocksSortedRecommendNotHighlight.length,
+        blocksSortedRecommendNotHighlight.length
       ).fill(() => {});
     }
   }, [blocksSortedRecommendNotHighlight]);
@@ -69,7 +69,7 @@ export default function LibraryBlock() {
     });
   };
 
-    // Function to register reloadData from LibraryBlockItem
+  // Function to register reloadData from LibraryBlockItem
   // const registerReloadData = (index: number, reloadData: () => void) => {
   //   reloadRefs.current[index] = reloadData;
   // };
@@ -77,7 +77,7 @@ export default function LibraryBlock() {
   // Filter blocks based on query id
   const filteredBlocks = queryId
     ? blocksSortedRecommendNotHighlight.filter(
-        (block: BlockItemType) => block.id === queryId,
+        (block: BlockItemType) => block.id === queryId
       )
     : blocksSortedRecommendNotHighlight;
 
@@ -96,7 +96,7 @@ export default function LibraryBlock() {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
-          {LIBRARY_TITLE}
+          {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px] min-h-[300px]">
           <Loading />
@@ -109,7 +109,7 @@ export default function LibraryBlock() {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
-          {LIBRARY_TITLE}
+          {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px]">
           <ErrorData onRetry={handleReloadData} />
@@ -119,14 +119,14 @@ export default function LibraryBlock() {
   }
 
   if (
-    typeof blocksSortedRecommendNotHighlight === 'undefined' ||
-    !blocksSortedRecommendNotHighlight?.length ||
-    pageDataStatus === '0'
+    (typeof blocksSortedRecommendNotHighlight === 'undefined' && !isLoading) ||
+    (!blocksSortedRecommendNotHighlight?.length && !isLoading) ||
+    (pageDataStatus === '0' && !isLoading)
   ) {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
-          {LIBRARY_TITLE}
+          {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px]">
           <NoData />
@@ -135,11 +135,11 @@ export default function LibraryBlock() {
     ); // No blocks to display
   }
 
-  if (filteredBlocks.length === 0 && !allBlocksError) {
+  if (filteredBlocks.length === 0 && !allBlocksError && !isLoading) {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-[16px]">
-          {LIBRARY_TITLE}
+          {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px]">
           <NoData />
@@ -148,7 +148,11 @@ export default function LibraryBlock() {
     ); // No blocks to display
   }
 
-  if (allBlocksError || (filteredBlocks.length === 1 && isError[0])) {
+  if (
+    allBlocksError ||
+    (filteredBlocks.length === 1 && isError[0]) ||
+    (filteredBlocks.length === 1 && isError[1])
+  ) {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
         {!queryId && (
@@ -169,9 +173,9 @@ export default function LibraryBlock() {
   }
 
   if (
-    (allBlocksEmpty && !allBlocksError) ||
-    (filteredBlocks.length === 1 && isEmpty[0]) ||
-    (filteredBlocks.length === 1 && isEmpty[1])
+    (allBlocksEmpty && !allBlocksError && !isLoading) ||
+    (filteredBlocks.length === 1 && isEmpty[0] && !isError[0] && !isLoading) ||
+    (filteredBlocks.length === 1 && isEmpty[1] && !isError[1] && !isLoading)
   ) {
     return (
       <div className="relative mt-[10px] max-w-[1200px] px-0 xl:px-[40px]">
@@ -208,7 +212,7 @@ export default function LibraryBlock() {
       <div className="flex flex-col gap-[56px]">
         {filteredBlocks.map((block: BlockItemType, filteredIndex: number) => {
           const originalIndex = blocksSortedRecommendNotHighlight.findIndex(
-            (originalBlock: BlockItemType) => originalBlock.id === block.id,
+            (originalBlock: BlockItemType) => originalBlock.id === block.id
           );
           return (
             <LibraryBlockItem

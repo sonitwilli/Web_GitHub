@@ -34,7 +34,7 @@ const ActivePackages: React.FC = () => {
   if (loading) {
     return (
       <div>
-        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[32px] pl-[16px]">
+        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-6 pl-[16px]">
           {ACTIVE_PACKAGES_TITLE}
         </h1>
         <div className="flex flex-col gap-[56px] min-h-[300px]">
@@ -47,7 +47,7 @@ const ActivePackages: React.FC = () => {
   if (error) {
     return (
       <div className="relative max-w-[1200px]">
-        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[32px] pl-[16px]">
+        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-6 pl-[16px]">
           {ACTIVE_PACKAGES_TITLE}
         </h1>
         <div className="flex flex-col gap-[56px]">
@@ -60,7 +60,7 @@ const ActivePackages: React.FC = () => {
   if (packages.length === 0) {
     return (
       <div className="relative max-w-[1200px]">
-        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[32px] pl-[16px]">
+        <h1 className="text-[28px] font-semibold leading-[1.3] text-white-smoke mb-6 pl-[16px]">
           {ACTIVE_PACKAGES_TITLE}
         </h1>
         <div className="flex flex-col gap-[56px]">
@@ -72,7 +72,7 @@ const ActivePackages: React.FC = () => {
 
   return (
     <div className="max-w-[1200px]">
-      <h3 className="text-white text-xl font-bold mb-4">Gói đang sử dụng</h3>
+      <h3 className="text-white text-xl font-bold mb-4 xl:mt-4">Gói đang sử dụng</h3>
       <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-w-[860px]">
         {packages.map((pkg, idx) => (
           <div key={idx}>

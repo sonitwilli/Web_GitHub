@@ -13,7 +13,7 @@ export const PLEASE_CHECK_NETWORK_ERROR =
   'Bạn vui lòng kiểm tra lại tín hiệu mạng';
 
 // ---------------------- Title ----------------------
-export const TITLE_SEND_OTP_FAIL = 'Gửi OTP thất bại';
+export const TITLE_SEND_OTP_FAIL = 'Gửi mã OTP không thành công';
 export const TITLE_ERROR_CONNECT_FPTPLAY_SERVICES =
   'Lỗi kết nối dịch vụ FPT Play';
 export const TITLE_LOGIN_FAILED = 'Đăng nhập không thành công';
