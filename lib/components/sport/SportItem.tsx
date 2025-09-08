@@ -9,6 +9,7 @@ import {
 import LeagueDetail from '@/lib/components/sport/League';
 import TableResult from '@/lib/components/sport/TableLeagueResult';
 import { viToEn } from '@/lib/utils/methods';
+import { reorderMatchesByRound } from '@/lib/utils/sortMatches';
 import {
   MATCH_RANKING,
   TABLE_LEAGUE_DETAIL,
@@ -60,9 +61,12 @@ const SportItem: FC<SportItemProps> = ({
   const sportItemRef = useRef<HTMLDivElement>(null);
 
   // Normalize matches so that null/undefined becomes an empty array
-  const matches: Match[] = Array.isArray(data?.league?.matches)
+  const rawMatches: Match[] = Array.isArray(data?.league?.matches)
     ? (data?.league?.matches as Match[])
     : [];
+  
+  // Sort matches by round_name
+  const matches: Match[] = reorderMatchesByRound(rawMatches);
 
   // Tính toán leagueLogo
   const leagueLogo =
@@ -277,22 +281,25 @@ const SportItem: FC<SportItemProps> = ({
             )}
 
             {/* Lịch thi đấu theo ngày */}
-            {Array.isArray(data) && data?.length > 0 && (
-              <div>
-                {data?.map((itemRow: Match, index: number) => (
-                  <LeagueDetail
-                    key={`${initKey}-${Math.round(Math.random() * 99999)}`}
-                    noMarginBottom={itemRow?.id === finalDataRenderring?.id}
-                    data={itemRow}
-                    leagueLogo={leagueLogo}
-                    lastIndex={index === data?.length - 1}
-                    className="bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black"
-                    preRoundName={index > 0 ? data[index - 1].round_name : ''}
-                    preMatchDate={index > 0 ? data[index - 1].match_date : ''}
-                  />
-                ))}
-              </div>
-            )}
+            {Array.isArray(data) && data?.length > 0 && (() => {
+              const sortedData = reorderMatchesByRound(data);
+              return (
+                <div>
+                  {sortedData.map((itemRow: Match, index: number) => (
+                    <LeagueDetail
+                      key={`${initKey}-${Math.round(Math.random() * 99999)}`}
+                      noMarginBottom={itemRow?.id === finalDataRenderring?.id}
+                      data={itemRow}
+                      leagueLogo={leagueLogo}
+                      lastIndex={index === sortedData.length - 1}
+                      className="bg-gradient-to-b from-black-035 to-black-035 bg-raisin-black"
+                      preRoundName={index > 0 ? sortedData[index - 1].round_name : ''}
+                      preMatchDate={index > 0 ? sortedData[index - 1].match_date : ''}
+                    />
+                  ))}
+                </div>
+              );
+            })()}
 
             {(Array.isArray(data) && data?.length === 0) ||
               (!data && (
