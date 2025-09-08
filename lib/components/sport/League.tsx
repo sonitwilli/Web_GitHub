@@ -94,13 +94,13 @@ const League: React.FC<Props> = ({
       {data?.home?.short_name && (
         <div
           id="league"
-          className={`bg-raisin-black relative flex items-center justify-center px-6 py-3 text-white ${
+          className={`bg-raisin-black relative flex items-center justify-center px-3 py-3 text-white ${
             noMarginBottom ? 'mb-0' : 'mb-2'
           }`}
         >
           <div className="w-full flex items-center justify-center">
             <div
-              className="text-sm font-semibold w-[55px] truncate px-2"
+              className="text-sm font-semibold w-[65px] truncate px-2"
               title={data?.home?.short_name}
             >
               {data?.home.short_name}
@@ -149,14 +149,14 @@ const League: React.FC<Props> = ({
             </div>
 
             <div
-              className="text-sm font-semibold w-[55px] truncate px-2"
+              className="text-sm font-semibold w-[65px] truncate px-2"
               title={data?.away?.short_name}
             >
               {data?.away?.short_name}
             </div>
 
             {(Boolean(data?.highlight_id) && Boolean(data?.type) && !parseInt(data?.is_finished as string)) ? (
-              <div className="absolute right-4 top-1/2 -translate-y-1/2">
+              <div className="absolute right-5 top-1/2 -translate-y-1/2">
                 <Link href={`/su-kien/${data?.highlight_id}?event=${data?.type}`}>
                   <svg
                     viewBox="0 0 16 16"
