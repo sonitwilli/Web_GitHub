@@ -50,8 +50,17 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
     [router.pathname],
   );
 
+  let slidesToScroll = 1;
+  if (width < 768) {
+    slidesToScroll = 1;
+  } else if (block?.block_type === 'new_vod_detail') {
+    slidesToScroll = width < 1280 ? 1 : 2;
+  } else {
+    slidesToScroll = 3;
+  }
+
   const [emblaMainRef, emblaMainApi] = useEmblaCarousel({
-    slidesToScroll: width < 768 ? 1 : 3,
+    slidesToScroll,
     dragFree: false,
     align: 'start',
   });
