@@ -56,7 +56,7 @@ export default function VodActionButtons({
             <button
               aria-label="schedule"
               onClick={handleReaction}
-              className={`inline-flex items-center w-[171px] font-[500] gap-[8px] rounded-[40px] bg-linear-to-r from-portland-orange to-lust hover:to-portland-orange ease-out duration-300 ${
+              className={`inline-flex items-center w-[146px] md:w-[150px] xl:w-[171px] font-[500] gap-[8px] rounded-[40px] bg-linear-to-r from-portland-orange to-lust hover:to-portland-orange ease-out duration-300 ${
                 type !== 'hovered-slide'
                   ? 'px-[16px] h-[36px] tablet:h-auto py-[8px] xl:px-[24px] xl:pr-[29px] xl:py-[12px] text-[16px]'
                   : 'w-[138px] h-[40px] px-[16px]'
