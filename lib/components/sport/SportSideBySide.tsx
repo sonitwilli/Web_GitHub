@@ -99,8 +99,36 @@ const SportSideBySide: FC<SportSideBySideProps> = ({
   // Embla carousel setup: align slides to start so first snap shows full slide on initial scroll
   const [emblaRef, emblaApi] = useEmblaCarousel({ skipSnaps: false, align: 'start' });
   // Prev/Next button state management for embla (call hooks unconditionally)
-  const { prevBtnDisabled, nextBtnDisabled, onPrevButtonClick, onNextButtonClick } =
-    usePrevNextButtons(emblaApi);
+  const { prevBtnDisabled, nextBtnDisabled } = usePrevNextButtons(emblaApi);
+
+  // Sport-specific prev/next handlers: desktop scrolls 2 slides, mobile/tablet scrolls 1
+  const onPrevButtonClick = () => {
+    if (!emblaApi) return;
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1280;
+    const step = isDesktop ? 2 : 1;
+    try {
+      const selected = emblaApi.selectedScrollSnap();
+      const target = Math.max(selected - step, 0);
+      emblaApi.scrollTo(target);
+    } catch {
+      // Fallback to repeated single-step calls
+      for (let i = 0; i < step; i++) emblaApi.scrollPrev();
+    }
+  };
+
+  const onNextButtonClick = () => {
+    if (!emblaApi) return;
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 1280;
+    const step = isDesktop ? 2 : 1;
+    try {
+      const selected = emblaApi.selectedScrollSnap();
+      const lastIndex = emblaApi.scrollSnapList().length - 1;
+      const target = Math.min(selected + step, lastIndex);
+      emblaApi.scrollTo(target);
+    } catch {
+      for (let i = 0; i < step; i++) emblaApi.scrollNext();
+    }
+  };
 
   // Đồng bộ tagSelect với query parameter tab
   useEffect(() => {
