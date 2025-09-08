@@ -235,15 +235,13 @@ export default function PageBlockItem({
                 <div className="py-3 font-semibold text-2xl text-white">
                   Lịch đấu hôm nay
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-4">
-                  <div className="rounded-b-lg">
+                  <div className="rounded-b-lg ">
                     <TodayTableLeagueResult
                       blockData={blockData}
                       height=""
                       pageType={block?.id}
                     />
                   </div>
-                </div>
               </div>
             ) : null
           ) : (
