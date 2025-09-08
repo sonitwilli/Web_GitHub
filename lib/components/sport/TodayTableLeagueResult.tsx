@@ -6,6 +6,7 @@ import {
 } from '@/lib/api/blocks';
 import LeagueDetail from '@/lib/components/sport/League';
 import { League } from '@/lib/api/blocks';
+import { reorderMatchesByRound } from '@/lib/utils/sortMatches';
 
 interface TodayTableLeagueResultProps {
   blockData?: BlockItemResponseType;
@@ -49,8 +50,10 @@ const getTodayMatchesByLeague = (blockData: BlockItemResponseType): Record<strin
       });
 
       if (todayMatches.length > 0) {
+        // Sort matches by round_name
+        const sortedMatches = reorderMatchesByRound(todayMatches);
         matchesByLeague[leagueName] = {
-          matches: todayMatches,
+          matches: sortedMatches,
           league: item.league
         };
       }
