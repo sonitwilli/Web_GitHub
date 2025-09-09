@@ -29,6 +29,18 @@ export function middleware(request: NextRequest) {
     return response;
   }
 
+  // Handle specific path redirects to /tv
+  try {
+    const url = request.nextUrl.clone();
+    const pathname = url.pathname.replace(/\/+$/, '');
+
+    if (pathname === '/dangnhapnhanh' || pathname === '/dnn') {
+      const dest = new URL('/tv', url.origin);
+      return NextResponse.redirect(dest);
+    }
+  } catch {
+  }
+
   // Nếu không phải iPhone hoặc version >= 16, tiếp tục xử lý request
   return NextResponse.next();
 }
