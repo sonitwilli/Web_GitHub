@@ -37,6 +37,7 @@ import {
   ERROR_OCCURRED_MESSAGE,
   INVALID_PHONE_MESSAGE,
   TITLE_SERVICE_ERROR,
+  TITLE_LOGIN_FAILED,
 } from '@/lib/constant/errors';
 import { onLoginSuccess } from '../../utils/loginSuccessHandlers/onLoginSuccess';
 import { handleUserInfo } from '../../utils/loginSuccessHandlers/handleUserInfo';
@@ -57,6 +58,7 @@ import {
   TYPE_LOGIN,
   UNDERSTOOD_BUTTON_TEXT,
   CLOSE_LOGIN_MODAL_NOW,
+  LOGIN_ERROR_MESSAGE,
 } from '@/lib/constant/texts';
 import { Oidc } from '@/lib/oidc';
 import { store } from '@/lib/store';
@@ -437,29 +439,27 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             data?.detail ||
             fallback;
 
-          fallback =
-            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
-
+          setErrorOtp(fallback);
+          if (data?.data?.seconds) {
+            setOtpCountdown(Number(data?.data?.seconds));
+          }
           if (err.message === 'Network Error') {
             showToast({
-              title: TITLE_SERVICE_ERROR,
-              desc: DEFAULT_ERROR_MSG,
+              title: data?.data?.title || TITLE_SEND_OTP_FAIL,
+              desc:
+                fallback ||
+                'Đã có lỗi xảy ra trong quá trình gửi mã OTP, bạn có thể thử lại để tiếp tục',
+              timeout: 5000,
+            });
+            return;
+          } else {
+            showToast({
+              title: data?.data?.title || TITLE_SERVICE_ERROR,
+              desc: fallback || DEFAULT_ERROR_MSG,
               timeout: 5000,
             });
             return;
           }
-
-          setErrorOtp(fallback);
-
-          if (data?.data?.seconds) {
-            setOtpCountdown(Number(data?.data?.seconds));
-          }
-
-          showToast({
-            title: data?.data?.title || TITLE_SEND_OTP_FAIL,
-            desc: fallback || DEFAULT_ERROR_MSG,
-            timeout: 5000,
-          });
         }
       }
     },
@@ -534,12 +534,23 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           if (data?.data?.seconds) {
             setOtpCountdown(Number(data?.data?.seconds));
           }
-
-          showToast({
-            title: data?.data?.title || TITLE_SEND_OTP_FAIL,
-            desc: fallback || DEFAULT_ERROR_MSG,
-            timeout: 5000,
-          });
+          if (err.message === 'Network Error') {
+            showToast({
+              title: data?.data?.title || TITLE_SEND_OTP_FAIL,
+              desc:
+                fallback ||
+                'Đã có lỗi xảy ra trong quá trình gửi mã OTP, bạn có thể thử lại để tiếp tục',
+              timeout: 5000,
+            });
+            return;
+          } else {
+            showToast({
+              title: data?.data?.title || TITLE_SERVICE_ERROR,
+              desc: fallback || DEFAULT_ERROR_MSG,
+              timeout: 5000,
+            });
+            return;
+          }
         }
       }
     },
@@ -655,24 +666,17 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
             data?.detail ||
             fallback;
 
-          fallback =
-            err.message === 'Network Error' ? DEFAULT_ERROR_MSG : fallback;
-
           if (err.message === 'Network Error') {
-            showToast({
-              title: TITLE_SERVICE_ERROR,
-              desc: DEFAULT_ERROR_MSG,
-              timeout: 5000,
+            showNotificationModal({
+              title: TITLE_LOGIN_FAILED,
+              msg: fallback || LOGIN_ERROR_MESSAGE,
+              buttons: {
+                accept: 'Đóng',
+              },
             });
             return;
           }
         }
-
-        showToast({
-          title: TITLE_ERROR_CONNECT_FPTPLAY_SERVICES,
-          desc: fallback || DEFAULT_ERROR_MSG,
-          timeout: 5000,
-        });
       }
     },
     [handleGetDevicesLimit, showNotificationModal, storeVerifyToken],

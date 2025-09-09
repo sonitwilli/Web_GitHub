@@ -52,6 +52,7 @@ import {
 import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { removeSessionStorage } from '@/lib/utils/storage';
+import { filterEndedEvents } from '@/lib/utils/eventUtils';
 
 const RequirePurchase = dynamic(
   () => import('@/lib/components/player/core/RequirePurchase'),
@@ -119,6 +120,11 @@ function ChannelPageContent() {
   const [blockSlideItems, setBlockSlideItems] = useState<BlockSlideItemType[]>(
     [],
   );
+
+  // Filtered block slide items - only applies if block contains events
+  const filteredBlockSlideItems = useMemo(() => {
+    return filterEndedEvents(blockSlideItems);
+  }, [blockSlideItems]);
   const [srcTimeShift, setSrcTimeShift] = useState<string>('');
   const [channelsBySearchKeyShown, setChannelsBySearchKeyShown] = useState<
     ChannelItemType[]
@@ -266,7 +272,10 @@ function ChannelPageContent() {
           type: selectedGroup.type,
         },
       });
-      setBlockSlideItems(res?.data?.data || []);
+      // Filter out ended events from the response data - only if block contains events
+      const responseData = res?.data?.data || [];
+      const filteredData = filterEndedEvents(responseData);
+      setBlockSlideItems(filteredData);
     } catch {}
   };
 
@@ -476,9 +485,9 @@ function ChannelPageContent() {
                   <>
                     {selectedGroup?.type === 'highlight' && (
                       <div className="grid grid-cols-2 tablet:grid-cols-4 xl:grid-cols-6 gap-x-[13px] gap-y-[24px] xl:gap-x-[16px] xl:gap-y-[48px]">
-                        {blockSlideItems &&
-                          blockSlideItems.length > 0 &&
-                          blockSlideItems.map((item, index) => (
+                        {filteredBlockSlideItems &&
+                          filteredBlockSlideItems.length > 0 &&
+                          filteredBlockSlideItems.map((item, index) => (
                             <div
                               key={index}
                               className="ease-out duration-300 hover:scale-[1.05]"

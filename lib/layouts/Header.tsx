@@ -45,7 +45,7 @@ const UserDropdownMenu = dynamic(
   () => import('../components/header/ProfileDropdown'),
   {
     ssr: false,
-  }
+  },
 );
 export const HeaderContext = createContext<HeaderContextType>({});
 
@@ -241,7 +241,7 @@ export default function Header() {
       try {
         const currentPath = window.location.pathname;
         const isPathInRouteNames = Object.values(ROUTE_PATH_NAMES).some(
-          (segment) => currentPath.includes(segment)
+          (segment) => currentPath.includes(segment),
         );
 
         let existedAds = false;
@@ -333,7 +333,7 @@ export default function Header() {
       if (iphoneVersion !== null && iphoneVersion < 1500) {
         // Hiển thị thông báo
         const confirmed = window.confirm(
-          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.'
+          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.',
         );
 
         if (confirmed) {
@@ -381,16 +381,19 @@ export default function Header() {
   }, [configs, menus, selectedMenuMoreItem]);
 
   const desktopMenusMore = useMemo(() => {
-    if (getCookie(TYPE_PR) === '2') return [];
-    if (configs?.number_item_of_menu_web && menus?.length) {
+    if (getCookie(TYPE_PR) === '2') {
+      localStorage.removeItem('menuItem');
+      return [];
+    }
+    if (configs?.number_item_of_menu_web && menus && menus?.length > 0) {
       const remainingMenus = menus.slice(
-        Number(configs?.number_item_of_menu_web)
+        Number(configs?.number_item_of_menu_web),
       );
       // Filter out items that already exist in desktopMenus
       const desktopMenuIds =
         desktopMenus?.map((menu) => menu.id || menu.page_id) || [];
       return remainingMenus.filter(
-        (menu) => !desktopMenuIds.includes(menu.id || menu.page_id)
+        (menu) => !desktopMenuIds.includes(menu.id || menu.page_id),
       );
     }
     return [];
@@ -427,7 +430,7 @@ export default function Header() {
       switch (pathSegment) {
         case 'xem-truyen-hinh':
           return menus.find(
-            (item) => item.id === 'channel' || item.page_id === 'channel'
+            (item) => item.id === 'channel' || item.page_id === 'channel',
           );
 
         case 'xem-video':
@@ -467,7 +470,7 @@ export default function Header() {
     switch (true) {
       case pathName === '/':
         found = menus.find(
-          (item) => item.id === 'home' || item.id === 'home-kids'
+          (item) => item.id === 'home' || item.id === 'home-kids',
         );
         break;
 
@@ -537,7 +540,7 @@ export default function Header() {
                           if (typeof window !== 'undefined') {
                             sessionStorage.setItem(
                               'lastActiveMenu',
-                              JSON.stringify(menu)
+                              JSON.stringify(menu),
                             );
                           }
                           clickLinkItem({

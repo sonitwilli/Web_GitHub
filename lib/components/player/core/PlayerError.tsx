@@ -146,7 +146,7 @@ export default function PlayerError() {
             <span className="text-left text-spanish-gray leading-[130%] tracking-[0.32px] whitespace-nowrap pr-2">
               Nội dung
             </span>
-            <span className="text-center text-white leading-[130%] tracking-[0.32px] line-clamp-2">
+            <span className="text-right text-white leading-[130%] tracking-[0.32px] line-clamp-2">
               {dataChannel?.name ||
                 dataChannel?.title ||
                 dataChannel?.title_vie ||

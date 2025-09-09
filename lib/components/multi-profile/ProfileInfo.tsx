@@ -82,7 +82,7 @@ const ProfileInfo: React.FC = () => {
     return (
       <div className="select-none font-normal">
         <div className="profile-info">
-          <h1 className="profile-info__title text-[20px] tablet:text-2xl font-medium text-white leading-9 xl:mt-3">
+          <h1 className="profile-info__title text-[20px] tablet:text-2xl font-medium text-white leading-9 xl:mt-[9px]">
             {profilesMetaData?.title_manager || 'Quản lý hồ sơ'}
           </h1>
           <ErrorData onRetry={refetchProfiles} />
@@ -94,7 +94,7 @@ const ProfileInfo: React.FC = () => {
   return (
     <div className="select-none font-normal">
       <div className="profile-info">
-        <h1 className="profile-info__title text-[20px] tablet:text-2xl font-medium text-white leading-9 xl:mt-3">
+        <h1 className="profile-info__title text-[20px] tablet:text-2xl font-medium text-white leading-9 xl:mt-[9px]">
           {profilesMetaData?.title_manager || 'Quản lý hồ sơ'}
         </h1>
         {profilesList && profilesList.length > 0 ? (

@@ -798,12 +798,12 @@ export default function usePlayer() {
     try {
       // const finalUrl =
       //   'https://vodcdn.fptplay.net/POVOD/encoded/2023/11/18/multi-legend-of-zhuohua-the-2023-cnf-001-1700300658/master.m3u8';
-      if (url && window.hlsPlayer) {
-        window.hlsPlayer.loadSource(url);
+      if (window.hlsPlayer) {
+        window.hlsPlayer.loadSource(url || '');
         if (setPlayingUrl) {
-          setPlayingUrl(url);
+          setPlayingUrl(url || '');
         }
-      } else if (url && window.shakaPlayer) {
+      } else if (window.shakaPlayer) {
         window.shakaPlayer
           .load(url)
           .then(() => {
@@ -846,12 +846,17 @@ export default function usePlayer() {
               channelDetailData: dataChannel,
             });
             const newUrl = getUrlToPlayH264({ dataStream: newStream });
-            if (newUrl) {
-              if (clearErrorInterRef) clearErrorInterRef();
-              playVideoWithUrl({ url: newUrl });
-              if (setPlayingUrl) {
-                setPlayingUrl(newUrl);
-              }
+            // if (newUrl) {
+            //   if (clearErrorInterRef) clearErrorInterRef();
+            //   playVideoWithUrl({ url: newUrl });
+            //   if (setPlayingUrl) {
+            //     setPlayingUrl(newUrl);
+            //   }
+            // }
+            if (clearErrorInterRef) clearErrorInterRef();
+            playVideoWithUrl({ url: newUrl || '' });
+            if (setPlayingUrl) {
+              setPlayingUrl(newUrl || '');
             }
           } else {
             const channelId = router.query.id as string;

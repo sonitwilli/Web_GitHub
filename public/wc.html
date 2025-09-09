@@ -60,29 +60,29 @@
     <script src="https://unpkg.com/vue-toastification@1.7.14/dist/umd/index.min.js"></script>
     <!-- Google Analytics -->
     <script>
-      ;(function (i, s, o, g, r, a, m) {
-        i['GoogleAnalyticsObject'] = r
-        ;(i[r] =
+      (function (i, s, o, g, r, a, m) {
+        i['GoogleAnalyticsObject'] = r;
+        (i[r] =
           i[r] ||
           function () {
-            ;(i[r].q = i[r].q || []).push(arguments)
+            (i[r].q = i[r].q || []).push(arguments);
           }),
-          (i[r].l = 1 * new Date())
-        ;(a = s.createElement(o)), (m = s.getElementsByTagName(o)[0])
-        a.async = 1
-        a.src = g
-        m.parentNode.insertBefore(a, m)
+          (i[r].l = 1 * new Date());
+        (a = s.createElement(o)), (m = s.getElementsByTagName(o)[0]);
+        a.async = 1;
+        a.src = g;
+        m.parentNode.insertBefore(a, m);
       })(
         window,
         document,
         'script',
         'https://www.google-analytics.com/analytics.js',
-        'ga'
-      )
+        'ga',
+      );
 
-      ga('create', 'UA-124500027-1', 'auto')
-      ga('set', 'page', window.location.pathname)
-      ga('send', 'pageview')
+      ga('create', 'UA-124500027-1', 'auto');
+      ga('set', 'page', window.location.pathname);
+      ga('send', 'pageview');
     </script>
     <!-- End Google Analytics -->
   </head>
@@ -571,38 +571,38 @@
     </div>
 
     <script>
-      let settingFromCookie = ''
-      let expireCookie = 14400
-            
+      let settingFromCookie = '';
+      let expireCookie = 14400;
+
       try {
-        const cookies = document.cookie
-        const cookiesArr = cookies.split(';')
+        const cookies = document.cookie;
+        const cookiesArr = cookies.split(';');
         const settingCookie = cookiesArr.find((item) =>
-          item.includes('setting_welcome')
-        )
-        const settingArr = settingCookie.split('=')
-        settingFromCookie = settingArr && settingArr[1] ? settingArr[1] : ''
+          item.includes('setting_welcome'),
+        );
+        const settingArr = settingCookie.split('=');
+        settingFromCookie = settingArr && settingArr[1] ? settingArr[1] : '';
 
         const expireWelcomeCookie = cookiesArr.find((item) =>
-          item.includes('expire_welcome')
-        )
-        const expireWelcomeArr = expireWelcomeCookie.split('=')
+          item.includes('expire_welcome'),
+        );
+        const expireWelcomeArr = expireWelcomeCookie.split('=');
         expireCookie =
-          expireWelcomeArr && expireWelcomeArr[1] ? expireWelcomeArr[1] : 14400
+          expireWelcomeArr && expireWelcomeArr[1] ? expireWelcomeArr[1] : 14400;
       } catch (error) {}
 
-      var setting = settingFromCookie
+      var setting = settingFromCookie;
       if (!setting) {
-        window.location.href = '/'
+        window.location.href = '/';
       } else {
-        setting = JSON.parse(decodeURIComponent(settingFromCookie))
+        setting = JSON.parse(decodeURIComponent(settingFromCookie));
         if (setting[0]) {
-          var bg_1_pc = setting[0].landscape
-          var bg_1_mb = setting[0].portrait
+          var bg_1_pc = setting[0].landscape;
+          var bg_1_mb = setting[0].portrait;
         }
         if (setting[1]) {
-          var bg_2_pc = setting[1].landscape
-          var bg_2_mb = setting[1].portrait
+          var bg_2_pc = setting[1].landscape;
+          var bg_2_mb = setting[1].portrait;
         }
 
         // if (window.location.href.includes("dev") || window.location.href.includes("my.fptplay")) {
@@ -613,34 +613,34 @@
         //     var flight_id_2_mb = setting[0].ads_url;
         // } else {
         var flightIdAds = setting[0].ads_url.substring(
-          setting[0].ads_url.indexOf('flightId=') + 9
-        )
-        var flight_id_1_pc = flightIdAds
-        var flight_id_1_mb = flightIdAds
-        var flight_id_2_pc = flightIdAds
-        var flight_id_2_mb = flightIdAds
+          setting[0].ads_url.indexOf('flightId=') + 9,
+        );
+        var flight_id_1_pc = flightIdAds;
+        var flight_id_1_mb = flightIdAds;
+        var flight_id_2_pc = flightIdAds;
+        var flight_id_2_mb = flightIdAds;
         // }
       }
 
       function shuffle(array) {
         var currentIndex = array.length,
           temporaryValue,
-          randomIndex
+          randomIndex;
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
           // Pick a remaining element...
-          randomIndex = Math.floor(Math.random() * currentIndex)
-          currentIndex -= 1
+          randomIndex = Math.floor(Math.random() * currentIndex);
+          currentIndex -= 1;
           // And swap it with the current element.
-          temporaryValue = array[currentIndex]
-          array[currentIndex] = array[randomIndex]
-          array[randomIndex] = temporaryValue
+          temporaryValue = array[currentIndex];
+          array[currentIndex] = array[randomIndex];
+          array[randomIndex] = temporaryValue;
         }
-        return array
+        return array;
       }
 
       // Used like so
-      var arr = []
+      var arr = [];
       // const time = new Date();
       // var hours = time.getHours();
       // console.log(hours);
@@ -648,36 +648,36 @@
       if (screen.width < 999) {
         // Mobile
         for (var i = 0; i < 1; i++) {
-          arr.push(flight_id_1_mb) //Oxy
+          arr.push(flight_id_1_mb); //Oxy
         }
         for (var i = 0; i < 1; i++) {
-          arr.push(flight_id_2_mb) //Oxy
+          arr.push(flight_id_2_mb); //Oxy
         }
       } else {
         //Desktop
         for (var i = 0; i < 1; i++) {
-          arr.push(flight_id_1_pc) //Oxy
+          arr.push(flight_id_1_pc); //Oxy
         }
         for (var i = 0; i < 1; i++) {
-          arr.push(flight_id_2_pc) //Oxy
+          arr.push(flight_id_2_pc); //Oxy
         }
       }
       // }
-      if (arr.length > 0) arr = shuffle(arr)
-      var flightId = arr[0]
+      if (arr.length > 0) arr = shuffle(arr);
+      var flightId = arr[0];
 
       function change() {
-        console.log(flightId)
+        console.log(flightId);
         if (flightId == flight_id_1_pc || flightId == flight_id_1_mb) {
           //Desktop Oxy
           // console.log('oxy');
           if (screen.width >= 999) {
             document.getElementById('container').style.backgroundImage =
-              'url(' + bg_1_pc + ')'
+              'url(' + bg_1_pc + ')';
             // document.getElementById('button').style.marginTop = '70%';
           } else {
             document.getElementById('container').style.backgroundImage =
-              'url(' + bg_1_mb + ')'
+              'url(' + bg_1_mb + ')';
             // document.getElementById('button').style.marginTop = '70%';
           }
         } else {
@@ -685,11 +685,11 @@
           // console.log('shopee');
           if (screen.width >= 999) {
             document.getElementById('container').style.backgroundImage =
-              'url(' + bg_2_pc + ')'
+              'url(' + bg_2_pc + ')';
             // document.getElementById('button').style.marginTop = '70%';
           } else {
             document.getElementById('container').style.backgroundImage =
-              'url(' + bg_2_mb + ')'
+              'url(' + bg_2_mb + ')';
             // document.getElementById('button').style.marginTop = '70%';
           }
         }
@@ -705,168 +705,168 @@
         }
       }
 
-      change()
+      change();
 
       function link(type, id) {
-        var url = ''
+        var url = '';
         switch (type) {
           case 'home':
-            url = '/trang/home'
-            break
+            url = '/trang/home';
+            break;
           case 'event':
-            url = '/su-kien/' + id + '?type=event'
-            break
+            url = '/su-kien/' + id + '?type=event';
+            break;
           case 'eventtv':
-            url = '/su-kien/' + id + '?type=eventtv'
-            break
+            url = '/su-kien/' + id + '?type=eventtv';
+            break;
           case 'vod':
-            url = '/xem-video/' + id
-            break
+            url = '/xem-video/' + id;
+            break;
           case 'livetv':
-            url = 'xem-truyen-hinh/' + id
-            break
+            url = 'xem-truyen-hinh/' + id;
+            break;
           default:
-            url = '/trang/home'
+            url = '/trang/home';
         }
-        return url
+        return url;
       }
 
       function setTime() {
         if (setting) {
-          localStorage.setItem('view_ads', 'OK')
+          localStorage.setItem('view_ads', 'OK');
           if (setting[0]) {
-            var timeCountdown1 = setting[0].countdown
-            var textButton1 = setting[0].text
-            var linkButton1 = link(setting[0].type, setting[0].object_id)
-            var textButtonFinal1 = textButton1
+            var timeCountdown1 = setting[0].countdown;
+            var textButton1 = setting[0].text;
+            var linkButton1 = link(setting[0].type, setting[0].object_id);
+            var textButtonFinal1 = textButton1;
             if (timeCountdown1 > 1) {
-              textButtonFinal1 += ' <span>(' + timeCountdown1 + ')</span>'
+              textButtonFinal1 += ' <span>(' + timeCountdown1 + ')</span>';
             } else {
-              document.getElementById('button1').classList.remove('disable')
+              document.getElementById('button1').classList.remove('disable');
             }
-            document.getElementById('button1').innerHTML = textButtonFinal1
+            document.getElementById('button1').innerHTML = textButtonFinal1;
           }
           if (setting[1]) {
-            var timeCountdown2 = setting[1].countdown
-            var textButton2 = setting[1].text
-            var linkButton2 = link(setting[1].type, setting[1].object_id)
-            var textButtonFinal2 = textButton2
+            var timeCountdown2 = setting[1].countdown;
+            var textButton2 = setting[1].text;
+            var linkButton2 = link(setting[1].type, setting[1].object_id);
+            var textButtonFinal2 = textButton2;
             if (timeCountdown2 > 1) {
-              textButtonFinal2 += ' <span>(' + timeCountdown2 + ')</span>'
+              textButtonFinal2 += ' <span>(' + timeCountdown2 + ')</span>';
             } else {
-              document.getElementById('button2').classList.remove('disable')
+              document.getElementById('button2').classList.remove('disable');
             }
-            document.getElementById('button2').innerHTML = textButtonFinal2
+            document.getElementById('button2').innerHTML = textButtonFinal2;
           }
           if (setting[2]) {
-            var timeCountdown3 = setting[2].countdown
-            var textButton3 = setting[2].text
-            var linkButton3 = link(setting[2].type, setting[2].object_id)
-            var textButtonFinal3 = textButton3
+            var timeCountdown3 = setting[2].countdown;
+            var textButton3 = setting[2].text;
+            var linkButton3 = link(setting[2].type, setting[2].object_id);
+            var textButtonFinal3 = textButton3;
             if (timeCountdown3 > 1) {
-              textButtonFinal3 += ' <span>(' + timeCountdown3 + ')</span>'
+              textButtonFinal3 += ' <span>(' + timeCountdown3 + ')</span>';
             } else {
-              document.getElementById('button3').classList.remove('disable')
+              document.getElementById('button3').classList.remove('disable');
             }
-            document.getElementById('button3').innerHTML = textButtonFinal3
+            document.getElementById('button3').innerHTML = textButtonFinal3;
           }
 
           if (timeCountdown1 != undefined) {
             interval1 = setInterval(function () {
               if (timeCountdown1 > 1) {
-                timeCountdown1--
+                timeCountdown1--;
                 document.getElementById('button1').innerHTML =
-                  textButton1 + ' <span>(' + timeCountdown1 + ')</span>'
+                  textButton1 + ' <span>(' + timeCountdown1 + ')</span>';
               } else {
-                clearInterval(interval1)
-                document.getElementById('button1').classList.remove('disable')
-                document.getElementById('button1').innerHTML = textButton1
+                clearInterval(interval1);
+                document.getElementById('button1').classList.remove('disable');
+                document.getElementById('button1').innerHTML = textButton1;
                 document
                   .getElementById('button1')
-                  .setAttribute('href', '/trang/home')
+                  .setAttribute('href', '/trang/home');
               }
-            }, 1000)
+            }, 1000);
           } else {
-            document.getElementById('button1').style.display = 'none'
+            document.getElementById('button1').style.display = 'none';
           }
 
           if (timeCountdown2 != undefined) {
             interval2 = setInterval(function () {
               if (timeCountdown2 > 1) {
-                timeCountdown2--
+                timeCountdown2--;
                 document.getElementById('button2').innerHTML =
-                  textButton2 + ' <span>(' + timeCountdown2 + ')</span>'
+                  textButton2 + ' <span>(' + timeCountdown2 + ')</span>';
               } else {
-                clearInterval(interval2)
-                document.getElementById('button2').classList.remove('disable')
-                document.getElementById('button2').innerHTML = textButton2
+                clearInterval(interval2);
+                document.getElementById('button2').classList.remove('disable');
+                document.getElementById('button2').innerHTML = textButton2;
                 document
                   .getElementById('button2')
-                  .setAttribute('href', linkButton2)
+                  .setAttribute('href', linkButton2);
               }
-            }, 1000)
+            }, 1000);
           } else {
-            document.getElementById('button2').style.display = 'none'
+            document.getElementById('button2').style.display = 'none';
           }
 
           if (timeCountdown3 != undefined) {
             interval3 = setInterval(function () {
               if (timeCountdown3 > 1) {
-                timeCountdown3--
+                timeCountdown3--;
                 document.getElementById('button3').innerHTML =
-                  textButton3 + ' <span>(' + timeCountdown3 + ')</span>'
+                  textButton3 + ' <span>(' + timeCountdown3 + ')</span>';
               } else {
-                clearInterval(interval3)
-                document.getElementById('button3').classList.remove('disable')
-                document.getElementById('button3').innerHTML = textButton3
+                clearInterval(interval3);
+                document.getElementById('button3').classList.remove('disable');
+                document.getElementById('button3').innerHTML = textButton3;
                 document
                   .getElementById('button3')
-                  .setAttribute('href', linkButton3)
+                  .setAttribute('href', linkButton3);
               }
-            }, 1000)
+            }, 1000);
           } else {
-            document.getElementById('button3').style.display = 'none'
+            document.getElementById('button3').style.display = 'none';
           }
         }
       }
 
       function loadAds() {
         if (typeof window.InitAdsPlayBanner === 'function') {
-          window.InitAdsPlayBanner()
-          return
+          window.InitAdsPlayBanner();
+          return;
         }
-        var scr = document.createElement('script')
-        scr.src = 'https://ads.fptplay.vn/sdk/v2/display.js'
+        var scr = document.createElement('script');
+        scr.src = 'https://ads.fptplay.vn/sdk/v3/display.js';
         scr.onload = function () {
-          window.InitAdsPlayBanner()
-        }
-        document.body.appendChild(scr)
-        setTime()
+          window.InitAdsPlayBanner();
+        };
+        document.body.appendChild(scr);
+        setTime();
       }
       if (document.readyState == 'loading') {
-        document.addEventListener('DOMContentLoaded', loadAds)
+        document.addEventListener('DOMContentLoaded', loadAds);
       } else {
-        loadAds()
+        loadAds();
       }
 
-      var countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4
+      var countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4;
       window.addEventListener('load', () => {
         intervaltohome = setInterval(function () {
-          console.log(countdownToHome)
+          console.log(countdownToHome);
           if (countdownToHome > 0) {
             if (document.visibilityState === 'visible') {
-              countdownToHome--
+              countdownToHome--;
             }
           } else {
-            clearInterval(intervaltohome)
-            window.location.href = '/trang/home'
+            clearInterval(intervaltohome);
+            window.location.href = '/trang/home';
           }
-        }, 1000)
-      })
+        }, 1000);
+      });
 
       window.addEventListener('beforeunload', () => {
-        countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4
-      })
+        countdownToHome = expireCookie ? expireCookie : 60 * 60 * 4;
+      });
 
       //Tracking
       function randomUuidv4() {
@@ -874,10 +874,10 @@
           /[xy]/g,
           function (c) {
             const r = (Math.random() * 16) | 0,
-              v = c === 'x' ? r : (r & 0x3) | 0x8
-            return v.toString(16)
-          }
-        )
+              v = c === 'x' ? r : (r & 0x3) | 0x8;
+            return v.toString(16);
+          },
+        );
       }
 
       function getBrowserDetail() {
@@ -1003,12 +1003,12 @@
           init: function () {
             var agent = this.header.join(' '),
               os = this.matchItem(agent, this.dataos),
-              browser = this.matchItem(agent, this.databrowser)
+              browser = this.matchItem(agent, this.databrowser);
 
             return {
               os: os,
               browser: browser,
-            }
+            };
           },
           matchItem: function (string, data) {
             let i = 0,
@@ -1018,60 +1018,60 @@
               regexv,
               match,
               matches,
-              version
+              version;
 
             for (i = 0; i < data.length; i += 1) {
-              regex = new RegExp(data[i].value, 'i')
-              match = regex.test(string)
+              regex = new RegExp(data[i].value, 'i');
+              match = regex.test(string);
               if (match) {
-                regexv = new RegExp(data[i].version + '[- /:;]([\\d._]+)', 'i')
-                matches = string.match(regexv)
-                version = ''
+                regexv = new RegExp(data[i].version + '[- /:;]([\\d._]+)', 'i');
+                matches = string.match(regexv);
+                version = '';
                 if (matches) {
                   if (matches[1]) {
-                    matches = matches[1]
+                    matches = matches[1];
                   }
                 }
                 if (matches) {
-                  matches = matches.split(/[._]+/)
+                  matches = matches.split(/[._]+/);
                   for (j = 0; j < matches.length; j += 1) {
                     if (j === 0) {
-                      version += matches[j] + '.'
+                      version += matches[j] + '.';
                     } else {
-                      version += matches[j]
+                      version += matches[j];
                     }
                   }
                 } else {
-                  version = '0'
+                  version = '0';
                 }
                 return {
                   name: data[i].name,
                   version: parseFloat(version),
                   mobile: data[i].mobile !== undefined ? data[i].mobile : null,
-                }
+                };
               }
             }
             return {
               name: 'unknown',
               version: 0,
-            }
+            };
           },
-        }
-        return module.init()
+        };
+        return module.init();
       }
 
       function getTimeZone() {
-        let offset = new Date().getTimezoneOffset()
-        let hours = Math.floor(Math.abs(offset) / 60)
-        let hoursStr = hours < 10 ? '0' + hours : hours
-        let minutes = Math.abs(offset) - hours * 60
-        let minutesStr = minutes < 10 ? '0' + minutes : minutes
-        let prefix = offset < 0 ? '+' : '-'
-        return 'UTC' + prefix + hoursStr + ':' + minutesStr
+        let offset = new Date().getTimezoneOffset();
+        let hours = Math.floor(Math.abs(offset) / 60);
+        let hoursStr = hours < 10 ? '0' + hours : hours;
+        let minutes = Math.abs(offset) - hours * 60;
+        let minutesStr = minutes < 10 ? '0' + minutes : minutes;
+        let prefix = offset < 0 ? '+' : '-';
+        return 'UTC' + prefix + hoursStr + ':' + minutesStr;
       }
 
       function getDateTime() {
-        const a = new Date()
+        const a = new Date();
         return (
           a.getFullYear() +
           '-' +
@@ -1088,24 +1088,24 @@
           (a.getSeconds() < 10 ? '0' + a.getSeconds() : a.getSeconds()) +
           '.' +
           a.getMilliseconds()
-        )
+        );
       }
 
       function commonParams() {
-        let deviceId = localStorage.getItem('deviceId') //Lấy chuỗi Id thiết bị lưu trong local storage
+        let deviceId = localStorage.getItem('deviceId'); //Lấy chuỗi Id thiết bị lưu trong local storage
         if (!deviceId) {
           //Nếu chưa lưu thì tạo mới 1 chuỗi bằng random và lưu xuống
-          deviceId = randomUuidv4()
-          localStorage.setItem('deviceId', deviceId)
+          deviceId = randomUuidv4();
+          localStorage.setItem('deviceId', deviceId);
         }
-        let tabId = sessionStorage.getItem('tabId') //Lấy chuỗi Id thiết bị lưu trong local storage
+        let tabId = sessionStorage.getItem('tabId'); //Lấy chuỗi Id thiết bị lưu trong local storage
         if (!tabId) {
           //Nếu chưa lưu thì tạo mới 1 chuỗi bằng random và lưu xuống
-          tabId = new Date().getTime()
-          sessionStorage.setItem('tabId', tabId)
+          tabId = new Date().getTime();
+          sessionStorage.setItem('tabId', tabId);
         }
-        let eventId = randomUuidv4()
-        let browsers = getBrowserDetail() || {}
+        let eventId = randomUuidv4();
+        let browsers = getBrowserDetail() || {};
         return {
           p: 'web-playfpt',
           av: '1.0.1',
@@ -1127,18 +1127,18 @@
           ost: browsers.os.name,
           ov: browsers.os.version,
           dvt: browsers.os.mobile ? 'mobile' : 'pc',
-        }
+        };
       }
 
       function sendTrackingView() {
-        let params = commonParams()
-        params['eac'] = 'view'
-        params['eca'] = 'src'
-        params['ela'] = '/bong-da'
-        params['iid'] = 'landing-page'
-        params['iid'] = 'landing-page'
-        params['inm'] = 'landing-page'
-        sendTracking(params, 'https://ua.fptplay.net/i')
+        let params = commonParams();
+        params['eac'] = 'view';
+        params['eca'] = 'src';
+        params['ela'] = '/bong-da';
+        params['iid'] = 'landing-page';
+        params['iid'] = 'landing-page';
+        params['inm'] = 'landing-page';
+        sendTracking(params, 'https://ua.fptplay.net/i');
       }
 
       function sendTracking(params, url = 'https://ua.fptplay.net/i') {
@@ -1150,18 +1150,18 @@
             },
           })
           .catch(function (error) {
-            console.error('tracking', error)
-          })
+            console.error('tracking', error);
+          });
       }
 
-      sendTrackingView()
+      sendTrackingView();
     </script>
     <script type="module">
       // Initialize Vue instance
       Vue.use(VueToastification.default, {
         maxToasts: 1,
         newestOnTop: true,
-      })
+      });
       const app = new Vue({
         el: '#container',
         data() {
@@ -1172,47 +1172,47 @@
             toastDuration: 3000,
             toastTimer: null,
             gereralInfoMessage: null,
-          }
+          };
         },
         mounted() {
           this.gereralInfoMessage =
             localStorage.getItem('gereral_info_message') &&
-            JSON.parse(localStorage.getItem('gereral_info_message'))
+            JSON.parse(localStorage.getItem('gereral_info_message'));
 
           window.addEventListener('online', () => {
-            this.checkConnectionStatus(true)
-          })
+            this.checkConnectionStatus(true);
+          });
           window.addEventListener('offline', () => {
-            this.checkConnectionStatus(false)
-          })
+            this.checkConnectionStatus(false);
+          });
         },
         methods: {
           checkConnectionStatus(status) {
-            const now = Date.now()
+            const now = Date.now();
 
             // xoá hết hàng đợi toast đã set timeout
             if (this.toastTimer) {
-              clearTimeout(this.toastTimer)
-              this.toastTimer = null
+              clearTimeout(this.toastTimer);
+              this.toastTimer = null;
             }
 
             // nếu status mới trùng với toast đang show thì không làm gì cả
             if (status === this.currentToastStatus) {
-              return
+              return;
             }
             // nếu status mới khác toast đang show thì set timeout toast mới bằng thời gian hiển thị còn lại của toast đang show
-            const remainingTime = this.lastToastTime + this.toastDuration - now
+            const remainingTime = this.lastToastTime + this.toastDuration - now;
             if (remainingTime > 0) {
               this.toastTimer = setTimeout(() => {
-                this.showToastNoInternet(status)
-              }, remainingTime)
+                this.showToastNoInternet(status);
+              }, remainingTime);
             } else {
               // remainingTime <=0 nghĩa là không có toast nào đang show, hiển thị toast mới ngay mà không cần timeout
-              this.showToastNoInternet(status)
+              this.showToastNoInternet(status);
             }
           },
           showToastNoInternet(status) {
-            let ToastReport = null
+            let ToastReport = null;
             let options = {
               timeout: 3000,
               closeOnClick: false,
@@ -1222,40 +1222,40 @@
               hideProgressBar: true,
               toastClassName: 'no-internet-toast-container',
               preventOnClickOutside: true,
-            }
-            let props = {}
+            };
+            let props = {};
             if (status) {
               props = {
                 image: '/images/no-internet/internet-connected.svg',
                 content:
                   this.gereralInfoMessage?.common?.msg_noti_have_internet ||
                   'Đã có kết nối mạng',
-              }
+              };
               ToastReport = Vue.extend({
                 template: `<div class="no-internet-toast"><img class="no-internet-icon" src="/images/no-internet/internet-connected.svg"/><span class="no-internet-content">${props?.content}</span></div>`,
-              })
+              });
             } else {
               props = {
                 image: '/images/no-internet/no-internet.svg',
                 content:
                   this.gereralInfoMessage?.common?.msg_noti_no_internet ||
                   'Mất kết nối mạng',
-              }
+              };
               ToastReport = Vue.extend({
                 template: `<div class="no-internet-toast"><img class="no-internet-icon" src="/images/no-internet/no-internet.svg"/><span class="no-internet-content">${props?.content}</span></div>`,
-              })
+              });
             }
             this.$toast(
               {
                 render: (h) => h(ToastReport),
               },
-              options
-            )
-            this.currentToastStatus = status
-            this.lastToastTime = Date.now()
+              options,
+            );
+            this.currentToastStatus = status;
+            this.lastToastTime = Date.now();
           },
         },
-      })
+      });
     </script>
   </body>
 </html>

@@ -15,7 +15,6 @@ const whiteList = [
   '/dieu-khoan-su-dung',
   '/chinh-sach-thanh-toan',
   '/chinh-sach-bao-mat',
-  '/trang/home',
   '/trang/home-kids',
   '/tim-kiem',
 ];

@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic';
 import { NextPageContext } from 'next';
 import { TITLE_SYSTEM_ERROR } from '@/lib/constant/errors';
 import DefaultLayout from '@/lib/layouts/Default';
+import * as Sentry from '@sentry/nextjs';
 
 const ErrorComponent = dynamic(
   () => import('@/lib/components/error/ErrorComponent'),
@@ -20,9 +21,11 @@ const ErrorPage = ({ statusCode, message }: ErrorPageProps) => {
   );
 };
 
-ErrorPage.getInitialProps = ({ res, err }: NextPageContext) => {
-  const statusCode = res?.statusCode || err?.statusCode || 666;
-  const message = err?.message || TITLE_SYSTEM_ERROR;
+ErrorPage.getInitialProps = async (contextData: NextPageContext) => {
+  const statusCode =
+    contextData?.res?.statusCode || contextData?.err?.statusCode || 666;
+  const message = contextData?.err?.message || TITLE_SYSTEM_ERROR;
+  await Sentry.captureUnderscoreErrorException(contextData);
   return { statusCode, message };
 };
 

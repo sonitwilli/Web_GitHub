@@ -126,7 +126,10 @@ const debugSlice = createSlice({
         video: streamBandwidth
           ? {
               BANDWIDTH: streamBandwidth,
-              CODECS: null,
+              CODECS:
+                typeof params.CodecVideo === 'string'
+                  ? params.CodecVideo
+                  : state.playerInfo.video?.CODECS || null,
             }
           : state.playerInfo.video,
 

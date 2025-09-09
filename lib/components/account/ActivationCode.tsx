@@ -171,7 +171,7 @@ const ActiveCode: React.FC = () => {
   return (
     <div id="active-code" className="text-white max-w-full 2xl:max-w-[856px] 2xl:mr-20">
       <form onSubmit={sendCode} className="flex flex-col gap-6">
-        <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[130%] tracking-[0.56px]">
+        <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[130%] tracking-[0.56px] mt-2">
           Đổi mã quà tặng
         </h1>
         <div className="text-base text-spanish-gray">

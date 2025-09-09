@@ -35,6 +35,12 @@ const RatingStar: React.FC<RatingStarProps> = ({
     (state: RootState) => state.app.messageConfigs,
   );
 
+  const showToastSafely = (title: string, desc: string) => {
+    try {
+      showToast({ title, desc });
+    } catch {}
+  };
+
   const generalInfoMessage = useMemo(
     () => ({
       rating_content: {
@@ -92,20 +98,20 @@ const RatingStar: React.FC<RatingStarProps> = ({
     });
 
     if (res?.status === '1') {
-      showToast({
-        title: res?.message?.title || 'Gửi đánh giá thành công',
-        desc: res?.msg || 'Cảm ơn bạn đã đánh giá nội dung này',
-      });
+      showToastSafely(
+        res?.message?.title || 'Gửi đánh giá thành công',
+        res?.msg || 'Cảm ơn bạn đã đánh giá nội dung này',
+      );
       if (isEditRating) {
         setIsEditRating(false);
       }
       setRating(starValue);
       loadRating?.();
     } else {
-      showToast({
-        title: res?.message?.title || 'Gửi đánh giá thất bại',
-        desc: res?.msg || 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-      });
+      showToastSafely(
+        res?.message?.title || 'Gửi đánh giá thất bại',
+        res?.message?.content || 'Đã có lỗi xảy ra, vui lòng thử lại sau',
+      );
     }
   };
 

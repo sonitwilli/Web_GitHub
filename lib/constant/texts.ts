@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.40';
+export const APP_VERSION = '8.0.41';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -589,3 +589,6 @@ export const LINK_TEXT = {
 export const PAUSE_PLAYER_MANUAL = 'PAUSE_PLAYER_MANUAL';
 export const CSL_WEB = 'CSL_WEB';
 export const CSL_VALUE = 'sonsangtuantoanminh';
+export const DebugLog = 'DebugLog';
+export const DebugLog_CREATED_TIME = 'DebugLog_CREATED_TIME';
+export const SENTRY_LIMIT = 'SENTRY_LIMIT'; // minute

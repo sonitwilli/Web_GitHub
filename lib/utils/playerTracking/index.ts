@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { trackingStoreKey } from "@/lib/constant/tracking";
-import { removeSessionStorage, saveSessionStorage } from "../storage";
+import { trackingStoreKey } from '@/lib/constant/tracking';
+import { removeSessionStorage, saveSessionStorage } from '../storage';
 import {
   KEY_LANGUAGES_AUDIO_CODECS,
   PLAYER_BOOKMARK_SECOND,
@@ -13,20 +13,20 @@ import {
   VIDEO_CURRENT_TIME,
   VIDEO_ID,
   VIDEO_TIME_BEFORE_ERROR,
-} from "@/lib/constant/texts";
-import { ChannelDetailType, StreamErrorType } from "@/lib/api/channel";
-import { Episode, VodHistoryResponseType } from "@/lib/api/vod";
-import { SubtitleItemType } from "@/lib/hooks/useSubtitle";
-import { AudioItemType } from "@/lib/components/player/core/AudioButton";
-import { StreamType } from "@/lib/components/player/context/PlayerPageContext";
-import tracking from "@/lib/tracking";
+} from '@/lib/constant/texts';
+import { ChannelDetailType, StreamErrorType } from '@/lib/api/channel';
+import { Episode, VodHistoryResponseType } from '@/lib/api/vod';
+import { SubtitleItemType } from '@/lib/hooks/useSubtitle';
+import { AudioItemType } from '@/lib/components/player/core/AudioButton';
+import { StreamType } from '@/lib/components/player/context/PlayerPageContext';
+import tracking from '@/lib/tracking';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const getPlayerSub = () => {
-  if (typeof sessionStorage === "undefined") {
+  if (typeof sessionStorage === 'undefined') {
     return {};
   }
-  let label = "";
+  let label = '';
   try {
     if (window?.shakaPlayer) {
       const activeTrack = window.shakaPlayer
@@ -38,7 +38,7 @@ export const getPlayerSub = () => {
       const currentIndex = window.hlsPlayer.subtitleTrack;
       if (currentIndex < 0) return null;
       const track = window.hlsPlayer.subtitleTracks[currentIndex];
-      label = track?.name || track?.lang || "";
+      label = track?.name || track?.lang || '';
       return track || null;
     }
   } catch {
@@ -55,7 +55,7 @@ export const getPlayerSub = () => {
   }
 };
 export const getVideoInfo = () => {
-  if (typeof sessionStorage === "undefined") {
+  if (typeof sessionStorage === 'undefined') {
     return {};
   }
   try {
@@ -73,19 +73,19 @@ export const getVideoInfo = () => {
 };
 
 export const getChapterId = () => {
-  if (typeof window === "undefined") {
-    return "";
+  if (typeof window === 'undefined') {
+    return '';
   }
   const url = window.location.href;
   const match = url.match(/\/tap-(\d+)/);
   if (match) {
     return String(Number(match[1]) - 1);
   }
-  return "0";
+  return '0';
 };
 
 export const getContentData = () => {
-  if (typeof sessionStorage === "undefined") {
+  if (typeof sessionStorage === 'undefined') {
     return {};
   }
   try {
@@ -111,10 +111,10 @@ export const getContentData = () => {
   }
 };
 export const getStreamProfiles = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
-  let StreamProfile = "";
+  let StreamProfile = '';
   try {
     if (window?.shakaPlayer?.getVariantTracks) {
       const tracks = window?.shakaPlayer?.getVariantTracks();
@@ -131,12 +131,12 @@ export const getStreamProfiles = () => {
         if (StreamProfile.length) {
           StreamProfile += `;(${JSON.stringify(profile)?.replace(
             /[{}"]/g,
-            ""
+            '',
           )})`;
         } else {
           StreamProfile += `(${JSON.stringify(profile)?.replace(
             /[{}"]/g,
-            ""
+            '',
           )})`;
         }
       });
@@ -148,18 +148,18 @@ export const getStreamProfiles = () => {
           b: level.bitrate,
           h: level.height,
           w: level.width,
-          m: "video/mp4",
-          c: level.codecSet || level.codecs || "",
-          f: level.frameRate || "",
+          m: 'video/mp4',
+          c: level.codecSet || level.codecs || '',
+          f: level.frameRate || '',
         };
 
         if (StreamProfile.length) {
           StreamProfile += `;(${JSON.stringify(profile).replace(
             /[{}"]/g,
-            ""
+            '',
           )})`;
         } else {
-          StreamProfile += `(${JSON.stringify(profile).replace(/[{}"]/g, "")})`;
+          StreamProfile += `(${JSON.stringify(profile).replace(/[{}"]/g, '')})`;
         }
       });
     }
@@ -179,10 +179,10 @@ export const getStreamProfiles = () => {
 };
 
 export const getBandwidth = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
-  let bandwidth = "";
+  let bandwidth = '';
   try {
     if (window?.shakaPlayer) {
       const bandwidthBps = window.shakaPlayer.getStats().estimatedBandwidth;
@@ -207,15 +207,15 @@ export const getBandwidth = () => {
 };
 
 export const getDimension = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
-  let d = "";
+  let d = '';
   try {
     if (window?.shakaPlayer) {
       const variantTracks = window.shakaPlayer.getVariantTracks();
       const highestTrack = [...variantTracks]
-        .filter((t) => t.type === "variant" && t.width && t.height)
+        .filter((t) => t.type === 'variant' && t.width && t.height)
         .sort((a, b) => b.height - a.height || b.width - a.width)[0];
       const activeTrack = variantTracks.find((t: any) => t.active);
       d = `${highestTrack?.width || activeTrack?.width}x${
@@ -244,22 +244,22 @@ export const getDimension = () => {
 };
 
 export const getPlayerActiveTrack = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
-  let videoBandwidth = "";
-  let audioBandwidth = "";
-  let resolution = "";
-  let framerate = "";
+  let videoBandwidth = '';
+  let audioBandwidth = '';
+  let resolution = '';
+  let framerate = '';
   let resolutionObject = {
     width: 0,
     height: 0,
   };
   let activeTrack: any = {};
-  let activeAudioLabel = "";
-  let audioMimeType = "audio/mp4";
-  let audioCodec = "mp4a.40.2";
-  let videoCodec = "avc1.64002A";
+  let activeAudioLabel = '';
+  let audioMimeType = 'audio/mp4';
+  let audioCodec = 'mp4a.40.2';
+  let videoCodec = 'avc1.64002A';
   const s = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_SUB_OBJECT);
   const a = sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_OBJECT);
   const selectedSubParsed = (s ? JSON.parse(s) : {}) as SubtitleItemType;
@@ -287,8 +287,8 @@ export const getPlayerActiveTrack = () => {
       };
       activeAudioLabel = activeTrack?.label || activeTrack?.language;
       audioMimeType = activeTrack?.audioMimeType;
-      audioCodec = activeTrack?.audioCodec || "mp4a.40.2";
-      videoCodec = activeTrack?.videoCodec || "avc1.64002A";
+      audioCodec = activeTrack?.audioCodec || 'mp4a.40.2';
+      videoCodec = activeTrack?.videoCodec || 'avc1.64002A';
     } else if (window?.hlsPlayer) {
       const levelIndex = window.hlsPlayer.currentLevel; // index in hls.levels array
       const activeTrack = window.hlsPlayer.levels[levelIndex];
@@ -302,9 +302,9 @@ export const getPlayerActiveTrack = () => {
       const currentTrackId = window.hlsPlayer.audioTrack;
       // Get the track info from hls.js
       const track = window.hlsPlayer.audioTracks[currentTrackId];
-      activeAudioLabel = track?.name || track?.lang || "";
-      audioCodec = track?.audioCodec || "mp4a.40.2";
-      videoCodec = track?.videoCodec || "avc1.64002A";
+      activeAudioLabel = track?.name || track?.lang || '';
+      audioCodec = track?.audioCodec || 'mp4a.40.2';
+      videoCodec = track?.videoCodec || 'avc1.64002A';
     }
   } catch {
     //
@@ -360,7 +360,7 @@ export const getPlayerActiveTrack = () => {
 };
 
 export const trackPlayerChange = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
   getPlayerActiveTrack();
@@ -371,7 +371,7 @@ export const trackPlayerChange = () => {
 };
 
 export const removePlayerSessionStorageWhenRender = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
   removeSessionStorage({
@@ -391,7 +391,7 @@ export const removePlayerSessionStorageWhenRender = () => {
 };
 
 export const removePlayerSessionStorageWhenUnMount = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
   removeSessionStorage({
@@ -399,7 +399,7 @@ export const removePlayerSessionStorageWhenUnMount = () => {
   });
 };
 export const removePlayerSessionStorage = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return;
   }
   removeSessionStorage({
@@ -451,26 +451,26 @@ export const removePlayerSessionStorage = () => {
 };
 
 export const getItemInfo = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return {};
   }
   try {
     const streamType = sessionStorage.getItem(
-      trackingStoreKey.PLAYER_STREAM_TYPE
+      trackingStoreKey.PLAYER_STREAM_TYPE,
     ) as StreamType;
     const eventId =
       (sessionStorage.getItem(trackingStoreKey.PLAYER_EVENT_ID) as string) ||
-      "";
+      '';
     const { dataChannel } = getContentData();
-    let ItemId = dataChannel?.id || dataChannel?._id || "";
+    let ItemId = dataChannel?.id || dataChannel?._id || '';
     const ItemName =
       dataChannel?.title ||
       dataChannel?.title_vie ||
       dataChannel?.title_origin ||
       dataChannel?.name ||
       dataChannel?.alias_name ||
-      "";
-    if (streamType === "event") {
+      '';
+    if (streamType === 'event') {
       ItemId = eventId;
     }
     return { ItemId, ItemName };
@@ -479,7 +479,7 @@ export const getItemInfo = () => {
   }
 };
 export const getTrackingParamIsLive = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return false;
   }
   // 0: VOD => pathname
@@ -495,12 +495,12 @@ export const getTrackingParamIsLive = () => {
   // 10: Timeshift => pathname
   const url = window.location.pathname;
   const { dataStream } = getContentData();
-  const isVod = url.includes("/xem-video/");
-  const isChannel = url.includes("/xem-truyen-hinh/");
-  const isEvent = url.includes("/su-kien/");
-  const isPremiere = url.includes("/cong-chieu/");
+  const isVod = url.includes('/xem-video/');
+  const isChannel = url.includes('/xem-truyen-hinh/');
+  const isEvent = url.includes('/su-kien/');
+  const isPremiere = url.includes('/cong-chieu/');
   const isPreview =
-    sessionStorage.getItem(trackingStoreKey.IS_PREVIEW_CONTENT) === "1";
+    sessionStorage.getItem(trackingStoreKey.IS_PREVIEW_CONTENT) === '1';
   if (isVod) {
     if (isPreview) {
       return 9;
@@ -521,7 +521,7 @@ export const getTrackingParamIsLive = () => {
     }
     // check query time_shift_id has value
     const urlParams = new URLSearchParams(window.location.search);
-    const timeshiftId = urlParams.get("time_shift_id");
+    const timeshiftId = urlParams.get('time_shift_id');
     if (timeshiftId) {
       return 10;
     }
@@ -533,8 +533,8 @@ export const getTrackingParamIsLive = () => {
     }
     // check query type = eventtv => 3
     const urlParams = new URLSearchParams(window.location.search);
-    const event = urlParams.get("event");
-    if (event === "eventtv") {
+    const event = urlParams.get('event');
+    if (event === 'eventtv') {
       return 3;
     }
     return 2;
@@ -545,7 +545,7 @@ export const getTrackingParamIsLive = () => {
   return 0;
 };
 export const getPlayerParams = () => {
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return {};
   }
   trackPlayerChange();
@@ -579,23 +579,23 @@ export const getPlayerParams = () => {
     : dataWatching?.duration || currentEpisode?.duration || 0;
   const { ItemId, ItemName } = getItemInfo();
   const bwBitPerS = Number(
-    sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH)
+    sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH),
   );
   const bwMbps = bwBitPerS / 1024 / 1024;
   const audioBwBitPerS = Number(
-    sessionStorage.getItem(trackingStoreKey.STREAM_AUDIO_BANDWIDTH)
+    sessionStorage.getItem(trackingStoreKey.STREAM_AUDIO_BANDWIDTH),
   );
   const audioBwMbps = audioBwBitPerS / 1024 / 1024;
   const streamBwBitPerS = Number(
-    sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH)
+    sessionStorage.getItem(trackingStoreKey.STREAM_BANDWIDTH),
   );
   const streamBwMbps = streamBwBitPerS / 1024 / 1024;
   const isLinkDRM =
     dataChannel?.drm === 1 ||
-    dataChannel?.drm === "1" ||
+    dataChannel?.drm === '1' ||
     dataChannel?.drm === true ||
     dataChannel?.verimatrix === 1 ||
-    dataChannel?.verimatrix === "1" ||
+    dataChannel?.verimatrix === '1' ||
     dataChannel?.verimatrix === true;
   const isLive = getTrackingParamIsLive();
   const isLandingPage =
@@ -611,43 +611,44 @@ export const getPlayerParams = () => {
     sessionStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) ||
     sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL) ||
     '';
-  return {
+
+  const data = {
     StreamProfile:
-      sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || "",
-    Bandwidth: String(Math.round(bwMbps)) || "",
-    StreamBandwidthAudio: audioBwMbps ? String(audioBwMbps.toFixed(2)) : "",
-    StreamBandwidth: String(Math.round(streamBwMbps)) || "",
+      sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
+    Bandwidth: String(Math.round(bwMbps)) || '',
+    StreamBandwidthAudio: audioBwMbps ? String(audioBwMbps.toFixed(2)) : '',
+    StreamBandwidth: String(Math.round(streamBwMbps)) || '',
     BufferLength:
       String(
         Math.round(
-          Number(sessionStorage.getItem(trackingStoreKey.BUFFER_LENGTH))
-        )
-      ) || "",
+          Number(sessionStorage.getItem(trackingStoreKey.BUFFER_LENGTH)),
+        ),
+      ) || '',
     TotalByteLoaded:
-      sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED || "") ||
-      "",
-    ItemId: ItemId || "",
-    ItemName: ItemName || "",
-    RefEpisodeID: currentEpisode?.ref_episode_id || "",
-    RefItemId: dataChannel?.id || dataChannel?._id || "",
+      sessionStorage.getItem(trackingStoreKey.TOTAL_CHUNK_SIZE_LOADED || '') ||
+      '',
+    ItemId: ItemId || '',
+    ItemName: ItemName || '',
+    RefEpisodeID: currentEpisode?.ref_episode_id || '',
+    RefItemId: dataChannel?.id || dataChannel?._id || '',
     RefPlaylistID:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || "" || "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '' || '',
     PlaylistID:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || "" || "",
-    ChapterID: getChapterId() || "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '' || '',
+    ChapterID: getChapterId() || '',
     isLastEpisode:
-      sessionStorage.getItem(trackingStoreKey.IS_FINAL_EPISODE) || "",
+      sessionStorage.getItem(trackingStoreKey.IS_FINAL_EPISODE) || '',
     TotalEpisode: dataChannel?.episodes?.length
       ? String(dataChannel?.episodes?.length)
-      : "",
-    EpisodeID: currentEpisode?.real_episode_id || "",
+      : '',
+    EpisodeID: currentEpisode?.real_episode_id || '',
 
-    DRMPartner: sessionStorage.getItem(trackingStoreKey.DRM_PARTNER) || "",
-    CDNName: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || "",
-    Bitrate: sessionStorage.getItem(trackingStoreKey.PLAYER_BITRATE) || "",
+    DRMPartner: sessionStorage.getItem(trackingStoreKey.DRM_PARTNER) || '',
+    CDNName: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
+    Bitrate: sessionStorage.getItem(trackingStoreKey.PLAYER_BITRATE) || '',
     Resolution:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_RESOLUTION) || "",
-    Dimension: sessionStorage.getItem(trackingStoreKey.PLAYER_DIMENSION) || "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_RESOLUTION) || '',
+    Dimension: sessionStorage.getItem(trackingStoreKey.PLAYER_DIMENSION) || '',
     VideoQuality:
       sessionStorage.getItem(SELECTED_VIDEO_QUALITY) ||
       getPlayerActiveTrack()?.resolutionObject?.height
@@ -664,11 +665,11 @@ export const getPlayerParams = () => {
     Duration: Math.round(Number(realDuration)).toString() || '',
     ElapsedTimePlaying:
       Math.round(
-        Number(sessionStorage.getItem(VIDEO_CURRENT_TIME || 0))
-      ).toString() || "",
+        Number(sessionStorage.getItem(VIDEO_CURRENT_TIME || 0)),
+      ).toString() || '',
     RealTimePlaying:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_REAL_TIME_PLAYING || "") ||
-      "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_REAL_TIME_PLAYING || '') ||
+      '',
     isLandingPage:
       sessionStorage.getItem(trackingStoreKey.PLAYER_IS_LANDING_PAGE) || '1',
     PlayerName: sessionStorage.getItem(trackingStoreKey.PLAYER_NAME) || 'Shaka',
@@ -677,11 +678,11 @@ export const getPlayerParams = () => {
       dataStream?.require_vip_plan ||
       '',
     playing_session:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_PLAYING_SESSION || "") ||
-      "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_PLAYING_SESSION || '') ||
+      '',
     content_session:
-      sessionStorage.getItem(trackingStoreKey.PLAYER_CONTENT_SESSION) || "",
-    AppSource: dataChannel?.app_id || "",
+      sessionStorage.getItem(trackingStoreKey.PLAYER_CONTENT_SESSION) || '',
+    AppSource: dataChannel?.app_id || '',
     FrameRate:
       String(
         Math.round(
@@ -701,62 +702,73 @@ export const getPlayerParams = () => {
     FType: dataChannel?.is_tvod ? '2' : '1',
     isPreAdv: '0',
     is_recommend:
-      sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || "0",
-    Multicast: dataStream?.url || "",
+      sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || '0',
+    Multicast: dataStream?.url || '',
     SubMenuId:
       sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) ||
       sessionStorage.getItem(trackingStoreKey.CHANNEL_SELECTED_GROUP) ||
-      "",
-    Key: sessionStorage.getItem(trackingStoreKey.CHANNEL_KEY) || "",
-    Status: dataStream?.enable_preview === "1" ? "Preview" : "None",
+      '',
+    Key: sessionStorage.getItem(trackingStoreKey.CHANNEL_KEY) || '',
+    Status: dataStream?.enable_preview === '1' ? 'Preview' : 'None',
     AudioMimeType: sessionStorage.getItem(
-      trackingStoreKey.PLAYER_AUDIO_MIME_TYPE
+      trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
     ),
     CodecAudio: sessionStorage.getItem(trackingStoreKey.PLAYER_AUDIO_CODEC),
     CodecVideo: sessionStorage.getItem(trackingStoreKey.PLAYER_VIDEO_CODEC),
     PublishCountry: dataChannel?.nation || dataChannel?.countries || '',
     isRepeat: 0,
   };
+  const href = window.location.href;
+  if (
+    typeof href === 'string' &&
+    !href.includes('/playlist/') &&
+    data &&
+    'PlaylistID' in data
+  ) {
+    delete (data as Record<string, unknown>).PlaylistID;
+    delete (data as Record<string, unknown>).RefPlaylistID;
+  }
+  return data;
 };
 
 export const trackingStartBuffering = async () => {
   // Log112: Buffering
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return {};
   }
   // start
   try {
     const startTime = sessionStorage.getItem(
-      trackingStoreKey.PLAYER_START_BUFFER_TIME
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
     );
     if (startTime) {
       return;
     }
     const pParams = getPlayerParams();
-    console.log("--- TRACKING StartBuffering", new Date().toISOString(), {
+    console.log('--- TRACKING StartBuffering', new Date().toISOString(), {
       pParams,
     });
     /*@ts-ignore*/
     return await tracking({
-      LogId: "112",
+      LogId: '112',
       /*@ts-ignore*/
-      Screen: "Buffering",
-      Event: "StartBuffering",
+      Screen: 'Buffering',
+      Event: 'StartBuffering',
       ...pParams,
-      BufferLength: "0",
+      BufferLength: '0',
     });
   } catch {}
 };
 
 export const trackingEndBuffering = async () => {
   // Log112: Buffering
-  if (typeof window === "undefined") {
+  if (typeof window === 'undefined') {
     return {};
   }
   // start
   try {
     const startTime = sessionStorage.getItem(
-      trackingStoreKey.PLAYER_START_BUFFER_TIME
+      trackingStoreKey.PLAYER_START_BUFFER_TIME,
     );
     if (!startTime) {
       return;
@@ -764,15 +776,15 @@ export const trackingEndBuffering = async () => {
     const current = new Date().getTime();
     const e = current - Number(startTime);
     const pParams = getPlayerParams();
-    console.log("--- TRACKING EndBuffering", new Date().toISOString(), {
+    console.log('--- TRACKING EndBuffering', new Date().toISOString(), {
       pParams,
     });
     /*@ts-ignore*/
     await tracking({
-      LogId: "112",
+      LogId: '112',
       /*@ts-ignore*/
-      Screen: "Buffering",
-      Event: "EndBuffering",
+      Screen: 'Buffering',
+      Event: 'EndBuffering',
       ...pParams,
       BufferLength: String(Math.round(e / 1000)),
     });

@@ -25,6 +25,8 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
   const [countdownTimer, setCountdownTimer] = useState<NodeJS.Timeout | null>(
     null,
   );
+  const [userCancelledThisEpisode, setUserCancelledThisEpisode] =
+    useState(false);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -44,6 +46,7 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
   useEffect(() => {
     setIsCancelled(false);
     setIsNavigating(false);
+    setUserCancelledThisEpisode(false); // Reset episode-specific cancellation
     dispatch(setIsAutoNextDisabled(false));
   }, [router.asPath, dispatch]);
 
@@ -121,6 +124,7 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
 
   const closeAutoNext = useCallback(() => {
     setIsCancelled(true); // Mark as cancelled to prevent re-showing
+    setUserCancelledThisEpisode(true); // Mark this episode as cancelled by user
     setIsVisible(false);
     clearTimers();
     // Clear the timer immediately
@@ -140,6 +144,7 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
       nextEpisode &&
       !isFinalEpisode &&
       !isCancelled &&
+      !userCancelledThisEpisode && // Don't show if user cancelled for this episode
       !isAutoNextDisabled &&
       !isNavigating &&
       !previewHandled;
@@ -150,6 +155,7 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
       nextPlaylistVideo &&
       !isLastPlaylistVideo &&
       !isCancelled &&
+      !userCancelledThisEpisode && // Don't show if user cancelled for this episode
       !isAutoNextDisabled &&
       !isNavigating &&
       !previewHandled;
@@ -170,6 +176,7 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
     nextPlaylistVideo,
     isLastPlaylistVideo,
     isCancelled,
+    userCancelledThisEpisode,
     isVisible,
     isAutoNextDisabled,
     isNavigating,
@@ -202,10 +209,11 @@ export const useAutoNextVideo = (): UseAutoNextVideoReturn => {
 
   useEffect(() => {
     if ((isEndVideo ?? 0) === 0) {
-      setIsCancelled(false);
-      dispatch(setIsAutoNextDisabled(false));
+      if (!isAutoNextDisabled && !userCancelledThisEpisode) {
+        setIsCancelled(false);
+      }
     }
-  }, [isEndVideo, dispatch]);
+  }, [isEndVideo, dispatch, isAutoNextDisabled, userCancelledThisEpisode]);
 
   useEffect(() => {
     return () => {

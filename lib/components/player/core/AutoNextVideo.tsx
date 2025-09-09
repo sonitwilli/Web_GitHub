@@ -142,7 +142,7 @@ const AutoNextVideo: React.FC<AutoNextVideoProps> = ({ isExpanded }) => {
     >
       {/* Container - positioned according to Figma spec */}
       <div
-        className={`w-full flex flex-col xl:flex-row xl:items-end xl:justify-between items-start gap-4 tablet:gap-6 xl:gap-[104px] absolute bottom-[20px] tablet:bottom-[42px] xl:bottom-[40px] ${
+        className={`w-fit flex flex-col xl:flex-row xl:items-end xl:justify-between items-start gap-4 tablet:gap-6 xl:gap-[104px] absolute bottom-[20px] tablet:bottom-[42px] xl:bottom-[40px] ${
           isExpanded
             ? 'left-[16px] tablet:left-[32px] xl:left-[351px] right-[16px] tablet:right-[32px] xl:right-auto xl:max-w-[1216px]'
             : isFullscreen
@@ -214,7 +214,7 @@ const AutoNextVideo: React.FC<AutoNextVideoProps> = ({ isExpanded }) => {
 
           {/* Auto Next Button */}
           <button
-            className="flex flex-row justify-center items-center px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 gap-2 w-[140px] tablet:w-[150px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] 
+            className="flex flex-row justify-center items-center px-3 tablet:px-4 xl:px-6 py-2 xl:py-3 xl:mr-[32px] gap-2 w-[140px] tablet:w-[150px] xl:w-[178px] h-[36px] tablet:h-[38px] xl:h-12 rounded-[40px] 
                        border-none cursor-pointer relative overflow-hidden transition-all duration-200 flex-none
                        bg-charleston-green-08 hover:bg-charleston-green"
             onClick={handleAutoNext}

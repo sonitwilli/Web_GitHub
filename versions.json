@@ -1,6 +1,24 @@
 {
     "versions": [
         {
+            "version": "8.0.41",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Preview 5p ] Lỗi để play TVC gói K+ bị đen luồng sự kiện / kênh K+",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 520 khi người dùng đã hoàn tất các công đoạn khởi tạo và start được frame đầu tiên",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 54 khi người dùng phát tiếp sau khi dừng xem nội dung VOD",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 514 khi người dùng jump/tua nội dung",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 416 khi người dùng thay đổi chất lượng hình ảnh",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số của log 45 Khi người dùng nhấn hiển thị danh sách kênh/Nhấn Xem thêm trên mỗi cụm danh sách kênh",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số của log 415 Khi người dùng jump qua 1 đọan phim/truyện đang xem hoặc khi người dùng tua nhanh 1 đọan phim/truyện đang xem",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số log 55 khi người dùng phát nội dung tiếp theo",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thống số log 52 khi người dùng thoát xem nội dung VOD",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 59 khi người dùng thao tác để Thêm / Xóa một phim vào danh sách yêu thích",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 516 khi người dùng sử dụng nút chức năng Share",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 518 khi người dùng chuyển phụ đề /thuyết minh"
+            ]
+        }, 
+        {
             "version": "8.0.40",
             "date": "Dự kiến",
             "content": [

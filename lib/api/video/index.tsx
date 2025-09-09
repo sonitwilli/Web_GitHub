@@ -1,3 +1,4 @@
+import { AxiosError, AxiosResponse } from 'axios';
 import { axiosInstance } from '../axios';
 
 // Types for rating API response
@@ -32,7 +33,7 @@ export const fetchDataInforVideo = async (id?: string) => {
     const res = await axiosInstance.get(`content/vod/${id}`);
     return res?.data;
   } catch {
-    return null;
+    return {} as Promise<AxiosResponse>;
   }
 };
 
@@ -71,8 +72,11 @@ export const postRatingData = async ({
       app_id: appId,
       rating,
     });
-    return res?.data;
-  } catch {
+    return res?.data || null;
+  } catch (error) {
+    if (error instanceof AxiosError) {
+      return error.response?.data || null;
+    }
     return null;
   }
 };
