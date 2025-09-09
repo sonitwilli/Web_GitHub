@@ -95,7 +95,6 @@ const TableResult: FC<TableResultProps> = ({
           </div>
         </div>
       )}
-      {lastIndex && <hr className="border-oxford-blue my-0.5" />}
     </div>
   );
 };
