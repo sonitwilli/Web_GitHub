@@ -34,10 +34,32 @@ export function middleware(request: NextRequest) {
     const url = request.nextUrl.clone();
     const pathname = url.pathname.replace(/\/+$/, '');
 
+    // Redirect quick login aliases to /tv
     if (pathname === '/dangnhapnhanh' || pathname === '/dnn') {
       const dest = new URL('/tv', url.origin);
       return NextResponse.redirect(dest);
     }
+
+    // Map of legacy/info paths to `/thong-tin/<slug>`
+    const infoPaths = new Set([
+      '/gioi-thieu',
+      '/chinh-sach-thanh-toan',
+      '/dieu-khoan-su-dung',
+      '/chinh-sach-bao-mat',
+      '/cam-ket-quyen-rieng-tu',
+    ]);
+
+    // Avoid redirect loop: if already under /thong-tin, don't redirect
+    if (!pathname.startsWith('/thong-tin')) {
+      if (infoPaths.has(pathname)) {
+        const slug = pathname.replace(/^\//, '');
+        const dest = new URL(`/thong-tin/${slug}`, url.origin);
+        // Preserve query string
+        dest.search = url.search;
+        return NextResponse.redirect(dest);
+      }
+    }
+
   } catch {
   }
 
