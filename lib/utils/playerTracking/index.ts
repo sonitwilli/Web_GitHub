@@ -386,6 +386,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       PLAYER_IS_RETRYING,
       trackingStoreKey.PLAYER_PARSED_DATA,
       trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN,
+      trackingStoreKey.PLAYER_PING_DATA,
     ],
   });
 };
@@ -446,6 +447,7 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.PLAYER_AUDIO_MIME_TYPE,
       trackingStoreKey.PLAYER_PARSED_DATA,
       trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN,
+      trackingStoreKey.PLAYER_PING_DATA,
     ],
   });
 };

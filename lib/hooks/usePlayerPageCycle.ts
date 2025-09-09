@@ -116,7 +116,7 @@ export default function usePlayerPageCycle() {
         trackingStoreKey.PLAYER_TRACKING_STATE,
       );
       if (trackingState === 'start') {
-        trackingPingLog111();
+        trackingPingLog111({ isFinal: true });
         saveSessionStorage({
           data: [
             {

@@ -171,7 +171,7 @@ const CountdownTimer = ({
                   '/images/default-poster-horizontal.png'
                 }
                 alt="background"
-                className="mx-auto h-full"
+                className="mx-auto max-h-full"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
                   target.onerror = null;
@@ -180,7 +180,7 @@ const CountdownTimer = ({
               />
             )}
             <div className="absolute z-1 left-[17px] bottom-[17px] tablet:bottom-8 tablet:left-8">
-              <div className="flex items-center justify-between gap-2 tablet:gap-4 bg-eerie-black rounded-xl p-4 w-[320px] tablet:w-[444px]">
+              <div className="flex items-center justify-between gap-2 tablet:gap-4 bg-eerie-black rounded-xl p-4 w-auto tablet:w-[444px]">
                 <div className="flex flex-col gap-2 w-fit">
                   <p className="text-white-smoke text-[16px] font-normal leading-[130%]">
                     {timeLeft >= 3600

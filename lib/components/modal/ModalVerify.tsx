@@ -12,11 +12,7 @@ import ModalWrapper from './ModalWrapper';
 import NoticeModal from '@/lib/components/modal/ModalNotice';
 import ChangePasswordModal from '@/lib/components/modal/ModalChangePassword';
 import { RootState } from '@/lib/store';
-import {
-  ALREADY_SHOWN_MODAL_MANAGEMENT_CODE,
-  MASK_PHONE,
-  SEND_OTP_TYPES,
-} from '@/lib/constant/texts';
+import { MASK_PHONE, SEND_OTP_TYPES } from '@/lib/constant/texts';
 import { useOtp } from '@/lib/hooks/useVerify';
 import { ResendOtpParams, VerifyOtpParams } from '@/lib/api/verify';
 import { NoticeModalRef } from '@/lib/components/modal/ModalNotice';
@@ -98,11 +94,8 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
 
     const modalType = useMemo(() => {
       const allowPin = currentUser?.allow_pin;
-      const hasSeen =
-        typeof window !== 'undefined' &&
-        localStorage.getItem(ALREADY_SHOWN_MODAL_MANAGEMENT_CODE) === '1';
 
-      return allowPin !== '1' && hasSeen ? 'forget' : 'management';
+      return allowPin !== '1' ? 'forget' : 'management';
     }, [currentUser]);
 
     // Initialize useOtp hook with options

@@ -53,26 +53,76 @@ export const checkScreen = (previewHandled?: boolean): TrackingScreen => {
     return '';
   }
 };
-export const trackingPingLog111 = async () => {
+export const trackingPingLog111 = async ({
+  isFinal,
+}: { isFinal?: boolean } = {}) => {
   // Log111: Ping
   try {
     if (typeof window === 'undefined') {
       return;
     }
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (video) {
+      if (video.paused) {
+        return;
+      }
+      if (video.duration === video.currentTime) {
+        return;
+      }
+    }
     trackPlayerChange();
     const screen = checkScreen();
     const playerParams = getPlayerParams();
-    console.log('--- TRACKING trackingPingLog111', new Date().toISOString(), {
-      playerParams,
-    });
-    /*@ts-ignore*/
-    return await tracking({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let sessionPingData: any = {};
+
+    const previousPingData = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_PING_DATA,
+    );
+
+    if (previousPingData) {
+      sessionPingData = JSON.parse(previousPingData);
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const pingData: any = {
       LogId: '111',
       Event: 'Ping',
       ...playerParams,
       Screen: screen,
       BufferLength: '',
+    };
+    const trackingState = sessionStorage.getItem(
+      trackingStoreKey.PLAYER_TRACKING_STATE,
+    );
+    pingData.PingState = trackingState;
+    console.log('--- TRACKING trackingPingLog111', new Date().toISOString(), {
+      playerParams,
+      trackingState,
+      pingData,
+      isFinal,
+      sessionPingData,
     });
+
+    /*@ts-ignore*/
+    const res = await tracking({
+      LogId: '111',
+      Event: 'Ping',
+      ...playerParams,
+      Screen: screen,
+      BufferLength: '',
+      ChapterID: isFinal ? sessionPingData?.ChapterID : pingData?.ChapterID,
+    });
+
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_PING_DATA,
+          value: JSON.stringify(pingData),
+        },
+      ],
+    });
+    return res;
   } catch {}
 };
 

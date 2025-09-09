@@ -103,6 +103,7 @@ export default function usePlayer() {
     isEndedLive,
     previewHandled,
     getSeekPremier,
+    isEndVideo,
   } = usePlayerPageContext();
   const isValidForProfileType = useMemo(() => {
     if (!fetchChannelCompleted) {
@@ -985,6 +986,19 @@ export default function usePlayer() {
     return result;
   };
 
+  const isEndVideoAlready = () => {
+    if (isEndVideo && isEndVideo > 0) {
+      return true;
+    }
+    const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+    if (!video) {
+      return true;
+    }
+    const d = video.duration;
+    const c = video.currentTime;
+    return d === c;
+  };
+
   const handleIntervalCheckErrors = () => {
     console.log('--- PLAYER handleIntervalCheckErrors', {
       checkErrorInterRef: window.checkErrorInterRef,
@@ -993,13 +1007,16 @@ export default function usePlayer() {
     if (previewHandled) {
       return;
     }
+    if (isEndVideoAlready()) {
+      return;
+    }
     // chạy sau khi load source
     if (!window.checkErrorInterRef) {
       // @ts-ignore
       window.checkErrorInterRef = setInterval(() => {
-        // if (document?.hidden) {
-        //   return;
-        // }
+        if (isEndVideoAlready()) {
+          return;
+        }
         console.log('--- PLAYER handleIntervalCheckErrors START', {
           checkErrorInterRef: window.checkErrorInterRef,
         });
@@ -1028,8 +1045,14 @@ export default function usePlayer() {
     console.log('--- PLAYER handleIntervalCheckErrorsSafari', {
       safariCheckErrorInterRef: window.safariCheckErrorInterRef,
     });
+    if (isEndVideoAlready()) {
+      return;
+    }
     if (!window.safariCheckErrorInterRef) {
       window.safariCheckErrorInterRef = setInterval(() => {
+        if (isEndVideoAlready()) {
+          return;
+        }
         const paused2 = sessionStorage.getItem(PAUSE_PLAYER_MANUAL);
         if (paused2 === 'true') {
           return;

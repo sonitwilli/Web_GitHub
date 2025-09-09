@@ -39,6 +39,9 @@ import useScreenSize from '@/lib/hooks/useScreenSize';
 import { trackingLoginProfileLog104 } from '@/lib/tracking/trackingProfile';
 import { scaleImageUrl } from '@/lib/utils/methods';
 import { useAppSelector } from '@/lib/store';
+import { saveProfile } from '@/lib/utils/profile';
+import { useRouter } from 'next/router';
+import { UserInfoResponseType } from '@/lib/api/user';
 
 interface Props {
   profiles: Profile[];
@@ -103,6 +106,7 @@ export default function UserDropdownMenu({
   const forgotPasswordModalRef = useRef<ForgetPasswordModalProfileRef>(null);
   const modalFillCodeRef = useRef<IModalFillCodeRef>(null);
   const modalManagementCodeRef = useRef<ModalManagementCodeRef>(null);
+  const router = useRouter();
   const dispatch = useDispatch();
   const { info: userInfo } = useAppSelector((state) => state.user);
   const {
@@ -132,6 +136,7 @@ export default function UserDropdownMenu({
   const [subTitle, setSubTitle] = useState<string>('');
   const [isErrorCode, setIsErrorCode] = useState<string>('');
   const [isDubTab, setIsDubTab] = useState(false);
+
   const confirmAddPin = async (pin: string) => {
     setLoading(true);
     profilePinModalRef.current?.setError('');
@@ -169,7 +174,7 @@ export default function UserDropdownMenu({
     // Cập nhật profile (bao gồm cả thiết lập PIN mới và kiểm tra PIN cũ)
     const updateResult = await updateProfile(
       { pin, type: pinModalType },
-      selectedProfile
+      selectedProfile,
     );
     setLoading(false);
 
@@ -190,7 +195,7 @@ export default function UserDropdownMenu({
         return;
       } else {
         profilePinModalRef.current?.setError(
-          updateResult?.data?.msg || DEFAULT_ERROR_MSG
+          updateResult?.data?.msg || DEFAULT_ERROR_MSG,
         );
         setIsForgotPin(false);
         return;
@@ -210,15 +215,15 @@ export default function UserDropdownMenu({
       const profileType = localStorage.getItem(TYPE_PR);
       return profileType === '2';
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (selectedProfile?.pin_type === '1') {
+    if (selectedProfile?.pin_type === '1' && !isDubTab) {
       setShowPinModal(true);
       setPinModalTitle('Nhập mã PIN hồ sơ');
       setSubTitle(
-        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng'
+        'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành chuyển đổi hồ sơ người dùng',
       );
       setPinModalType('access');
     } else if (isKidProfile && selectedProfile?.profile_type === '1') {
@@ -239,13 +244,35 @@ export default function UserDropdownMenu({
       window.location.href = '/';
       return;
     }
-    if (userInfo?.profile?.profile_id !== getCookie(NUMBER_PR)) {
+
+    if (
+      userInfo?.profile?.profile_id !== getCookie(NUMBER_PR) &&
+      getCookie(TYPE_PR) === '1' &&
+      userInfo?.profile?.profile_type !== '2'
+    ) {
+      setIsDubTab(false);
+      const isSeletedProfile = profiles.find(
+        (profile) => profile.profile_id === getCookie(NUMBER_PR),
+      );
+      saveProfile({ profile: isSeletedProfile });
+      dispatch(changeUserInfo(isSeletedProfile as UserInfoResponseType));
+      router.reload()
+      return;
+    }
+    if (
+      (userInfo?.profile?.profile_id !== getCookie(NUMBER_PR) &&
+        getCookie(TYPE_PR) === '2') ||
+      (userInfo?.profile?.profile_id !== getCookie(NUMBER_PR) && !isKidProfile)
+    ) {
       setIsDubTab(true);
-      setSelectedProfile({
-        ...currentProfile,
-        profile_id: getCookie(NUMBER_PR) as string,
-        profile_type: getCookie(TYPE_PR) as string,
-      });
+      const isSeletedProfile = profiles.find(
+        (profile) => profile.profile_id === getCookie(NUMBER_PR),
+      );
+      if (isSeletedProfile) {
+        setSelectedProfile(isSeletedProfile);
+        return;
+      }
+      setSelectedProfile(null);
       return;
     }
     if (!selectedProfile) return;
@@ -270,7 +297,10 @@ export default function UserDropdownMenu({
 
       handleLoginSuccess({
         profile: loginResult?.data || {},
-        isRedirect: getCookie(TYPE_PR) === '2' ? !isDubTab : true,
+        isRedirect:
+          getCookie(TYPE_PR) === '2'
+            ? !isDubTab
+            : true,
       });
       setIsDubTab(false);
       setShowPinModal(false);
@@ -333,7 +363,7 @@ export default function UserDropdownMenu({
       const response = await getUserInfo();
       const data = response?.data;
       setSubTitle(
-        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng'
+        'Vui lòng nhập mã quản lý gồm 6 số (0-9) để thực hiện chỉnh sửa hồ sơ người dùng',
       );
       setLoading(false);
       setIsForgotPin(true);
@@ -401,7 +431,7 @@ export default function UserDropdownMenu({
   const handleRestep = () => {
     setPinModalTitle('Thiết lập mã PIN hồ sơ');
     setSubTitle(
-      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ'
+      'Vui lòng nhập mã PIN gồm 4 số (0-9) để tiến hành thiết lập mã PIN hồ sơ',
     );
     setPinModalType('edit');
     setShowPinModal(true);
@@ -512,7 +542,7 @@ export default function UserDropdownMenu({
                       />
                     )}
                   </div>
-                  <span className="flex-1 text-[13.65px] tablet:text-[16px] font-normal">
+                  <span className="flex-1 text-[13.65px] line-clamp-1 max-w-full overflow-hidden tablet:text-[16px] font-normal">
                     {profile.name}
                   </span>
                   {currentProfile?.profile_id === profile?.profile_id && (

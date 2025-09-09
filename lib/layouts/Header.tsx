@@ -10,6 +10,7 @@ import {
   PROFILE_TYPES,
   ROUTE_PATH_NAMES,
   TYPE_PR,
+  USER,
 } from '@/lib/constant/texts';
 import MenuMore from '@/lib/components/header/MenuMore';
 import MobileMenu from '@/lib/components/header/MobileMenu';
@@ -25,14 +26,16 @@ import useMenu from '../hooks/useMenu';
 import { ACCOUNT } from '@/lib/constant/texts';
 import { saveProfile } from '@/lib/utils/profile';
 import dynamic from 'next/dynamic';
-import { setCurrentProfile } from '../store/slices/multiProfiles';
-import { Profile } from '../api/user';
+import { setCurrentProfile, setProfiles } from '../store/slices/multiProfiles';
+import { Profile, UserInfoResponseType } from '../api/user';
 import { trackingEnterFuncLog16 } from '@/lib/tracking/trackingCommon';
 import HeaderAds from '@/lib/components/ads/HeaderAds';
 import { HomepageBannerAds } from '@/lib/components/ads';
 import { useNetwork } from '../components/contexts/NetworkProvider';
 import { IoSearch } from 'react-icons/io5';
 import { getCookie } from 'cookies-next';
+import { changeUserInfo } from '../store/slices/userSlice';
+import { useProfileList } from '../hooks/useProfileList';
 
 interface HeaderContextType {
   menus?: MenuItem[];
@@ -153,12 +156,16 @@ export default function Header() {
   const { selectedMenuMoreItem } = useAppSelector((state) => state.app);
 
   const userInfo = useAppSelector((state) => state.user);
-  const profiles = useAppSelector((state) => state.multiProfile.profiles);
+  const { profiles } = useAppSelector((state) => state.multiProfile);
+  const [isTabMultiPrf, setIsTabMultiPrf] = useState<Profile | null | undefined>(null);
+
   const currentProfile = useMemo(() => {
-    const userProfileId = userInfo?.info?.profile?.profile_id;
+    const userProfileId = userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
-  }, [profiles, userInfo]);
+  }, [profiles, userInfo, isTabMultiPrf]);
   const { adsLoaded } = useAppSelector((state) => state.app);
+  const {fetchProfiles, profiles: profilesList} = useProfileList();
+  
 
   // Load Ads script globally (moved from pages/index.tsx)
   useEffect(() => {
@@ -180,7 +187,26 @@ export default function Header() {
   }, [router.isReady, appDispatch]);
 
   useEffect(() => {
-    saveProfile({ profile: currentProfile });
+    const localUser = localStorage.getItem(USER);
+    if (!userInfo?.info?.profile?.profile_id && localUser) {
+      dispatch(changeUserInfo(localUser as UserInfoResponseType));
+      fetchProfiles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if(profilesList && profilesList.length > 0) {
+      const localUser = localStorage.getItem(USER);
+      const currPrfTemp = profilesList.find((p) => p.profile_id === (JSON.parse(localUser as string)?.user_id_str));
+      dispatch(setProfiles(profilesList));
+      setIsTabMultiPrf(currPrfTemp as Profile);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profilesList]);
+
+  useEffect(() => {
+    saveProfile({ profile: currentProfile as Profile });
     dispatch(setCurrentProfile(currentProfile as Profile));
   }, [currentProfile, dispatch]);
 

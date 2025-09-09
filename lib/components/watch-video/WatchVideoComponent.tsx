@@ -87,6 +87,7 @@ const WatchVideoComponent = () => {
     previewHandled,
     dataPlaylist,
     queryEpisodeNotExist,
+    isDetailError,
   } = usePlayerPageContext();
   const { viewportType } = useScreenSize();
   const router = useRouter();
@@ -225,8 +226,10 @@ const WatchVideoComponent = () => {
     const hasMultiplePlaylistVideos =
       dataPlaylist?.videos && dataPlaylist?.videos?.length > 1;
     const isSeriesOrSeason =
-      dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-      dataChannel?.episode_type === EpisodeTypeEnum.SEASON;
+      (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+        dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+      dataChannel?.episodes &&
+      dataChannel?.episodes?.length > 0;
 
     return Boolean(
       hasMultipleEpisodes || hasMultiplePlaylistVideos || isSeriesOrSeason,
@@ -415,9 +418,13 @@ const WatchVideoComponent = () => {
             </div>
           </div>
 
-          <div className="f-container mt-[40px]">
-            <InforVideoComponent dataVideo={dataChannel} />
-          </div>
+          {!isDetailError ? (
+            <div className="f-container mt-[40px]">
+              <InforVideoComponent dataVideo={dataChannel} />
+            </div>
+          ) : (
+            ''
+          )}
         </>
       )}
     </div>
