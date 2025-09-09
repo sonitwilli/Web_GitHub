@@ -275,10 +275,15 @@ const InforVideoComponent = (props: PropsVideo) => {
 
   const id = useMemo(() => {
     const slugs = router?.query?.slug;
-    const rawId = Array.isArray(slugs) ? slugs[0] : slugs;
+    let rawId: string | undefined = undefined;
+    if (streamType === 'playlist') {
+      rawId = Array.isArray(slugs) ? slugs[1] : slugs;
+    } else {
+      rawId = Array.isArray(slugs) ? slugs[0] : slugs;
+    }
     const videoId = rawId?.split('-').pop();
     return videoId;
-  }, [router]);
+  }, [router, streamType]);
   // grid grid-cols-[1fr_minmax(416px,_24.3559%)]
   return (
     <div className="InforVideoComponent xl:flex">
@@ -356,11 +361,13 @@ const InforVideoComponent = (props: PropsVideo) => {
           <div>{dataVideo?.maturity_rating?.advisories}</div>
         </div>
 
-        {dataVideo?.short_description ? 
-        <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
-          <p>{dataVideo?.short_description}</p>
-        </div>
-        : ""}
+        {dataVideo?.short_description ? (
+          <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
+            <p>{dataVideo?.short_description}</p>
+          </div>
+        ) : (
+          ''
+        )}
 
         <HandleLongText
           text={dataVideo?.description}

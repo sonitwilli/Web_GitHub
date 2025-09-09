@@ -24,7 +24,8 @@ export const trackingRegisterPaymentLog417 = ({
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const playerParams: any = getPlayerParams();
     const paymentParams = getPaymentTrackingData();
     const isTvod = playerParams.FType === '2';
     let LogId = '417';

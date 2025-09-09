@@ -45,7 +45,9 @@ export default function BlockHoverItem({ index }: Props) {
       type: block?.type || '',
     });
     if (blockIndex > -1) {
-      return `${result}?block_index=${blockIndex}&position_index=${index}`;
+      return result?.includes('?')
+        ? `${result}&block_index=${blockIndex}&position_index=${index}`
+        : `${result}?block_index=${blockIndex}&position_index=${index}`;
     }
     return result || '/';
   }, [slide, block, blockIndex, index]);

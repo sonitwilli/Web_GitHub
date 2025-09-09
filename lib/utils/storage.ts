@@ -50,7 +50,7 @@ const checkCsl = () => {
     });
     const key =
       localStorage.getItem(CSL_WEB) || sessionStorage.getItem(CSL_WEB);
-    if (key === CSL_VALUE) {
+    if (key && key.trim() === CSL_VALUE.trim()) {
       return;
     }
     console.log = () => {};

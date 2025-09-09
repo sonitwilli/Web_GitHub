@@ -95,19 +95,13 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const {
-    isEndVideo,
-    hlsErrors,
-    dataStream,
-    dataChannel,
-    realPlaySeconds,
-    stopPlayerStream,
-  } = usePlayerPageContext();
+  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds } =
+    usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { setIsVideoPaused } = usePlayerPageContext();
+  const { setIsVideoPaused, isVideoPaused } = usePlayerPageContext();
 
   // Helper to check if type is live-like (live, channel, event)
   const isLiveType = type === 'live' || type === 'channel' || type === 'event';
@@ -221,6 +215,23 @@ const Preview: React.FC<PreviewProps> = ({
     setIsPopupManuallyClosed(false);
   }, [router.asPath]);
 
+  useEffect(() => {
+    if (previewState === null && isVideoPaused && videoRef.current) {
+      const wasInBackground = sessionStorage.getItem('was_preview_background');
+      if (wasInBackground === 'true') {
+        videoRef.current.play().catch(() => {});
+        setIsVideoPaused?.(false);
+        sessionStorage.removeItem('was_preview_background');
+      }
+    }
+  }, [previewState, isVideoPaused, setIsVideoPaused]);
+
+  useEffect(() => {
+    if (previewState === 'background') {
+      sessionStorage.setItem('was_preview_background', 'true');
+    }
+  }, [previewState]);
+
   // --- TEXT FROM CONFIGS (preview) ---
   const previewConfig = messageConfigs?.preview || {};
 
@@ -302,17 +313,12 @@ const Preview: React.FC<PreviewProps> = ({
 
   // --- HANDLERS ---
   const handleAutoStopPreview = useCallback(() => {
-    // Stop player stream
-    if (stopPlayerStream) {
-      stopPlayerStream();
-    }
-
-    // Pause the video context state
+    // Only pause the video, don't stop the stream to avoid reinitializing player
     if (setIsVideoPaused) {
       setIsVideoPaused(true);
     }
 
-    // Also try to pause via video element directly
+    // Pause via video element directly
     if (videoRef.current) {
       videoRef.current.pause();
     }
@@ -320,7 +326,7 @@ const Preview: React.FC<PreviewProps> = ({
     // Show background overlay with time limit message
     setPreviewState('background');
     sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [setIsVideoPaused, stopPlayerStream]);
+  }, [setIsVideoPaused]);
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {

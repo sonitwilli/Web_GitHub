@@ -124,9 +124,9 @@ export function useKeyboardControls(enabled: boolean = true) {
 
       video.currentTime = newTime;
 
-      if (video.paused) {
-        video.play().catch(() => {});
-      }
+      // if (video.paused) {
+      //   video.play().catch(() => {});
+      // }
 
       // Track seek event
       saveSeekEvent({

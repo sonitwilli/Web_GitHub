@@ -633,7 +633,8 @@ export default function usePlayer() {
       }
 
       // Get current debug data and create hash
-      const playerParams = getPlayerParams();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const playerParams: any = getPlayerParams();
       const debugData = {
         bandwidth: playerParams.Bandwidth,
         streamBandwidth: playerParams.StreamBandwidth,

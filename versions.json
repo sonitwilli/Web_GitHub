@@ -1,6 +1,19 @@
 {
     "versions": [
         {
+            "version": "8.0.42",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Đang xem] Lỗi không lưu bookmark đối với VOD bộ khác tập 1",
+                "[WEB][ProfileKID] Lỗi hiển thị không đúng deeplink và thanh menu đối với profile kid",
+                "[WEB][V5][Quản lý thanh toán và gói] Lỗi lệch giữa 2 text Quản lý thanh toán và gói và title của các màn hình",
+                "[WEB][PlayerVOD] Nextmovie/nextchapter: Lỗi không scale màn hình nextmovie/nextchapter khi chuyển sang mode responsive",
+                "[WEB][Preview 5p ] Lỗi để play TVC gói K+ bị đen luồng sự kiện / kênh K+",
+                "[WEB][RatingVOD] Lỗi hiển thị sai title/description của toast thông báo khi đánh giá > 5 lần/phút",
+                "[WEB][PlayerVOD/Playlist] Nextchapter : Lỗi next sang tập tiếp theo khi chọn phát lại VOD"
+            ]
+        }, 
+        {
             "version": "8.0.41",
             "date": "Dự kiến",
             "content": [

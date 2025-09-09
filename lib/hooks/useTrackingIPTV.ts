@@ -154,7 +154,8 @@ export const trackingStopTimeshiftLog44 = () => {
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const playerParams: any = getPlayerParams();
     const { ItemId, ItemName } = playerParams;
     if (!ItemId || !ItemName) {
       const url = window.location.href;

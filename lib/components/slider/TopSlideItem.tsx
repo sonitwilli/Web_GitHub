@@ -68,10 +68,13 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
   }, [slide]);
 
   const slideLink = useMemo(() => {
-    const result = `${createLink({
+    const link = createLink({
       data: slide || {},
       type: block?.type || '',
-    })}?block_index=0&position_index=${index}`;
+    });
+    const result = link?.includes('?')
+      ? `${link}&block_index=0&position_index=${index}`
+      : `${link}?block_index=0&position_index=${index}`;
     return result || '/';
   }, [slide, block, index]);
 

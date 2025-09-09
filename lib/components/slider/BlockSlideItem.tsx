@@ -153,14 +153,15 @@ export default function BlockSlideItem({
   const slideLink = useMemo(() => {
     if (block?.type === 'trailer') {
       if (blockIndex > -1) {
-        return `/xem-video/${viToEn(
+        const result = `/xem-video/${viToEn(
           dataChannel?.title ||
             dataChannel?.title_vie ||
             dataChannel?.title_origin ||
             '',
-        )}-${dataChannel?.id}/tap-${
-          Number(slide?.id_trailer) + 1
-        }?block_index=${blockIndex}&position_index=${index}`;
+        )}-${dataChannel?.id}/tap-${Number(slide?.id_trailer) + 1}`;
+        return result?.includes('?')
+          ? `${result}&block_index=${blockIndex}&position_index=${index}`
+          : `${result}?block_index=${blockIndex}&position_index=${index}`;
       }
       return `/xem-video/${viToEn(
         dataChannel?.title ||
@@ -176,23 +177,35 @@ export default function BlockSlideItem({
     const isSearchPage = router.pathname.includes('/tim-kiem');
     const isRelatedItem = block?.type === 'vod_related';
     if (blockIndex > -1 && block?.block_type !== 'category') {
-      return `${result}?block_type=${
-        block?.block_type
-      }&block_index=${blockIndex}&position_index=${index}${
-        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
-      }`;
+      return result?.includes('?')
+        ? `${result}&block_type=${
+            block?.block_type
+          }&block_index=${blockIndex}&position_index=${index}${
+            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          }`
+        : `${result}?block_type=${
+            block?.block_type
+          }&block_index=${blockIndex}&position_index=${index}${
+            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          }`;
     }
 
     if (block?.block_type === 'category') {
-      return `${result}?block_index=${blockIndex}&position_index=${index}${
-        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
-      }`;
+      return result?.includes('?')
+        ? `${result}&block_index=${blockIndex}&position_index=${index}${
+            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          }`
+        : `${result}?block_index=${blockIndex}&position_index=${index}${
+            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          }`;
     }
-    return (
-      `${result}?block_type=${block?.block_type}&position_index=${index}${
-        isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
-      }` || '/'
-    );
+    return result?.includes('?')
+      ? `${result}&block_type=${block?.block_type}&position_index=${index}${
+          isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+        }`
+      : `${result}?block_type=${block?.block_type}&position_index=${index}${
+          isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+        }` || '/';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block, dataChannel, blockIndex, index]);
 

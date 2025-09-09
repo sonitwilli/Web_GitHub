@@ -109,7 +109,8 @@ export const trackingShowPopupLog191 = ({ ItemName }: TrackingParams = {}) => {
   ];
   const isPageMatching = pages.some((keyword) => pathname.includes(keyword));
   if (isPageMatching) {
-    const playerParams = getPlayerParams();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const playerParams: any = getPlayerParams();
     itemId = playerParams.ItemId || '';
   }
   const params: TrackingParams = {

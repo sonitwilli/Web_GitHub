@@ -22,9 +22,9 @@ export default function RewindForward({ type }: Props) {
       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
       if (video) {
         video.currentTime = Math.max(video.currentTime - 10, 0);
-        if (video.paused) {
-          video.play().catch(() => {});
-        }
+        // if (video.paused) {
+        //   video.play().catch(() => {});
+        // }
         // Track seek event
         saveSeekEvent({
           timestamp: Date.now(),
@@ -52,9 +52,9 @@ export default function RewindForward({ type }: Props) {
         }
 
         video.currentTime = newTime;
-        if (video.paused) {
-          video.play().catch(() => {});
-        }
+        // if (video.paused) {
+        //   video.play().catch(() => {});
+        // }
         // Track seek event
         saveSeekEvent({
           timestamp: Date.now(),
