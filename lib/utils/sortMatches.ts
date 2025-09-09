@@ -7,8 +7,7 @@ import { Match } from '@/lib/api/blocks';
  */
 const isDateHeader = (match: Match): boolean => {
   return (
-    match.id === 'match_date' ||
-    (!match.home?.short_name && !match.away?.short_name && !!match.match_date && !match.round_name)
+    (!match.away?.short_name)
   );
 };
 
