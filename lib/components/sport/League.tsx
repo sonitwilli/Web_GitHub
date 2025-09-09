@@ -44,7 +44,7 @@ const League: React.FC<Props> = ({
   // Don't show per-item date when rendering the "today matches" table
   const showDate =
     Boolean(data?.match_date) &&
-    data?.match_date !== preMatchDate &&
+    data?.match_date !== preMatchDate && data?.match_type !== "" &&
     typeLeague !== 'today_matches';
   const showRound =
     data?.match_type === 'round_id' &&
@@ -94,7 +94,7 @@ const League: React.FC<Props> = ({
       {data?.home?.short_name && (
         <div
           id="league"
-          className={`bg-raisin-black relative flex items-center justify-center px-3 py-3 text-white ${
+          className={`bg-raisin-black text-center relative flex items-center justify-center px-3 py-3 text-white ${
             noMarginBottom ? 'mb-0' : 'mb-2'
           }`}
         >
