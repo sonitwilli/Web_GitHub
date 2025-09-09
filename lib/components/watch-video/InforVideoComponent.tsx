@@ -374,10 +374,10 @@ const InforVideoComponent = (props: PropsVideo) => {
           className="HandleLongText max-w-full mb-[16px] xl:mb-[24px]"
         />
 
-        <div className="flex gap-2 text-spanish-gray text-[14px] xl:text-[16px] mb-[16px] xl:mb-[24px]">
+        <div className="flex flex-wrap gap-2 text-spanish-gray text-[14px] xl:text-[16px] mb-[16px] xl:mb-[24px]">
           {dataVideo?.genres?.map((genre, index) => (
-            <div key={index} className="flex gap-2">
-              <span>{genre}</span>
+            <div key={index} className="flex gap-2 break-words whitespace-normal">
+              <span className="break-words whitespace-normal">{genre}</span>
               <span>{index < (dataVideo.genres?.length ?? 0) - 1 && '•'}</span>
             </div>
           ))}
