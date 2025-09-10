@@ -167,6 +167,14 @@ export default function Header() {
       userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo, isTabMultiPrf]);
+  // Fixed slot widths: 90px when unauthenticated (login text), 64px when avatar is present
+  const [slotWidth, setSlotWidth] = useState<number>(90);
+
+  // Update slot width based on authentication state: 90 when not authenticated, 64 when avatar present
+  useEffect(() => {
+    const target = userInfo && profiles.length && currentProfile ? 64 : 90;
+    setSlotWidth(target);
+  }, [userInfo, profiles.length, currentProfile]);
   const { adsLoaded } = useAppSelector((state) => state.app);
   const { fetchProfiles, profiles: profilesList } = useProfileList();
 
@@ -657,25 +665,34 @@ export default function Header() {
                 </Link>
               )}
 
-              <div className="hidden xl:block">
-                {isLoadingUserData ? (
-                  <div className="w-[32px] h-[32px] tablet:w-[42px] tablet:h-[42px]">
-                    
-                  </div>
-                ) : userInfo && profiles.length && currentProfile ? (
-                  <UserDropdownMenu
-                    profiles={profiles}
-                    currentProfile={currentProfile}
-                  />
-                ) : (
-                  <button
-                    className="text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl hidden lg:inline-block font-[600] leading-[130%] tracking-[0.36px]"
-                    onClick={() => dispatch(openLoginModal())}
-                  >
-                    Đăng nhập
-                  </button>
-                )}
+              {/* Desktop (xl+) fixed-width slot to avoid layout shift when avatar mounts */}
+              <div className="hidden xl:flex items-center">
+                <div
+                  style={{ width: `${slotWidth}px` }}
+                  className="flex items-center justify-end overflow-hidden"
+                  aria-hidden={!(userInfo && profiles.length && currentProfile)}
+                >
+                  {userInfo && profiles.length && currentProfile ? (
+                    <UserDropdownMenu
+                      profiles={profiles}
+                      currentProfile={currentProfile}
+                    />
+                  ) : (
+                    // reserve space equal to login button / avatar area
+                    <div className="w-[90px] h-[24px]" aria-hidden="true" />
+                  )}
+                </div>
               </div>
+
+              {/* Mobile / tablet: show login button when user not present */}
+              {!userInfo && (
+                <button
+                  className="text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl lg:hidden font-[600] leading-[130%] tracking-[0.36px] w-[90px]"
+                  onClick={() => dispatch(openLoginModal())}
+                >
+                  Đăng nhập
+                </button>
+              )}
             </div>
           </div>
         </div>
