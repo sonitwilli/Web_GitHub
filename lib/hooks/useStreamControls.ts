@@ -1,4 +1,5 @@
 import { useCallback, useRef } from 'react';
+import { replaceMpd } from '../utils/methods';
 
 interface HlsEvents {
   MEDIA_ATTACHED: string;
@@ -120,7 +121,7 @@ export function useStreamControls({
               }
             });
 
-            hlsInstance.loadSource(url);
+            hlsInstance.loadSource(replaceMpd(url));
             return;
           }
         }
@@ -133,7 +134,7 @@ export function useStreamControls({
           const shakaInstance = new window.shaka.Player(video);
           shakaRef.current = shakaInstance;
           try {
-            await shakaInstance.load(url);
+            await shakaInstance.load(replaceMpd(url));
             if (opId !== opIdRef.current) return;
             onUrlChange?.(url);
             if (autoplay) {

@@ -55,7 +55,7 @@ const NextRecommend: React.FC<NextRecommendProps> = ({ isExpanded }) => {
     >
       {/* Container */}
       <div
-        className={`w-fit flex flex-col lg:flex-row xl:flex-row lg:items-end xl:items-end gap-4 lg:gap-6 xl:gap-8 absolute bottom-[20px] tablet:bottom-[42px] lg:bottom-[36px] xl:bottom-10 ${
+        className={`w-fit flex flex-col flex-wrap lg:flex-row xl:flex-row lg:items-end xl:items-end gap-4 lg:gap-6 xl:gap-8 absolute bottom-[20px] tablet:bottom-[42px] lg:bottom-[36px] xl:bottom-10 ${
           isExpanded
             ? 'left-[16px] tablet:left-[32px] lg:left-[48px] xl:left-[351px] right-[16px] tablet:right-[32px] lg:right-[48px] xl:right-auto xl:max-w-[1216px]'
             : isMobile

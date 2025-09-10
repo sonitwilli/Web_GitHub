@@ -181,6 +181,16 @@ export const scalePosterOverlayUrl = ({
   return `${imageUrl}?${queryParams}`;
 };
 
+export const replaceMpd = (url: string = '') => {
+  if (url) {
+    if (url.match('^http://')) {
+      url = url.replace('http://', 'https://');
+    }
+    return url;
+  }
+  return '';
+};
+
 export const thumbnailUrl = ({
   // NOTE: hàm này ưu tiên metaBlock
   block,
@@ -193,7 +203,7 @@ export const thumbnailUrl = ({
   metaBlock?: PageMetaType;
   urlRouterPath?: string;
 }) => {
-  let urlImage = null
+  let urlImage = null;
   const blockType = metaBlock?.block_style
     ? metaBlock?.block_style
     : block?.block_type || block?.type;
@@ -204,15 +214,15 @@ export const thumbnailUrl = ({
         urlImage = scaleImageUrl({
           imageUrl:
             blockData?.image?.landscape || blockData?.image?.landscape_title,
-            width: 300
-        })
+          width: 300,
+        });
       } else {
         urlImage = scaleImageUrl({
           imageUrl:
             blockData?.image?.landscape || blockData?.image?.landscape_title,
-        })
+        });
       }
-      return urlImage
+      return urlImage;
     case 'auto_expansion':
     case 'category':
     case 'horizontal_banner_with_title':
@@ -270,7 +280,7 @@ export const thumbnailUrl = ({
       return scaleImageUrl({
         imageUrl:
           blockData?.image?.portrait || blockData?.image?.portrait_mobile,
-          width: 300,
+        width: 300,
       });
   }
 };

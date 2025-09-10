@@ -64,6 +64,7 @@ import { getSeekEvent, clearSeekEvent } from '@/lib/utils/seekTracking';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
 import { syncFromPlayerParams } from '../store/slices/debugSlice';
 import { getPlayerParams } from '../utils/playerTracking';
+import { replaceMpd } from '../utils/methods';
 
 function getRandom(): number {
   return Math.floor(Math.random() * 11) + 3;
@@ -800,13 +801,13 @@ export default function usePlayer() {
       // const finalUrl =
       //   'https://vodcdn.fptplay.net/POVOD/encoded/2023/11/18/multi-legend-of-zhuohua-the-2023-cnf-001-1700300658/master.m3u8';
       if (window.hlsPlayer) {
-        window.hlsPlayer.loadSource(url || '');
+        window.hlsPlayer.loadSource(replaceMpd(url || ''));
         if (setPlayingUrl) {
           setPlayingUrl(url || '');
         }
       } else if (window.shakaPlayer) {
         window.shakaPlayer
-          .load(url)
+          .load(replaceMpd(url || ''))
           .then(() => {
             autoplay();
           })

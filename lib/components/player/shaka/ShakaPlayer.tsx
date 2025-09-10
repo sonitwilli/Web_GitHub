@@ -9,7 +9,7 @@ import { ChannelDetailType } from '@/lib/api/channel';
 import { StreamItemType } from '@/lib/api/stream';
 import useCodec from '@/lib/hooks/useCodec';
 import usePlayer from '@/lib/hooks/usePlayer';
-import { loadJsScript } from '@/lib/utils/methods';
+import { loadJsScript, replaceMpd } from '@/lib/utils/methods';
 import {
   DRM_CONFIG,
   DRM_CONFIG_SIGMA,
@@ -211,7 +211,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           setPlayingUrl(finalUrl);
         }
         window.shakaPlayer
-          .load(finalUrl)
+          .load(replaceMpd(finalUrl))
           .then(() => {
             handleBookmark();
             autoplay();

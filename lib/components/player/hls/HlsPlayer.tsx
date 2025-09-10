@@ -33,6 +33,7 @@ import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
 import CodecNotSupport from '../core/CodecNotSupport';
 import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
 import { useDispatch } from 'react-redux';
+import { replaceMpd } from '@/lib/utils/methods';
 
 const PlayerControlBar = dynamic(() => import('../control/PlayerControlBar'), {
   ssr: false,
@@ -115,7 +116,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       // const finalUrl =
       //   "https://vodcdn.fptplay.net/POVOD/encoded/2023/11/18/multi-legend-of-zhuohua-the-2023-cnf-001-1700300658/master.m3u8";
       if (finalUrl && window.hlsPlayer && videoRef?.current) {
-        window.hlsPlayer.loadSource(finalUrl);
+        window.hlsPlayer.loadSource(replaceMpd(finalUrl));
         if (setPlayingUrl) {
           setPlayingUrl(finalUrl);
         }
@@ -342,7 +343,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
       try {
         const url = getUrlToPlayH264();
         if (url && window.hlsPlayer && videoRef?.current) {
-          window.hlsPlayer.loadSource(url);
+          window.hlsPlayer.loadSource(replaceMpd(url));
           if (setPlayingUrl) {
             setPlayingUrl(url);
           }
@@ -392,7 +393,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
 
   useEffect(() => {
     if (showLoginPlayer && loginManifestUrl && window.hlsPlayer) {
-      window.hlsPlayer.loadSource(loginManifestUrl);
+      window.hlsPlayer.loadSource(replaceMpd(loginManifestUrl));
       if (setPlayingUrl) {
         setPlayingUrl(loginManifestUrl);
       }
