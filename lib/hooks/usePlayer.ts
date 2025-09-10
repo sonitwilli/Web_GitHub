@@ -987,8 +987,12 @@ export default function usePlayer() {
     const currentTime = sessionStorage.getItem(VIDEO_CURRENT_TIME)
       ? Number(sessionStorage.getItem(VIDEO_CURRENT_TIME))
       : 0;
+    const pauseManual = localStorage.getItem(PAUSE_PLAYER_MANUAL);
     const result =
-      currentTime === previousCurrentTimeRef.current && !isVideoPaused;
+      (currentTime === previousCurrentTimeRef.current && !isVideoPaused) ||
+      (currentTime === previousCurrentTimeRef.current &&
+        isVideoPaused &&
+        pauseManual !== 'true');
     console.log('--- PLAYER CHECK TIME', {
       currentTime,
       previousCurrentTimeRef: previousCurrentTimeRef.current,

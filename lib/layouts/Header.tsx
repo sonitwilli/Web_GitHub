@@ -157,15 +157,18 @@ export default function Header() {
 
   const userInfo = useAppSelector((state) => state.user);
   const { profiles } = useAppSelector((state) => state.multiProfile);
-  const [isTabMultiPrf, setIsTabMultiPrf] = useState<Profile | null | undefined>(null);
+  const [isTabMultiPrf, setIsTabMultiPrf] = useState<
+    Profile | null | undefined
+  >(null);
+  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
 
   const currentProfile = useMemo(() => {
-    const userProfileId = userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
+    const userProfileId =
+      userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo, isTabMultiPrf]);
   const { adsLoaded } = useAppSelector((state) => state.app);
-  const {fetchProfiles, profiles: profilesList} = useProfileList();
-  
+  const { fetchProfiles, profiles: profilesList } = useProfileList();
 
   // Load Ads script globally (moved from pages/index.tsx)
   useEffect(() => {
@@ -191,18 +194,25 @@ export default function Header() {
     if (!userInfo?.info?.profile?.profile_id && localUser) {
       dispatch(changeUserInfo(localUser as UserInfoResponseType));
       fetchProfiles();
+    } else {
+      // Nếu không có user data để load, set loading = false
+      setIsLoadingUserData(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if(profilesList && profilesList.length > 0) {
+    if (profilesList && profilesList.length > 0) {
       const localUser = localStorage.getItem(USER);
-      const currPrfTemp = profilesList.find((p) => p.profile_id === (JSON.parse(localUser as string)?.user_id_str));
+      const currPrfTemp = profilesList.find(
+        (p) => p.profile_id === JSON.parse(localUser as string)?.user_id_str,
+      );
       dispatch(setProfiles(profilesList));
       setIsTabMultiPrf(currPrfTemp as Profile);
+      // Set loading = false khi profiles đã load xong
+      setIsLoadingUserData(false);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profilesList]);
 
   useEffect(() => {
@@ -648,7 +658,11 @@ export default function Header() {
               )}
 
               <div className="hidden xl:block">
-                {userInfo && profiles.length && currentProfile ? (
+                {isLoadingUserData ? (
+                  <div className="w-[32px] h-[32px] tablet:w-[42px] tablet:h-[42px]">
+                    
+                  </div>
+                ) : userInfo && profiles.length && currentProfile ? (
                   <UserDropdownMenu
                     profiles={profiles}
                     currentProfile={currentProfile}

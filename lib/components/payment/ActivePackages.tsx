@@ -72,7 +72,7 @@ const ActivePackages: React.FC = () => {
 
   return (
     <div className="max-w-[1200px]">
-      <h3 className="text-white text-xl font-bold mb-4 xl:mt-[12.5px]">Gói đang sử dụng</h3>
+      <h3 className="text-white text-[24px] font-bold mb-4 xl:mt-[9px]">Gói đang sử dụng</h3>
       <div className="grid grid-cols-1 tablet:grid-cols-2 gap-4 max-w-[860px]">
         {packages.map((pkg, idx) => (
           <div key={idx}>

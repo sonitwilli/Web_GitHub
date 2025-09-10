@@ -31,6 +31,8 @@ import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import useCodec from '@/lib/hooks/useCodec';
 import { useStreamControls } from '@/lib/hooks/useStreamControls';
+import PlayerPlaceholder from './PlayerPlaceholder';
+import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 
 export type PreviewType = 'vod' | 'playlist' | 'live' | 'event' | 'channel';
 
@@ -96,14 +98,21 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds, setIsPreviewMode } =
-    usePlayerPageContext();
+  const {
+    isEndVideo,
+    hlsErrors,
+    dataStream,
+    dataChannel,
+    realPlaySeconds,
+    videoHeight,
+  } = usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { setIsVideoPaused } = usePlayerPageContext();
   const streamVideoRef = useRef<HTMLVideoElement | null>(null);
+  const { viewportType } = useScreenSize();
 
   // Helper to check if type is live-like (live, channel, event)
   const isLiveType = type === 'live' || type === 'channel' || type === 'event';
@@ -131,15 +140,16 @@ const Preview: React.FC<PreviewProps> = ({
     return type === 'vod' || type === 'playlist' ? 'hls' : 'shaka';
   }, [type]);
 
-  const { destroy: destroyStream, playUrl: playStreamUrl } = useStreamControls({
-    playerType,
-    videoRef: streamVideoRef as React.RefObject<HTMLVideoElement>,
-    onUrlChange: (url) => {
-      // Optional: track URL changes if needed
-      console.log('Stream URL changed to:', url);
-    },
-    autoplay: false,
-  });
+  const { pauseStream: pauseStreamPreview, playUrl: playStreamUrl } =
+    useStreamControls({
+      playerType,
+      videoRef: streamVideoRef as React.RefObject<HTMLVideoElement>,
+      onUrlChange: (url) => {
+        // Optional: track URL changes if needed
+        console.log('Stream URL changed to:', url);
+      },
+      autoplay: false,
+    });
 
   const isLiveEnded = useMemo(() => {
     return (
@@ -158,6 +168,9 @@ const Preview: React.FC<PreviewProps> = ({
   const [isPopupManuallyClosed, setIsPopupManuallyClosed] = useState(false);
   // Track if user has clicked exit from banner
   const [hasExitedFromBanner, setHasExitedFromBanner] = useState(false);
+  // Track if should show placeholder when auto stop
+  const [showPlaceholderOnAutoStop, setShowPlaceholderOnAutoStop] =
+    useState(false);
 
   const PREVIEW_TIME_LIMIT = 300; // 5 minutes in seconds
 
@@ -313,24 +326,13 @@ const Preview: React.FC<PreviewProps> = ({
     );
   }, [type, isTvod, previewConfig]);
 
-  // --- HANDLERS ---
-  const destroyCurrentStream = useCallback(async () => {
-    await destroyStream();
-  }, [destroyStream]);
-
   const handleAutoStopPreview = useCallback(() => {
-    // Set preview mode to false to allow DRM ping in main player
-    if (setIsPreviewMode) {
-      setIsPreviewMode(false);
-    }
-
-    // Destroy current stream when preview time limit is reached
-    destroyCurrentStream();
-
+    pauseStreamPreview();
+    setShowPlaceholderOnAutoStop(true);
     // Show background overlay with time limit message
     setPreviewState('background');
     sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [destroyCurrentStream, setIsPreviewMode]);
+  }, [pauseStreamPreview]);
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {
@@ -399,6 +401,9 @@ const Preview: React.FC<PreviewProps> = ({
   );
 
   const handlePurchaseAction = useCallback(() => {
+    // Reset placeholder state when user takes action
+    setShowPlaceholderOnAutoStop(false);
+
     if (isTvod) {
       // For TVOD, use linkToBuy logic
       const vipPlan = dataStream?.require_vip_plan || requireVipPlan || '';
@@ -415,7 +420,16 @@ const Preview: React.FC<PreviewProps> = ({
 
       setShowPackageModal(true);
     }
-  }, [exitFullscreen, isTvod, requireVipPlan, linkToBuy, setIsVideoPaused]);
+  }, [
+    exitFullscreen,
+    isTvod,
+    requireVipPlan,
+    linkToBuy,
+    setIsVideoPaused,
+    type,
+    videoRef,
+    dataStream,
+  ]);
 
   const handleClosePopup = useCallback(() => {
     setPreviewState(null);
@@ -430,23 +444,19 @@ const Preview: React.FC<PreviewProps> = ({
       } else {
         // Mark that user has exited from banner
         setHasExitedFromBanner(true);
-        
+
         const trailerUrl = dataStream?.trailer_url;
         if (trailerUrl) {
-          // Set preview mode to false to allow DRM ping in main player
-          if (setIsPreviewMode) {
-            setIsPreviewMode(false);
-          }
-          
-          // Destroy current stream first to stop any DRM ping
-          await destroyCurrentStream();
+          // Reset placeholder state
+          setShowPlaceholderOnAutoStop(false);
           // Then play trailer URL
           await playStreamUrl(trailerUrl);
           // Set popup state to show popup instead of hiding completely
           setPreviewState('popup');
         } else {
+          // Reset placeholder state
+          setShowPlaceholderOnAutoStop(false);
           // Fallback to original method if no trailer URL
-          destroyCurrentStream();
           onExitPreviewLive?.('');
           setPreviewState('popup');
         }
@@ -459,8 +469,6 @@ const Preview: React.FC<PreviewProps> = ({
     onExitPreviewLive,
     dataStream,
     playStreamUrl,
-    destroyCurrentStream,
-    setIsPreviewMode,
   ]);
 
   // Main effect to control preview state
@@ -484,10 +492,6 @@ const Preview: React.FC<PreviewProps> = ({
         if (finalUrl) {
           setPreviewState('popup');
           sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
-          // Set preview mode to true to prevent DRM ping in main player
-          if (setIsPreviewMode) {
-            setIsPreviewMode(true);
-          }
         } else {
           setPreviewState(null);
           sessionStorage.removeItem(IS_PREVIEW_LIVE);
@@ -495,10 +499,6 @@ const Preview: React.FC<PreviewProps> = ({
       } else {
         setPreviewState('popup');
         sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
-        // Set preview mode to true to prevent DRM ping in main player
-        if (setIsPreviewMode) {
-          setIsPreviewMode(true);
-        }
       }
     } else if (!isPreviewActive) {
       setPreviewState(null);
@@ -507,10 +507,8 @@ const Preview: React.FC<PreviewProps> = ({
       setIsPopupManuallyClosed(false);
       // Reset exit from banner flag when preview becomes inactive
       setHasExitedFromBanner(false);
-      // Set preview mode to false when preview becomes inactive
-      if (setIsPreviewMode) {
-        setIsPreviewMode(false);
-      }
+      // Reset placeholder state when preview becomes inactive
+      setShowPlaceholderOnAutoStop(false);
     }
   }, [
     isPreviewEnded,
@@ -525,8 +523,8 @@ const Preview: React.FC<PreviewProps> = ({
     onExitPreviewLive,
     dataStream,
     getUrlToPlayH264,
-    setIsPreviewMode,
     hasExitedFromBanner,
+    showPlaceholderOnAutoStop,
   ]);
 
   // --- RENDER ---
@@ -592,78 +590,95 @@ const Preview: React.FC<PreviewProps> = ({
 
       {/* Background Overlay for Ended Preview */}
       {previewState === 'background' && (
-        <div
-          className={`${
-            isLiveType ? 'preview-background-live' : 'preview-background-vod'
-          } absolute top-0 left-0 w-full h-full z-3 flex flex-col items-center justify-center`}
-          style={{
-            backgroundImage: `url('/images/OverlayPreview.png')`,
-            backgroundRepeat: 'no-repeat',
-            backgroundSize: 'cover',
-          }}
-        >
-          <div className="flex flex-col justify-center items-center p-0 gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-            <div className="flex flex-col items-center p-0 gap-4 h-[68px] flex-none order-0 self-stretch">
-              <h2
-                className={`${
-                  isLiveType
-                    ? 'preview-background-live__title'
-                    : 'preview-background-vod__title'
-                } whitespace-nowrap tablet:whitespace-normal font-semibold text-[20px] tablet:text-2xl leading-[130%] text-center tracking-[0.02em] text-white-smoke flex-none order-0 flex-grow-0`}
-              >
-                {backgroundTitle}
-              </h2>
-              <span
-                className={`${
-                  isLiveType
-                    ? 'preview-background-live__description'
-                    : 'preview-background-vod__description'
-                } font-normal text-[14px] tablet:text-base leading-[130%] text-center tracking-[0.02em] text-silver-chalice flex-none order-1 self-stretch flex-grow-0`}
-              >
-                {backgroundDescription}
-              </span>
+        <>
+          {showPlaceholderOnAutoStop && (
+            <div
+              className="w-full h-full absolute top-0 left-0 z-[1]"
+              style={{
+                height:
+                  viewportType === VIEWPORT_TYPE.DESKTOP
+                    ? `${
+                        videoHeight && videoHeight > 0 ? videoHeight : '100%'
+                      }px`
+                    : '100%',
+              }}
+            >
+              <PlayerPlaceholder />
             </div>
-            <div className="flex flex-row justify-center items-start p-0 gap-4 w-[343px] tablet:w-[361px] h-12 flex-none order-1 flex-grow-0">
-              {isLiveType &&
-              currentStream?.require_obj_msg?.available &&
-              parseInt(currentStream.require_obj_msg.available) > 0 ? (
-                <div className="flex items-center justify-between gap-4">
-                  <button
-                    onClick={handleExitPreview}
-                    className={`${
-                      isLiveType
-                        ? 'preview-background-live__exit-btn'
-                        : 'preview-background-vod__exit-btn'
-                    } w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-charleston-green text-light-gray text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
-                  >
-                    Thoát
-                  </button>
+          )}
+          <div
+            className={`${
+              isLiveType ? 'preview-background-live' : 'preview-background-vod'
+            } absolute top-0 left-0 w-full h-full z-3 flex flex-col items-center justify-center`}
+            style={{
+              backgroundImage: `url('/images/OverlayPreview.png')`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: 'cover',
+            }}
+          >
+            <div className="flex flex-col justify-center items-center p-0 gap-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <div className="flex flex-col items-center p-0 gap-4 h-[68px] flex-none order-0 self-stretch">
+                <h2
+                  className={`${
+                    isLiveType
+                      ? 'preview-background-live__title'
+                      : 'preview-background-vod__title'
+                  } whitespace-nowrap tablet:whitespace-normal font-semibold text-[20px] tablet:text-2xl leading-[130%] text-center tracking-[0.02em] text-white-smoke flex-none order-0 flex-grow-0`}
+                >
+                  {backgroundTitle}
+                </h2>
+                <span
+                  className={`${
+                    isLiveType
+                      ? 'preview-background-live__description'
+                      : 'preview-background-vod__description'
+                  } font-normal text-[14px] tablet:text-base leading-[130%] text-center tracking-[0.02em] text-silver-chalice flex-none order-1 self-stretch flex-grow-0`}
+                >
+                  {backgroundDescription}
+                </span>
+              </div>
+              <div className="flex flex-row justify-center items-start p-0 gap-4 w-[343px] tablet:w-[361px] h-12 flex-none order-1 flex-grow-0">
+                {isLiveType &&
+                currentStream?.require_obj_msg?.available &&
+                parseInt(currentStream.require_obj_msg.available) > 0 ? (
+                  <div className="flex items-center justify-between gap-4">
+                    <button
+                      onClick={handleExitPreview}
+                      className={`${
+                        isLiveType
+                          ? 'preview-background-live__exit-btn'
+                          : 'preview-background-vod__exit-btn'
+                      } w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-charleston-green text-light-gray text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
+                    >
+                      Thoát
+                    </button>
+                    <button
+                      onClick={handlePurchaseAction}
+                      className={`${
+                        isLiveType
+                          ? 'preview-background-live__register-btn'
+                          : 'preview-background-vod__register-btn'
+                      }  w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
+                    >
+                      {backgroundButtonText}
+                    </button>
+                  </div>
+                ) : (
                   <button
                     onClick={handlePurchaseAction}
                     className={`${
                       isLiveType
                         ? 'preview-background-live__register-btn'
                         : 'preview-background-vod__register-btn'
-                    }  w-[172.5px] flex h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
+                    } w-[152.5px] tablet:w-[200px] flex h-10 tablet:h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
                   >
                     {backgroundButtonText}
                   </button>
-                </div>
-              ) : (
-                <button
-                  onClick={handlePurchaseAction}
-                  className={`${
-                    isLiveType
-                      ? 'preview-background-live__register-btn'
-                      : 'preview-background-vod__register-btn'
-                  } w-[152.5px] tablet:w-[200px] flex h-10 tablet:h-12 px-6 py-3 items-center justify-center gap-2 rounded-[40px] bg-gradient-to-r from-portland-orange to-lust text-white-smoke text-base font-semibold leading-[130%] tracking-[0.02em] cursor-pointer transition-all duration-200`}
-                >
-                  {backgroundButtonText}
-                </button>
-              )}
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Background Banner for Live Events (only for live type) */}

@@ -4,7 +4,21 @@
             "version": "8.0.43",
             "date": "Dự kiến",
             "content": [
-                "Update"             
+                "[WEB][Sự kiện] Lỗi không play được sự kiện khi đã đăng nhập",
+                "[WEB][Sự kiện] Lỗi image và redirect khi nhấn title ở block Highlight",
+                "[WEB][PlayerVOD] Lỗi: Tự động play lại hoặc nháy màn hình sau khi xem hết nội dung cuối cùng của playlist/VOD",
+                "[WEB][DetailVOD] Lỗi vẫn hiển thị Danh sách phát đối với VOD sắp công chiếu (chưa có tập nào)",
+                "[WEB][Đang xem] Lỗi đang lưu bookmark tập trước đó cho tập đối với trường hợp reload page/vào lại VOD",
+                "[WEB][MultiProfile/Login] Lỗi không đồng bộ avatar ở các tab khi thực hiện login/logout/chuyển đổi profile",
+                "[WEB][MultiProfile] Lỗi hiển thị icon khóa/đang dùng đối với tên người dùng 15 ký tự",
+                "[WEB][Thông tin tài khoản] Lỗi không hiển thị popup Thiết lập mã quản lý khi chọn vào Mã quản lý và nhập đúng mã OTP",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 170 khi người dùng vào màn hình detail của sự kiện",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 171 khi người dùng thao tác start một sự kiện",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số của log 172 khi người dùng thao tác để thoát khỏi sự kiện đang xem",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 174 khi nguời dùng chọn đặt/hủy lịch nhắc trong màn hình chi tiết sự kiện",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 178 khi người dùng đã hoàn tất các công đoạn khởi tạo và start được frame đầu tiên",
+                "[WEB][Comment] Lỗi thông báo khi bị lỗi get danh sách report trong comment vod",
+                "[WEB][Comment] Lỗi không hiển thị được chức năng comment ở VOD thuộc playlist"
             ]
         }, 
         {

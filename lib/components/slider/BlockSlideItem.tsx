@@ -176,21 +176,7 @@ export default function BlockSlideItem({
     });
     const isSearchPage = router.pathname.includes('/tim-kiem');
     const isRelatedItem = block?.type === 'vod_related';
-    if (blockIndex > -1 && block?.block_type !== 'category') {
-      return result?.includes('?')
-        ? `${result}&block_type=${
-            block?.block_type
-          }&block_index=${blockIndex}&position_index=${index}${
-            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
-          }`
-        : `${result}?block_type=${
-            block?.block_type
-          }&block_index=${blockIndex}&position_index=${index}${
-            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
-          }`;
-    }
-
-    if (block?.block_type === 'category') {
+    if (blockIndex > -1) {
       return result?.includes('?')
         ? `${result}&block_index=${blockIndex}&position_index=${index}${
             isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
@@ -200,10 +186,10 @@ export default function BlockSlideItem({
           }`;
     }
     return result?.includes('?')
-      ? `${result}&block_type=${block?.block_type}&position_index=${index}${
+      ? `${result}&position_index=${index}${
           isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
         }`
-      : `${result}?block_type=${block?.block_type}&position_index=${index}${
+      : `${result}?position_index=${index}${
           isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
         }` || '/';
     // eslint-disable-next-line react-hooks/exhaustive-deps

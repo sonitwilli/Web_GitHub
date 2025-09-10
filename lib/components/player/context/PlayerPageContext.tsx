@@ -224,8 +224,6 @@ type ContextType = {
   }) => number | undefined;
   isDetailError?: boolean;
   setIsDetailError?: (v: boolean) => void;
-  isPreviewMode?: boolean;
-  setIsPreviewMode?: (v: boolean) => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -249,7 +247,6 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [queryEpisodeNotExist, setQueryEpisodeNotExist] = useState(false);
   const [hasWatchedCredit, setHasWatchedCredit] = useState(false);
   const [nextRecommendCancelled, setNextRecommendCancelled] = useState(false);
-  const [isPreviewMode, setIsPreviewMode] = useState(false);
   const isBackgroundRetryRef = useRef(false);
   const { isFullscreen } = useAppSelector((s) => s.player);
   const [hlsErrors, setHlsErrors] = useState<ErrorData[]>([]);
@@ -1600,8 +1597,6 @@ export function PlayerPageContextProvider({ children }: Props) {
         getSeekPremier,
         isDetailError,
         setIsDetailError,
-        isPreviewMode,
-        setIsPreviewMode,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

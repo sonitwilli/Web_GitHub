@@ -99,7 +99,6 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isExpanded,
     queryEpisodeNotExist,
     clearErrorInterRef,
-    isPreviewMode,
   } = usePlayerPageContext();
   const dispatch = useDispatch();
   const {
@@ -511,25 +510,19 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         if (isTDM) {
           initFairPlaySigma({
             cb: () => {
-              if (!isPreviewMode) {
-                initPing();
-              }
+              initPing();
             },
           });
         } else {
           initFairPlay({
             cb: () => {
-              if (!isPreviewMode) {
-                initPing();
-              }
+              initPing();
             },
           });
         }
       } else {
         initNetworkingEngine();
-        if (!isPreviewMode) {
-          initPing();
-        }
+        initPing();
       }
     } else {
       playVideo();
