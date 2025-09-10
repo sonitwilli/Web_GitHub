@@ -664,7 +664,7 @@ export default function Header() {
               <div className="hidden xl:flex items-center">
                 <div
                   style={{ width: `${slotWidth}px` }}
-                  className="flex items-center justify-end overflow-hidden"
+                  className="flex items-center justify-end relative"
                   aria-hidden={!(userInfo && profiles.length && currentProfile)}
                 >
                   {userInfo && profiles.length && currentProfile ? (
