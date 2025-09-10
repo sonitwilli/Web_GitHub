@@ -160,7 +160,7 @@ export default function Header() {
   const [isTabMultiPrf, setIsTabMultiPrf] = useState<
     Profile | null | undefined
   >(null);
-  const [isLoadingUserData, setIsLoadingUserData] = useState(true);
+
 
   const currentProfile = useMemo(() => {
     const userProfileId =
@@ -202,10 +202,7 @@ export default function Header() {
     if (!userInfo?.info?.profile?.profile_id && localUser) {
       dispatch(changeUserInfo(localUser as UserInfoResponseType));
       fetchProfiles();
-    } else {
-      // Nếu không có user data để load, set loading = false
-      setIsLoadingUserData(false);
-    }
+    } 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -217,8 +214,6 @@ export default function Header() {
       );
       dispatch(setProfiles(profilesList));
       setIsTabMultiPrf(currPrfTemp as Profile);
-      // Set loading = false khi profiles đã load xong
-      setIsLoadingUserData(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profilesList]);
