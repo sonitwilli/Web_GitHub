@@ -30,6 +30,7 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
       !block?.block_type ||
       block?.block_type === 'participant' ||
       block.block_type === 'auto_expansion' ||
+      block?.block_type === 'horizontal_slider_hyperlink' ||
       block.type === 'group_channel' ||
       block.type === 'app_category' ||
       block?.type === 'vod_related' ||
