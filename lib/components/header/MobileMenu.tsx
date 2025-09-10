@@ -219,7 +219,7 @@ export default function MobileMenu({ menus }: Props) {
                   href={`/trang/${menu.id}`}
                   // Keep original spacing/leading but ensure block display so
                   // truncation and padding behave consistently.
-                  className={`block flex-shrink-0 text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray truncate whitespace-nowrap ${
+                  className={`block flex-shrink-0 text-left w-full px-[16px] tablet:px-[24px] py-[3px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray truncate whitespace-nowrap ${
                     menu.id === activeMenu?.id ? '!text-white-smoke' : ''
                   }`}
                   title={menu?.name}
