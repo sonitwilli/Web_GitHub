@@ -42,6 +42,7 @@ import { useAppSelector } from '@/lib/store';
 import { saveProfile } from '@/lib/utils/profile';
 import { useRouter } from 'next/router';
 import { UserInfoResponseType } from '@/lib/api/user';
+import CustomImage from '../common/CustomImage';
 
 interface Props {
   profiles: Profile[];
@@ -520,15 +521,11 @@ export default function UserDropdownMenu({
                   className="flex items-center pl-[16px] tablet:pl-[24px] pr-[10px] tablet:pr-[12px] py-3 gap-4 transition cursor-pointer text-white-smoke hover:bg-charleston-green"
                 >
                   <div className="relative">
-                    <div
+                    <CustomImage
+                      src={scaleImageUrl({ imageUrl: profile.avatar_url || fallbackAvatar, width: 24, height: 24 })}
+                      width="24px"
+                      height="24px"
                       className="w-[24px] h-[24px] rounded-full border border-white bg-cover bg-center"
-                      style={{
-                        backgroundImage: `url(${scaleImageUrl({
-                          imageUrl: profile.avatar_url || fallbackAvatar,
-                          width: 24,
-                          height: 24,
-                        })})`,
-                      }}
                     />
                     {profile?.profile_type === '2' && (
                       <img
