@@ -94,7 +94,7 @@ const ProfileAvatarList: React.FC<ProfileAvatarListProps> = ({
           </div>
         </div>
 
-        <div className="relative xl:min-w-[888px] xl:absolute xl:right-0 overflow-hidden p-0 xl:p-4 top-0 left-1/2 -translate-x-1/2 mx-auto">
+        <div className="relative xl:min-w-[916px] xl:absolute xl:right-0 overflow-hidden p-0 xl:p-4 top-0 left-1/2 -translate-x-1/2 mx-auto">
           <div className="text-left ml-0 xl:ml-4 mb-6 xl:mb-4">
             <ProfileHeading>{title}</ProfileHeading>
           </div>

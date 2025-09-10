@@ -180,7 +180,7 @@ const AccountInfo: React.FC = () => {
   }, [router.asPath, isEditing, hasDispatchedSidebar, dispatch]);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-[856px] text-white-smoke">
+    <div className="flex flex-col gap-4 w-full max-w-[856px] text-white-smoke">
       {isEditing ? (
         <AccountNameEdit
           initialName={''}
@@ -189,7 +189,7 @@ const AccountInfo: React.FC = () => {
         />
       ) : (
         <>
-          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[36px] tracking-[0.02em]">
+          <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[36px] tracking-[0.02em] mb-2">
             Thông tin tài khoản
           </h1>
 
@@ -284,7 +284,6 @@ const AccountInfo: React.FC = () => {
             onForget={handleForgetPassword}
             onHidden={() => setShowModalFillManagementCode(false)}
           />
-
 
           <ForgetPasswordModalProfile ref={forgotPasswordModalRef} />
         </>

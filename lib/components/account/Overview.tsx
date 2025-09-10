@@ -110,7 +110,7 @@ const Overview: React.FC = () => {
   return (
     <>
       <div className="2xl:max-w-[856px] text-white-smoke">
-        <h1 className="text-[20px] sm:text-[28px] font-semibold mb-6 sm:mb-4">
+        <h1 className="text-[24px] tablet:text-[28px] font-semibold mb-6 sm:mb-4">
           Tổng quan
         </h1>
 
@@ -124,10 +124,10 @@ const Overview: React.FC = () => {
             </>
           )}
           <div
-            className="flex justify-between items-center rounded-md hover:bg-charleston-green divide-charleston-green cursor-pointer pt-4 pb-4 pl-6 pr-6"
+            className="flex justify-between items-center rounded-b-md hover:bg-charleston-green divide-charleston-green cursor-pointer pt-4 pb-4 pl-6 pr-6"
             onClick={() => router.push(`/tai-khoan?tab=${ACCOUNT_INFO}`)}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 ">
               <ReactSVG
                 src="/images/settings/settings_account_box.svg"
                 className="w-[24px] h-[24px]"
@@ -150,7 +150,13 @@ const Overview: React.FC = () => {
                   item.action();
                 }
               }}
-              className="flex justify-between items-center pt-4 pb-4 pl-6 pr-6 hover:bg-charleston-green divide-charleston-green cursor-pointer"
+              className={`flex ${
+                idx === quickLinks.length - 1
+                  ? 'rounded-b-md'
+                  : idx === 0
+                  ? 'rounded-t-md'
+                  : ''
+              } justify-between items-center pt-4 pb-4 pl-6 pr-6 hover:bg-charleston-green divide-charleston-green cursor-pointer`}
             >
               <div className="flex items-center">
                 {item.icon}

@@ -67,15 +67,15 @@ const ProfileUser: React.FC<ProfileUserProps> = ({
       className="w-full bg-eerie-black px-4 sm:px-6 py-4 rounded-xl cursor-pointer hover:bg-charleston-green"
       onClick={handleDataRoute}
     >
-      <div className="flex items-center">
+      <div className="flex items-center relative">
+        {dataUser?.profile_type === '2' && (
+          <img
+            className="absolute w-full bottom-[2px] z-1 left-0  max-w-[32px]"
+            src="/images/profiles/child.png"
+            alt="child"
+          />
+        )}
         <div className="relative shrink-0">
-          {dataUser?.profile_type === '2' && (
-            <img
-              className="absolute w-full bottom-[4px] left-0 right-[4px] pl-[4px] pr-[9px]"
-              src="/images/profiles/child.png"
-              alt="child"
-            />
-          )}
           <img
             src={dataUser.avatar_url || '/default-avatar.png'} // Fallback image
             alt="User Avatar"

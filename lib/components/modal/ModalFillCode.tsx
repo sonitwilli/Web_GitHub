@@ -84,7 +84,7 @@ const ProfilePasswordModal = forwardRef<
         <h2 className="text-center text-[20px] sm:text-2xl font-bold text-white mb-4">
           {title}
         </h2>
-        <p className="text-center text-base font-normal text-gray-400 mb-8">
+        <p className="text-center text-base font-normal text-spanish-gray mb-8">
           {subTitle}
         </p>
         <div className="w-full mb-8">
@@ -119,7 +119,7 @@ const ProfilePasswordModal = forwardRef<
           </ProfileButton>
         </div>
         <div
-          className="text-center text-base font-medium text-gray-400 mt-6 cursor-pointer hover:text-fpl transition-colors"
+          className="text-center text-base font-medium text-white-smoke mt-6 cursor-pointer hover:text-fpl transition-colors"
           onClick={onForget}
         >
           Quên mã quản lý

@@ -33,6 +33,7 @@ import { useRouter } from 'next/router';
 import { switchProfile } from '@/lib/api/user';
 // import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
 import { trackingModifyProfileLog103 } from '@/lib/tracking/trackingProfile';
+import useClickOutside from '@/lib/hooks/useClickOutside';
 
 interface ProfileFormProps {
   errorUpdate?: string | null;
@@ -113,7 +114,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   //   useState<number>(0);
   // const [initialDisplayName, setInitialDisplayName] = useState<string>('');
   const router = useRouter();
-
+  const ref = useClickOutside<HTMLDivElement>(() => {
+    if (setShowPinDropdown) setShowPinDropdown(false);
+  }, ['show_pin_dropdown']);
   // Sử dụng hook useFetchRecommendedProfile
   const { profileData, fetchRecommendedProfile, isLoading, error } =
     useFetchRecommendedProfile({
@@ -566,7 +569,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 <img
                   src="/images/profiles/edit_black.png"
                   alt="edit avatar"
-                  className="w-[18px] h-[18px] min-w-[18px]"
+                  className="w-[24px] h-[24px]"
                 />
               </div>
               {isChild && (
@@ -597,7 +600,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 !validNameChange || createError?.message || errorUpdate
                   ? 'border-scarlet focus:border-scarlet'
                   : 'border-black-olive-404040 focus:border-gray'
-              } border w-full py-[18px] px-6 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
+              } border w-full py-[15px] px-6 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
             />
             {!validNameChange && !errorUpdate && (
               <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
@@ -793,7 +796,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </div>
               {!(profile?.pin_type === PIN_TYPES.REQUIRED_PIN) && !pin ? (
                 <p
-                  className="text-white-smoke text-base leading-6 font-medium cursor-pointer"
+                  className="text-white-smoke text-base leading-6 font-medium cursor-pointer hover:text-fpl"
                   onClick={() => setShowAddPinModal(true)}
                 >
                   {pinTitleAdd}
@@ -804,7 +807,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     className="flex items-center gap-2 cursor-pointer"
                     onClick={() => setShowPinDropdown(!showPinDropdown)}
                   >
-                    <span className="text-white-smoke text-base leading-6 font-medium">
+                    <span className="text-white-smoke text-base leading-6 font-medium hover:text-fpl">
                       Chỉnh sửa
                     </span>
                     <IoIosArrowDown
@@ -815,10 +818,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 </div>
               )}
               {showPinDropdown && (
-                <div className="absolute z-10 right-0 top-full bg-charleston-green w-[252px] rounded-2xl py-4">
+                <div ref={ref} className="absolute z-10 right-0 top-[calc(100%+4px)] bg-charleston-green w-[252px] rounded-2xl py-4">
                   <div className="hover:bg-black-olive-404040">
                     <div
-                      className="py-4 px-5 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
+                      className="py-3 px-4 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
                       onClick={() => {
                         setShowEditPinModal(true);
                         setShowPinDropdown(false);
@@ -830,7 +833,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   </div>
                   <div className="hover:bg-black-olive-404040">
                     <div
-                      className="py-4 px-5 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
+                      className="py-3 px-4 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
                       onClick={handleRemovePin}
                     >
                       <LiaTrashAlt className="mr-3" fontSize={20} /> Xóa mã PIN

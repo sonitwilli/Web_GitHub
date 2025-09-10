@@ -16,7 +16,7 @@ const ProfileButton: React.FC<ProfileButtonProps> = ({
   disabled = false,
   variant = '',
   width = '',
-  className = 'bg-gradient-to-r from-[#fe592a] to-[#e93013]',
+  className = 'fpl-bg',
   onClickBtn,
   children,
 }) => {

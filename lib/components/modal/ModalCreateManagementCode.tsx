@@ -257,7 +257,7 @@ const CreateManagementCodeModal = forwardRef<
                         errors.password || errorResponseNewPassword
                           ? 'border-scarlet focus:border-scarlet'
                           : 'border-black-olive-404040 focus:border-gray'
-                      } w-full h-12 border bg-raisin-black bg-opacity-35 rounded-[104px] px-4 text-white text-base placeholder-[#616161] outline-none focus:ring-0`}
+                      } w-full h-[56px] border bg-raisin-black bg-opacity-35 rounded-[104px] px-4 text-white text-base placeholder-[#616161] outline-none focus:ring-0`}
                     />
                     <button
                       type="button"
@@ -304,7 +304,7 @@ const CreateManagementCodeModal = forwardRef<
                         errors.confirmPassword || errorResponseNewPassword
                           ? 'border-scarlet focus:border-scarlet'
                           : 'border-black-olive-404040 focus:border-gray'
-                      } w-full h-12 border bg-raisin-black bg-opacity-35 rounded-[104px] px-4 text-white text-base placeholder-[#616161] outline-none focus:ring-0`}
+                      } w-full h-[56px] border bg-raisin-black bg-opacity-35 rounded-[104px] px-4 text-white text-base placeholder-[#616161] outline-none focus:ring-0`}
                     />
                     <button
                       type="button"

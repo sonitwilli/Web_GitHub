@@ -150,7 +150,7 @@ const ActiveCode: React.FC = () => {
         }
       }
     } catch (error) {
-      if(error instanceof AxiosError && error.response?.status === 401) {
+      if (error instanceof AxiosError && error.response?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       } else {
         showToast({
@@ -169,7 +169,10 @@ const ActiveCode: React.FC = () => {
   };
 
   return (
-    <div id="active-code" className="text-white max-w-full 2xl:max-w-[856px] 2xl:mr-20">
+    <div
+      id="active-code"
+      className="text-white max-w-full 2xl:max-w-[856px] 2xl:mr-20"
+    >
       <form onSubmit={sendCode} className="flex flex-col gap-6">
         <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[130%] tracking-[0.56px] mt-2">
           Đổi mã quà tặng
@@ -188,7 +191,7 @@ const ActiveCode: React.FC = () => {
             onChange={handleInputChange}
             placeholder={ACTIVATED_CODE_TEXT}
             autoFocus
-            className="w-full h-14 rounded-full bg-transparent border border-dim-gray text-[14px] 
+            className="w-full h-14 rounded-full bg-transparent border border-black-olive-404040 text-[14px] 
              px-7 py-2 text-white placeholder-dim-gray outline-none"
             disabled={lockUser}
             aria-describedby="input-code-feedback"
