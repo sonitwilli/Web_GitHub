@@ -463,8 +463,8 @@ export const getItemInfo = () => {
     const eventId =
       (sessionStorage.getItem(trackingStoreKey.PLAYER_EVENT_ID) as string) ||
       '';
-    const { dataChannel } = getContentData();
-    let ItemId = dataChannel?.id || dataChannel?._id || '';
+    const { dataChannel, currentEpisode } = getContentData();
+    const ItemId = dataChannel?.id || dataChannel?._id || '';
     const ItemName =
       dataChannel?.title ||
       dataChannel?.title_vie ||
@@ -472,10 +472,11 @@ export const getItemInfo = () => {
       dataChannel?.name ||
       dataChannel?.alias_name ||
       '';
+    let EpisodeId = currentEpisode?.real_episode_id || '';
     if (streamType === 'event') {
-      ItemId = eventId;
+      EpisodeId = eventId;
     }
-    return { ItemId, ItemName };
+    return { ItemId, ItemName, EpisodeId };
   } catch {
     return {};
   }
@@ -579,7 +580,7 @@ export const getPlayerParams = () => {
     : !isPlayerDurationNaN
     ? playerDuration
     : dataWatching?.duration || currentEpisode?.duration || 0;
-  const { ItemId, ItemName } = getItemInfo();
+  const { ItemId, ItemName, EpisodeId } = getItemInfo();
   const bwBitPerS = Number(
     sessionStorage.getItem(trackingStoreKey.PLAYER_BANDWIDTH),
   );
@@ -602,11 +603,15 @@ export const getPlayerParams = () => {
   const isLive = getTrackingParamIsLive();
   const isLandingPage =
     sessionStorage.getItem(trackingStoreKey.PLAYER_IS_LANDING_PAGE) || '1';
-  const Position = isLandingPage
-    ? ''
-    : sessionStorage.getItem(trackingStoreKey.POSITION_INDEX) !== 'undefined'
-    ? sessionStorage.getItem(trackingStoreKey.POSITION_INDEX)
-    : '';
+  const streamType = sessionStorage.getItem(
+    trackingStoreKey.PLAYER_STREAM_TYPE,
+  ) as StreamType;
+  const Position =
+    !isLandingPage && (streamType === 'timeshift' || streamType === 'channel')
+      ? ''
+      : sessionStorage.getItem(trackingStoreKey.POSITION_INDEX) !== 'undefined'
+      ? sessionStorage.getItem(trackingStoreKey.POSITION_INDEX)
+      : '';
   const Audio =
     selectedAudioParsed?.X_LABEL ||
     sessionStorage.getItem(SELECTED_AUDIO_LABEL) ||
@@ -643,7 +648,7 @@ export const getPlayerParams = () => {
     TotalEpisode: dataChannel?.episodes?.length
       ? String(dataChannel?.episodes?.length)
       : '',
-    EpisodeID: currentEpisode?.real_episode_id || '',
+    EpisodeID: EpisodeId || '',
 
     DRMPartner: sessionStorage.getItem(trackingStoreKey.DRM_PARTNER) || '',
     CDNName: sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
@@ -719,6 +724,7 @@ export const getPlayerParams = () => {
     CodecVideo: sessionStorage.getItem(trackingStoreKey.PLAYER_VIDEO_CODEC),
     PublishCountry: dataChannel?.nation || dataChannel?.countries || '',
     isRepeat: 0,
+    Price: '0',
   };
   const href = window.location.href;
   if (

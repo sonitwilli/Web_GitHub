@@ -99,6 +99,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isExpanded,
     queryEpisodeNotExist,
     clearErrorInterRef,
+    isPreviewMode,
   } = usePlayerPageContext();
   const dispatch = useDispatch();
   const {
@@ -301,8 +302,12 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     }
     window.shakaPlayer = player;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('error', (error: any) => {
+      console.log(`--- PLAYER SHAKA ERROR WHILE PLAYING TEST`, error);
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     player.addEventListener('expirationupdated', (event: any) => {
-      console.log('--- SHAKA: Key expiration updated:', event);
+      console.log('--- SHAKA: expirationupdated', event);
       console.log('--- SHAKA: Expiration time (ms):', event.expiration);
       if (event.expiration) {
         const expirationDate = new Date(event.expiration);
@@ -310,6 +315,21 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       } else {
         console.log('--- SHAKA: The key never expires');
       }
+    });
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('keystatuschanged', (event: any) => {
+      try {
+        console.log('--- SHAKA: keystatuschanged:', event);
+        if (event.keyStatuses) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          event.keyStatuses.forEach((status: unknown, keyId: any) => {
+            const keyIdHex = window.shaka.util.Uint8ArrayUtils.toHex(
+              new Uint8Array(keyId),
+            );
+            console.log('Key ID:', keyIdHex, 'Status:', status);
+          });
+        }
+      } catch {}
     });
     player.addEventListener('adaptation', () => {
       trackPlayerChange();
@@ -491,19 +511,25 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         if (isTDM) {
           initFairPlaySigma({
             cb: () => {
-              initPing();
+              if (!isPreviewMode) {
+                initPing();
+              }
             },
           });
         } else {
           initFairPlay({
             cb: () => {
-              initPing();
+              if (!isPreviewMode) {
+                initPing();
+              }
             },
           });
         }
       } else {
         initNetworkingEngine();
-        initPing();
+        if (!isPreviewMode) {
+          initPing();
+        }
       }
     } else {
       playVideo();

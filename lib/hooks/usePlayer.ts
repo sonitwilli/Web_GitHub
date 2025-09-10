@@ -54,7 +54,6 @@ import {
   trackingPauseTimeshiftLog431,
   trackingResumeTimeshiftLog432,
   trackingSeekTimeshiftLog415,
-  trackingStartChannelLog41,
   trackingStartTimeshiftLog43,
   useTrackingIPTV,
 } from './useTrackingIPTV';
@@ -405,7 +404,7 @@ export default function usePlayer() {
           }
           break;
         case 'channel':
-          trackingStartChannelLog41();
+          // trackingStartChannelLog41();
           if (hlsErrors && hlsErrors.length > 0) {
             trackingStartFirstFrameLog413({
               Event: 'Retry',
@@ -497,52 +496,52 @@ export default function usePlayer() {
         },
       ],
     });
-    const {
-      bookmark,
-      landing_page,
-      is_from_chatbot,
-      block_index,
-      position_index,
-      block_type,
-      ...restQuery
-    } = router.query;
-    if (
-      bookmark !== undefined ||
-      landing_page !== undefined ||
-      is_from_chatbot !== undefined ||
-      block_index ||
-      position_index ||
-      block_type
-    ) {
-      if (landing_page) {
-        saveSessionStorage({
-          data: [
-            {
-              key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
-              value: '0',
-            },
-          ],
-        });
-      }
-      if (block_index) {
-        saveSessionStorage({
-          data: [
-            {
-              key: trackingStoreKey.BLOCK_INDEX,
-              value: block_index as string,
-            },
-          ],
-        });
-      }
-      router.replace(
-        {
-          pathname: router.pathname,
-          query: restQuery,
-        },
-        undefined,
-        { shallow: true },
-      );
-    }
+    // const {
+    //   bookmark,
+    //   landing_page,
+    //   is_from_chatbot,
+    //   block_index,
+    //   position_index,
+    //   block_type,
+    //   ...restQuery
+    // } = router.query;
+    // if (
+    //   bookmark !== undefined ||
+    //   landing_page !== undefined ||
+    //   is_from_chatbot !== undefined ||
+    //   block_index ||
+    //   position_index ||
+    //   block_type
+    // ) {
+    //   if (landing_page) {
+    //     saveSessionStorage({
+    //       data: [
+    //         {
+    //           key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
+    //           value: '0',
+    //         },
+    //       ],
+    //     });
+    //   }
+    //   if (block_index) {
+    //     saveSessionStorage({
+    //       data: [
+    //         {
+    //           key: trackingStoreKey.BLOCK_INDEX,
+    //           value: block_index as string,
+    //         },
+    //       ],
+    //     });
+    //   }
+    //   router.replace(
+    //     {
+    //       pathname: router.pathname,
+    //       query: restQuery,
+    //     },
+    //     undefined,
+    //     { shallow: true },
+    //   );
+    // }
     if (isBackgroundRetryRef) {
       isBackgroundRetryRef.current = false;
     }
@@ -968,6 +967,22 @@ export default function usePlayer() {
     }
   };
 
+  const getDrmInfo = () => {
+    try {
+      return {
+        status: window?.shakaPlayer?.getKeyStatuses
+          ? window.shakaPlayer.getKeyStatuses()
+          : '',
+        info: window?.shakaPlayer.drmInfo ? window?.shakaPlayer.drmInfo() : '',
+      };
+    } catch {
+      return {
+        key: '',
+        info: '',
+      };
+    }
+  };
+
   const isErrorCurrentTime = () => {
     const currentTime = sessionStorage.getItem(VIDEO_CURRENT_TIME)
       ? Number(sessionStorage.getItem(VIDEO_CURRENT_TIME))
@@ -979,6 +994,7 @@ export default function usePlayer() {
       previousCurrentTimeRef: previousCurrentTimeRef.current,
       paused: isVideoPaused,
       isError: result,
+      nvm: getDrmInfo(),
     });
     if (result) {
       sessionStorage.setItem(PLAYER_IS_RETRYING, 'true');
@@ -1019,6 +1035,7 @@ export default function usePlayer() {
         }
         console.log('--- PLAYER handleIntervalCheckErrors START', {
           checkErrorInterRef: window.checkErrorInterRef,
+          nvm: getDrmInfo(),
         });
         const currentTime = sessionStorage.getItem(VIDEO_CURRENT_TIME)
           ? Number(sessionStorage.getItem(VIDEO_CURRENT_TIME))
@@ -1036,7 +1053,6 @@ export default function usePlayer() {
       }, 5000);
     }
   };
-
   const handleIntervalCheckErrorsSafari = () => {
     const paused = sessionStorage.getItem(PAUSE_PLAYER_MANUAL);
     if (paused === 'true') {
@@ -1060,6 +1076,7 @@ export default function usePlayer() {
         console.log('--- PLAYER handleIntervalCheckErrorsSafari START', {
           safariCheckErrorInterRef: window.safariCheckErrorInterRef,
           checkErrorInterRef: window.checkErrorInterRef,
+          nvm: getDrmInfo(),
         });
 
         if (window.checkErrorInterRef) {

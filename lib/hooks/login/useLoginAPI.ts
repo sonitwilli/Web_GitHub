@@ -671,7 +671,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
               title: TITLE_LOGIN_FAILED,
               msg: fallback || LOGIN_ERROR_MESSAGE,
               buttons: {
-                accept: 'Đóng',
+                accept: 'Thoát',
               },
             });
             return;

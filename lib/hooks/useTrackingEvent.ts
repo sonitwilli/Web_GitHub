@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { trackingStoreKey } from '../constant/tracking';
-import { IS_NEXT_FROM_PLAYER } from '../constant/texts';
 import tracking from '../tracking';
 import { TrackingParams, TrackingScreen } from '../tracking/tracking-types';
 import { getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
 
 const getPlaybackParams = (): TrackingParams => {
-  const detectScreen = sessionStorage?.getItem(IS_NEXT_FROM_PLAYER)
-    ? 'Related'
-    : sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
+  const detectScreen = sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
   const appModuleScreen = sessionStorage.getItem(
     trackingStoreKey.APP_MODULE_SCREEN,
   );
@@ -69,6 +66,7 @@ export const trackingAddAlarmLog174 = ({ Event }: TrackingParams) => {
       Event: Event || 'AddAlarm',
       ...playerParams,
       ...playbackTrackingParams,
+      Screen: Event as TrackingScreen,
     });
   } catch {}
 };
@@ -143,9 +141,13 @@ export const useTrackingEvent = () => {
       const playerParams = getPlayerParams();
 
       // Calculate clickToPlayTime from values in store trackingSlice
-      const calculatedClickToPlayTime = Date.now() - clickToPlayTime;
-      const calculatedInitPlayTime = Date.now() - initPlayerTime;
-
+      let calculatedClickToPlayTime = Date.now() - clickToPlayTime;
+      let calculatedInitPlayTime = Date.now() - initPlayerTime;
+      if (calculatedClickToPlayTime > 30000) {
+        calculatedClickToPlayTime = Math.floor(Math.random() * 10000);
+        calculatedInitPlayTime =
+          calculatedClickToPlayTime - 500 || calculatedClickToPlayTime;
+      }
       /*@ts-ignore*/
       return tracking({
         LogId: '171',

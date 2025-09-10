@@ -50,7 +50,8 @@ const axiosServer = ({ cookies }: { cookies: any }) => {
       const suffix = DEFAULT_API_SUFFIX;
       const fullUrl = $config.url || '';
       const arr = fullUrl.split(DEFAULT_API_SUFFIX);
-      uriSend = arr[1] || '';
+      uriSend = arr[0] || '';
+      uriSend = uriSend.includes('?') ? uriSend.substr(0, uriSend.indexOf('?')) : uriSend;
 
       const expireTime = Math.floor(new Date().getTime() / 1000) + 3600;
       const neKeyUser =

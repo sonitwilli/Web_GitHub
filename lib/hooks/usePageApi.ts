@@ -10,7 +10,8 @@ import {
   RecommendBlockItemType,
 } from '@/lib/api/blocks';
 import { useRouter } from 'next/router';
-import { TOKEN, TYPE_PR } from '../constant/texts';
+import { TYPE_PR } from '../constant/texts';
+// import { TOKEN, TYPE_PR } from '../constant/texts';
 
 export const validBlockTypes = [
   'vod_detail',
@@ -212,12 +213,12 @@ export default function usePageApi({ currentId }: { currentId?: string }) {
   };
 
   const fetchRecommendBlocks = async () => {
-    if (typeof localStorage !== 'undefined') {
-      const token = localStorage.getItem(TOKEN);
-      if (!token) {
-        return;
-      }
-    }
+    // if (typeof localStorage !== 'undefined') {
+    //   const token = localStorage.getItem(TOKEN);
+    //   if (!token) {
+    //     return;
+    //   }
+    // }
     setIsLoading(true);
     setRecommendBlocksError(null);
     const { id } = router.query;

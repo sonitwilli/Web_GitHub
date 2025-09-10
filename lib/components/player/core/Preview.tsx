@@ -30,6 +30,7 @@ import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import useCodec from '@/lib/hooks/useCodec';
+import { useStreamControls } from '@/lib/hooks/useStreamControls';
 
 export type PreviewType = 'vod' | 'playlist' | 'live' | 'event' | 'channel';
 
@@ -95,13 +96,14 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds } =
+  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds, setIsPreviewMode } =
     usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const { setIsVideoPaused, isVideoPaused } = usePlayerPageContext();
+  const { setIsVideoPaused } = usePlayerPageContext();
+  const streamVideoRef = useRef<HTMLVideoElement | null>(null);
 
   // Helper to check if type is live-like (live, channel, event)
   const isLiveType = type === 'live' || type === 'channel' || type === 'event';
@@ -125,6 +127,20 @@ const Preview: React.FC<PreviewProps> = ({
     dataStream,
   });
 
+  const playerType = useMemo(() => {
+    return type === 'vod' || type === 'playlist' ? 'hls' : 'shaka';
+  }, [type]);
+
+  const { destroy: destroyStream, playUrl: playStreamUrl } = useStreamControls({
+    playerType,
+    videoRef: streamVideoRef as React.RefObject<HTMLVideoElement>,
+    onUrlChange: (url) => {
+      // Optional: track URL changes if needed
+      console.log('Stream URL changed to:', url);
+    },
+    autoplay: false,
+  });
+
   const isLiveEnded = useMemo(() => {
     return (
       isLiveType &&
@@ -140,6 +156,8 @@ const Preview: React.FC<PreviewProps> = ({
 
   // Track if user has manually closed the popup
   const [isPopupManuallyClosed, setIsPopupManuallyClosed] = useState(false);
+  // Track if user has clicked exit from banner
+  const [hasExitedFromBanner, setHasExitedFromBanner] = useState(false);
 
   const PREVIEW_TIME_LIMIT = 300; // 5 minutes in seconds
 
@@ -176,6 +194,7 @@ const Preview: React.FC<PreviewProps> = ({
     const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (videoElement) {
       videoRef.current = videoElement;
+      streamVideoRef.current = videoElement;
     }
   }, []);
 
@@ -214,23 +233,6 @@ const Preview: React.FC<PreviewProps> = ({
   useEffect(() => {
     setIsPopupManuallyClosed(false);
   }, [router.asPath]);
-
-  useEffect(() => {
-    if (previewState === null && isVideoPaused && videoRef.current) {
-      const wasInBackground = sessionStorage.getItem('was_preview_background');
-      if (wasInBackground === 'true') {
-        videoRef.current.play().catch(() => {});
-        setIsVideoPaused?.(false);
-        sessionStorage.removeItem('was_preview_background');
-      }
-    }
-  }, [previewState, isVideoPaused, setIsVideoPaused]);
-
-  useEffect(() => {
-    if (previewState === 'background') {
-      sessionStorage.setItem('was_preview_background', 'true');
-    }
-  }, [previewState]);
 
   // --- TEXT FROM CONFIGS (preview) ---
   const previewConfig = messageConfigs?.preview || {};
@@ -312,21 +314,23 @@ const Preview: React.FC<PreviewProps> = ({
   }, [type, isTvod, previewConfig]);
 
   // --- HANDLERS ---
+  const destroyCurrentStream = useCallback(async () => {
+    await destroyStream();
+  }, [destroyStream]);
+
   const handleAutoStopPreview = useCallback(() => {
-    // Only pause the video, don't stop the stream to avoid reinitializing player
-    if (setIsVideoPaused) {
-      setIsVideoPaused(true);
+    // Set preview mode to false to allow DRM ping in main player
+    if (setIsPreviewMode) {
+      setIsPreviewMode(false);
     }
 
-    // Pause via video element directly
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    // Destroy current stream when preview time limit is reached
+    destroyCurrentStream();
 
     // Show background overlay with time limit message
     setPreviewState('background');
     sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [setIsVideoPaused]);
+  }, [destroyCurrentStream, setIsPreviewMode]);
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {
@@ -418,14 +422,34 @@ const Preview: React.FC<PreviewProps> = ({
     setIsPopupManuallyClosed(true);
   }, []);
 
-  const handleExitPreview = useCallback(() => {
+  const handleExitPreview = useCallback(async () => {
     if (isLiveType) {
       if (dataEndedPreviewEvent?.is_ended) {
         onExitPreviewEvent?.();
         setPreviewState('banner');
       } else {
-        onExitPreviewLive?.(dataStream?.trailer_url || '');
-        setPreviewState('popup');
+        // Mark that user has exited from banner
+        setHasExitedFromBanner(true);
+        
+        const trailerUrl = dataStream?.trailer_url;
+        if (trailerUrl) {
+          // Set preview mode to false to allow DRM ping in main player
+          if (setIsPreviewMode) {
+            setIsPreviewMode(false);
+          }
+          
+          // Destroy current stream first to stop any DRM ping
+          await destroyCurrentStream();
+          // Then play trailer URL
+          await playStreamUrl(trailerUrl);
+          // Set popup state to show popup instead of hiding completely
+          setPreviewState('popup');
+        } else {
+          // Fallback to original method if no trailer URL
+          destroyCurrentStream();
+          onExitPreviewLive?.('');
+          setPreviewState('popup');
+        }
       }
     }
   }, [
@@ -434,6 +458,9 @@ const Preview: React.FC<PreviewProps> = ({
     onExitPreviewEvent,
     onExitPreviewLive,
     dataStream,
+    playStreamUrl,
+    destroyCurrentStream,
+    setIsPreviewMode,
   ]);
 
   // Main effect to control preview state
@@ -446,7 +473,7 @@ const Preview: React.FC<PreviewProps> = ({
       (playerError && isLiveType) ||
       isLiveEnded;
 
-    if (shouldShowBackground) {
+    if (shouldShowBackground && !hasExitedFromBanner) {
       setPreviewState('background');
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
       // Reset manual close state when preview ends
@@ -457,6 +484,10 @@ const Preview: React.FC<PreviewProps> = ({
         if (finalUrl) {
           setPreviewState('popup');
           sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
+          // Set preview mode to true to prevent DRM ping in main player
+          if (setIsPreviewMode) {
+            setIsPreviewMode(true);
+          }
         } else {
           setPreviewState(null);
           sessionStorage.removeItem(IS_PREVIEW_LIVE);
@@ -464,12 +495,22 @@ const Preview: React.FC<PreviewProps> = ({
       } else {
         setPreviewState('popup');
         sessionStorage.setItem(IS_PREVIEW_LIVE, 'true');
+        // Set preview mode to true to prevent DRM ping in main player
+        if (setIsPreviewMode) {
+          setIsPreviewMode(true);
+        }
       }
     } else if (!isPreviewActive) {
       setPreviewState(null);
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
       // Reset manual close state when preview becomes inactive
       setIsPopupManuallyClosed(false);
+      // Reset exit from banner flag when preview becomes inactive
+      setHasExitedFromBanner(false);
+      // Set preview mode to false when preview becomes inactive
+      if (setIsPreviewMode) {
+        setIsPreviewMode(false);
+      }
     }
   }, [
     isPreviewEnded,
@@ -484,6 +525,8 @@ const Preview: React.FC<PreviewProps> = ({
     onExitPreviewLive,
     dataStream,
     getUrlToPlayH264,
+    setIsPreviewMode,
+    hasExitedFromBanner,
   ]);
 
   // --- RENDER ---

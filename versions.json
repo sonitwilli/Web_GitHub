@@ -1,6 +1,13 @@
 {
     "versions": [
         {
+            "version": "8.0.43",
+            "date": "Dự kiến",
+            "content": [
+                "Update"             
+            ]
+        }, 
+        {
             "version": "8.0.42",
             "date": "Dự kiến",
             "content": [

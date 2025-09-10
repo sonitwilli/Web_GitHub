@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { trackingStoreKey } from '../constant/tracking';
-import { IS_NEXT_FROM_PLAYER } from '../constant/texts';
 import tracking from '../tracking';
 import { TrackingParams, TrackingScreen } from '../tracking/tracking-types';
 import { getPlayerParams } from '../utils/playerTracking';
@@ -8,9 +7,7 @@ import { useAppSelector } from '../store';
 import { removeSessionStorage } from '../utils/storage';
 
 const getIPTVParams = (): TrackingParams => {
-  const detectScreen = sessionStorage?.getItem(IS_NEXT_FROM_PLAYER)
-    ? 'Related'
-    : sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
+  const detectScreen = sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
   const appModuleScreen = sessionStorage.getItem(
     trackingStoreKey.APP_MODULE_SCREEN,
   );
