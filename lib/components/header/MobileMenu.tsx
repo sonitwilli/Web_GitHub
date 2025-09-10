@@ -166,7 +166,9 @@ export default function MobileMenu({ menus }: Props) {
             ? 'z-1 pointer-events-auto opacity-60'
             : '-z-[1] pointer-events-none opacity-0'
         }`}
-        style={{ height: 'calc(100vh - 80px)' }}
+        // Include safe-area inset in the height so on landscape (small heights)
+        // the overlay still covers the visible area and doesn't clip menu items.
+        style={{ height: 'calc(100vh - 80px + env(safe-area-inset-bottom, 0px))' }}
       ></div>
 
       {/* Menus */}
@@ -179,8 +181,10 @@ export default function MobileMenu({ menus }: Props) {
         } z-[2] overflow-y-auto bg-smoky-black duration-300 ease-out ${
           openMobileMenu ? 'left-0' : '-left-[266px] xl:-left-[250px]'
         }`}
-        style={{ 
-          paddingBottom: 'max(calc(env(safe-area-inset-bottom)))'
+        // Ensure enough padding at the bottom to account for mobile safe-area and
+        // give items room in landscape orientations where viewport height is small.
+        style={{
+          paddingBottom: 'calc(env(safe-area-inset-bottom, 0px) + 24px)'
         }}
         onClick={() => {
           if (setOpenMobileMenu) setOpenMobileMenu(false);
@@ -213,7 +217,9 @@ export default function MobileMenu({ menus }: Props) {
                   prefetch={false}
                   key={`menu-mobile-${index}-${menu.id}`}
                   href={`/trang/${menu.id}`}
-                  className={`text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray truncate whitespace-nowrap ${
+                  // Keep original spacing/leading but ensure block display so
+                  // truncation and padding behave consistently.
+                  className={`block flex-shrink-0 text-left w-full px-[16px] tablet:px-[24px] py-[6px] text-[14px] leading-[130%] tracking-[0.28px] text-spanish-gray truncate whitespace-nowrap ${
                     menu.id === activeMenu?.id ? '!text-white-smoke' : ''
                   }`}
                   title={menu?.name}
