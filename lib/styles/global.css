@@ -1,3 +1,4 @@
+@import './no-select.css';
 @import 'tailwindcss';
 @import './breakpoints.css';
 @import './colors.css';
