@@ -500,7 +500,7 @@ export default function UserDropdownMenu({
             height: 40,
           })}
           alt="avatar"
-          className="w-[44px] h-[44px] rounded-full"
+          className="w-[29px] h-[29px] rounded-full md:w-[44px] md:h-[44px]"
         />
 
         {isKidProfile && (
