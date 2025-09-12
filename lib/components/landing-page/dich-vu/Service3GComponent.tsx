@@ -1,52 +1,28 @@
 import Image from 'next/image';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PackageControl from './PackageControl';
 import PoliciesComponent from './Policies';
-
-const iconData = [
-  {
-    src: '/images/landing-page/icon-1.png',
-    text: 'Xem hàng ngàn nội dung <br />giải trí đỉnh cao',
-  },
-  {
-    src: '/images/landing-page/icon-2.png',
-    text: 'Phim bộ, phim chiếu rạp <br />mới nhất &amp; giải bóng đá đỉnh cao',
-  },
-  {
-    src: '/images/landing-page/icon-3.png',
-    text: 'Chất lượng cao',
-  },
-];
-const logoBrand = [
-  { src: '/images/landing-page/fpt.png', alt: 'fpt', width: 100, height: 67 },
-  {
-    src: '/images/landing-page/viettel.png',
-    alt: 'viettel',
-    width: 125,
-    height: 53,
-  },
-  {
-    src: '/images/landing-page/mobifone.png',
-    alt: 'mobifone',
-    width: 169,
-    height: 28,
-  },
-  {
-    src: '/images/landing-page/vinaphone2.jpg',
-    alt: 'vinaphone',
-    width: 146,
-    height: 34,
-  },
-];
+import { fetchDataDichVu } from '../../../../lib/api/landing-page';
+import type { DichVuData } from './types';
 
 const Service3GComponent = () => {
   const [selectedTelcos, setSelectedTelcos] = useState<string>('fpt');
+  const [data, setData] = useState<DichVuData | null>(null);
 
   const handleOnClickTelcos = (telco: string) => {
-    if (telco) {
-      setSelectedTelcos(telco);
-    }
+    setSelectedTelcos(telco);
   };
+
+  useEffect(() => {
+    let mounted = true;
+    fetchDataDichVu()
+      .then((d) => mounted && setData(d))
+      .catch(() => {});
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   return (
     <div className="mt-20 w-full">
       {/* Banner */}
@@ -61,7 +37,7 @@ const Service3GComponent = () => {
 
       {/* Intro */}
       <div className="flex flex-col lg:flex-row items-center justify-center w-full min-h-[343px] bg-white-smoke py-12 box-border font-light">
-        {iconData.map((item, idx) => (
+  {data?.iconData?.map((item, idx: number) => (
           <div
             key={idx}
             className="flex flex-col items-center justify-center h-[247px] w-[393px] text-eerie-black relative"
@@ -96,7 +72,7 @@ const Service3GComponent = () => {
         </div>
 
         <div className="flex gap-8 mt-8 flex-wrap justify-center">
-          {logoBrand.map((logo, idx) => (
+          {data?.logoBrand?.map((logo, idx: number) => (
             <div
               onClick={() => handleOnClickTelcos(logo.alt)}
               key={idx}

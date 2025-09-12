@@ -1,31 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-
-type PackageItem = {
-  name: string;
-  description: string;
-  details:
-    | string
-    | {
-        head: string;
-        data: string;
-        tail: string;
-      };
-  syntax: string;
-  syntax2: string;
-  syntax3?: string;
-  fee: {
-    text: string;
-    details: string;
-  };
-};
+import type { PackageItem, Labels } from './types';
 
 type Props = {
   id?: string;
   title: string;
   packages: PackageItem[];
   showControls?: boolean;
+  labels?: Labels | null;
 };
 
 export default function PackageCarousel({
@@ -33,6 +16,7 @@ export default function PackageCarousel({
   title,
   packages,
   showControls = false,
+  labels,
 }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'center',
@@ -83,7 +67,7 @@ export default function PackageCarousel({
                   </span>
                   <span className="my-3">{_package.description}</span>
                   <div className="font-bold">
-                    Cước data:&nbsp;
+                    {labels?.dataFee}&nbsp;
                     {typeof _package.details === 'string' ? (
                       <span className="font-light">{_package.details}</span>
                     ) : (
@@ -97,18 +81,16 @@ export default function PackageCarousel({
                     )}
                   </div>
                   <div className="my-3">
-                    <span className="font-bold">Cú pháp đăng ký:&nbsp; </span>
+                    <span className="font-bold">{labels?.registerSyntax}&nbsp; </span>
                     <span>{_package.syntax}</span>
                   </div>
                   <div className="my-3">
-                    <span className="font-bold">Cú pháp hủy:&nbsp; </span>
+                    <span className="font-bold">{labels?.cancelSyntax}&nbsp; </span>
                     <span>{_package.syntax2}</span>
                   </div>
                   {_package.syntax3 && (
                     <div className="my-3">
-                      <span className="font-bold">
-                        Để kiểm tra dung lượng data của gói cước:&nbsp;{' '}
-                      </span>
+                      <span className="font-bold">{labels?.checkData}&nbsp;{' '}</span>
                       <span>{_package.syntax3}</span>
                     </div>
                   )}

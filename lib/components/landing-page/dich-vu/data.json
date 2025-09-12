@@ -1,0 +1,176 @@
+{
+  "iconData": [
+    {
+      "src": "/images/landing-page/icon-1.png",
+      "text": "Xem hàng ngàn nội dung <br />giải trí đỉnh cao"
+    },
+    {
+      "src": "/images/landing-page/icon-2.png",
+      "text": "Phim bộ, phim chiếu rạp <br />mới nhất &amp; giải bóng đá đỉnh cao"
+    },
+    {
+      "src": "/images/landing-page/icon-3.png",
+      "text": "Chất lượng cao"
+    }
+  ],
+  "logoBrand": [
+    { "src": "/images/landing-page/fpt.png", "alt": "fpt", "width": 100, "height": 67 },
+    { "src": "/images/landing-page/viettel.png", "alt": "viettel", "width": 125, "height": 53 },
+    { "src": "/images/landing-page/mobifone.png", "alt": "mobifone", "width": 169, "height": 28 },
+    { "src": "/images/landing-page/vinaphone2.jpg", "alt": "vinaphone", "width": 146, "height": 34 }
+  ],
+  "packages": {
+    "fpt": [
+      {
+        "name": "FTV119",
+        "description": "Xem truyền hình (trừ các kênh K+, HBO Go), các giải thể thao quốc tế và trong nước, kho phim bộ, phim lẻ khổng lồ và hàng ngàn nội dung giải trí khác trong 30 ngày (Lưu ý: Đăng nhập và xem cùng lúc trên 2 thiết bị mobile (bao gồm Phone và Tablet).",
+        "details": "Miễn phí Data tốc độ cao truy cập ứng dụng FPT Play. Cộng 2GB/ngày truy cập Internet",
+        "syntax": "Soạn DK FTV119 gửi 789 hoặc FTV119 gửi 789 (Miễn phí SMS)",
+        "syntax2": "Soạn HUY FTV119 gửi 789 (Miễn phí SMS). Để kiểm tra dung lượng data của gói cước soạn: Soạn KT ALL gửi 999 (200đ/SMS) hoặc nhấn gọi *090*5# (miễn phí)",
+        "fee": { "text": "Đăng ký với mức cước", "details": "119.000 ĐỒNG" }
+      }
+    ],
+    "viettel": [
+      {
+        "name": "Ngày (F1)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 01 ngày",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói.",
+        "syntax": "Soạn XN1F gửi 5282",
+        "syntax2": "Soạn HUY F1 gửi 5282",
+        "fee": { "text": "Đăng ký với mức cước", "details": "3.000 ĐỒNG" }
+      },
+      {
+        "name": "Tuần (F7)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 07 ngày",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói",
+        "syntax": "Soạn F7 gửi 5282",
+        "syntax2": "Soạn HUY F7 gửi 5282",
+        "fee": { "text": "Đăng ký với mức cước", "details": "10.000 ĐỒNG" }
+      },
+      {
+        "name": "Tháng (F30)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 30 ngày",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói",
+        "syntax": "Soạn F30 gửi 5282",
+        "syntax2": "Soạn HUY F30 gửi 5282",
+        "fee": { "text": "Đăng ký với mức cước", "details": "30.000 ĐỒNG" }
+      }
+    ],
+    "mobifone": [
+      {
+        "name": "Ngày (F1)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 01 ngày",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm", "data": "100MB", "tail": "dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói." },
+        "syntax": "Soạn DK F1 gửi 1584",
+        "syntax2": "Soạn HUY F1 gửi 1584",
+        "fee": { "text": "Đăng ký với mức cước", "details": "3.000 ĐỒNG" }
+      },
+      {
+        "name": "Ngày (TT1)",
+        "description": "Xem nội dung thể thao, giái trí hấp dẫn trong 01 ngày.",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm", "data": "100MB", "tail": "dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói." },
+        "syntax": "Soạn DK TT1 gửi 1584",
+        "syntax2": "Soạn HUY TT1 gửi 1584",
+        "fee": { "text": "Đăng ký với mức cước", "details": "10.000 ĐỒNG" }
+      },
+      {
+        "name": "Tuần (TT7)",
+        "description": "Xem nội dung thể thao, giái trí hấp dẫn trong 07 ngày.",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm", "data": "200MB", "tail": "dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói." },
+        "syntax": "Soạn DK TT7 gửi 1584",
+        "syntax2": "Soạn HUY TT7 gửi 1584",
+        "fee": { "text": "Đăng ký với mức cước", "details": "30.000 ĐỒNG" }
+      },
+      {
+        "name": "Ngày (FL)",
+        "description": "Xem nội dung các kênh truyền hình gia đình (ngoại trừ kênh K+, Kênh HBO Go, kênh Quốc tế) và các nội dung cơ bản trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng", "data": "850MB/ngày", "tail": "truy cập Internet ngoài gói" },
+        "syntax": "Soạn DK FL hoặc FL gửi 999",
+        "syntax2": "Soạn HUY FL gửi 999",
+        "syntax3": "Soạn KT All gửi 999",
+        "fee": { "text": "Đăng ký với mức cước", "details": "6.000 ĐỒNG" }
+      },
+      {
+        "name": "Ngày (PP)",
+        "description": "Xem nội dung phim bộ, phim lẻ đặc sắc và các nội dung cơ bản trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng", "data": "850MB/ngày", "tail": "truy cập Internet ngoài gói" },
+        "syntax": "Soạn DK PP hoặc PP gửi 999",
+        "syntax2": "Soạn HUY PP gửi 999",
+        "syntax3": "Soạn KT All gửi 999",
+        "fee": { "text": "Đăng ký với mức cước", "details": "6.000 ĐỒNG" }
+      },
+      {
+        "name": "Ngày (EX)",
+        "description": "Xem nội dung các kênh truyền hình (ngoại trừ kênh K+, Kênh HBO Go) và phim bộ, phim lẻ đặc sắc trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.",
+        "details": { "head": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng", "data": "950MB/ngày", "tail": "truy cập Internet ngoài gói" },
+        "syntax": "Soạn DK EX hoặc EX gửi 999",
+        "syntax2": "Soạn HUY EX gửi 999",
+        "syntax3": "Soạn KT All gửi 999",
+        "fee": { "text": "Đăng ký với mức cước", "details": "8.000 ĐỒNG" }
+      }
+    ],
+    "vinaphone": [
+      {
+        "name": "Ngày (F1)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 01 ngày",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói",
+        "syntax": "Soạn DK F1 gửi 9113",
+        "syntax2": "Soạn HUY F1 gửi 9113",
+        "fee": { "text": "Đăng ký với mức cước", "details": "3.000 ĐỒNG" }
+      },
+      {
+        "name": "Tuần (F7)",
+        "description": "Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 07 ngày",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói",
+        "syntax": "Soạn DK F7 gửi 9113",
+        "syntax2": "Soạn HUY F7 gửi 9113",
+        "fee": { "text": "Đăng ký với mức cước", "details": "15.000 ĐỒNG" }
+      },
+      {
+        "name": "VIP",
+        "description": "Xem nội dung thể thao, giái trí hấp dẫn trong 01 ngày.",
+        "details": "Miễn phí không giới hạn dung lượng khi xem nội dung của gói",
+        "syntax": "Soạn DK VIP gửi 9113",
+        "syntax2": "Soạn HUY VIP gửi 9113",
+        "fee": { "text": "Đăng ký với mức cước", "details": "5.000 ĐỒNG" }
+      }
+    ]
+    ,
+    "labels": {
+      "dataFee": "Cước data:",
+      "registerSyntax": "Cú pháp đăng ký:",
+      "cancelSyntax": "Cú pháp hủy:",
+      "checkData": "Để kiểm tra dung lượng data của gói cước:",
+      "registerButtonPrefix": "Đăng ký với mức cước"
+    }
+  }
+  ,
+  "policies": {
+    "title": "Điều khoản và dịch vụ",
+    "columns": [
+      [
+        "Dịch vụ 3G/4G chỉ áp dụng cho thuê bao di động truy cập FPT Play phiên bản App bằng 3G/4G",
+        "Để biết giá các gói cước, soạn KTX gửi 5282 (đối với Viettel), soạn GIA gửi 1584 (đối với Mobifone)",
+        "Các gói cước được tự động gia hạn theo chu kỳ cước.",
+        "Để xem hướng dẫn sử dụng, soạn HDF gửi 5282 (đối với thuê bao Viettel), soạn HD gửi 1584 (đối với thuê bao Mobifone), soạn TG F gửi 9113 (đối với thuê bao Vinaphone)"
+      ],
+      [
+        "Để khôi phục gói, soạn KPF gửi 5282 (đối với thuê bao Viettel)",
+        "Để sử dụng dịch vụ 3G/4G, bạn vui lòng đăng nhập ứng dụng FPT Play bằng số điện thoại đã đăng ký",
+        "Đối với các thuê bao Viettel, trường hợp tài khoản của khách hàng tại thời điểm đăng ký mới không đủ cước theo giá gói, trừ cước 50% giá cước. Trường hợp tài khoản của khách hàng tại thời điểm trừ cước gia hạn không đủ cước theo giá gói, trừ cước 2 lần trong chu kì (mỗi lần 50% giá cước)."
+      ],
+      [
+        "Đối với các thuê bao Vinaphone, chỉ áp dụng cho thuê bao trả trước (có bao gồm cả thuê bao EZCOM) hoạt động 2 chiều trên mạng VinaPhone (không nợ đọng, huỷ, tạm ngưng, khoá 1 chiều/2 chiều)",
+        "Đối với các thuê bao MobiFone, khi trừ cước gia hạn, nếu tài khoản chính nhỏ hơn mức cước thì dịch vụ sẽ trừ mức cước thấp hơn theo từng gói cước như sau: <br />1. Gói F1: Trừ cước 2.000đ và 1.000đ <br />2. Gói F7: Trừ cước 6.000đ và 4.000đ <br />3. Gói F30: Trừ cước 20.000đ và 10.000đ"
+      ]
+    ]
+  }
+  ,
+  "telcos": {
+    "fpt": { "id": "fpt", "title": "GÓI 3G/4G FPT", "showControls": false },
+    "viettel": { "id": "viettel", "title": "GÓI 3G/4G VIETTEL", "showControls": true },
+    "mobifone": { "id": "mobifone", "title": "GÓI 3G/4G MOBIFONE", "showControls": true },
+    "vinaphone": { "id": "vinaphone", "title": "GÓI 3G/4G VINAPHONE", "showControls": true }
+  }
+}
+
