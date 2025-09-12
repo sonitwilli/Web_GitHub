@@ -658,17 +658,14 @@ export default function Header() {
               )}
 
               <div className="hidden xl:block">
-                {isLoadingUserData ? (
-                  <div className="w-[32px] h-[32px] tablet:w-[48px] tablet:h-[48px] tablet:w-[42px] tablet:h-[42px]">
-                  </div>
-                ) : userInfo && profiles.length && currentProfile ? (
+                {userInfo && profiles.length && currentProfile && !isLoadingUserData ? (
                   <UserDropdownMenu
                     profiles={profiles}
                     currentProfile={currentProfile}
                   />
                 ) : (
                   <button
-                    className="text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl hidden lg:inline-block font-[600] leading-[130%] tracking-[0.36px]"
+                    className={`text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl font-[600] leading-[130%] tracking-[0.36px] ${isLoadingUserData ? 'hidden' : 'hidden lg:inline-block'}`}
                     onClick={() => dispatch(openLoginModal())}
                   >
                     Đăng nhập

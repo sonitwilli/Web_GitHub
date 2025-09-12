@@ -4,6 +4,8 @@ import { store, useAppDispatch, useAppSelector } from '../store';
 import {
   BOOLEAN_TEXTS,
   ERROR_PLAYER_FPT_PLAY,
+  ERROR_PLAYER_FPT_PLAY_RETRY,
+  EXPIRED_TIME,
   HISTORY_TEXT,
   PAUSE_PLAYER_MANUAL,
   PLAYER_BOOKMARK_SECOND,
@@ -26,7 +28,7 @@ import {
 } from '../store/slices/playerSlice';
 import { trackingErrorLog17 } from '../tracking/trackingCommon';
 import { ErrorData, ErrorDetails, ErrorTypes } from 'hls.js';
-import { getTimeShiftChannel } from '../api/channel';
+import { genExpiredLink, getTimeShiftChannel } from '../api/channel';
 import {
   ShakaErrorDetailType,
   ShakaErrorType,
@@ -43,13 +45,11 @@ import { removeSessionStorage, saveSessionStorage } from '../utils/storage';
 import useTrackingPing from './useTrackingPing';
 import {
   trackingPauseMovieLog53,
+  trackingPlaybackErrorLog515,
   trackingResumeMovieLog54,
   useTrackingPlayback,
 } from './useTrackingPlayback';
-import {
-  trackingStartFirstFrameLog178,
-  useTrackingEvent,
-} from './useTrackingEvent';
+import { useTrackingEvent } from './useTrackingEvent';
 import {
   trackingPauseTimeshiftLog431,
   trackingResumeTimeshiftLog432,
@@ -64,6 +64,7 @@ import { getSeekEvent, clearSeekEvent } from '@/lib/utils/seekTracking';
 import { useVodPageContext } from '../components/player/context/VodPageContext';
 import { syncFromPlayerParams } from '../store/slices/debugSlice';
 import { getPlayerParams } from '../utils/playerTracking';
+import { TrackingScreen } from '../tracking/tracking-types';
 import { replaceMpd } from '../utils/methods';
 
 function getRandom(): number {
@@ -118,7 +119,8 @@ export default function usePlayer() {
   }, [dataChannel, fetchChannelCompleted]);
   const { handleLoadAds } = useAdsPlayer();
   const { trackingStartFirstFrameLog520 } = useTrackingPlayback();
-  const { trackingStartLiveShowLog171 } = useTrackingEvent();
+  const { trackingStartLiveShowLog171, trackingStartFirstFrameLog178 } =
+    useTrackingEvent();
   const { trackingStartFirstFrameLog413 } = useTrackingIPTV();
   const { getUrlToPlayH264 } = useCodec({
     dataChannel,
@@ -150,6 +152,7 @@ export default function usePlayer() {
   const retryCountRef = useRef(0);
   const retryGetStreamTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const retryBackgroundTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalCheckHlsRequest = useRef<NodeJS.Timeout | null>(null);
   const [isPlayingHandled, setIsPlayingHandled] = useState(false);
   const [isInitAds, setIsInitAds] = useState(false);
   const { historyData } = useAppSelector((s) => s.vod);
@@ -163,6 +166,67 @@ export default function usePlayer() {
   // Real playing time accumulators
   const lastTimeForRealPlayRef = useRef(0);
   const realPlaySecondsAccRef = useRef(0);
+  const hlsAmountCheck = useRef(0);
+  const hlsAmount = useRef(0);
+  const observer = useRef<PerformanceObserver>(null);
+  const trackingFetchRequest = () => {
+    // check xem player còn gọi luồng không
+    if (observer.current?.disconnect) {
+      observer.current.disconnect();
+    }
+    hlsAmount.current = 0;
+    hlsAmountCheck.current = 0;
+    observer.current = new PerformanceObserver((list) => {
+      for (const entry of list.getEntries()) {
+        if (
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (entry as any).initiatorType === 'video' &&
+          entry.entryType === 'resource'
+        ) {
+          console.log('--- PLAYER ENTRY', entry);
+          hlsAmount.current += 1;
+        }
+      }
+    });
+    observer.current.observe({
+      entryTypes: ['resource'],
+    });
+  };
+  const checkHlsRequest = () => {
+    console.log('--- PLAYER HLS CHECK ' + new Date().toISOString(), {
+      hlsAmountCheck: hlsAmountCheck.current,
+      hlsAmount: hlsAmount.current,
+    });
+    if (
+      hlsAmountCheck.current !== hlsAmount.current &&
+      hlsAmount.current > hlsAmountCheck.current
+    ) {
+      hlsAmountCheck.current = hlsAmount.current;
+    } else {
+      if (observer.current?.disconnect) {
+        observer.current.disconnect();
+      }
+      if (intervalCheckHlsRequest.current) {
+        clearInterval(intervalCheckHlsRequest.current);
+        intervalCheckHlsRequest.current = null;
+      }
+      hlsAmount.current = 0;
+      hlsAmountCheck.current = 0;
+      console.log('--- PLAYER ERROR HLS AMOUNT ' + new Date().toISOString());
+      if (window.checkErrorInterRef) {
+        clearInterval(window.checkErrorInterRef);
+        window.checkErrorInterRef = null;
+      }
+      if (window.safariCheckErrorInterRef) {
+        clearInterval(window.safariCheckErrorInterRef);
+        window.safariCheckErrorInterRef = null;
+      }
+      const paused = sessionStorage.getItem(PAUSE_PLAYER_MANUAL);
+      if (paused !== 'true') {
+        checkVideoCodec();
+      }
+    }
+  };
   const handleUpdateRetryTimeout = () => {
     // mỗi lần retry: 3s, 3s, 3s, 6s, 30s, 1phút, 5 phút, 10 phút, 15 phút, dừng
     switch (retryCountRef.current) {
@@ -338,6 +402,30 @@ export default function usePlayer() {
   };
 
   const handlePlaying = async () => {
+    if (
+      dataChannel?.verimatrix === true ||
+      dataChannel?.verimatrix === '1' ||
+      dataChannel?.drm === true ||
+      dataChannel?.drm === '1'
+    ) {
+      const parser = new UAParser(navigator.userAgent);
+      const browser = parser.getBrowser().name;
+      if (
+        browser?.toUpperCase()?.includes('SAFARI') &&
+        (streamType === 'channel' || streamType === 'event')
+      ) {
+        if (intervalCheckHlsRequest.current) {
+          clearInterval(intervalCheckHlsRequest.current);
+          intervalCheckHlsRequest.current = null;
+        }
+        trackingFetchRequest();
+        intervalCheckHlsRequest.current = setInterval(
+          () => checkHlsRequest(),
+          10000,
+        );
+      }
+    }
+
     if (setIsEndVideo) {
       setIsEndVideo(0);
     }
@@ -848,17 +936,23 @@ export default function usePlayer() {
               channelDetailData: dataChannel,
             });
             const newUrl = getUrlToPlayH264({ dataStream: newStream });
-            // if (newUrl) {
-            //   if (clearErrorInterRef) clearErrorInterRef();
-            //   playVideoWithUrl({ url: newUrl });
-            //   if (setPlayingUrl) {
-            //     setPlayingUrl(newUrl);
-            //   }
-            // }
+            const expired = sessionStorage.getItem(EXPIRED_TIME);
+            let realLink = newUrl;
+            if (expired && newUrl && !isNaN(Number(expired))) {
+              try {
+                const res = await genExpiredLink({
+                  originalLink: newUrl || '',
+                  timeMinus: expired,
+                });
+                if (res?.data?.data?.url) {
+                  realLink = res?.data?.data?.url;
+                }
+              } catch {}
+            }
             if (clearErrorInterRef) clearErrorInterRef();
-            playVideoWithUrl({ url: newUrl || '' });
+            playVideoWithUrl({ url: realLink || '' });
             if (setPlayingUrl) {
-              setPlayingUrl(newUrl || '');
+              setPlayingUrl(realLink || '');
             }
           } else {
             const channelId = router.query.id as string;
@@ -916,14 +1010,32 @@ export default function usePlayer() {
               previousCurrentTimeRef.current = 0;
               if (clearErrorInterRef) clearErrorInterRef();
               playVideoWithUrl({ url: playingUrlRef?.current });
-            }, t);
+            }, 2000);
           } else {
+            console.log(
+              '--- PLAYER START RETRY WITH NEW STREAM ' +
+                new Date().toISOString(),
+            );
             if (openPlayerErrorModal) {
+              console.log(
+                '--- PLAYER SHOW ERROR POPUP ' + new Date().toISOString(),
+              );
               openPlayerErrorModal({
                 code: hlsErrosRef?.current[0].type,
               });
             }
             retryCountRef.current += 1;
+            if (retryCountRef.current > 1) {
+              trackingPlaybackErrorLog515({
+                Event: 'RetryPlayer',
+                ErrCode: hlsErrosRef?.current[0].type,
+                Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
+                  hlsErrosRef?.current[0].type
+                    ? `(Mã lỗi ${hlsErrosRef?.current[0].type})`
+                    : ''
+                }` as TrackingScreen,
+              });
+            }
             setRetryCount((v) => v + 1);
             retryGetStream();
           }
@@ -1000,6 +1112,8 @@ export default function usePlayer() {
       paused: isVideoPaused,
       isError: result,
       nvm: getDrmInfo(),
+      hlsAmountCheck: hlsAmountCheck.current,
+      hlsAmount: hlsAmount.current,
     });
     if (result) {
       sessionStorage.setItem(PLAYER_IS_RETRYING, 'true');
@@ -1021,9 +1135,12 @@ export default function usePlayer() {
   };
 
   const handleIntervalCheckErrors = () => {
-    console.log('--- PLAYER handleIntervalCheckErrors', {
-      checkErrorInterRef: window.checkErrorInterRef,
-    });
+    console.log(
+      '--- PLAYER handleIntervalCheckErrors ' + new Date().toISOString(),
+      {
+        checkErrorInterRef: window.checkErrorInterRef,
+      },
+    );
     // không chạy khi preview
     if (previewHandled) {
       return;
@@ -1063,9 +1180,12 @@ export default function usePlayer() {
     if (paused === 'true') {
       return;
     }
-    console.log('--- PLAYER handleIntervalCheckErrorsSafari', {
-      safariCheckErrorInterRef: window.safariCheckErrorInterRef,
-    });
+    console.log(
+      '--- PLAYER handleIntervalCheckErrorsSafari ' + new Date().toISOString(),
+      {
+        safariCheckErrorInterRef: window.safariCheckErrorInterRef,
+      },
+    );
     if (isEndVideoAlready()) {
       return;
     }
@@ -1078,11 +1198,15 @@ export default function usePlayer() {
         if (paused2 === 'true') {
           return;
         }
-        console.log('--- PLAYER handleIntervalCheckErrorsSafari START', {
-          safariCheckErrorInterRef: window.safariCheckErrorInterRef,
-          checkErrorInterRef: window.checkErrorInterRef,
-          nvm: getDrmInfo(),
-        });
+        console.log(
+          '--- PLAYER handleIntervalCheckErrorsSafari START ' +
+            new Date().toISOString(),
+          {
+            safariCheckErrorInterRef: window.safariCheckErrorInterRef,
+            checkErrorInterRef: window.checkErrorInterRef,
+            nvm: getDrmInfo(),
+          },
+        );
 
         if (window.checkErrorInterRef) {
           return;
@@ -1099,7 +1223,7 @@ export default function usePlayer() {
           setRetryCount(0);
         }
         previousCurrentTimeRef.current = currentTime;
-      }, 20000);
+      }, 10000);
     }
   };
 
@@ -1153,6 +1277,13 @@ export default function usePlayer() {
     // Reset state khi cleanup
     setIsPlayingHandled(false);
     sessionStorage.removeItem(PLAYER_BOOKMARK_SECOND);
+    if (observer.current?.disconnect) {
+      observer.current.disconnect();
+    }
+    if (intervalCheckHlsRequest.current) {
+      clearInterval(intervalCheckHlsRequest.current);
+      intervalCheckHlsRequest.current = null;
+    }
   };
 
   useEffect(() => {

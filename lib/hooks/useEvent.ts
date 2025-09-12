@@ -59,20 +59,27 @@ export default function useEvent({ slide, block }: Props) {
             if (countdowntime < 1) {
               status = null;
             } else {
-              const preSecond =
-                Math.round(second) + 1 < 10
-                  ? '0' + (Math.round(second) + 1)
-                  : Math.round(second) + 1;
-              const nextSecond =
-                Math.round(second) < 10
-                  ? '0' + Math.round(second)
-                  : Math.round(second);
-              const preMin = min + 1 < 10 ? '0' + (min + 1) : min + 1;
-              const nextMin = min < 10 ? '0' + min : min;
-              setPreSecond(preSecond);
-              setNextSecond(nextSecond);
-              setPreMin(preMin);
-              setNextMin(nextMin);
+              const currentSecond = Math.round(second);
+              const currentMinute = min;
+
+              const nextSecond = currentSecond;
+              const nextMinute = currentMinute;
+
+              let preSecond = currentSecond + 1;
+              let preMinute = currentMinute;
+
+              if (preSecond >= 60) {
+                preSecond = 0;
+                preMinute = currentMinute + 1;
+              }
+
+              const formatTime = (value: number) =>
+                value < 10 ? `0${value}` : value.toString();
+
+              setPreSecond(formatTime(preSecond));
+              setNextSecond(formatTime(nextSecond));
+              setPreMin(formatTime(preMinute));
+              setNextMin(formatTime(nextMinute));
               status = true;
             }
           }

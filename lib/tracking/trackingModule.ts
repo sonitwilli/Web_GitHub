@@ -2,6 +2,7 @@ import tracking from '.';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import { TrackingParams } from './tracking-types';
 import { getPlayerParams } from '../utils/playerTracking';
+import { getPlaybackParams } from '../hooks/useTrackingPlayback';
 export const trackingAccessLog50 = () => {
   const appName = localStorage.getItem(trackingStoreKey.APP_NAME) || '';
   const appId = localStorage.getItem(trackingStoreKey.APP_ID) || '';
@@ -48,10 +49,12 @@ export const trackingLog59 = ({
 export const trackingLog512 = ({ Event }: TrackingParams) => {
   // Log512 : EnterDetail
   const playerParams = getPlayerParams();
+  const playbackParams = getPlaybackParams();
   console.log('playerParams 512', playerParams);
 
   const params: TrackingParams = {
     ...playerParams,
+    ...playbackParams,
     Event: Event || 'EnterDetail',
   };
   tracking(params);

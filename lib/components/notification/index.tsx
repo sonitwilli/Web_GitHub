@@ -5,6 +5,10 @@ import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { trackingEnterFuncLog16 } from '@/lib/tracking/trackingCommon';
 import { trackingStoreKey } from '@/lib/constant/tracking';
+import { useNetwork } from '../contexts/NetworkProvider';
+import { ERROR_CONNECTION } from '@/lib/constant/texts';
+import { DEFAULT_ERROR_MSG } from '@/lib/constant/texts';
+import { showToast } from '@/lib/utils/globalToast';
 
 const DropdownNoti = dynamic(() => import('./DropdownNoti'), {
   ssr: false,
@@ -16,9 +20,17 @@ export default function Notification() {
   const [allRead, setAllRead] = useState(false);
 
   const { isLogged } = useAppSelector((state) => state.user);
+  const { isOffline } = useNetwork();
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
+    if (isOffline) {
+      showToast({
+        title: ERROR_CONNECTION,
+        desc: DEFAULT_ERROR_MSG,
+      });
+      return;
+    }
     if (isLogged) {
       setOpen(!open);
       trackingEnterFuncLog16('EnterNotification');

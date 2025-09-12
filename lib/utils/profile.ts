@@ -1,6 +1,6 @@
 // Import hằng số (điều chỉnh đường dẫn theo dự án của bạn)
 import {
-  MESSAGE_NO_CONNECTION,
+  // MESSAGE_NO_CONNECTION,
   DEFAULT_ERROR_MSG,
   NUMBER_PR,
   TYPE_PR,
@@ -99,7 +99,7 @@ export const checkError = ({ error }: CheckErrorParams = {}): string => {
   if (error instanceof Error && error.message) {
     const message = error.message;
     if (message.toUpperCase().includes('NETWORK')) {
-      return MESSAGE_NO_CONNECTION;
+      return DEFAULT_ERROR_MSG;
     }
   }
   return DEFAULT_ERROR_MSG;

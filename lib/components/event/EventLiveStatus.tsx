@@ -71,13 +71,13 @@ export default function EventLiveStatus({ dataEvent }: Props) {
           setEventStatus(null);
         } else if (countdown < 60) {
           setStatus(`Còn ${countdown} giây nữa`);
-          setEventStatus('scheduled');
+          setEventStatus(null); // Không hiển thị "Phát sóng vào" khi còn ít hơn 1 phút
         } else if (countdown < 3600) {
           setStatus(`Còn ${Math.floor(countdown / 60)} phút nữa`);
-          setEventStatus('scheduled');
+          setEventStatus(null); // Không hiển thị "Phát sóng vào" khi còn ít hơn 1 giờ
         } else {
           setStatus(formatVietnamDayTimeLabel(start));
-          setEventStatus('scheduled');
+          setEventStatus('scheduled'); // Chỉ hiển thị "Phát sóng vào" khi còn hơn 1 giờ
         }
       } else if (now >= start && now <= end) {
         setStatus(dataEvent?.label_event || 'LIVE');

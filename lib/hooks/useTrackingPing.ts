@@ -1,44 +1,61 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useRef } from 'react';
 import tracking from '../tracking';
-import { getPlayerParams, trackPlayerChange } from '../utils/playerTracking';
-import { ROUTE_PATH_NAMES, VIDEO_ID } from '../constant/texts';
+import {
+  getPlayerParams,
+  getTrackingParamIsLive,
+  trackPlayerChange,
+} from '../utils/playerTracking';
+import { VIDEO_ID } from '../constant/texts';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
-import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { TrackingScreen } from '../tracking/tracking-types';
 
 const pingTime = 60000;
-export const checkScreen = (previewHandled?: boolean): TrackingScreen => {
+export const checkScreen = (): TrackingScreen => {
   if (typeof window === 'undefined') {
     return '';
   }
   try {
     let value = 'PingVOD';
-    const href = window.location.href;
-    if (previewHandled) {
-      if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
-        value = 'PingPreviewLive';
-      }
-      if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
-        value = 'PingPreview';
-      }
-      if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
-        value = 'PingPreviewShow';
-      }
-    } else {
-      if (href?.includes(ROUTE_PATH_NAMES.CHANNEL)) {
-        value = 'PingChannel';
-      }
-      if (href?.includes(ROUTE_PATH_NAMES.VOD)) {
+    const isLive = getTrackingParamIsLive();
+    switch (isLive) {
+      case 0:
         value = 'PingVOD';
-      }
-      if (href?.includes(ROUTE_PATH_NAMES.PREMIERE)) {
-        value = 'PingPremiere';
-      }
-      if (href?.includes(ROUTE_PATH_NAMES.EVENT)) {
+        break;
+      case 1:
+        value = 'PingChannel';
+        break;
+      case 2:
         value = 'PingLiveshow';
-      }
+        break;
+      case 3:
+        value = 'PingLiveshow';
+        break;
+      case 4:
+        value = 'PingPremiere';
+        break;
+      case 5:
+        value = 'PingPreviewLive';
+        break;
+      case 6:
+        value = 'PingPreviewShow';
+        break;
+      case 7:
+        value = 'PingTrailer';
+        break;
+      case 8:
+        value = 'PingPladio';
+        break;
+      case 9:
+        value = 'PingPreview';
+        break;
+      case 10:
+        value = 'PingChannel';
+        break;
+      default:
+        value = 'PingVOD';
+        break;
     }
     saveSessionStorage({
       data: [
@@ -127,7 +144,6 @@ export const trackingPingLog111 = async ({
 };
 
 export default function useTrackingPing() {
-  const { previewHandled } = usePlayerPageContext();
   const pingInterval = useRef<NodeJS.Timeout | null>(null);
   // const lastPingTime = useRef(0);
   const isFirstPingDone = useRef(false);
@@ -182,6 +198,6 @@ export default function useTrackingPing() {
   return {
     trackingPingLog111,
     handlePingPlayer,
-    checkScreen: () => checkScreen(previewHandled),
+    checkScreen,
   };
 }

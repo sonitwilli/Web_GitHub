@@ -224,6 +224,8 @@ type ContextType = {
   }) => number | undefined;
   isDetailError?: boolean;
   setIsDetailError?: (v: boolean) => void;
+  canShowSub?: boolean;
+  setCanShowSub?: (v: boolean) => void;
 };
 
 const PlayerPageContext = createContext<ContextType | null>(null);
@@ -241,6 +243,7 @@ type Props = {
 };
 
 export function PlayerPageContextProvider({ children }: Props) {
+  const [canShowSub, setCanShowSub] = useState(false);
   const [isDetailError, setIsDetailError] = useState(false);
   const [isPauseClick, setIsPauseClick] = useState(0);
   const [isSupportOs, setIsSupportOs] = useState(true);
@@ -288,7 +291,31 @@ export function PlayerPageContextProvider({ children }: Props) {
   const isPlaySuccessRef = useRef<boolean>(false);
   useEffect(() => {
     isPlaySuccessRef.current = isPlaySuccess;
+    if (isPlaySuccess) {
+      setTimeout(() => {
+        setCanShowSub(true);
+      }, 1000);
+    }
   }, [isPlaySuccess]);
+
+  useEffect(() => {
+    let playerState = 'Minimize';
+    if (isFullscreen) {
+      playerState = 'Fullscreen';
+    } else if (isExpanded) {
+      playerState = 'Maximize';
+    } else {
+      playerState = 'Minimize';
+    }
+    saveSessionStorage({
+      data: [
+        {
+          key: trackingStoreKey.PLAYER_STATE,
+          value: playerState,
+        },
+      ],
+    });
+  }, [isExpanded, isFullscreen]);
   const [realPlaySeconds, setRealPlaySeconds] = useState<number>(0);
   const [playerName, setPlayerName] = useState<PLAYER_NAME_TYPE>('hls');
   const modalActions = useModalActions();
@@ -375,7 +402,7 @@ export function PlayerPageContextProvider({ children }: Props) {
   const isEndedLiveCountdown = useSelector(
     (state: RootState) => state.player.isEndedLiveCountdown,
   );
-
+  const { isLogged } = useAppSelector((state) => state.user);
   const [previewHandled, setPreviewHandled] = useState(false);
   // const checkScreen = () => {
   //   if (typeof window === 'undefined') {
@@ -1265,6 +1292,8 @@ export function PlayerPageContextProvider({ children }: Props) {
 
   useEffect(() => {
     if (fetchChannelCompleted) {
+      console.log('--- TRACKING fetchChannelCompleted');
+
       switch (streamType) {
         case 'vod':
           if (requirePurchaseData) {
@@ -1333,10 +1362,20 @@ export function PlayerPageContextProvider({ children }: Props) {
       // Re-init lại player flow sau khi chuẩn bị xong
       setDataStream({}); // <- force clear để Player component re-render lại
       getData(); // Gọi lại để fetch stream & phát lại
+    } else if (isPrepareLive === true) {
+      if (!isLogged) {
+        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPrepareLive, fetchChannelCompleted]);
-
+  useEffect(() => {
+    if (isEndedLive) {
+      trackingShowBackdropLog177({
+        Event: 'ShowBackdrop',
+      });
+    }
+  }, [isEndedLive]);
   useEffect(() => {
     if (dataEvent?.type !== 'event') return;
     if (!dataEvent?.end_time || isPrepareLive === true) return;
@@ -1597,6 +1636,8 @@ export function PlayerPageContextProvider({ children }: Props) {
         getSeekPremier,
         isDetailError,
         setIsDetailError,
+        canShowSub,
+        setCanShowSub,
       }}
     >
       <div className="f-container fixed top-0 left-0 -z-[10] pointer-events-none">

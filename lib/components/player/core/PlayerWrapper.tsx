@@ -18,6 +18,7 @@ import FingerPrintClient from './FingerPrintClient';
 import dynamic from 'next/dynamic';
 import {
   DEFAULT_IP_ADDRESS,
+  ERROR_PLAYER_FPT_PLAY_RETRY,
   IP_ADDRESS,
   PAUSE_PLAYER_MANUAL,
   PLAYER_WRAPPER,
@@ -56,6 +57,7 @@ import axios from 'axios';
 import useCodec from '@/lib/hooks/useCodec';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import PauseDesktop from './PauseDesktop';
+import { TrackingScreen } from '@/lib/tracking/tracking-types';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -263,8 +265,10 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     if (streamType === 'vod') {
       return (
         (dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-        dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-        dataChannel?.episode_type === EpisodeTypeEnum.SEASON
+        ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+          dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+          dataChannel?.episodes?.length &&
+          dataChannel?.episodes?.length > 0)
       );
     }
     if (streamType === 'playlist') {
@@ -319,9 +323,11 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     setIsShowErrorModal(true);
     setPlayerError(v);
     trackingPlaybackErrorLog515({
-      Event: 'Error',
+      Event: 'PlaybackError',
       ErrCode: v.code,
-      ErrMessage: v.content,
+      Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
+        v.code ? `(Mã lỗi ${v.code})` : ''
+      }` as TrackingScreen,
     });
     trackingShowPopupLog191();
   };
@@ -574,7 +580,7 @@ export default function PlayerWrapper({ children, eventId }: Props) {
           visible={showNoAdsGuide}
         />
 
-        {viewportType === VIEWPORT_TYPE.DESKTOP && isShowExpandButton && (
+        {viewportType === VIEWPORT_TYPE.DESKTOP && isShowExpandButton ? (
           <div
             className={`absolute top-1/2 right-0 -translate-y-1/2 player-expand z-[2] ${
               isPlaySuccess ? '' : ''
@@ -582,6 +588,8 @@ export default function PlayerWrapper({ children, eventId }: Props) {
           >
             <ExpandButton />
           </div>
+        ) : (
+          ''
         )}
         {showModalLogin ? <PlayerLogin /> : ''}
 

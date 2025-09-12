@@ -4,11 +4,13 @@ const fptPackages = [
   {
     name: 'FTV119',
     description:
-      'Xem truyền hình gia đình (ngoại trừ kênh K+, các giải thể thao quốc tế và trong nước, kho phim bộ, phim lẻ khổng lồ và hàng ngàn nội dung giải trí khác trong 30 ngày. (Lưu ý: Đăng nhập và xem cùng lúc trên 2 thiết bị mobile (bao gồm Phone và Tablet).',
+      'Xem truyền hình (trừ các kênh K+, HBO Go), các giải thể thao quốc tế và trong nước, kho phim bộ, phim lẻ khổng lồ và hàng ngàn nội dung giải trí khác trong 30 ngày (Lưu ý: Đăng nhập và xem cùng lúc trên 2 thiết bị mobile (bao gồm Phone và Tablet).',      
     details:
       'Miễn phí Data tốc độ cao truy cập ứng dụng FPT Play. Cộng 2GB/ngày truy cập Internet',
-    syntax: 'Soạn FTV119 gửi 9199 (Miễn phí SMS)',
-    syntax2: 'Soạn HUY FTV119 gửi 9199 (Miễn phí SMS). Để kiểm tra dung lượng data của gói cước soạn: Soạn KT ALL gửi 9199 (200đ/SMS) hoặc nhấn gọi *090*5# (miễn phí)',
+    syntax: 'Soạn DK FTV119 gửi 789 hoặc FTV119 gửi 789 (Miễn phí SMS)',
+    syntax2:
+      'Soạn HUY FTV119 gửi 789 (Miễn phí SMS). Để kiểm tra dung lượng data của gói cước soạn: Soạn KT ALL gửi 999 (200đ/SMS) hoặc nhấn gọi *090*5# (miễn phí)',
+    
     fee: {
       text: 'Đăng ký với mức cước',
       details: '119.000 ĐỒNG',

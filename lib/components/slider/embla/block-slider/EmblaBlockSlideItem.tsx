@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useMemo, useRef } from 'react';
 import {
+  BlockItemResponseType,
   BlockItemType,
   BlockSlideItemType,
   PageMetaType,
@@ -15,6 +16,7 @@ type PropType = {
   block?: BlockItemType;
   index?: number;
   metaBlock?: PageMetaType;
+  blockData?: BlockItemResponseType;
 };
 
 const EmblaBlockSlideItem: React.FC<PropType> = (props) => {

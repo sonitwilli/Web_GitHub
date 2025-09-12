@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.43';
+export const APP_VERSION = '8.0.45';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -256,6 +256,8 @@ export const WRONG_OTP = 'Mã OTP không chính xác, vui lòng thử lại.';
 export const QUICK_LOGIN_SCAN_VERIFY_TOKEN = 'QUICK_LOGIN_SCAN_VERIFY_TOKEN';
 export const ERROR_PLAYER_FPT_PLAY =
   'Đã xảy ra sự cố khi kết nối FPT Play! Vui lòng thử lại sau hoặc chọn một nội dung khác.';
+export const ERROR_PLAYER_FPT_PLAY_RETRY =
+  'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.';
 // login
 export const LOGIN_PHONE_NUMBER = 'LOGIN_PHONE_NUMBER';
 export const TYPE_LOGIN = 'TYPE_LOGIN';
@@ -552,6 +554,7 @@ export const PREVIEW_MESSAGES = {
 };
 export enum SOURCE_PROVIDER {
   GALAXY_PLAY = 'galaxy-play',
+  PLADIO = 'pladio',
 }
 
 export const HISTORY_TEXT = {
@@ -592,3 +595,4 @@ export const CSL_VALUE = 'sonsangtuantoanminh';
 export const DebugLog = 'DebugLog';
 export const DebugLog_CREATED_TIME = 'DebugLog_CREATED_TIME';
 export const SENTRY_LIMIT = 'SENTRY_LIMIT'; // minute
+export const EXPIRED_TIME = 'EXPIRED_TIME';

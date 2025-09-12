@@ -10,6 +10,7 @@ import {
   SELECTED_SUBTITLE,
   SELECTED_SUBTITLE_LABEL,
   SELECTED_VIDEO_QUALITY,
+  SOURCE_PROVIDER,
   VIDEO_CURRENT_TIME,
   VIDEO_ID,
   VIDEO_TIME_BEFORE_ERROR,
@@ -441,6 +442,7 @@ export const removePlayerSessionStorage = () => {
       trackingStoreKey.BLOCK_INDEX,
       trackingStoreKey.POSITION_INDEX,
       trackingStoreKey.SCREEN_ITEM,
+      trackingStoreKey.PLAYER_VOD_ID_RELATED,
       VIDEO_TIME_BEFORE_ERROR,
       PLAYER_IS_RETRYING,
       trackingStoreKey.PLAYER_AUDIO_CODEC,
@@ -473,7 +475,7 @@ export const getItemInfo = () => {
       dataChannel?.alias_name ||
       '';
     let EpisodeId = currentEpisode?.real_episode_id || '';
-    if (streamType === 'event') {
+    if (streamType === 'event' || streamType === 'premiere') {
       EpisodeId = eventId;
     }
     return { ItemId, ItemName, EpisodeId };
@@ -497,7 +499,7 @@ export const getTrackingParamIsLive = () => {
   // 9: PreviewVOD => pathname + field previewHandled
   // 10: Timeshift => pathname
   const url = window.location.pathname;
-  const { dataStream } = getContentData();
+  const { dataStream, dataChannel } = getContentData();
   const isVod = url.includes('/xem-video/');
   const isChannel = url.includes('/xem-truyen-hinh/');
   const isEvent = url.includes('/su-kien/');
@@ -507,6 +509,9 @@ export const getTrackingParamIsLive = () => {
   if (isVod) {
     if (isPreview) {
       return 9;
+    }
+    if (dataChannel?.source_provider === SOURCE_PROVIDER.PLADIO) {
+      return 8;
     }
     if (dataStream) {
       const isTrailer = dataStream?.is_trailer;
@@ -699,7 +704,7 @@ export const getPlayerParams = () => {
     BlockPosition: sessionStorage.getItem(trackingStoreKey.BLOCK_INDEX) || '',
     Position: Position || '',
     isTrailer: dataStream?.is_trailer || '',
-    isLive: isLive?.toString() || '',
+    IsLive: isLive?.toString() || '',
     isLinkDRM: isLinkDRM ? '1' : '0',
     Directors:
       dataChannel?.directors_detail
@@ -725,6 +730,10 @@ export const getPlayerParams = () => {
     PublishCountry: dataChannel?.nation || dataChannel?.countries || '',
     isRepeat: 0,
     Price: '0',
+    IDRelated:
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID_RELATED) || '',
+    PlayerState:
+      sessionStorage.getItem(trackingStoreKey.PLAYER_STATE) || 'Minimize',
   };
   const href = window.location.href;
   if (

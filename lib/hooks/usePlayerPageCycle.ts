@@ -1,7 +1,6 @@
 import { useEffect, useLayoutEffect } from 'react';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
-import { trackingPingLog111 } from './useTrackingPing';
 import { changePageBlocks } from '../store/slices/blockSlice';
 import { useAppDispatch } from '../store';
 import { changeClickToPlayTime } from '../store/slices/trackingSlice';
@@ -37,6 +36,7 @@ export default function usePlayerPageCycle() {
         },
       ],
     });
+    console.log('--- TRACKING player page cycle', router.query);
     const {
       bookmark,
       landing_page,
@@ -44,6 +44,7 @@ export default function usePlayerPageCycle() {
       block_index,
       position_index,
       from,
+      id_related,
       ...restQuery
     } = router.query;
     if (
@@ -52,7 +53,8 @@ export default function usePlayerPageCycle() {
       is_from_chatbot !== undefined ||
       block_index ||
       position_index ||
-      from
+      from ||
+      id_related
     ) {
       if (landing_page) {
         saveSessionStorage({
@@ -94,6 +96,16 @@ export default function usePlayerPageCycle() {
           ],
         });
       }
+      if (id_related) {
+        saveSessionStorage({
+          data: [
+            {
+              key: trackingStoreKey.PLAYER_VOD_ID_RELATED,
+              value: id_related as string,
+            },
+          ],
+        });
+      }
       router.replace(
         {
           pathname: router.pathname,
@@ -112,20 +124,20 @@ export default function usePlayerPageCycle() {
   useEffect(() => {
     return () => {
       console.log('--- PLAYER UNMOUNTED usePlayerPageCycle');
-      const trackingState = sessionStorage.getItem(
-        trackingStoreKey.PLAYER_TRACKING_STATE,
-      );
-      if (trackingState === 'start') {
-        trackingPingLog111({ isFinal: true });
-        saveSessionStorage({
-          data: [
-            {
-              key: trackingStoreKey.PLAYER_TRACKING_STATE,
-              value: 'stop',
-            },
-          ],
-        });
-      }
+      // const trackingState = sessionStorage.getItem(
+      //   trackingStoreKey.PLAYER_TRACKING_STATE,
+      // );
+      // if (trackingState === 'start') {
+      //   trackingPingLog111({ isFinal: true });
+      //   saveSessionStorage({
+      //     data: [
+      //       {
+      //         key: trackingStoreKey.PLAYER_TRACKING_STATE,
+      //         value: 'stop',
+      //       },
+      //     ],
+      //   });
+      // }
     };
   }, []);
   return {};

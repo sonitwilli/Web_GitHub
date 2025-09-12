@@ -145,13 +145,13 @@ const BuyPackageComponent = () => {
       </div>
 
       <a
-        href="https://shop.fpt.vn/internet?utm_source=Seo&utm_medium=FPTPlayMuaGoi&utm_campaign=Internet"
+        href="https://fpt.vn/internet-ca-nhan?utm_campaign=Internet&utm_medium=FPTPlayMuaGoi&utm_source=Seo"
         target="_blank"
         rel="noopener noreferrer"
         className="mt-8 block"
       >
         <Image
-          src="/images/package_desktop.jpg"
+          src="/images/package_desktop.png"
           alt="muagoi"
           width={1920}
           height={200}

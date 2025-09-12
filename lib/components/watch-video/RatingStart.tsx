@@ -6,6 +6,7 @@ import { showToast } from '@/lib/utils/globalToast';
 import { postRatingData, RatingData } from '@/lib/api/video';
 import { HighlightedInfo } from './InforVideoComponent';
 import { useSelector } from 'react-redux';
+import { AxiosError } from 'axios';
 
 interface RatingStarProps {
   itemId: string;
@@ -90,28 +91,45 @@ const RatingStar: React.FC<RatingStarProps> = ({
       return;
     }
 
-    const res = await postRatingData({
-      itemId,
-      refId,
-      appId,
-      rating: starValue,
-    });
+    try {
+      const res = await postRatingData({
+        itemId,
+        refId,
+        appId,
+        rating: starValue,
+      });
 
-    if (res?.status === '1') {
-      showToastSafely(
-        res?.message?.title || 'Gửi đánh giá thành công',
-        res?.msg || 'Cảm ơn bạn đã đánh giá nội dung này',
-      );
-      if (isEditRating) {
-        setIsEditRating(false);
+      if (res?.status === '1') {
+        showToastSafely(
+          res?.message?.title || 'Gửi đánh giá thành công',
+          res?.msg || 'Cảm ơn bạn đã đánh giá nội dung này',
+        );
+        if (isEditRating) {
+          setIsEditRating(false);
+        }
+        setRating(starValue);
+        loadRating?.();
+      } else {
+        showToastSafely(
+          res?.message?.title ||
+            res?.data?.title ||
+            'Gửi đánh giá không thành công',
+          res?.message?.content ||
+            res?.data?.msg ||
+            'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        );
       }
-      setRating(starValue);
-      loadRating?.();
-    } else {
-      showToastSafely(
-        res?.message?.title || 'Gửi đánh giá thất bại',
-        res?.message?.content || 'Đã có lỗi xảy ra, vui lòng thử lại sau',
-      );
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        showToastSafely(
+          error.response?.data?.message?.title ||
+            error.response?.data?.data?.title ||
+            'Gửi đánh giá không thành công',
+          error.response?.data?.message?.content ||
+            error.response?.data?.data?.msg ||
+            'Đã có lỗi xảy ra, vui lòng thử lại sau',
+        );
+      }
     }
   };
 

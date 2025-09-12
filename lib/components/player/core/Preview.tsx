@@ -31,8 +31,6 @@ import { AxiosError } from 'axios';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import useCodec from '@/lib/hooks/useCodec';
 import { useStreamControls } from '@/lib/hooks/useStreamControls';
-import PlayerPlaceholder from './PlayerPlaceholder';
-import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 
 export type PreviewType = 'vod' | 'playlist' | 'live' | 'event' | 'channel';
 
@@ -54,6 +52,7 @@ interface RequireObjMsg {
 
 interface CurrentStream {
   require_obj_msg?: RequireObjMsg;
+  ttl_preview?: string;
 }
 
 interface DataEndedPreviewEvent {
@@ -98,21 +97,13 @@ const Preview: React.FC<PreviewProps> = ({
 }) => {
   const router = useRouter();
   const dispatch = useAppDispatch();
-  const {
-    isEndVideo,
-    hlsErrors,
-    dataStream,
-    dataChannel,
-    realPlaySeconds,
-    videoHeight,
-  } = usePlayerPageContext();
+  const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds } =
+    usePlayerPageContext();
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { setIsVideoPaused } = usePlayerPageContext();
-  const streamVideoRef = useRef<HTMLVideoElement | null>(null);
-  const { viewportType } = useScreenSize();
 
   // Helper to check if type is live-like (live, channel, event)
   const isLiveType = type === 'live' || type === 'channel' || type === 'event';
@@ -140,16 +131,10 @@ const Preview: React.FC<PreviewProps> = ({
     return type === 'vod' || type === 'playlist' ? 'hls' : 'shaka';
   }, [type]);
 
-  const { pauseStream: pauseStreamPreview, playUrl: playStreamUrl } =
-    useStreamControls({
-      playerType,
-      videoRef: streamVideoRef as React.RefObject<HTMLVideoElement>,
-      onUrlChange: (url) => {
-        // Optional: track URL changes if needed
-        console.log('Stream URL changed to:', url);
-      },
-      autoplay: false,
-    });
+  const { playUrl: playStreamUrl } = useStreamControls({
+    playerType,
+    videoRef: videoRef as React.RefObject<HTMLVideoElement>,
+  });
 
   const isLiveEnded = useMemo(() => {
     return (
@@ -172,15 +157,19 @@ const Preview: React.FC<PreviewProps> = ({
   const [showPlaceholderOnAutoStop, setShowPlaceholderOnAutoStop] =
     useState(false);
 
-  const PREVIEW_TIME_LIMIT = 300; // 5 minutes in seconds
+  const PREVIEW_TIME_LIMIT = useMemo(() => {
+    return parseInt(currentStream?.ttl_preview || '300'); // 5 minutes in seconds
+  }, [currentStream]);
 
   // Track preview time elapsed based on real play seconds
   useEffect(() => {
+    // Only listen when all conditions are met
     if (
       isLiveType &&
       isPreviewActive &&
       realPlaySeconds &&
-      realPlaySeconds > 0
+      realPlaySeconds > 0 &&
+      realPlaySeconds <= PREVIEW_TIME_LIMIT
     ) {
       // Auto stop when time limit reached
       if (realPlaySeconds >= PREVIEW_TIME_LIMIT) {
@@ -207,7 +196,6 @@ const Preview: React.FC<PreviewProps> = ({
     const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (videoElement) {
       videoRef.current = videoElement;
-      streamVideoRef.current = videoElement;
     }
   }, []);
 
@@ -326,13 +314,17 @@ const Preview: React.FC<PreviewProps> = ({
     );
   }, [type, isTvod, previewConfig]);
 
-  const handleAutoStopPreview = useCallback(() => {
-    pauseStreamPreview();
+  const handleAutoStopPreview = () => {
+    if (window.hlsPlayer) {
+      window.hlsPlayer.destroy();
+    } else if (window.shakaPlayer) {
+      window.shakaPlayer.unload();
+    }
     setShowPlaceholderOnAutoStop(true);
     // Show background overlay with time limit message
     setPreviewState('background');
-    sessionStorage.removeItem(IS_PREVIEW_LIVE);
-  }, [pauseStreamPreview]);
+    console.log('handleAutoStopPreview ----------------');
+  };
 
   const exitFullscreen = useCallback(() => {
     if (document.fullscreenElement && document.exitFullscreen) {
@@ -436,7 +428,7 @@ const Preview: React.FC<PreviewProps> = ({
     setIsPopupManuallyClosed(true);
   }, []);
 
-  const handleExitPreview = useCallback(async () => {
+  const handleExitPreview = () => {
     if (isLiveType) {
       if (dataEndedPreviewEvent?.is_ended) {
         onExitPreviewEvent?.();
@@ -450,7 +442,7 @@ const Preview: React.FC<PreviewProps> = ({
           // Reset placeholder state
           setShowPlaceholderOnAutoStop(false);
           // Then play trailer URL
-          await playStreamUrl(trailerUrl);
+          playStreamUrl(trailerUrl);
           // Set popup state to show popup instead of hiding completely
           setPreviewState('popup');
         } else {
@@ -462,14 +454,7 @@ const Preview: React.FC<PreviewProps> = ({
         }
       }
     }
-  }, [
-    type,
-    dataEndedPreviewEvent,
-    onExitPreviewEvent,
-    onExitPreviewLive,
-    dataStream,
-    playStreamUrl,
-  ]);
+  };
 
   // Main effect to control preview state
   useEffect(() => {
@@ -592,18 +577,12 @@ const Preview: React.FC<PreviewProps> = ({
       {previewState === 'background' && (
         <>
           {showPlaceholderOnAutoStop && (
-            <div
-              className="w-full h-full absolute top-0 left-0 z-[1]"
-              style={{
-                height:
-                  viewportType === VIEWPORT_TYPE.DESKTOP
-                    ? `${
-                        videoHeight && videoHeight > 0 ? videoHeight : '100%'
-                      }px`
-                    : '100%',
-              }}
-            >
-              <PlayerPlaceholder />
+            <div className="w-full h-full absolute top-0 left-0 z-[1]">
+              <img
+                src="/images/default-poster-horizontal.png"
+                alt="default poster"
+                className="w-full h-auto object-cover"
+              />
             </div>
           )}
           <div

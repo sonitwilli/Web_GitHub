@@ -9,6 +9,8 @@ import {
 import { getContentData, getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
 import { getSeekEvent } from '../utils/seekTracking';
+import { ERROR_PLAYER_FPT_PLAY_RETRY } from '../constant/texts';
+import { removeSessionStorage } from '../utils/storage';
 
 export const getPlaybackParams = (): TrackingParams => {
   const detectScreen = sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
@@ -16,7 +18,9 @@ export const getPlaybackParams = (): TrackingParams => {
     trackingStoreKey.APP_MODULE_SCREEN,
   );
   const Screen =
-    detectScreen && detectScreen !== '' ? detectScreen : appModuleScreen;
+    detectScreen && detectScreen !== ''
+      ? detectScreen
+      : appModuleScreen || 'General';
   const { dataStream } = getContentData();
   const Url =
     sessionStorage.getItem(trackingStoreKey.PLAYING_URL) ||
@@ -97,11 +101,18 @@ export const trackingStopMovieLog52 = () => {
     }
     const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
-    return tracking({
+    tracking({
       LogId: '52',
       Event: Event || 'StopMovie',
       ...playerParams,
       ...playbackTrackingParams,
+    });
+    removeSessionStorage({
+      data: [
+        trackingStoreKey.APP_MODULE_SCREEN,
+        trackingStoreKey.APP_MODULE_SUBMENU_ID,
+        trackingStoreKey.IS_RECOMMEND_ITEM,
+      ],
     });
   } catch {}
 };
@@ -231,12 +242,11 @@ export const trackingPlaybackErrorLog515 = ({
       Event: Event || 'PlaybackError',
       ...playerParams,
       ...playbackTrackingParams,
-      Screen,
+      Screen: Screen || (ERROR_PLAYER_FPT_PLAY_RETRY as TrackingScreen),
       ErrCode,
-      ErrMessage:
-        ErrMessage ||
-        'Kết nối tới dịch vụ tạm thời đang có lỗi hoặc gián đoạn. Bạn có thể thử lại sau hoặc chọn một nội dung khác.',
-      ErrUrl,
+      ErrMessage: ErrMessage || ERROR_PLAYER_FPT_PLAY_RETRY,
+      ErrUrl:
+        ErrUrl || sessionStorage.getItem(trackingStoreKey.PLAYING_URL) || '',
       ErrHeader,
     });
   } catch {}

@@ -1,6 +1,42 @@
 {
     "versions": [
         {
+            "version": "8.0.45",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Page] Lỗi tô xanh page",
+                "[WEB][MultiProfile] Đá thiết bị: Lỗi không hiển thị lỗi kết nối với dịch vụ khi nhấn btn Hoàn tất ở màn hình Tạo hồ sơ",
+                "[WEB][MultiProfile] Lỗi không hiển thị toast thông báo Lỗi kết nối dịch vụ đối với trường hợp lỗi API khi nhấn btn Hoàn tất ở màn hình Tạo hồ sơ/Chỉnh sửa hồ sơ",
+                "[WEB][MultiProfile] Lỗi không hiển thị toast thông báo Lỗi kết nối dịch vụ đối với trường hợp lỗi API khi nhấn btn Xác nhận ở màn hình Nhập mã quản lý/Thiết lập mã quản lý",
+                "[WEB][Sự kiện] Lỗi vào sự kiện công chiếu chưa tới giờ phát khi chưa login",
+                "[WEB][Notification] Bổ sung thêm hiển thị khi thao tác ở chức năng Notification đối với trường hợp mất kết nối mạng",
+                "[WEB][Sự kiện] Lỗi hiện dư text 'Phát sóng vào' khi time còn dưới 1h",
+                "[WEB][Truyền hình] Lỗi scale dropdown ngày ở Lịch phát sóng",
+                "[WEB][Sự kiện] Lỗi countdown 00:60 ở Highlight",
+                "[Web][TrackingLog][Ping] Ghi nhận sai thông số playing_session của log 111 Ping cuối Khi người dùng ngừng xem nội dung Truyền hình",
+                "[Web][TrackingLog][Ping] Ghi nhận sai thông số của log 111 Ping Khi người dùng bắt đầu/đang/thoát xem nội dung",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 174 khi nguời dùng chọn đặt/hủy lịch nhắc trong màn hình chi tiết sự kiện",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 177 khi hiển thị màn hình Backdrop kết thúc sự kiện",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 518 khi người dùng thực hiện chuyển phụ đề / thuyết minh khi xem phim",
+                "[Web][TrackingLog][Ping] Ghi nhận sai thông số Screen của log 111 khi người dùng bắt đầu/đang/thoát xem nội dung"
+            ]
+        }, 
+        {
+            "version": "8.0.44",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Navigation bar] Lỗi mất tên category trong menu hamburger",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 515 người dùng gặp lỗi trong quá trình phát nội dung",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 518 khi người dùng thực hiện chuyển phụ đề / thuyết minh khi xem phim",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 179 khi hệ thống gọi nạp lại link (Play Attempt)",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số Screen của log 111 khi người dùng bắt đầu/đang/thoát xem nội dung",
+                "[Website][V5][DRM Key] Đứng luồng, hiển thị popup lỗi khi hết Key DRM",
+                "[WEB][PlayerVOD]Phụ đề: Lỗi vẫn hiển thị 1 đoạn là tiếng Việt khi đã chọn phụ đề là tiếng khác sau khi reload/chọn ở danh sách phát ở Safari",
+                "[WEB][PlayerVOD] Nextmovie/nextchapter: Lỗi không scale màn hình nextmovie/nextchapter khi chuyển sang mode responsive",
+                "[WEB][PlayerVOD] Nextmovie: Lỗi không hiển thị lại màn hình nextmovie sau khi tắt rồi play tiếp đến cuối VOD(đối với phim có danh đề)/seek và xem lại đến cuối"
+            ]
+        }, 
+        {
             "version": "8.0.43",
             "date": "Dự kiến",
             "content": [

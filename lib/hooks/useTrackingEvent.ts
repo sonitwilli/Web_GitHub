@@ -4,6 +4,7 @@ import tracking from '../tracking';
 import { TrackingParams, TrackingScreen } from '../tracking/tracking-types';
 import { getPlayerParams } from '../utils/playerTracking';
 import { useAppSelector } from '../store';
+import { removeSessionStorage } from '../utils/storage';
 
 const getPlaybackParams = (): TrackingParams => {
   const detectScreen = sessionStorage.getItem(trackingStoreKey.SCREEN_ITEM);
@@ -11,7 +12,9 @@ const getPlaybackParams = (): TrackingParams => {
     trackingStoreKey.APP_MODULE_SCREEN,
   );
   const Screen =
-    detectScreen && detectScreen !== '' ? detectScreen : appModuleScreen;
+    detectScreen && detectScreen !== ''
+      ? detectScreen
+      : appModuleScreen || 'General';
   return { Screen: Screen as TrackingScreen };
 };
 export const trackingEnterDetailLiveShowLog170 = ({
@@ -43,11 +46,18 @@ export const trackingStopLiveShowLog172 = () => {
     const playerParams = getPlayerParams();
     const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
-    return tracking({
+    tracking({
       LogId: '172',
       Event: 'StopLiveShow',
       ...playerParams,
       ...playbackTrackingParams,
+    });
+    removeSessionStorage({
+      data: [
+        trackingStoreKey.APP_MODULE_SCREEN,
+        trackingStoreKey.APP_MODULE_SUBMENU_ID,
+        trackingStoreKey.IS_RECOMMEND_ITEM,
+      ],
     });
   } catch {}
 };
@@ -89,24 +99,6 @@ export const trackingShowBackdropLog177 = ({ Event }: TrackingParams) => {
   } catch {}
 };
 
-export const trackingStartFirstFrameLog178 = ({ Event }: TrackingParams) => {
-  // Log178 : Initial | Retry
-  try {
-    if (typeof window === 'undefined') {
-      return;
-    }
-    const playerParams = getPlayerParams();
-    const playbackTrackingParams = getPlaybackParams();
-    /*@ts-ignore*/
-    return tracking({
-      LogId: '178',
-      Event: Event || 'Initial',
-      ...playerParams,
-      ...playbackTrackingParams,
-    });
-  } catch {}
-};
-
 export const trackingPlayAttempLog179 = ({ Event }: TrackingParams) => {
   // Log179 : PlayAttemp
   try {
@@ -140,6 +132,24 @@ export const useTrackingEvent = () => {
       const playbackTrackingParams = getPlaybackParams();
       const playerParams = getPlayerParams();
 
+      /*@ts-ignore*/
+      return tracking({
+        LogId: '171',
+        Event: 'StartLiveShow',
+        ...playbackTrackingParams,
+        ...playerParams,
+      });
+    } catch {}
+  };
+
+  const trackingStartFirstFrameLog178 = ({ Event }: TrackingParams) => {
+    // Log178 : Initial | Retry
+    try {
+      if (typeof window === 'undefined') {
+        return;
+      }
+      const playerParams = getPlayerParams();
+      const playbackTrackingParams = getPlaybackParams();
       // Calculate clickToPlayTime from values in store trackingSlice
       let calculatedClickToPlayTime = Date.now() - clickToPlayTime;
       let calculatedInitPlayTime = Date.now() - initPlayerTime;
@@ -150,10 +160,10 @@ export const useTrackingEvent = () => {
       }
       /*@ts-ignore*/
       return tracking({
-        LogId: '171',
-        Event: 'StartLiveShow',
-        ...playbackTrackingParams,
+        LogId: '178',
+        Event: Event || 'Initial',
         ...playerParams,
+        ...playbackTrackingParams,
         ClickToPlayTime: calculatedClickToPlayTime.toString(),
         InitPlayerTime: calculatedInitPlayTime.toString(),
       });
@@ -163,5 +173,6 @@ export const useTrackingEvent = () => {
   return {
     trackingEnterDetailLiveShowLog170,
     trackingStartLiveShowLog171,
+    trackingStartFirstFrameLog178,
   };
 };

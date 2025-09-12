@@ -46,10 +46,12 @@ export default function useSubtitle() {
         },
       ],
     });
-    trackingChangeSubAudioLog518({
-      Event: 'ChangeSubtitles',
-      ItemName: selected?.label,
-    });
+    if (selected?.label) {
+      trackingChangeSubAudioLog518({
+        Event: 'ChangeSubtitles',
+        ItemName: selected?.label,
+      });
+    }
   }, [selected]);
 
   const getSubs = useCallback(() => {

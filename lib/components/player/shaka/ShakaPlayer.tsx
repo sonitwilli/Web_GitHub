@@ -5,7 +5,7 @@ import {
   useLayoutEffect,
   useMemo,
 } from 'react';
-import { ChannelDetailType } from '@/lib/api/channel';
+import { ChannelDetailType, genExpiredLink } from '@/lib/api/channel';
 import { StreamItemType } from '@/lib/api/stream';
 import useCodec from '@/lib/hooks/useCodec';
 import usePlayer from '@/lib/hooks/usePlayer';
@@ -20,7 +20,7 @@ import { useDrmPlayer } from '@/lib/hooks/useDrmPlayer';
 import { usePlayerPageContext } from '../context/PlayerPageContext';
 import { userAgentInfo } from '@/lib/utils/ua';
 import OverlayLogo from '../core/OverlayLogo';
-import { PLAYER_NAME, VIDEO_ID } from '@/lib/constant/texts';
+import { EXPIRED_TIME, PLAYER_NAME, VIDEO_ID } from '@/lib/constant/texts';
 import dynamic from 'next/dynamic';
 import styles from '../core/Text.module.css';
 // import { useRouter } from 'next/router';
@@ -43,6 +43,8 @@ import {
 import CodecNotSupport from '../core/CodecNotSupport';
 import { useDispatch, useSelector } from 'react-redux';
 import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
+import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
+import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -99,6 +101,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isExpanded,
     queryEpisodeNotExist,
     clearErrorInterRef,
+    canShowSub,
   } = usePlayerPageContext();
   const dispatch = useDispatch();
   const {
@@ -158,60 +161,36 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     const isInitiallyShown = controlsContainer.getAttribute('shown') === 'true';
     setIsUserInteractive(isInitiallyShown);
   }, []);
-  // const handleBookmark = () => {
-  //   try {
-  //     // chỉ bookmark nếu:
-  //     // không có bookmark=false
-  //     // id tập khác routerChapterId
 
-  //     if (
-  //       typeof historyData?.chapter_id !== 'undefined' &&
-  //       vodCtx.routerChapterId !== 'undefined'
-  //     ) {
-  //       if (
-  //         String(historyData?.chapter_id) !== String(vodCtx.routerChapterId)
-  //       ) {
-  //         return;
-  //       }
-  //     }
-  //     if (streamType !== 'vod' && streamType !== 'playlist') {
-  //       return;
-  //     }
-  //     const bookmark = router.query[HISTORY_TEXT.BOOK_MARK];
-  //     if (bookmark === BOOLEAN_TEXTS.FALSE) {
-  //       return;
-  //     }
-  //     if (historyData?.timeplayed && historyData?.timeplayed !== '0') {
-  //       const t = Number(historyData?.timeplayed);
-  //       if (typeof sessionStorage !== 'undefined') {
-  //         sessionStorage.setItem(PLAYER_BOOKMARK_SECOND, t.toString());
-  //       }
-  //       const video = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-  //       if (video) {
-  //         video.currentTime = t;
-  //       }
-  //     }
-  //   } catch {}
-  // };
   // Phát video với src (ưu tiên props.src)
   const playVideo = useCallback(
-    ({ newUrl }: { newUrl?: string } = {}) => {
+    async ({ newUrl }: { newUrl?: string } = {}) => {
       const finalUrl = previewHandled
         ? getUrlToPlayH264() || dataStream?.trailer_url
         : showLoginPlayer && loginManifestUrl
         ? loginManifestUrl
         : newUrl || getUrlToPlayH264();
 
-      // const finalUrl =
-      //   'https://vodcdn.fptplay.net/POVOD/encoded/2024/07/11/asbeautifulasyou-2024-cn-003-1720705086/H264/stream.mpd';
-      // const finalUrl =
-      //   'https://vodcdn.fptplay.net/POVOD/encoded/2025/05/13/choicehusband-2023-cn-001-020c2597a0bebb80/H264/master.m3u8';
-      if (window.shakaPlayer && finalUrl) {
+      const expired = sessionStorage.getItem(EXPIRED_TIME);
+      let realLink = finalUrl;
+      if (expired && finalUrl && !isNaN(Number(expired))) {
+        try {
+          const res = await genExpiredLink({
+            originalLink: finalUrl || '',
+            timeMinus: expired,
+          });
+          if (res?.data?.data?.url) {
+            realLink = res?.data?.data?.url;
+          }
+        } catch {}
+      }
+
+      if (window.shakaPlayer && realLink) {
         if (setPlayingUrl) {
-          setPlayingUrl(finalUrl);
+          setPlayingUrl(realLink);
         }
         window.shakaPlayer
-          .load(replaceMpd(finalUrl))
+          .load(replaceMpd(realLink))
           .then(() => {
             handleBookmark();
             autoplay();
@@ -372,22 +351,59 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       const firstLoad = sessionStorage.getItem(
         trackingStoreKey.PLAYER_FIRST_LOAD,
       );
-      if (!firstLoad) {
-        saveSessionStorage({
-          data: [
-            {
-              key: trackingStoreKey.PLAYER_FIRST_LOAD,
-              value: new Date().getTime().toString(),
-            },
-          ],
-        });
-        trackingPlayAttempLog521({
-          Event: 'FirstLoad',
-        });
-      } else {
-        trackingPlayAttempLog521({
-          Event: 'PlayAttemp',
-        });
+      console.log('--- SHAKA: LOADING', firstLoad);
+      if (dataStream?.url) {
+        if (!firstLoad) {
+          saveSessionStorage({
+            data: [
+              {
+                key: trackingStoreKey.PLAYER_FIRST_LOAD,
+                value: new Date().getTime().toString(),
+              },
+            ],
+          });
+          switch (streamType) {
+            case 'vod':
+            case 'playlist':
+              trackingPlayAttempLog521({
+                Event: 'FirstLoad',
+              });
+              break;
+            case 'event':
+            case 'premiere':
+              trackingPlayAttempLog179({
+                Event: 'FirstLoad',
+              });
+              break;
+            case 'channel':
+            case 'timeshift':
+              trackingPlayAttempLog414({
+                Event: 'FirstLoad',
+              });
+              break;
+          }
+        } else {
+          switch (streamType) {
+            case 'vod':
+            case 'playlist':
+              trackingPlayAttempLog521({
+                Event: 'PlayAttemp',
+              });
+              break;
+            case 'event':
+            case 'premiere':
+              trackingPlayAttempLog179({
+                Event: 'PlayAttemp',
+              });
+              break;
+            case 'channel':
+            case 'timeshift':
+              trackingPlayAttempLog414({
+                Event: 'PlayAttemp',
+              });
+              break;
+          }
+        }
       }
       console.log('--- SHAKA: LOAD MANIFEST');
     });
@@ -627,7 +643,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
             !isFullscreen && !isExpanded ? 'xl:rounded-[16px]' : ''
           } ${styles.video} ${
             viewportType !== VIEWPORT_TYPE.DESKTOP ? '!rounded-0' : ''
-          }`}
+          } ${canShowSub ? 'video-can-show-sub' : ''}`}
           onPlaying={handlePlaying}
           onVolumeChange={handleVolumeChange}
           onLoadedMetadata={handleLoadedMetaData}

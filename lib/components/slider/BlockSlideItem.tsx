@@ -176,21 +176,40 @@ export default function BlockSlideItem({
     });
     const isSearchPage = router.pathname.includes('/tim-kiem');
     const isRelatedItem = block?.type === 'vod_related';
+    const idRelated =
+      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '';
+
     if (blockIndex > -1) {
       return result?.includes('?')
         ? `${result}&block_index=${blockIndex}&position_index=${index}${
-            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+            isSearchPage
+              ? '&from=Search'
+              : isRelatedItem
+              ? `&from=Related&id_related=${idRelated}`
+              : ''
           }`
         : `${result}?block_index=${blockIndex}&position_index=${index}${
-            isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+            isSearchPage
+              ? '&from=Search'
+              : isRelatedItem
+              ? `&from=Related&id_related=${idRelated}`
+              : ''
           }`;
     }
     return result?.includes('?')
       ? `${result}&position_index=${index}${
-          isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          isSearchPage
+            ? '&from=Search'
+            : isRelatedItem
+            ? `&from=Related&id_related=${idRelated}`
+            : ''
         }`
       : `${result}?position_index=${index}${
-          isSearchPage ? '&from=Search' : isRelatedItem ? '&from=Related' : ''
+          isSearchPage
+            ? '&from=Search'
+            : isRelatedItem
+            ? `&from=Related&id_related=${idRelated}`
+            : ''
         }` || '/';
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block, dataChannel, blockIndex, index]);
@@ -234,11 +253,11 @@ export default function BlockSlideItem({
     console.log('--- TRACKING handleItemClick', block, slide);
     sessionStorage.setItem(
       trackingStoreKey.APP_MODULE_SCREEN,
-      block?.block_type || '',
+      block?.block_type || metaBlock?.block_style || '',
     );
     sessionStorage.setItem(
       trackingStoreKey.APP_MODULE_SUBMENU_ID,
-      block?.name || '',
+      block?.name || metaBlock?.name || '',
     );
     sessionStorage.setItem(
       trackingStoreKey.IS_RECOMMEND_ITEM,

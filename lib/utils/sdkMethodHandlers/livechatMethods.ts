@@ -21,6 +21,7 @@ export interface LivechatMethods {
   getDisplayInfo(): displayInfoResponse;
   destroy(): boolean;
   getDeviceInfo(): deviceInfoResponse;
+  openDeepLink(url?: string): void;
 }
 export interface platformInfoResponse {
   platform?: string;
@@ -112,6 +113,11 @@ export const Commands: LivechatMethods = {
     return {};
   },
   openLink(url?: string) {
+    if (url) {
+      window.open(url, '_blank', 'noreferrer');
+    }
+  },
+  openDeepLink(url?: string) {
     if (url) {
       window.open(url, '_blank', 'noreferrer');
     }

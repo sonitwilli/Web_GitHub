@@ -49,13 +49,12 @@ export default function NewVodDetail({ blockData, block, data }: Props) {
         <div className="f-container">
           <NewVodDetailSlideItem slide={selectedSlide} block={block} />
         </div>
-        <div
-          className="f-container mt-[32px] xl:mt-0"
-        >
+        <div className="f-container mt-[32px] xl:mt-0">
           <EmblaBlockSlider
             slidesItems={data || []}
             block={block}
             slideClassName={`block-slider-${block?.block_type}`}
+            metaBlock={blockData?.meta}
           />
         </div>
       </div>

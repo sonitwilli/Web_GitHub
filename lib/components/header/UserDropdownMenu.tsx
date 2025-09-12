@@ -201,6 +201,20 @@ export default function UserDropdownMenu({
         setIsForgotPin(false);
         return;
       }
+    } else if (
+      updateResult?.data?.status !== '0' &&
+      userInfo?.profile?.profile_id !== getCookie(NUMBER_PR)
+    ) {
+      setIsDubTab(true);
+      saveProfile({ profile: selectedProfile as Profile });
+      const loginResult = await loginProfile({
+        profile_id: selectedProfile?.profile_id,
+      });
+      if (loginResult?.success) {
+        window.location.href = '/';
+        return;
+      }
+      return;
     }
 
     setLoading(true);
@@ -257,7 +271,7 @@ export default function UserDropdownMenu({
       );
       saveProfile({ profile: isSeletedProfile });
       dispatch(changeUserInfo(isSeletedProfile as UserInfoResponseType));
-      router.reload()
+      router.reload();
       return;
     }
     if (
@@ -266,15 +280,27 @@ export default function UserDropdownMenu({
       (userInfo?.profile?.profile_id !== getCookie(NUMBER_PR) && !isKidProfile)
     ) {
       setIsDubTab(true);
-      const isSeletedProfile = profiles.find(
-        (profile) => profile.profile_id === getCookie(NUMBER_PR),
-      );
-      if (isSeletedProfile) {
-        setSelectedProfile(isSeletedProfile);
+      let isSeletedProfile = null;
+      if (
+        selectedProfile &&
+        selectedProfile?.profile_id !== getCookie(NUMBER_PR)
+      ) {
+        saveProfile({ profile: selectedProfile as Profile });
+        const loginResult = await loginProfile({
+          profile_id: selectedProfile?.profile_id,
+        });
+        if (loginResult?.success) {
+          window.location.href = '/';
+        }
+
+        return;
+      } else {
+        isSeletedProfile = profiles.find(
+          (profile) => profile.profile_id === getCookie(NUMBER_PR),
+        );
+        setSelectedProfile(isSeletedProfile as Profile);
         return;
       }
-      setSelectedProfile(null);
-      return;
     }
     if (!selectedProfile) return;
 
@@ -298,10 +324,7 @@ export default function UserDropdownMenu({
 
       handleLoginSuccess({
         profile: loginResult?.data || {},
-        isRedirect:
-          getCookie(TYPE_PR) === '2'
-            ? !isDubTab
-            : true,
+        isRedirect: getCookie(TYPE_PR) === '2' ? !isDubTab : true,
       });
       setIsDubTab(false);
       setShowPinModal(false);
@@ -470,15 +493,14 @@ export default function UserDropdownMenu({
           }
         }}
       >
-        <div
-          className="w-full h-full rounded-full bg-cover bg-center"
-          style={{
-            backgroundImage: `url(${scaleImageUrl({
-              imageUrl: currentProfile?.avatar_url || fallbackAvatar,
-              width: 40,
-              height: 40,
-            })})`,
-          }}
+        <CustomImage
+          src={scaleImageUrl({
+            imageUrl: currentProfile?.avatar_url || fallbackAvatar,
+            width: 40,
+            height: 40,
+          })}
+          alt="avatar"
+          className="w-[44px] h-[44px] rounded-full"
         />
 
         {isKidProfile && (
@@ -522,7 +544,11 @@ export default function UserDropdownMenu({
                 >
                   <div className="relative">
                     <CustomImage
-                      src={scaleImageUrl({ imageUrl: profile.avatar_url || fallbackAvatar, width: 24, height: 24 })}
+                      src={scaleImageUrl({
+                        imageUrl: profile.avatar_url || fallbackAvatar,
+                        width: 24,
+                        height: 24,
+                      })}
                       width="24px"
                       height="24px"
                       className="w-[24px] h-[24px] rounded-full border border-white bg-cover bg-center"

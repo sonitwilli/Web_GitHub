@@ -551,6 +551,33 @@ const deletePingChannel = async ({
   );
 };
 
+export interface ExpireInterface {
+  originalLink: string;
+  timeMinus?: string; // second
+}
+
+export interface ExpiredResponse {
+  data?: {
+    url?: string;
+  };
+}
+
+const genExpiredLink = async (
+  data?: ExpireInterface,
+): Promise<AxiosResponse<ExpiredResponse>> => {
+  // ví dụ link thực tế expired sau 65 phút
+  // dev muốn test sau 5 phút only
+  // thì timeMinus = 65 - 5 = 60 phút = 3600s
+  function cleanUrl(url: string) {
+    return url.replace(/(https:\/\/[^/]+)\/.*?(\/channel)/, '$1$2');
+  }
+  const result = cleanUrl(data?.originalLink || '');
+  return axiosInstance.post(`stream/tv/securelink`, {
+    url: result,
+    bypass_time: data?.timeMinus || '-3780',
+  });
+};
+
 export {
   getChannels,
   getChannelDetail,
@@ -560,4 +587,5 @@ export {
   getTimeShiftChannel,
   pingChannel,
   deletePingChannel,
+  genExpiredLink,
 };

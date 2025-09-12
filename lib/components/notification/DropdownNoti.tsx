@@ -7,6 +7,7 @@ import { useOutsideClick } from '@/lib/hooks/useOutsideClick';
 import { usePreventOuterScroll } from '@/lib/hooks/usePreventOuterScroll';
 import { useAppSelector } from '@/lib/store';
 import { useNotification } from '../../hooks/useNotification';
+import { useNetwork } from '../contexts/NetworkProvider';
 import NotificationItem from './NotificationItem';
 import NotificationDetail from './NotificationDetail';
 import ReadAll from '../svg/ReadAll';
@@ -19,7 +20,12 @@ import {
 } from '../../api/notification';
 import { RiArrowLeftLine } from 'react-icons/ri';
 import { showToast } from '@/lib/utils/globalToast';
-import { DEFAULT_ERROR_MSG, INFORM, READ } from '@/lib/constant/texts';
+import {
+  DEFAULT_ERROR_MSG,
+  INFORM,
+  READ,
+  ERROR_CONNECTION,
+} from '@/lib/constant/texts';
 import Spinner from '../svg/Spinner';
 
 export type NotificationStatusType = 'all' | 'unread' | 'read';
@@ -42,6 +48,7 @@ export default function DropdownNoti({
 }) {
   const { fetchCategories, fetchInbox, markRead } = useNotification();
   const { info } = useAppSelector((state) => state.user);
+  const { isOffline } = useNetwork();
 
   const notiModalRef = useClickOutside<HTMLDivElement>(onClose, [
     'notification-bell-button',
@@ -78,9 +85,22 @@ export default function DropdownNoti({
       setCategories(cachedCategories);
     } else {
       (async () => {
-        const cats = await fetchCategories();
-        setCategories(cats);
-        cachedCategories = cats;
+        try {
+          const cats = await fetchCategories();
+          // Đảm bảo cats là array và có ít nhất 1 item
+          if (Array.isArray(cats) && cats.length > 0) {
+            setCategories(cats);
+            cachedCategories = cats;
+          } else {
+            // Nếu không có categories, set empty array để UI hiển thị "không có items"
+            setCategories([]);
+            cachedCategories = [];
+          }
+        } catch {
+          // Nếu có lỗi, set empty array
+          setCategories([]);
+          cachedCategories = [];
+        }
       })();
     }
   }, [fetchCategories]);
@@ -108,6 +128,11 @@ export default function DropdownNoti({
           setHasMore(res.data.length >= 10);
           setCurrentPage(page);
         }
+      } catch {
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: DEFAULT_ERROR_MSG,
+        });
       } finally {
         setLoading(false);
       }
@@ -155,6 +180,15 @@ export default function DropdownNoti({
   };
 
   const handleClickItem = async (item: InboxListItem) => {
+    // Check if offline first
+    if (isOffline) {
+      showToast({
+        title: ERROR_CONNECTION,
+        desc: DEFAULT_ERROR_MSG,
+      });
+      return;
+    }
+
     // Open new tab
     if (item.url) {
       const separator = item.url.includes('?') ? '&' : '?';
@@ -176,6 +210,15 @@ export default function DropdownNoti({
   };
 
   const handleShowDetail = async (item: InboxListItem) => {
+    // Check if offline first
+    if (isOffline) {
+      showToast({
+        title: ERROR_CONNECTION,
+        desc: DEFAULT_ERROR_MSG,
+      });
+      return;
+    }
+
     setInboxDetail({ ...item });
 
     // Local update inboxList: 'read'
@@ -196,6 +239,15 @@ export default function DropdownNoti({
   }
 
   const handleMarkReadCategory = async () => {
+    // Check if offline first
+    if (isOffline) {
+      showToast({
+        title: ERROR_CONNECTION,
+        desc: DEFAULT_ERROR_MSG,
+      });
+      return;
+    }
+
     try {
       const res = await onMarkReadCategoryInbox({
         category_id: selectedCategory,
@@ -214,10 +266,15 @@ export default function DropdownNoti({
         });
         // Optionally: reload with server
         loadInbox(1, false, selectedCategory, selectedStatus);
+      } else {
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: DEFAULT_ERROR_MSG,
+        });
       }
     } catch {
       showToast({
-        title: INFORM,
+        title: ERROR_CONNECTION,
         desc: DEFAULT_ERROR_MSG,
       });
     }

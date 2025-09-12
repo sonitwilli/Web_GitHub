@@ -395,10 +395,12 @@ export default function useAudio() {
         },
       ],
     });
-    trackingChangeSubAudioLog518({
-      Event: 'ChangeAudio',
-      ItemName: selectedAudio?.X_LABEL,
-    });
+    if (selectedAudio?.X_LABEL) {
+      trackingChangeSubAudioLog518({
+        Event: 'ChangeAudio',
+        ItemName: selectedAudio?.X_LABEL,
+      });
+    }
   }, [selectedAudio]);
 
   return {

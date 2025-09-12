@@ -45,6 +45,7 @@ const tracking = async (params: TrackingParams) => {
     AppName: appInfo?.AppName as TrackingAppName,
     Screen: getScreen(params),
     BoxTime: newDate,
+    DateStamp: newDate,
     user_session:
       params.Event === 'LoginSuccess'
         ? newDate

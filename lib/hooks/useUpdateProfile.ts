@@ -3,7 +3,9 @@ import { updateProfile, ApiResponse } from '@/lib/api/multi-profiles'; // Adjust
 import { Profile } from '@/lib/api/user';
 import { AxiosResponse } from 'axios';
 import { trackingModifyProfileLog103 } from '../tracking/trackingProfile';
-import { PROFILE_TYPES } from '../constant/texts';
+import { ERROR_CONNECTION, PROFILE_TYPES } from '../constant/texts';
+import { checkError } from '../utils/profile';
+import { showToast } from '../utils/globalToast';
 
 interface UseUpdateProfileProps {
   setLoadingUpdate?: (value: boolean) => void;
@@ -50,11 +52,16 @@ export const useUpdateProfile = ({
           localStorage.setItem('userSelected', JSON.stringify(data?.data));
           onUpdateSuccess?.();
         } else {
-          setError(data?.message?.content || null);
+          // setError(data?.message?.content || null);
+          throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
         console.log(err);
         setError(null);
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: checkError({ error: err }),
+        });
       } finally {
         setIsLoading(false);
         setLoadingUpdate?.(false);

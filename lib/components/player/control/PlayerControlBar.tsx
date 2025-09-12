@@ -131,8 +131,10 @@ export default function PlayerControlBar() {
             <SpeedButton />
             {(dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
             (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
-            dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-            dataChannel?.episode_type === EpisodeTypeEnum.SEASON ? (
+            ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+              dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+              dataChannel?.episodes?.length &&
+              dataChannel?.episodes?.length > 0) ? (
               <EpisodeListButton />
             ) : (
               ''

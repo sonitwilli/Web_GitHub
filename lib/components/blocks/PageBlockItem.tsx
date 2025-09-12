@@ -52,7 +52,6 @@ export default function PageBlockItem({
   // Kiểm tra xem có đang ở trang xem-video hay không
   const isVideoWatchPage = router.pathname.includes('xem-video');
 
-
   const getBlockData = useCallback(async () => {
     if (!block?.type) {
       return;
@@ -66,7 +65,7 @@ export default function PageBlockItem({
           block: block || {},
           keywordSearch: keywordSearch,
         });
-        
+
         // Filter out ended events from the response data - only if block contains events
         if (res?.data?.data) {
           const filteredData = filterEndedEvents(res.data.data);
@@ -121,15 +120,15 @@ export default function PageBlockItem({
     return dataBlock ? filterEndedEvents(dataBlock) : [];
   }, [dataBlock]);
 
-  useEffect(()=>{
-    if(data && data?.length > 0){
-      const pageSize = parseInt(configs?.number_item_of_page || '30')
+  useEffect(() => {
+    if (data && data?.length > 0) {
+      const pageSize = parseInt(configs?.number_item_of_page || '30');
       // Filter out ended events before slicing - only if block contains events
       const filteredData = filterEndedEvents(data);
-      const list = filteredData.slice(0, pageSize)
-      setDataBlock([...list])
-    } 
-  }, [data, configs?.number_item_of_page])
+      const list = filteredData.slice(0, pageSize);
+      setDataBlock([...list]);
+    }
+  }, [data, configs?.number_item_of_page]);
 
   const isFetchAllCompleted = useMemo(() => {
     if (!blockData?.data?.length) {
@@ -164,7 +163,9 @@ export default function PageBlockItem({
     if (block?.type === 'page') {
       return `/trang/${block.id}`;
     } else {
-      return `/block/${block?.type}/${viToEn(block?.name || '')}-${block?.id}?block_type=${block?.block_type}`;
+      return `/block/${block?.type}/${viToEn(block?.name || '')}-${
+        block?.id
+      }?block_type=${block?.block_type}`;
     }
   }, [block]);
 
@@ -187,11 +188,7 @@ export default function PageBlockItem({
 
   if (block?.block_type === 'auto_expansion') {
     return (
-      <NewVodDetail
-        data={filteredData}
-        block={block}
-        blockData={blockData}
-      />
+      <NewVodDetail data={filteredData} block={block} blockData={blockData} />
     );
   }
 
@@ -235,13 +232,13 @@ export default function PageBlockItem({
                 <div className="py-3 font-semibold text-2xl text-white">
                   Lịch đấu hôm nay
                 </div>
-                  <div className="rounded-b-lg ">
-                    <TodayTableLeagueResult
-                      blockData={blockData}
-                      height=""
-                      pageType={block?.id}
-                    />
-                  </div>
+                <div className="rounded-b-lg ">
+                  <TodayTableLeagueResult
+                    blockData={blockData}
+                    height=""
+                    pageType={block?.id}
+                  />
+                </div>
               </div>
             ) : null
           ) : (
@@ -281,11 +278,17 @@ export default function PageBlockItem({
             blockData?.data?.length > Number(configs?.number_item_of_page) &&
             !isVideoWatchPage && <ShowMore href={linkMore} variant="link" />}
         </div>
-        <div className={`${useContainer ? 'f-slider-container' : ''}`}>
+        <div
+          className={`${useContainer ? 'f-slider-container' : ''}`}
+          onClick={() => {
+            console.log('--- CLICK SLIDE', block, blockData);
+          }}
+        >
           <EmblaBlockSlider
             slidesItems={filteredData}
             block={block}
             slideClassName={`block-slider-${block?.block_type}`}
+            metaBlock={blockData?.meta}
           />
         </div>
       </div>
@@ -308,7 +311,9 @@ export default function PageBlockItem({
       }`}
     >
       <div
-        className={`${useContainer ? 'f-container' : ''} mb-[14px] md:mb-[24px] ${
+        className={`${
+          useContainer ? 'f-container' : ''
+        } mb-[14px] md:mb-[24px] ${
           !blockData?.meta?.short_description
             ? 'flex items-center gap-0 md:gap-[16px] justify-between tablet:justify-start'
             : ''
@@ -331,6 +336,7 @@ export default function PageBlockItem({
           slidesItems={filteredDataBlock}
           block={block}
           slideClassName={`block-slider-${block?.block_type} block-type-${block?.type}`}
+          metaBlock={blockData?.meta}
         />
       </div>
     </div>

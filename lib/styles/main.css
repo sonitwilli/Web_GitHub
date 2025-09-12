@@ -95,3 +95,7 @@ body::-webkit-scrollbar-track {
 .pr-safe {
   padding-right: env(safe-area-inset-right);
 }
+
+.video-can-show-sub::cue {
+  opacity: 1 !important;
+}

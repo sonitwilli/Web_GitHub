@@ -18,6 +18,8 @@ import { useAppSelector } from '@/lib/store';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
 import useCodec from '@/lib/hooks/useCodec';
+import React from 'react';
+import { isArray } from 'lodash';
 
 const ShareReaction = dynamic(() => import('../reaction/ShareReaction'), {
   ssr: false,
@@ -333,6 +335,10 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     };
   }, []);
 
+  useEffect(() => {
+    console.log('dataChannel', dataChannel);
+  }, [dataChannel]);
+
   return (
     <>
       <div
@@ -483,6 +489,58 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                     onClick={() => setShowModalShare(true)}
                   />
                 </div>
+
+                {/* Meta Data & Maturity Rating */}
+                {(() => {
+                  const validMetaData = isArray(dataEvent?.meta_data)
+                    ? dataEvent.meta_data.filter(
+                        (item: string) =>
+                          item && item !== '0' && item.trim() !== '',
+                      )
+                    : [];
+                  const hasValidAdvisories =
+                    dataEvent?.maturity_rating?.advisories &&
+                    dataEvent.maturity_rating.advisories !== '0' &&
+                    dataEvent.maturity_rating.advisories.trim() !== '';
+
+                  if (validMetaData.length === 0 && !hasValidAdvisories) {
+                    return null;
+                  }
+
+                  return (
+                    <div className="mb-[24px]">
+                      {/* Meta Data */}
+                      {validMetaData.length > 0 && (
+                        <div
+                          className={`flex items-center ${
+                            hasValidAdvisories ? 'mb-[16px]' : ''
+                          }`}
+                        >
+                          {validMetaData.map((item: string, idx: number) => (
+                            <React.Fragment key={idx}>
+                              <span className="text-spanish-gray font-roboto font-medium text-base leading-[130%] tracking-[0.02em]">
+                                {item}
+                              </span>
+                              {idx < validMetaData.length - 1 && (
+                                <span className="text-spanish-gray font-medium flex-shrink-0">
+                                  •
+                                </span>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </div>
+                      )}
+                      {/* Limit Age */}
+                      {hasValidAdvisories && (
+                        <div className="d-flex items-center">
+                          <span className="text-spanish-gray font-roboto font-medium text-base leading-[130%] tracking-[0.02em]">
+                            {dataEvent?.maturity_rating?.advisories}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
 
                 <div className="text-[20px] font-semibold">
                   <EventLiveStatus dataEvent={dataEvent} />

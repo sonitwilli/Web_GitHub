@@ -8,6 +8,8 @@ import {
   onMarkReadInbox,
 } from '../api/notification';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
+import { showToast } from '../utils/globalToast';
+import { DEFAULT_ERROR_MSG, ERROR_CONNECTION } from '../constant/texts';
 
 export type InboxPagingType = {
   page: number;
@@ -19,11 +21,17 @@ export type InboxPagingType = {
 export function useNotification() {
   const dispatch = useDispatch();
 
-  const handleAuthError = useCallback(
+  const handleError = useCallback(
     (error: unknown) => {
       const axiosError = error as AxiosError;
       if (axiosError.response?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+        return;
+      } else {
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: DEFAULT_ERROR_MSG,
+        });
       }
     },
     [dispatch],
@@ -36,10 +44,10 @@ export function useNotification() {
         return res.data.data;
       }
     } catch (error) {
-      handleAuthError(error);
+      handleError(error);
     }
     return [];
-  }, [handleAuthError]);
+  }, [handleError]);
 
   const fetchInbox = useCallback(
     async (params?: {
@@ -57,11 +65,11 @@ export function useNotification() {
           };
         }
       } catch (error) {
-        handleAuthError(error);
+        handleError(error);
       }
       return { data: [], paging: {} };
     },
-    [handleAuthError],
+    [handleError],
   );
 
   const fetchInboxDetail = useCallback(
@@ -72,20 +80,23 @@ export function useNotification() {
           return res.data.data;
         }
       } catch (error) {
-        handleAuthError(error);
+        handleError(error);
       }
       return null;
     },
-    [handleAuthError],
+    [handleError],
   );
 
-  const markRead = useCallback(async (ids: string[]) => {
-    try {
-      await onMarkReadInbox({ inbox_ids: ids });
-    } catch (error) {
-      console.error('Mark read failed', error);
-    }
-  }, []);
+  const markRead = useCallback(
+    async (ids: string[]) => {
+      try {
+        await onMarkReadInbox({ inbox_ids: ids });
+      } catch (error) {
+        handleError(error);
+      }
+    },
+    [handleError],
+  );
 
   return {
     fetchCategories,

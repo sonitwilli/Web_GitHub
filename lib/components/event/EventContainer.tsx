@@ -18,6 +18,10 @@ type Props = {
 export type EventDetailExtended = BlockSlideItemType & {
   blocks?: BlockItemType[];
   begin_time?: number;
+  meta_data?: string[];
+  maturity_rating?: {
+    advisories?: string;
+  };
 };
 
 export interface FirebaseEventData {

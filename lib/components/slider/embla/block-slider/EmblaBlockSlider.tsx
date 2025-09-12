@@ -8,7 +8,11 @@ import React, {
 import { EmblaOptionsType } from 'embla-carousel';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useRouter } from 'next/router';
-import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
+import {
+  BlockItemType,
+  BlockMetaType,
+  BlockSlideItemType,
+} from '@/lib/api/blocks';
 
 import {
   NextButton,
@@ -35,13 +39,14 @@ type PropType = {
   block?: BlockItemType;
   slidesItems?: BlockSlideItemType[];
   slideClassName?: string;
+  metaBlock?: BlockMetaType;
 };
 
 const EmblaBlockSlider: React.FC<PropType> = (props) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { width } = useScreenSize();
   const [imageHeight, setImageHeight] = useState(0);
-  const { slidesItems, slideClassName, block } = props;
+  const { slidesItems, slideClassName, block, metaBlock } = props;
   const [selectedIndex, setSelectedIndex] = useState(0);
   const router = useRouter();
 
@@ -134,6 +139,7 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                   block={block}
                   slide={slide}
                   index={index}
+                  metaBlock={metaBlock}
                 />
               ))}
             </div>

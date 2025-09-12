@@ -290,9 +290,13 @@ export const checkPassword = async ({
       };
     }
   } catch (error) {
+    showToast({
+      title: ERROR_CONNECTION,
+      desc: checkError({ error }),
+    });
     return {
       success: false,
-      error: error instanceof Error ? error.message : DEFAULT_ERROR_MSG,
+      error: DEFAULT_ERROR_MSG,
     };
   }
 };

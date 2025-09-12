@@ -222,55 +222,57 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
         const firstLoad = sessionStorage.getItem(
           trackingStoreKey.PLAYER_FIRST_LOAD,
         );
-        if (!firstLoad) {
-          saveSessionStorage({
-            data: [
-              {
-                key: trackingStoreKey.PLAYER_FIRST_LOAD,
-                value: new Date().getTime().toString(),
-              },
-            ],
-          });
-          switch (streamType) {
-            case 'vod':
-            case 'playlist':
-              trackingPlayAttempLog521({
-                Event: 'FirstLoad',
-              });
-              break;
-            case 'event':
-            case 'premiere':
-              trackingPlayAttempLog179({
-                Event: 'FirstLoad',
-              });
-              break;
-            case 'channel':
-            case 'timeshift':
-              trackingPlayAttempLog414({
-                Event: 'FirstLoad',
-              });
-              break;
-          }
-        } else {
-          switch (streamType) {
-            case 'vod':
-            case 'playlist':
-              trackingPlayAttempLog521({
-                Event: 'PlayAttemp',
-              });
-              break;
-            case 'event':
-            case 'premiere':
-              trackingPlayAttempLog179({
-                Event: 'PlayAttemp',
-              });
-              break;
-            case 'channel':
-            case 'timeshift':
-              trackingPlayAttempLog414({
-                Event: 'PlayAttemp',
-              });
-              break;
+        if (dataStream?.url) {
+          if (!firstLoad) {
+            saveSessionStorage({
+              data: [
+                {
+                  key: trackingStoreKey.PLAYER_FIRST_LOAD,
+                  value: new Date().getTime().toString(),
+                },
+              ],
+            });
+            switch (streamType) {
+              case 'vod':
+              case 'playlist':
+                trackingPlayAttempLog521({
+                  Event: 'FirstLoad',
+                });
+                break;
+              case 'event':
+              case 'premiere':
+                trackingPlayAttempLog179({
+                  Event: 'FirstLoad',
+                });
+                break;
+              case 'channel':
+              case 'timeshift':
+                trackingPlayAttempLog414({
+                  Event: 'FirstLoad',
+                });
+                break;
+            }
+          } else {
+            switch (streamType) {
+              case 'vod':
+              case 'playlist':
+                trackingPlayAttempLog521({
+                  Event: 'PlayAttemp',
+                });
+                break;
+              case 'event':
+              case 'premiere':
+                trackingPlayAttempLog179({
+                  Event: 'PlayAttemp',
+                });
+                break;
+              case 'channel':
+              case 'timeshift':
+                trackingPlayAttempLog414({
+                  Event: 'PlayAttemp',
+                });
+                break;
+            }
           }
         }
       });

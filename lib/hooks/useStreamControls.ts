@@ -33,7 +33,7 @@ declare global {
   }
 }
 
-type PlayerType = 'hls' | 'shaka' | 'native';
+type PlayerType = 'hls' | 'shaka';
 
 type Options = {
   playerType: PlayerType;
@@ -51,19 +51,7 @@ export function useStreamControls({
   const hlsRef = useRef<HlsInstance | undefined>(undefined);
   const shakaRef = useRef<ShakaPlayerInstance | undefined>(undefined);
   const opIdRef = useRef(0);
-  const isPausedRef = useRef(false);
   const currentUrlRef = useRef<string | undefined>(undefined);
-
-  // ---- Pause stream (simple pause for any stream type):
-  const pauseStream = useCallback(() => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    try {
-      video.pause();
-      isPausedRef.current = true;
-    } catch {}
-  }, [videoRef]);
 
   // ---- Initialize & play new URL:
   const playUrl = useCallback(
@@ -153,7 +141,5 @@ export function useStreamControls({
 
   return {
     playUrl,
-    pauseStream,
-    isPaused: isPausedRef.current,
   };
 }

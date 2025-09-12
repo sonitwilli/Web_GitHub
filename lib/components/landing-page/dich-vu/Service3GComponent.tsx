@@ -19,24 +19,24 @@ const iconData = [
 ];
 const logoBrand = [
   { src: '/images/landing-page/fpt.png', alt: 'fpt', width: 100, height: 67 },
-  // {
-  //   src: '/images/landing-page/viettel.png',
-  //   alt: 'viettel',
-  //   width: 125,
-  //   height: 53,
-  // },
-  // {
-  //   src: '/images/landing-page/mobifone.png',
-  //   alt: 'mobifone',
-  //   width: 169,
-  //   height: 28,
-  // },
-  // {
-  //   src: '/images/landing-page/vinaphone2.jpg',
-  //   alt: 'vinaphone',
-  //   width: 146,
-  //   height: 34,
-  // },
+  {
+    src: '/images/landing-page/viettel.png',
+    alt: 'viettel',
+    width: 125,
+    height: 53,
+  },
+  {
+    src: '/images/landing-page/mobifone.png',
+    alt: 'mobifone',
+    width: 169,
+    height: 28,
+  },
+  {
+    src: '/images/landing-page/vinaphone2.jpg',
+    alt: 'vinaphone',
+    width: 146,
+    height: 34,
+  },
 ];
 
 const Service3GComponent = () => {

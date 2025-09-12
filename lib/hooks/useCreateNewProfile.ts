@@ -7,7 +7,7 @@ import {
 import { showToast } from '@/lib/utils/globalToast';
 import { useRouter } from 'next/router';
 import { trackingRegisteredProfileLog102 } from '../tracking/trackingProfile';
-import { PROFILE_TYPES } from '../constant/texts';
+import { DEFAULT_ERROR_MSG, ERROR_CONNECTION, PROFILE_TYPES } from '../constant/texts';
 
 interface UseCreateNewProfileProps {
   setLoadingCreate?: (value: boolean) => void;
@@ -48,14 +48,15 @@ export const useCreateNewProfile = ({
           });
           router.push('/tai-khoan?tab=ho-so');
         } else {
-          throw new Error(
-            data.msg || 'Service error: Failed to create profile',
-          );
+          throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
-        setError(
-          err instanceof Error ? err : new Error('Failed to create profile'),
-        );
+        console.log(err);
+        setError(null);
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: DEFAULT_ERROR_MSG,
+        });
       } finally {
         setIsLoading(false);
         setLoadingCreate?.(false);
