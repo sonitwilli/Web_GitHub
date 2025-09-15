@@ -1,7 +1,7 @@
 import { BlockItemType, BlockSlideItemType } from '@/lib/api/blocks';
 import { createLink } from '@/lib/utils/methods';
 import dynamic from 'next/dynamic';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { IoMdClose } from 'react-icons/io';
 import copy from 'copy-to-clipboard';
 import { useRouter } from 'next/router';
@@ -36,6 +36,41 @@ export default function ModalShare({
     (s) => s.app,
   );
   const router = useRouter();
+
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      // Try modern Clipboard API first
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return;
+      }
+      
+      // Fallback for older browsers or non-secure contexts
+      // Create a temporary textarea element that can be selected
+      const textArea = document.createElement('textarea');
+      textArea.value = text;
+      textArea.style.position = 'fixed';
+      textArea.style.left = '-999999px';
+      textArea.style.top = '-999999px';
+      textArea.style.userSelect = 'text';
+      textArea.style.webkitUserSelect = 'text';
+      // Set vendor-specific properties for older browsers
+      Object.assign(textArea.style, {
+        mozUserSelect: 'text',
+        msUserSelect: 'text'
+      });
+      textArea.className = 'selectable'; // Use the selectable class from no-select.css
+      
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    } catch {
+      // Final fallback using copy-to-clipboard library
+      copy(text);
+    }
+  }, []);
   const linkShare = useMemo(() => {
     if (isUseRouteLink && typeof window !== 'undefined') {
       return `${process.env.NEXT_PUBLIC_BASE_URL}${window.location.pathname}`;
@@ -136,9 +171,12 @@ export default function ModalShare({
           <button
             aria-label="copy link"
             className="absolute top-1/2 -translate-y-1/2 right-[12px] text-white fpl-bg h-[32px] px-[12px] rounded-[40px] hover:cursor-pointer"
-            onClick={() => {
-              copy(linkShare);
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              copyToClipboard(linkShare || link);
             }}
+            style={{ userSelect: 'none' }}
           >
             Sao chép
           </button>
