@@ -100,7 +100,7 @@ const League: React.FC<Props> = ({
         >
           <div className="w-full flex items-center justify-center">
             <div
-              className="text-sm font-semibold w-[65px] truncate px-2"
+              className="text-sm font-semibold w-[70px] truncate px-2"
               title={data?.home?.short_name}
             >
               {data?.home.short_name}
@@ -149,7 +149,7 @@ const League: React.FC<Props> = ({
             </div>
 
             <div
-              className="text-sm font-semibold w-[65px] truncate px-2"
+              className="text-sm font-semibold w-[70px] truncate px-2"
               title={data?.away?.short_name}
             >
               {data?.away?.short_name}

@@ -45,11 +45,9 @@ export default function useReaction({ slide, block }: Props) {
     if ((!slide?.id && !slide?._id) || !slide?.type) return;
 
     try {
-      if (!isLiked) {
-        trackingLog59({
-          Event: isLiked ? 'Unsubscribed' : 'Subscribed',
-        });
-      }
+      trackingLog59({
+        Event: isLiked ? 'Unsubscribed' : 'Subscribed',
+      });
       // if (String(slide?.is_coming_soon) === '1') {
       //   await subscribeVod({
       //     id: slide?.id || '',

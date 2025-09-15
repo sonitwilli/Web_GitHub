@@ -11,6 +11,7 @@ import { usePlayerPageContext } from '../components/player/context/PlayerPageCon
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
 import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
+import { ControlPopupType } from '../components/player/core/MobilePopup';
 
 export interface SubtitleItemType {
   language?: string;
@@ -31,7 +32,9 @@ const defaultSub: SubtitleItemType = {
   language: OFF_SUB,
 };
 
-export default function useSubtitle() {
+export default function useSubtitle({
+  type,
+}: { type?: ControlPopupType } = {}) {
   const [subs, setSubs] = useState<SubtitleItemType[]>([]);
   const { playerName, isMetaDataLoaded } = usePlayerPageContext();
   const [selected, setSelected] = useState<SubtitleItemType>();
@@ -69,67 +72,83 @@ export default function useSubtitle() {
       setSubs([defaultSub, ...checks]);
     }
     if (playerName === 'shaka' && window.shakaPlayer) {
-      setTimeout(() => {
-        const tracks = window.shakaPlayer?.getTextLanguages
-          ? window.shakaPlayer.getTextLanguages() || []
-          : [];
-        const validTracks = tracks.filter(
-          /*@ts-ignore*/
-          (x) => !!KEY_LANGUAGES_AUDIO_CODECS[x],
-        );
-        const checks: SubtitleItemType[] = validTracks?.map((x: string) => ({
-          language: x,
-          /*@ts-ignore*/
-          label: x ? KEY_LANGUAGES_AUDIO_CODECS[x] : '',
-          id: x,
-        }));
-        setSubs([defaultSub, ...checks]);
-      }, 500);
+      setTimeout(
+        () => {
+          const tracks = window.shakaPlayer?.getTextLanguages
+            ? window.shakaPlayer.getTextLanguages() || []
+            : [];
+          const validTracks = tracks.filter(
+            /*@ts-ignore*/
+            (x) => !!KEY_LANGUAGES_AUDIO_CODECS[x],
+          );
+          const checks: SubtitleItemType[] = validTracks?.map((x: string) => ({
+            language: x,
+            /*@ts-ignore*/
+            label: x ? KEY_LANGUAGES_AUDIO_CODECS[x] : '',
+            id: x,
+          }));
+          setSubs([defaultSub, ...checks]);
+        },
+        type === 'default' ? 500 : 0,
+      );
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playerName]);
 
-  useEffect(() => {
-    // check selected on load
-    if (subs?.length >= 2) {
-      const saved = localStorage.getItem(SELECTED_SUBTITLE);
-      // có lưu trước đó
-      if (saved) {
-        // đang tắt
-        if (saved === OFF_SUB) {
-          setSelected(subs[0]);
-          if (playerName === 'hls' && window.hlsPlayer) {
-            window.hlsPlayer.subtitleDisplay = false;
+  const checkSubOnRender = useCallback(() => {
+    try {
+      if (subs?.length >= 2) {
+        const saved = localStorage.getItem(SELECTED_SUBTITLE);
+        // có lưu trước đó
+        if (saved) {
+          // đang tắt
+          if (saved === OFF_SUB) {
+            setSelected(subs[0]);
+            if (playerName === 'hls' && window.hlsPlayer) {
+              window.hlsPlayer.subtitleDisplay = false;
+            }
+            if (playerName === 'shaka' && window.shakaPlayer) {
+              window.shakaPlayer.setTextTrackVisibility(false);
+              window.shakaPlayer.selectTextLanguage(null);
+            }
+            return;
           }
-          if (playerName === 'shaka' && window.shakaPlayer) {
-            window.shakaPlayer.setTextTrackVisibility(false);
-            window.shakaPlayer.selectTextLanguage(null);
+          let index: number = 0;
+          const found = subs.find((x, idx) => {
+            if (x.language === saved) {
+              index = idx;
+              return true;
+            } else {
+              return false;
+            }
+          });
+          // cái lưu trước đó có nằm trong list hay không
+          // có
+          if (found) {
+            setSelected(found);
+            if (playerName === 'hls' && window.hlsPlayer) {
+              window.hlsPlayer.subtitleDisplay = true;
+              window.hlsPlayer.subtitleTrack = index - 1;
+            }
+            if (playerName === 'shaka' && window.shakaPlayer) {
+              window.shakaPlayer.setTextTrackVisibility(true);
+              window.shakaPlayer.selectTextLanguage(saved);
+            }
           }
-          return;
-        }
-        let index: number = 0;
-        const found = subs.find((x, idx) => {
-          if (x.language === saved) {
-            index = idx;
-            return true;
-          } else {
-            return false;
+          // không có thì lấy cái đầu tiên
+          else {
+            setSelected(subs[1]);
+            if (playerName === 'hls' && window.hlsPlayer) {
+              window.hlsPlayer.subtitleDisplay = true;
+              window.hlsPlayer.subtitleTrack = 0;
+            }
+            if (playerName === 'shaka' && window.shakaPlayer) {
+              window.shakaPlayer.setTextTrackVisibility(true);
+              window.shakaPlayer.selectTextLanguage(subs[1].language);
+            }
           }
-        });
-        // cái lưu trước đó có nằm trong list hay không
-        // có
-        if (found) {
-          setSelected(found);
-          if (playerName === 'hls' && window.hlsPlayer) {
-            window.hlsPlayer.subtitleDisplay = true;
-            window.hlsPlayer.subtitleTrack = index - 1;
-          }
-          if (playerName === 'shaka' && window.shakaPlayer) {
-            window.shakaPlayer.setTextTrackVisibility(true);
-            window.shakaPlayer.selectTextLanguage(saved);
-          }
-        }
-        // không có thì lấy cái đầu tiên
-        else {
+        } else {
+          // nếu chưa có local thì show sub đầu tiên
           setSelected(subs[1]);
           if (playerName === 'hls' && window.hlsPlayer) {
             window.hlsPlayer.subtitleDisplay = true;
@@ -140,19 +159,14 @@ export default function useSubtitle() {
             window.shakaPlayer.selectTextLanguage(subs[1].language);
           }
         }
-      } else {
-        // nếu chưa có local thì show sub đầu tiên
-        setSelected(subs[1]);
-        if (playerName === 'hls' && window.hlsPlayer) {
-          window.hlsPlayer.subtitleDisplay = true;
-          window.hlsPlayer.subtitleTrack = 0;
-        }
-        if (playerName === 'shaka' && window.shakaPlayer) {
-          window.shakaPlayer.setTextTrackVisibility(true);
-          window.shakaPlayer.selectTextLanguage(subs[1].language);
-        }
       }
-    }
+    } catch {}
+  }, [subs, playerName]);
+
+  useEffect(() => {
+    // check selected on load
+    checkSubOnRender();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subs, playerName]);
 
   useEffect(() => {
@@ -225,5 +239,6 @@ export default function useSubtitle() {
     setOpen,
     clickSub,
     containerRef,
+    checkSubOnRender,
   };
 }

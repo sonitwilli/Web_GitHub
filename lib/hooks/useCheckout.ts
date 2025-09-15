@@ -225,7 +225,7 @@ export function useCheckout({
           window.location.href = payUrl;
         } else {
           router.push(
-            `/mua-goi/dich-vu/thanh-toan/that-bai?method=foxpay_credit&status_code=${response?.data?.status}&error=Quý khách vui vòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ`,
+            `/mua-goi/dich-vu/thanh-toan/that-bai?method=foxpay_credit&status_code=${response?.data?.status}&error=Quý khách vui lòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ`,
           );
         }
         // this.vm.$router.push(`/mua-goi/dich-vu/thanh-toan/foxpay_credit`)

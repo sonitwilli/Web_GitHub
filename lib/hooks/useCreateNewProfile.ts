@@ -7,7 +7,14 @@ import {
 import { showToast } from '@/lib/utils/globalToast';
 import { useRouter } from 'next/router';
 import { trackingRegisteredProfileLog102 } from '../tracking/trackingProfile';
-import { DEFAULT_ERROR_MSG, ERROR_CONNECTION, PROFILE_TYPES } from '../constant/texts';
+import {
+  DEFAULT_ERROR_MSG,
+  ERROR_CONNECTION,
+  PROFILE_TYPES,
+} from '../constant/texts';
+import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
+import { AxiosError } from 'axios';
+import { useAppDispatch } from '../store';
 
 interface UseCreateNewProfileProps {
   setLoadingCreate?: (value: boolean) => void;
@@ -16,10 +23,11 @@ interface UseCreateNewProfileProps {
 export const useCreateNewProfile = ({
   setLoadingCreate,
 }: UseCreateNewProfileProps) => {
+  const dispatch = useAppDispatch();
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<Error | null>(null);
-  const router = useRouter()
+  const router = useRouter();
 
   const createNewProfile = useCallback(
     async (params: {
@@ -43,7 +51,10 @@ export const useCreateNewProfile = ({
             desc: data?.message?.content || '',
           });
           trackingRegisteredProfileLog102({
-            ItemId: params.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+            ItemId:
+              params.profile_type === PROFILE_TYPES.KID_PROFILE
+                ? 'Kid'
+                : 'Normal',
             ItemName: params.name,
           });
           router.push('/tai-khoan?tab=ho-so');
@@ -51,19 +62,22 @@ export const useCreateNewProfile = ({
           throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
-        console.log(err);
-        setError(null);
-        showToast({
-          title: ERROR_CONNECTION,
-          desc: DEFAULT_ERROR_MSG,
-        });
+        if (err instanceof AxiosError && err.response?.status === 401) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+        } else {
+          setError(null);
+          showToast({
+            title: ERROR_CONNECTION,
+            desc: DEFAULT_ERROR_MSG,
+          });
+        }
       } finally {
         setIsLoading(false);
         setLoadingCreate?.(false);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setLoadingCreate],
+    [setLoadingCreate]
   );
 
   return { profileData, createNewProfile, isLoading, error };

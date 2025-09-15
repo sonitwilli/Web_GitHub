@@ -512,7 +512,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                       {/* Meta Data */}
                       {validMetaData.length > 0 && (
                         <div
-                          className={`flex items-center ${
+                          className={`flex items-center gap-2 ${
                             hasValidAdvisories ? 'mb-[16px]' : ''
                           }`}
                         >

@@ -69,7 +69,6 @@ import {
   trackingStartChannelLog41,
 } from '@/lib/hooks/useTrackingIPTV';
 import { trackingLog512 } from '@/lib/tracking/trackingModule';
-
 export interface PlayerModalType {
   content?: ModalContent;
   closeKey?: ModalCloseKey;
@@ -289,6 +288,7 @@ export function PlayerPageContextProvider({ children }: Props) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPlaySuccess, setIsPlaySuccess] = useState(false);
   const isPlaySuccessRef = useRef<boolean>(false);
+
   useEffect(() => {
     isPlaySuccessRef.current = isPlaySuccess;
     if (isPlaySuccess) {
@@ -1363,7 +1363,7 @@ export function PlayerPageContextProvider({ children }: Props) {
       setDataStream({}); // <- force clear để Player component re-render lại
       getData(); // Gọi lại để fetch stream & phát lại
     } else if (isPrepareLive === true) {
-      if (!isLogged) {
+      if (!isLogged && dataStream?.trailer_url) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       }
     }

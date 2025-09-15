@@ -57,9 +57,17 @@ export const trackingStopChannelLog42 = () => {
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const playerParams: any = getPlayerParams();
     const iptvParams = getIPTVParams();
     /*@ts-ignore*/
+    const oldPlayingSession = sessionStorage.getItem(
+      trackingStoreKey.OLD_PLAYER_PLAYING_SESSION,
+    );
+    if (oldPlayingSession === playerParams.playing_session) {
+      // Kiểm tra chỉ bắn 1 lần log Stop cho cùng 1 playing_session
+      return;
+    }
     tracking({
       LogId: '42',
       Event: 'StopChannel',
@@ -74,6 +82,10 @@ export const trackingStopChannelLog42 = () => {
         trackingStoreKey.IS_RECOMMEND_ITEM,
       ],
     });
+    sessionStorage.setItem(
+      trackingStoreKey.OLD_PLAYER_PLAYING_SESSION,
+      playerParams.playing_session || '',
+    );
     return;
   } catch {}
 };
@@ -151,7 +163,7 @@ export const trackingStopTimeshiftLog44 = () => {
     if (typeof window === 'undefined') {
       return;
     }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     const playerParams: any = getPlayerParams();
     const { ItemId, ItemName } = playerParams;
     if (!ItemId || !ItemName) {

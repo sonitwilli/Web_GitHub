@@ -99,20 +99,17 @@ const Preview: React.FC<PreviewProps> = ({
   const dispatch = useAppDispatch();
   const { isEndVideo, hlsErrors, dataStream, dataChannel, realPlaySeconds } =
     usePlayerPageContext();
+
   const { messageConfigs } = useAppSelector((s) => s.app);
   const { isLogged } = useAppSelector((state) => state.user);
   const userInfo = useAppSelector((state) => state.user.info);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const { setIsVideoPaused } = usePlayerPageContext();
 
-  // Helper to check if type is live-like (live, channel, event)
   const isLiveType = type === 'live' || type === 'channel' || type === 'event';
 
-  // Packages and modal
   const [packages, setPackages] = useState<PackagePreview[]>([]);
   const [showPackageModal, setShowPackageModal] = useState(false);
-
-  // Modal confirm state - uncomment for account status check
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [confirmModalContent, setConfirmModalContent] = useState<ModalContent>({
     title: '',
@@ -144,42 +141,37 @@ const Preview: React.FC<PreviewProps> = ({
     );
   }, [isLiveType, currentStream, getUrlToPlayH264]);
 
-  // Single preview state
   const [previewState, setPreviewState] = useState<
     'popup' | 'background' | 'banner' | null
   >(null);
 
-  // Track if user has manually closed the popup
   const [isPopupManuallyClosed, setIsPopupManuallyClosed] = useState(false);
-  // Track if user has clicked exit from banner
   const [hasExitedFromBanner, setHasExitedFromBanner] = useState(false);
-  // Track if should show placeholder when auto stop
   const [showPlaceholderOnAutoStop, setShowPlaceholderOnAutoStop] =
     useState(false);
+  const [hasAutoStopped, setHasAutoStopped] = useState(false);
 
   const PREVIEW_TIME_LIMIT = useMemo(() => {
-    return parseInt(currentStream?.ttl_preview || '300'); // 5 minutes in seconds
+    return parseInt(currentStream?.ttl_preview || '300');
   }, [currentStream]);
 
-  // Track preview time elapsed based on real play seconds
   useEffect(() => {
-    // Only listen when all conditions are met
     if (
       isLiveType &&
       isPreviewActive &&
       realPlaySeconds &&
       realPlaySeconds > 0 &&
-      realPlaySeconds <= PREVIEW_TIME_LIMIT
+      realPlaySeconds <= PREVIEW_TIME_LIMIT &&
+      !hasAutoStopped &&
+      previewState === 'popup'
     ) {
-      // Auto stop when time limit reached
       if (realPlaySeconds >= PREVIEW_TIME_LIMIT) {
+        setHasAutoStopped(true);
         handleAutoStopPreview();
       }
     }
-  }, [isLiveType, isPreviewActive, realPlaySeconds, PREVIEW_TIME_LIMIT]);
+  }, [realPlaySeconds]);
 
-  // Auto hide popup if user is logged in and no payment required
-  // But skip this for live/event when user is not logged in
   useEffect(() => {
     if (previewState === 'popup' && isPreviewActive) {
       const timer = setTimeout(() => {
@@ -191,7 +183,6 @@ const Preview: React.FC<PreviewProps> = ({
     }
   }, [currentUser, paymentData, isPreviewActive, previewState]);
 
-  // Setup video element reference
   useEffect(() => {
     const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
     if (videoElement) {
@@ -199,7 +190,6 @@ const Preview: React.FC<PreviewProps> = ({
     }
   }, []);
 
-  // Load packages when opening modal
   useEffect(() => {
     if (showPackageModal && packages.length === 0) {
       const vipPlan = dataStream?.require_vip_plan || requireVipPlan || '';
@@ -219,7 +209,6 @@ const Preview: React.FC<PreviewProps> = ({
     }
   }, []);
 
-  // Banner state for live event ended
   useEffect(() => {
     if (
       previewState === 'background' &&
@@ -230,12 +219,11 @@ const Preview: React.FC<PreviewProps> = ({
     }
   }, [previewState, type, dataEndedPreviewEvent]);
 
-  // Reset manual close state when page reloads or route changes
   useEffect(() => {
     setIsPopupManuallyClosed(false);
+    setHasAutoStopped(false);
   }, [router.asPath]);
 
-  // --- TEXT FROM CONFIGS (preview) ---
   const previewConfig = messageConfigs?.preview || {};
 
   const popupMessage = useMemo(() => {
@@ -321,7 +309,6 @@ const Preview: React.FC<PreviewProps> = ({
       window.shakaPlayer.unload();
     }
     setShowPlaceholderOnAutoStop(true);
-    // Show background overlay with time limit message
     setPreviewState('background');
     console.log('handleAutoStopPreview ----------------');
   };
@@ -393,18 +380,15 @@ const Preview: React.FC<PreviewProps> = ({
   );
 
   const handlePurchaseAction = useCallback(() => {
-    // Reset placeholder state when user takes action
     setShowPlaceholderOnAutoStop(false);
+    setHasAutoStopped(false);
 
     if (isTvod) {
-      // For TVOD, use linkToBuy logic
       const vipPlan = dataStream?.require_vip_plan || requireVipPlan || '';
       linkToBuy(vipPlan);
     } else {
-      // For SVOD/LIVE, show package modal
       exitFullscreen();
 
-      // Only pause player when opening package modal for VOD
       if (type === 'vod' && videoRef.current && !videoRef.current.paused) {
         videoRef.current.pause();
         setIsVideoPaused?.(true);
@@ -434,21 +418,17 @@ const Preview: React.FC<PreviewProps> = ({
         onExitPreviewEvent?.();
         setPreviewState('banner');
       } else {
-        // Mark that user has exited from banner
         setHasExitedFromBanner(true);
 
         const trailerUrl = dataStream?.trailer_url;
         if (trailerUrl) {
-          // Reset placeholder state
           setShowPlaceholderOnAutoStop(false);
-          // Then play trailer URL
+          setHasAutoStopped(false);
           playStreamUrl(trailerUrl);
-          // Set popup state to show popup instead of hiding completely
           setPreviewState('popup');
         } else {
-          // Reset placeholder state
           setShowPlaceholderOnAutoStop(false);
-          // Fallback to original method if no trailer URL
+          setHasAutoStopped(false);
           onExitPreviewLive?.('');
           setPreviewState('popup');
         }
@@ -456,9 +436,7 @@ const Preview: React.FC<PreviewProps> = ({
     }
   };
 
-  // Main effect to control preview state
   useEffect(() => {
-    // Only show background overlay if player is NOT successfully playing
     const shouldShowBackground =
       isPreviewEnded ||
       (isEndVideo && isEndVideo > 0) ||
@@ -469,9 +447,10 @@ const Preview: React.FC<PreviewProps> = ({
     if (shouldShowBackground && !hasExitedFromBanner) {
       setPreviewState('background');
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
-      // Reset manual close state when preview ends
       setIsPopupManuallyClosed(false);
     } else if (isPreviewActive && !isPopupManuallyClosed && !isLiveEnded) {
+      setHasAutoStopped(false);
+
       const finalUrl = getUrlToPlayH264();
       if (isLiveType && !isLogged) {
         if (finalUrl) {
@@ -488,12 +467,10 @@ const Preview: React.FC<PreviewProps> = ({
     } else if (!isPreviewActive) {
       setPreviewState(null);
       sessionStorage.removeItem(IS_PREVIEW_LIVE);
-      // Reset manual close state when preview becomes inactive
       setIsPopupManuallyClosed(false);
-      // Reset exit from banner flag when preview becomes inactive
       setHasExitedFromBanner(false);
-      // Reset placeholder state when preview becomes inactive
       setShowPlaceholderOnAutoStop(false);
+      setHasAutoStopped(false);
     }
   }, [
     isPreviewEnded,

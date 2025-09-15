@@ -58,6 +58,7 @@ import useCodec from '@/lib/hooks/useCodec';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import PauseDesktop from './PauseDesktop';
 import { TrackingScreen } from '@/lib/tracking/tracking-types';
+import PlayerError from './PlayerError';
 
 const NoAdsGuide = dynamic(() => import('./NoAdsGuide'), { ssr: false });
 const ListEspisodeComponent = dynamic(
@@ -69,7 +70,6 @@ const BroadcastScheduleWrapper = dynamic(
   { ssr: false },
 );
 const MiddleButtons = dynamic(() => import('./MiddleButtons'), { ssr: false });
-const PlayerError = dynamic(() => import('./PlayerError'), { ssr: false });
 const PlayerLogin = dynamic(() => import('./PlayerLogin'));
 const Preview = dynamic(() => import('./Preview'), { ssr: false });
 const DebugOverlay = dynamic(() => import('./DebugOverlay'), { ssr: false });
@@ -320,19 +320,31 @@ export default function PlayerWrapper({ children, eventId }: Props) {
   }, [previewHandled]);
 
   const openPlayerErrorModal = (v: PlayerErrorType) => {
-    setIsShowErrorModal(true);
-    setPlayerError(v);
-    trackingPlaybackErrorLog515({
-      Event: 'PlaybackError',
-      ErrCode: v.code,
-      Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
-        v.code ? `(Mã lỗi ${v.code})` : ''
-      }` as TrackingScreen,
-    });
-    trackingShowPopupLog191();
+    try {
+      console.log(
+        '--- PLAYER openPlayerErrorModal ' + new Date().toISOString(),
+        v,
+      );
+      setIsShowErrorModal(true);
+      setPlayerError(v);
+      trackingPlaybackErrorLog515({
+        Event: 'PlaybackError',
+        ErrCode: v.code,
+        Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
+          v.code ? `(Mã lỗi ${v.code})` : ''
+        }` as TrackingScreen,
+      });
+      trackingShowPopupLog191();
+    } catch (error) {
+      console.log(
+        '--- PLAYER openPlayerErrorModal error ' + new Date().toISOString(),
+        error,
+      );
+    }
   };
 
   const closePlayerErrorModal = () => {
+    console.log('--- PLAYER closePlayerErrorModal ' + new Date().toISOString());
     setIsShowErrorModal(false);
     setPlayerError(undefined);
   };
@@ -435,6 +447,14 @@ export default function PlayerWrapper({ children, eventId }: Props) {
     window.location.pathname.includes('/xem-video');
   useKeyboardControls(isVideoPage);
 
+  useEffect(() => {
+    console.log('--- PLAYER isShowErrorModal ' + new Date().toISOString(), {
+      isShowErrorModal,
+      streamType,
+      previewHandled,
+    });
+  }, [isShowErrorModal, streamType, previewHandled]);
+
   return (
     <PlayerWrapperContext
       value={{
@@ -511,6 +531,8 @@ export default function PlayerWrapper({ children, eventId }: Props) {
         {isShowErrorModal && !(streamType === 'channel' && previewHandled) ? (
           <PlayerError />
         ) : null}
+
+        {/* {isShowErrorModal ? <PlayerError /> : null} */}
         {showFingerPrintClient ? (
           <div className="absolute w-full h-full z-[2]">
             <FingerPrintClient />

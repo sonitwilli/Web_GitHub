@@ -1,11 +1,13 @@
 import { useState, useCallback } from 'react';
 import { updateProfile, ApiResponse } from '@/lib/api/multi-profiles'; // Adjust path based on your fileGeekyCoder file structure
 import { Profile } from '@/lib/api/user';
-import { AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 import { trackingModifyProfileLog103 } from '../tracking/trackingProfile';
 import { ERROR_CONNECTION, PROFILE_TYPES } from '../constant/texts';
 import { checkError } from '../utils/profile';
 import { showToast } from '../utils/globalToast';
+import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
+import { useAppDispatch } from '../store';
 
 interface UseUpdateProfileProps {
   setLoadingUpdate?: (value: boolean) => void;
@@ -16,6 +18,7 @@ export const useUpdateProfile = ({
   setLoadingUpdate,
   onUpdateSuccess,
 }: UseUpdateProfileProps = {}) => {
+  const dispatch = useAppDispatch();
   const [profileData, setProfileData] = useState<ApiResponse | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +32,7 @@ export const useUpdateProfile = ({
         profile_type?: string;
         pin?: string;
       },
-      selectedProfile: Profile | null,
+      selectedProfile: Profile | null
     ) => {
       setIsLoading(true);
       setLoadingUpdate?.(true);
@@ -37,7 +40,7 @@ export const useUpdateProfile = ({
       try {
         const response: AxiosResponse<ApiResponse> = await updateProfile(
           params,
-          selectedProfile,
+          selectedProfile
         );
         const data: ApiResponse = response.data;
         setProfileData(data);
@@ -47,7 +50,10 @@ export const useUpdateProfile = ({
             Event: 'ModifiedProfile',
             ItemId: selectedProfile?.profile_id || '',
             ItemName: selectedProfile?.name || '',
-            Status: selectedProfile?.profile_type === PROFILE_TYPES.KID_PROFILE ? 'Kid' : 'Normal',
+            Status:
+              selectedProfile?.profile_type === PROFILE_TYPES.KID_PROFILE
+                ? 'Kid'
+                : 'Normal',
           });
           localStorage.setItem('userSelected', JSON.stringify(data?.data));
           onUpdateSuccess?.();
@@ -56,18 +62,23 @@ export const useUpdateProfile = ({
           throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
-        console.log(err);
-        setError(null);
-        showToast({
-          title: ERROR_CONNECTION,
-          desc: checkError({ error: err }),
-        });
+        if (err instanceof AxiosError && err.response?.status === 401) {
+          dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+          return;
+        } else {
+          setError(null);
+          showToast({
+            title: ERROR_CONNECTION,
+            desc: checkError({ error: err }),
+          });
+        }
       } finally {
         setIsLoading(false);
         setLoadingUpdate?.(false);
       }
     },
-    [setLoadingUpdate, onUpdateSuccess],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [setLoadingUpdate, onUpdateSuccess]
   );
 
   return { profileData, updateProfileAction, isLoading, error };

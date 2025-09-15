@@ -1,6 +1,33 @@
 {
     "versions": [
         {
+            "version": "8.0.46",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Navigation bar] Lỗi mất tên category trong menu hamburger",
+                "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 515 người dùng gặp lỗi trong quá trình phát nội dung",
+                "[Web][TrackingLog][Truyền hình] Ghi nhận sai thông số log 44 Khi người dùng ngừng xem timeshift",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận sai thông số log 177 khi hiển thị màn hình Backdrop kết thúc sự kiện",
+                "[Web][TrackingLog][Payment] Không ghi nhận log 141 khi người dùng mua nội dung phim",
+                "[Web][TrackingLog][Payment] Ghi nhận sai thông số log 417 khi người dùng đăng ký gói thành công",
+                "[Web][TrackingLog][Payment] Ghi nhận sai thông số log 417 khi người dùng đăng ký gói thất bại",
+                "[WEB][Comment] Lỗi danh sách cài đặt bình luận phần 'Trả lời' khi di chuyển chuột ra khỏi vùng chọn",
+                "[WEB][Comment] Lỗi icon danh sách cài đặt bình luận phần 'Trả lời'",
+                "[WEB][Comment] Lỗi danh sách cài đặt bình luận phần 'Báo cáo bình luận' khi di chuyển chuột ra khỏi vùng chọn",
+                "[Web][TrackingLog][Playback] Không ghi nhận log 59 khi người dùng thao tác để Xóa một phim vào danh sách yêu thích",
+                "[Web][TrackingLog][Sự kiện] Ghi nhận nhiều log 172 khi người dùng thoát xem nội dung sự kiện",
+                "[WEB][DetailVOD] Lỗi hiển thị chậm khi chọn mở popup Phụ đề/Bỏ theo dõi ở mode mobile",
+                "[WEB][Trang chủ] Lỗi hover expand không full poster",
+                "[WEB][HoverExpand][Xem thêm] Lỗi hover expand không full poster ở trang Xem thêm",
+                "[WEB][MultiProfile] Lịch sử xem: Lỗi đang xóa local đối với trường hợp lỗi API khi nhấn vào btn Xóa ở popup Xóa tất cả",
+                "[WEB][MultiProfile] Đá thiết bị: Lỗi không có action gì khi nhấn vào chỉnh sửa hồ sơ khác hồ sơ đang sử dụng",
+                "[WEB][MultiProfile] Lỗi sai ui của màn hình thông báo khi lỗi api lấy danh sách lịch sử xem",
+                "[WEB][Notification] Bổ sung thêm hiển thị khi thao tác ở chức năng Notification đối với trường hợp mất kết nối mạng",
+                "[WEB][AR_WC] Lỗi hiển thị nội dung cảnh báo tình huống đối với trường hợp scale màn hình",
+                "[WEB][PlayerVOD] Nextmovie : Không tắt được nextmovie sau khi xem hết tập cuối"
+            ]
+        }, 
+        {
             "version": "8.0.45",
             "date": "Dự kiến",
             "content": [

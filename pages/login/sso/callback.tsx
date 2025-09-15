@@ -62,10 +62,8 @@ export default function SSOCallbackPage() {
       // Set login type for loginSuccess function to handle redirect properly
       localStorage.setItem(TOKEN, token);
 
-      showToast({
-        title: 'Đăng nhập thành công',
-        desc: 'Bạn đã đăng nhập thành công. Chúc bạn có trải nghiệm tuyệt vời trên FPT Play.',
-      });
+      // Set flag to show login success toast in AppContainer
+      sessionStorage.setItem('show_login_success_toast', 'true');
     }
   }, []);
 

@@ -17,6 +17,7 @@ type PropType = {
   index?: number;
   metaBlock?: PageMetaType;
   blockData?: BlockItemResponseType;
+  isInview?: boolean;
 };
 
 const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
@@ -59,6 +60,15 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
     }
     timeRef.current = setTimeout(() => {
       if (slideRef.current) {
+        const fContainer =
+          document.querySelector<HTMLDivElement>('.f-container');
+        let pl = 0;
+        let pr = 0;
+        if (fContainer) {
+          const styles = window.getComputedStyle(fContainer);
+          pl = parseFloat(styles.paddingLeft);
+          pr = parseFloat(styles.paddingRight);
+        }
         const clientX = localStorage.getItem(MOUSE_CLIENT_X)
           ? parseInt(localStorage.getItem(MOUSE_CLIENT_X) || '')
           : 0;
@@ -82,35 +92,31 @@ const EmblaBlockSlideItem: React.FC<PropType> = (props) => {
 
         const scrollX = window.scrollX;
         const scrollY = window.scrollY;
-        let centerAX = rectA.left + rectA.width / 2 + scrollX;
+        const centerAX = rectA.left + rectA.width / 2 + scrollX;
         const centerAY = rectA.top + rectA.height / 2 + scrollY;
-        const viewportWidth = window.innerWidth;
+        const viewportWidth =
+          window.innerWidth -
+          (window.innerWidth - document.documentElement.clientWidth);
         const hoverItem = document.getElementById('hover_slide_card');
-        // left
-        if (viewportWidth >= 1280 && viewportWidth <= 1599) {
-          if (slideChildRef?.current) {
-            const rectChild = slideChildRef.current.getBoundingClientRect();
-            const distanceToRight = window.innerWidth - rectChild.right;
-            if (rectChild?.left <= 54) {
-              centerAX = 234;
-              if (hoverItem) {
-                hoverItem.classList.remove('-translate-x-1/2');
-              }
-            } else if (hoverItem) {
-              hoverItem.classList.add('-translate-x-1/2');
-            }
-            if (distanceToRight <= 80) {
-              centerAX = 950;
-              if (hoverItem) {
-                hoverItem.classList.remove('-translate-x-1/2');
-              }
-            } else if (hoverItem) {
-              hoverItem.classList.add('-translate-x-1/2');
-            }
+
+        if (hoverItem && slideChildRef.current) {
+          const childRect = slideChildRef.current.getBoundingClientRect();
+          const childRectToRight = Number(
+            (viewportWidth - childRect.right).toFixed(0),
+          );
+          if (childRectToRight === pr) {
+            hoverItem.style.left = `unset`;
+            hoverItem.style.right = `${pr - 1}px`;
+            hoverItem.classList.remove('-translate-x-1/2');
+          } else if (childRect.left === pl) {
+            hoverItem.style.left = `${pl - 1}px`;
+            hoverItem.style.right = `unset`;
+            hoverItem.classList.remove('-translate-x-1/2');
+          } else {
+            hoverItem.classList.add('-translate-x-1/2');
+            hoverItem.style.right = `unset`;
+            hoverItem.style.left = `${centerAX}px`;
           }
-        }
-        if (hoverItem) {
-          hoverItem.style.left = `${centerAX}px`;
           hoverItem.style.top = `${centerAY}px`;
           hoverItem.style.opacity = `1`;
           hoverItem.style.zIndex = `1`;

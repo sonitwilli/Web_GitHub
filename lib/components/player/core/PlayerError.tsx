@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { PlayerWrapperContext } from './PlayerWrapper';
 import { useAppSelector } from '@/lib/store';
 import getBrowser from '@/lib/utils/getBrowser';
@@ -74,8 +74,15 @@ export default function PlayerError() {
     return '';
   }, [router, dataChannel]);
 
+  useEffect(() => {
+    console.log(
+      '--- PLAYER playerError ' + new Date().toISOString(),
+      playerError,
+    );
+  }, [playerError]);
+
   return (
-    <div className="fixed w-full h-full top-0 left-0 flex items-center justify-center z-[99] bg-black-06">
+    <div className="PlayerError fixed w-full h-full top-0 left-0 flex items-center justify-center z-[99] bg-black-06">
       <div className="w-[400px] max-w-full p-[32px] bg-eerie-black rounded-[16px]">
         <div className="text-center text-white-smoke font-[600] text-[24px] leading-[130%] tracking-[0.48px] mb-[16px]">
           Lỗi kết nối dịch vụ

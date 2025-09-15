@@ -206,6 +206,7 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
   }
   return (
     <Provider store={store}>
+      <div className="f-container" id="nvm"></div>
       <SeoHead seo={seoProps} />
       <NetworkProvider>
         <AppContainer>

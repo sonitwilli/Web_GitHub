@@ -63,7 +63,6 @@ const PaymentFailPage: React.FC = () => {
   const router = useRouter();
   const [details, setDetails] = useState<PaymentResultDetail[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
   useEffect(() => {
     if (!router.isReady) return;
     const { msg, error, error_message, message } = router.query;
@@ -72,8 +71,13 @@ const PaymentFailPage: React.FC = () => {
       error ||
       error_message ||
       message ||
-      'Quý khách vui vòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ';
+      'Quý khách vui lòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ';
     setErrorMessage(errorMessage as string);
+    const errCode =
+      (router.query.error_code as string) ||
+      (router.query.status_code as string) ||
+      (router.query.result_code as string) ||
+      '-1';
     const text = getPaymentDetails(router.query);
     setDetails([
       { label: 'Tài khoản', value: text.account as string | null },
@@ -97,7 +101,11 @@ const PaymentFailPage: React.FC = () => {
       },
       { label: 'Mã giao dịch', value: text.transId as string | null },
     ]);
-    trackingRegisterPaymentLog417({ Status: 'Failed' });
+    trackingRegisterPaymentLog417({
+      Status: 'Failed',
+      ErrMessage: errorMessage as string,
+      ErrCode: errCode as string,
+    });
   }, [router.isReady, router.query]);
 
   const handleRetry = useCallback(() => {

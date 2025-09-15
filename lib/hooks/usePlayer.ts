@@ -402,29 +402,31 @@ export default function usePlayer() {
   };
 
   const handlePlaying = async () => {
-    if (
-      dataChannel?.verimatrix === true ||
-      dataChannel?.verimatrix === '1' ||
-      dataChannel?.drm === true ||
-      dataChannel?.drm === '1'
-    ) {
-      const parser = new UAParser(navigator.userAgent);
-      const browser = parser.getBrowser().name;
-      if (
-        browser?.toUpperCase()?.includes('SAFARI') &&
-        (streamType === 'channel' || streamType === 'event')
-      ) {
-        if (intervalCheckHlsRequest.current) {
-          clearInterval(intervalCheckHlsRequest.current);
-          intervalCheckHlsRequest.current = null;
-        }
-        trackingFetchRequest();
-        intervalCheckHlsRequest.current = setInterval(
-          () => checkHlsRequest(),
-          10000,
-        );
-      }
-    }
+    // try {
+    //   if (
+    //     dataChannel?.verimatrix === true ||
+    //     dataChannel?.verimatrix === '1' ||
+    //     dataChannel?.drm === true ||
+    //     dataChannel?.drm === '1'
+    //   ) {
+    //     const parser = new UAParser(navigator.userAgent);
+    //     const browser = parser.getBrowser().name;
+    //     if (
+    //       browser?.toUpperCase()?.includes('SAFARI') &&
+    //       (streamType === 'channel' || streamType === 'event')
+    //     ) {
+    //       if (intervalCheckHlsRequest.current) {
+    //         clearInterval(intervalCheckHlsRequest.current);
+    //         intervalCheckHlsRequest.current = null;
+    //       }
+    //       trackingFetchRequest();
+    //       intervalCheckHlsRequest.current = setInterval(
+    //         () => checkHlsRequest(),
+    //         10000,
+    //       );
+    //     }
+    //   }
+    // } catch {}
 
     if (setIsEndVideo) {
       setIsEndVideo(0);
@@ -436,18 +438,6 @@ export default function usePlayer() {
       retrying,
     });
     checkVolumeOnLoaded();
-
-    // Check and tracking seek event
-    const seekEvent = getSeekEvent();
-    if (seekEvent) {
-      if (streamType === 'timeshift') {
-        trackingSeekTimeshiftLog415();
-      } else {
-        trackingSeekVideoLog514();
-      }
-      // Clear the seek event after logging
-      clearSeekEvent();
-    }
 
     const firstPlay = sessionStorage.getItem(
       trackingStoreKey.PLAYER_FIRST_PLAY_SUCCESS,
@@ -467,66 +457,78 @@ export default function usePlayer() {
       switch (streamType) {
         case 'vod':
         case 'playlist':
-          if (hlsErrors && hlsErrors.length > 0) {
-            trackingStartFirstFrameLog520({
-              Event: 'Retry',
-            });
-          } else {
-            trackingStartFirstFrameLog520({
-              Event: 'Initial',
-            });
-          }
+          try {
+            if (hlsErrors && hlsErrors.length > 0) {
+              trackingStartFirstFrameLog520({
+                Event: 'Retry',
+              });
+            } else {
+              trackingStartFirstFrameLog520({
+                Event: 'Initial',
+              });
+            }
+          } catch {}
           break;
         case 'event':
         case 'premiere':
           if (!isEndedLive) {
-            trackingStartLiveShowLog171();
-            if (hlsErrors && hlsErrors.length > 0) {
-              trackingStartFirstFrameLog178({
-                Event: 'Retry',
-              });
-            } else {
-              trackingStartFirstFrameLog178({
-                Event: 'Initial',
-              });
-            }
+            try {
+              trackingStartLiveShowLog171();
+              if (hlsErrors && hlsErrors.length > 0) {
+                trackingStartFirstFrameLog178({
+                  Event: 'Retry',
+                });
+              } else {
+                trackingStartFirstFrameLog178({
+                  Event: 'Initial',
+                });
+              }
+            } catch {}
           }
           break;
         case 'channel':
           // trackingStartChannelLog41();
-          if (hlsErrors && hlsErrors.length > 0) {
-            trackingStartFirstFrameLog413({
-              Event: 'Retry',
-            });
-          } else {
-            trackingStartFirstFrameLog413({
-              Event: 'Initial',
-            });
-          }
+          try {
+            if (hlsErrors && hlsErrors.length > 0) {
+              trackingStartFirstFrameLog413({
+                Event: 'Retry',
+              });
+            } else {
+              trackingStartFirstFrameLog413({
+                Event: 'Initial',
+              });
+            }
+          } catch {}
           break;
         case 'timeshift':
-          trackingStartTimeshiftLog43();
-          if (hlsErrors && hlsErrors.length > 0) {
-            trackingStartFirstFrameLog413({
-              Event: 'Retry',
-            });
-          } else {
-            trackingStartFirstFrameLog413({
-              Event: 'Initial',
-            });
-          }
+          try {
+            trackingStartTimeshiftLog43();
+            if (hlsErrors && hlsErrors.length > 0) {
+              trackingStartFirstFrameLog413({
+                Event: 'Retry',
+              });
+            } else {
+              trackingStartFirstFrameLog413({
+                Event: 'Initial',
+              });
+            }
+          } catch {}
           break;
         default:
-          trackingStartFirstFrameLog520({
-            Event: 'Initial',
-          });
+          try {
+            trackingStartFirstFrameLog520({
+              Event: 'Initial',
+            });
+          } catch {}
       }
     } else {
-      if (streamType === 'timeshift') {
-        trackingResumeTimeshiftLog432();
-      } else {
-        trackingResumeMovieLog54();
-      }
+      try {
+        if (streamType === 'timeshift') {
+          trackingResumeTimeshiftLog432();
+        } else {
+          trackingResumeMovieLog54();
+        }
+      } catch {}
     }
     trackPlayerChange();
 
@@ -660,7 +662,9 @@ export default function usePlayer() {
       trackingStoreKey.PLAYER_START_BUFFER_TIME,
     );
     if (startBufferTime) {
-      trackingEndBuffering();
+      try {
+        trackingEndBuffering();
+      } catch {}
     }
     handlePingPlayer();
   };
@@ -829,11 +833,13 @@ export default function usePlayer() {
   };
 
   const handlePaused = () => {
-    if (streamType === 'timeshift') {
-      trackingPauseTimeshiftLog431();
-    } else {
-      trackingPauseMovieLog53();
-    }
+    try {
+      if (streamType === 'timeshift') {
+        trackingPauseTimeshiftLog431();
+      } else {
+        trackingPauseMovieLog53();
+      }
+    } catch {}
     if (setIsVideoPaused) setIsVideoPaused(true);
   };
 
@@ -858,6 +864,21 @@ export default function usePlayer() {
     }
   };
 
+  const handleSeeked = () => {
+    // Check and tracking seek event
+    const seekEvent = getSeekEvent();
+    if (seekEvent) {
+      try {
+        if (streamType === 'timeshift') {
+          trackingSeekTimeshiftLog415();
+        } else {
+          trackingSeekVideoLog514();
+        }
+      } catch {}
+      // Clear the seek event after logging
+      clearSeekEvent();
+    }
+  };
   const convertShakaError = ({
     allErrors,
     detailErrors,
@@ -1010,7 +1031,7 @@ export default function usePlayer() {
               previousCurrentTimeRef.current = 0;
               if (clearErrorInterRef) clearErrorInterRef();
               playVideoWithUrl({ url: playingUrlRef?.current });
-            }, 2000);
+            }, t);
           } else {
             console.log(
               '--- PLAYER START RETRY WITH NEW STREAM ' +
@@ -1019,6 +1040,7 @@ export default function usePlayer() {
             if (openPlayerErrorModal) {
               console.log(
                 '--- PLAYER SHOW ERROR POPUP ' + new Date().toISOString(),
+                hlsErrosRef?.current,
               );
               openPlayerErrorModal({
                 code: hlsErrosRef?.current[0].type,
@@ -1026,22 +1048,29 @@ export default function usePlayer() {
             }
             retryCountRef.current += 1;
             if (retryCountRef.current > 1) {
-              trackingPlaybackErrorLog515({
-                Event: 'RetryPlayer',
-                ErrCode: hlsErrosRef?.current[0].type,
-                Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
-                  hlsErrosRef?.current[0].type
-                    ? `(Mã lỗi ${hlsErrosRef?.current[0].type})`
-                    : ''
-                }` as TrackingScreen,
-              });
+              try {
+                trackingPlaybackErrorLog515({
+                  Event: 'RetryPlayer',
+                  ErrCode: hlsErrosRef?.current[0].type,
+                  Screen: `${ERROR_PLAYER_FPT_PLAY_RETRY} ${
+                    hlsErrosRef?.current[0].type
+                      ? `(Mã lỗi ${hlsErrosRef?.current[0].type})`
+                      : ''
+                  }` as TrackingScreen,
+                });
+              } catch {}
             }
             setRetryCount((v) => v + 1);
             retryGetStream();
           }
         }
       }
-    } catch {}
+    } catch (error) {
+      console.log(
+        '--- PLAYER checkVideoCodec Error ' + new Date().getTime(),
+        error,
+      );
+    }
   };
 
   const handleAddError = ({ error }: { error?: ErrorData }) => {
@@ -1050,14 +1079,16 @@ export default function usePlayer() {
         // Reset state khi có error
         setIsPlayingHandled(false);
 
-        trackingErrorLog17({
-          Event: 'Error',
-          ErrCode: error?.type,
-          ErrMessage: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
-          ItemName: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
-          Url: getUrlToPlayH264(),
-          ItemId: dataChannel?._id,
-        });
+        try {
+          trackingErrorLog17({
+            Event: 'Error',
+            ErrCode: error?.type,
+            ErrMessage: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
+            ItemName: `${ERROR_PLAYER_FPT_PLAY} (Mã lỗi ${error?.type})`,
+            Url: getUrlToPlayH264(),
+            ItemId: dataChannel?._id,
+          });
+        } catch {}
         const pl = sessionStorage.getItem(trackingStoreKey.PLAYER_NAME);
         let code = error.details;
         if (pl === PLAYER_NAME.SHAKA) {
@@ -1341,5 +1372,8 @@ export default function usePlayer() {
     clearIntervalErrorSafari,
     isValidForProfileType,
     handleBookmark,
+    handleSeeked,
+    checkHlsRequest,
+    trackingFetchRequest,
   };
 }

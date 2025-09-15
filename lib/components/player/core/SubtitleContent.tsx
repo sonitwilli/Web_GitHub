@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function SubtitleContent({ type = 'default', onClick }: Props) {
-  const { subs, selected, clickSub } = useSubtitle();
+  const { subs, selected, clickSub } = useSubtitle({ type });
 
   const handleClick = (ad: SubtitleItemType) => {
     clickSub(ad);

@@ -59,52 +59,6 @@ const viettelPackages = [
 
 const mobifonePackages = [
   {
-    name: 'Ngày (F1)',
-    description:
-      'Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 01 ngày',
-    details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
-      data: '100MB',
-      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
-    },
-    syntax: 'Soạn DK F1 gửi 1584',
-    syntax2: 'Soạn HUY F1 gửi 1584',
-    fee: {
-      text: 'Đăng ký với mức cước',
-      details: '3.000 ĐỒNG',
-    },
-  },
-  {
-    name: 'Ngày (TT1)',
-    description: 'Xem nội dung thể thao, giái trí hấp dẫn trong 01 ngày.',
-    details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
-      data: '100MB',
-      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
-    },
-    syntax: 'Soạn DK TT1 gửi 1584',
-    syntax2: 'Soạn HUY TT1 gửi 1584',
-    fee: {
-      text: 'Đăng ký với mức cước',
-      details: '10.000 ĐỒNG',
-    },
-  },
-  {
-    name: 'Tuần (TT7)',
-    description: 'Xem nội dung thể thao, giái trí hấp dẫn trong 07 ngày.',
-    details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
-      data: '200MB',
-      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
-    },
-    syntax: 'Soạn DK TT7 gửi 1584',
-    syntax2: 'Soạn HUY TT7 gửi 1584',
-    fee: {
-      text: 'Đăng ký với mức cước',
-      details: '30.000 ĐỒNG',
-    },
-  },
-  {
     name: 'Ngày (FL)',
     description:
       'Xem nội dung các kênh truyền hình gia đình (ngoại trừ kênh K+, Kênh HBO Go, kênh Quốc tế) và các nội dung cơ bản trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.',

@@ -1,20 +1,18 @@
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { REVISION } from '@/lib/constant/texts';
 
 export const useIsRevision = (): boolean => {
-  const searchParams = useSearchParams();
   const [isRevision, setIsRevision] = useState(false);
 
   useEffect(() => {
-    const revision = localStorage.getItem('revision');
-    const type = searchParams.get('type');
+    const revision = localStorage.getItem(REVISION);
 
-    if (revision && type === 'test_event_before') {
+    if (revision) {
       setIsRevision(true);
     } else {
       setIsRevision(false);
     }
-  }, [searchParams]);
+  }, []);
 
   return isRevision;
 };

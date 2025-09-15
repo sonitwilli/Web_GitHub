@@ -12,10 +12,10 @@ import {
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
 import { Profile } from '@/lib/api/user';
 import { showToast } from '@/lib/utils/globalToast';
-import Image from 'next/image';
 import { useDispatch } from 'react-redux';
 import { ERROR_CONNECTION, HAVING_ERROR } from '@/lib/constant/texts';
 import NoData from '../empty-data/NoData';
+import ErrorData from '../error/ErrorData';
 
 interface ProfileHistoryData {
   list_history: HistoryItem[];
@@ -62,7 +62,7 @@ const ProfileHistoryContainer: React.FC = () => {
       setSideBarLeft({
         text: 'Thông tin hồ sơ',
         url: `${window?.location?.origin}/tai-khoan?tab=ho-so&child=quan-ly-va-tuy-chon`,
-      }),
+      })
     );
 
     let user: Profile | null = selectedProfile;
@@ -113,11 +113,10 @@ const ProfileHistoryContainer: React.FC = () => {
 
         setIsLoading(false);
         setIsServerError(true);
-        setProfileHistory({ list_history: [] });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isPerPage],
+    [isPerPage]
   );
 
   const deleteProfileHistory = async (profile_id: string) => {
@@ -144,7 +143,6 @@ const ProfileHistoryContainer: React.FC = () => {
         title: ERROR_CONNECTION,
         desc: HAVING_ERROR,
       });
-      setProfileHistory({ list_history: [] });
       confirmModalRef.current?.closeModal();
     }
   };
@@ -173,7 +171,7 @@ const ProfileHistoryContainer: React.FC = () => {
   };
 
   return (
-    <div className="profile-history min-h-[60vh] select-none font-normal text-white">
+    <div className="profile-history min-h-[60vh] select-none font-normal text-white xl:mt-[9px]">
       <div className="profile-history-group flex max-w-full xl:max-w-[914px] items-center justify-between flex-shrink-0">
         <span className="text-[20px] xl:text-2xl font-medium">
           Lịch sử xem của {userSelect?.name}
@@ -189,7 +187,7 @@ const ProfileHistoryContainer: React.FC = () => {
         )}
       </div>
       {profileHistory?.list_history?.length > 0 && !isLoading ? (
-        <div className="profile-history__selected mt-6 mt-6 max-w-full xl:max-w-[914px] rounded-lg bg-eerie-black p-6">
+        <div className="profile-history__selected mt-6 max-w-full xl:max-w-[914px] rounded-lg bg-eerie-black p-6">
           <ProfileHistory
             data={dataWatching}
             isMore={dataWatching.length < profileHistory.list_history.length}
@@ -197,28 +195,15 @@ const ProfileHistoryContainer: React.FC = () => {
           />
         </div>
       ) : isLoading && !isServerError ? (
-        <SpinnerLoading />
-      ) : isServerError && !isLoading ? (
-        <div className="server-error absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-8">
-          <Image
-            src="/images/cinematic-law/server-error.png"
-            alt="cinematic"
-            width={200}
-            height={200}
-            className="object-contain"
-          />
-          <h3 className="no-data text-xl font-semibold text-[#f5f5f4]">
-            Không tìm thấy nội dung
-          </h3>
-          <button
-            className="try-again rounded-lg bg-gradient-to-r from-[#fe592a] to-[#e93013] px-22 py-3 text-base font-medium text-white hover:from-[#ff6a3b] hover:to-[#fa4013] transition-colors"
-            onClick={() => userSelect && getProfileHistory(userSelect)}
-          >
-            Thử lại
-          </button>
+        <div className="flex justify-center items-center h-screen max-h-[200px]">
+          <SpinnerLoading />
         </div>
+      ) : isServerError && !isLoading ? (
+        <ErrorData
+          onRetry={() => userSelect && getProfileHistory(userSelect)}
+        />
       ) : (
-        <NoData />
+        profileHistory?.list_history?.length === 0 && <NoData />
       )}
       <ConfirmModal
         ref={confirmModalRef}

@@ -45,7 +45,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [checkedSlides, setCheckedSlides] = useState<boolean[]>(
-    slidesItems ? new Array(slidesItems.length).fill(false) : [],
+    slidesItems ? new Array(slidesItems.length).fill(false) : []
   );
   const { deleteData, response } = useDeleteDataBlock();
 
@@ -69,7 +69,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
         return newCheckedSlides;
       });
     },
-    [],
+    []
   );
 
   // Xử lý chọn tất cả
@@ -95,7 +95,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [response],
+    [response]
   );
 
   useEffect(() => {
@@ -267,7 +267,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
 
           <div
             className={`block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)] hover:text-white hover:cursor-pointer duration-400 absolute top-0 -right-[50px] -translate-y-1/2 ${
-              queryId || nextBtnDisabled  ? '!hidden' : ''
+              queryId || nextBtnDisabled ? '!hidden' : ''
             }`}
             style={{
               marginTop: `${imageHeight / 2 + 16}px`,

@@ -623,7 +623,19 @@ export const getPlayerParams = () => {
     sessionStorage.getItem(SELECTED_AUDIO_LABEL_LIVE) ||
     sessionStorage.getItem(trackingStoreKey.PLAYER_ACTIVE_AUDIO_LABEL) ||
     '';
-
+  const VideoQuality =
+    sessionStorage.getItem(SELECTED_VIDEO_QUALITY) ||
+    getPlayerActiveTrack()?.resolutionObject?.height
+      ? String(getPlayerActiveTrack()?.resolutionObject?.height)
+      : '';
+  let SubMenuId =
+    sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) || '';
+  if (streamType === 'channel') {
+    SubMenuId =
+      sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) ||
+      sessionStorage.getItem(trackingStoreKey.CHANNEL_SELECTED_GROUP) ||
+      '';
+  }
   const data = {
     StreamProfile:
       sessionStorage.getItem(trackingStoreKey.STREAM_PROFILES) || '',
@@ -661,11 +673,7 @@ export const getPlayerParams = () => {
     Resolution:
       sessionStorage.getItem(trackingStoreKey.PLAYER_RESOLUTION) || '',
     Dimension: sessionStorage.getItem(trackingStoreKey.PLAYER_DIMENSION) || '',
-    VideoQuality:
-      sessionStorage.getItem(SELECTED_VIDEO_QUALITY) ||
-      getPlayerActiveTrack()?.resolutionObject?.height
-        ? String(getPlayerActiveTrack()?.resolutionObject?.height)
-        : '',
+    VideoQuality: VideoQuality !== '0' ? VideoQuality : '',
     Audio: Audio !== 'und' && Audio !== 'Unknown' ? Audio : '',
     Subtitle: selectedSubParsed?.label || sub || getPlayerSub() || '',
     Url:
@@ -674,7 +682,10 @@ export const getPlayerParams = () => {
       '',
     Credit: (dataStream?.end_content || 0)?.toString() || '',
     StartTime: dataWatching?.timeplayed || dataChannel?.begin_time || '',
-    Duration: Math.round(Number(realDuration)).toString() || '',
+    Duration:
+      Math.round(Number(realDuration)).toString() !== '0'
+        ? Math.round(Number(realDuration)).toString()
+        : '',
     ElapsedTimePlaying:
       Math.round(
         Number(sessionStorage.getItem(VIDEO_CURRENT_TIME || 0)),
@@ -716,10 +727,7 @@ export const getPlayerParams = () => {
     is_recommend:
       sessionStorage.getItem(trackingStoreKey.IS_RECOMMEND_ITEM) || '0',
     Multicast: dataStream?.url || '',
-    SubMenuId:
-      sessionStorage.getItem(trackingStoreKey.APP_MODULE_SUBMENU_ID) ||
-      sessionStorage.getItem(trackingStoreKey.CHANNEL_SELECTED_GROUP) ||
-      '',
+    SubMenuId: SubMenuId || '',
     Key: sessionStorage.getItem(trackingStoreKey.CHANNEL_KEY) || '',
     Status: dataStream?.enable_preview === '1' ? 'Preview' : 'None',
     AudioMimeType: sessionStorage.getItem(

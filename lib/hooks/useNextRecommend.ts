@@ -292,11 +292,21 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   useEffect(() => {
     if ((isEndVideo ?? 0) > 0) {
       setIsCancelled(false);
-      if (nextRecommendCancelled) {
+    }
+  }, [isEndVideo]);
+
+  useEffect(() => {
+    if ((isEndVideo ?? 0) > 0) {
+      if (
+        hasEndContent &&
+        nextRecommendCancelled &&
+        isFinalEpisode &&
+        isCancelled
+      ) {
         setNextRecommendCancelled?.(false);
       }
     }
-  }, [isEndVideo, nextRecommendCancelled, setNextRecommendCancelled]);
+  }, [isEndVideo]);
 
   // Reset cancelled state when video is still playing and hasn't reached end_content
   useEffect(() => {
