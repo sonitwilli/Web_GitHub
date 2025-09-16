@@ -18,7 +18,7 @@ const iconData = [
   },
 ];
 const logoBrand = [
-  { src: '/images/landing-page/fpt.png', alt: 'fpt', width: 100, height: 67 },
+  // { src: '/images/landing-page/fpt.png', alt: 'fpt', width: 100, height: 67 },
   // {
   //   src: '/images/landing-page/viettel.png',
   //   alt: 'viettel',
@@ -40,7 +40,7 @@ const logoBrand = [
 ];
 
 const Service3GComponent = () => {
-  const [selectedTelcos, setSelectedTelcos] = useState<string>('fpt');
+  const [selectedTelcos, setSelectedTelcos] = useState<string>('mobifone');
 
   const handleOnClickTelcos = (telco: string) => {
     if (telco) {

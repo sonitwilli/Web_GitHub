@@ -31,6 +31,7 @@ const baseConfig: NextConfig = {
       },
     ],
   },
+  poweredByHeader: false,
 };
 
 const pwaConfig = withPWA({

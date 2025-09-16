@@ -33,6 +33,7 @@ import { handleClearStrorage } from '@/utils/common/handleClearStrorage';
 import useTabActivity from '@/lib/hooks/useTabActivity';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { showToast } from '@/lib/utils/globalToast';
+import { userAgentInfo } from '@/lib/utils/ua';
 const Chatbot = dynamic(() => import('@/lib/components/chatbot/Chatbot'), {
   ssr: false,
 });
@@ -207,9 +208,10 @@ export default function AppContainer({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    console.log('--- APP: ', '10:35-11:09', {
+    console.log('--- APP: ', '08:00-15:09', {
       devMode: process.env.NEXT_PUBLIC_ENVIRONMENT,
       deployMode: process.env.NODE_ENV,
+      device: userAgentInfo(),
     });
     const handleRouteChange = (url: string) => {
       if (!errorCodeResult) {

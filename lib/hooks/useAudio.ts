@@ -22,6 +22,7 @@ import { AudioItemType } from '../components/player/core/AudioButton';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
 import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
+import { userAgentInfo } from '../utils/ua';
 
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
@@ -331,6 +332,14 @@ export default function useAudio() {
     filterdAudios,
   ]);
 
+  const checkAudioOnRenderAndroidMobile = useCallback(() => {
+    const device = userAgentInfo();
+    if (!device?.isFromAndroidOs) {
+      return;
+    }
+    checkAudioOnRender();
+  }, [checkAudioOnRender]);
+
   useEffect(() => {
     checkAudioOnRender();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -426,5 +435,6 @@ export default function useAudio() {
     containerRef,
     filterdAudios,
     checkAudioOnRender,
+    checkAudioOnRenderAndroidMobile,
   };
 }

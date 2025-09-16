@@ -59,54 +59,49 @@ const viettelPackages = [
 
 const mobifonePackages = [
   {
-    name: 'Ngày (FL)',
+    name: 'Ngày (F1)',
     description:
-      'Xem nội dung các kênh truyền hình gia đình (ngoại trừ kênh K+, Kênh HBO Go, kênh Quốc tế) và các nội dung cơ bản trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.',
+      'Xem tất cả nội dung cơ bản của dịch vụ nhưng không bao gồm các nội dung cao cấp trong 01 ngày',
     details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng',
-      data: '850MB/ngày',
-      tail: 'truy cập Internet ngoài gói',
+      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
+      data: '100MB',
+      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
     },
-    syntax: 'Soạn DK FL hoặc FL gửi 999',
-    syntax2: 'Soạn HUY FL gửi 999',
-    syntax3: 'Soạn KT All gửi 999',
+    syntax: 'Soạn DK F1 gửi 1584',
+    syntax2: 'Soạn HUY F1 gửi 1584',
     fee: {
       text: 'Đăng ký với mức cước',
-      details: '6.000 ĐỒNG',
+      details: '3.000 ĐỒNG',
     },
   },
   {
-    name: 'Ngày (PP)',
-    description:
-      'Xem nội dung phim bộ, phim lẻ đặc sắc và các nội dung cơ bản trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.',
+    name: 'Ngày (TT1)',
+    description: 'Xem nội dung thể thao, giái trí hấp dẫn trong 01 ngày.',
     details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng',
-      data: '850MB/ngày',
-      tail: 'truy cập Internet ngoài gói',
+      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
+      data: '100MB',
+      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
     },
-    syntax: 'Soạn DK PP hoặc PP gửi 999',
-    syntax2: 'Soạn HUY PP gửi 999',
-    syntax3: 'Soạn KT All gửi 999',
+    syntax: 'Soạn DK TT1 gửi 1584',
+    syntax2: 'Soạn HUY TT1 gửi 1584',
     fee: {
       text: 'Đăng ký với mức cước',
-      details: '6.000 ĐỒNG',
+      details: '10.000 ĐỒNG',
     },
   },
   {
-    name: 'Ngày (EX)',
-    description:
-      'Xem nội dung các kênh truyền hình (ngoại trừ kênh K+, Kênh HBO Go) và phim bộ, phim lẻ đặc sắc trên FPT Play. Xem cùng lúc trên 3 thiết bị bao gồm SmartTV, Smart Phone, Tablet, PC-Web trong 1 ngày.',
+    name: 'Tuần (TT7)',
+    description: 'Xem nội dung thể thao, giái trí hấp dẫn trong 07 ngày.',
     details: {
-      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói. Cộng',
-      data: '950MB/ngày',
-      tail: 'truy cập Internet ngoài gói',
+      head: 'Miễn phí không giới hạn dung lượng khi xem nội dung của gói và được cộng thêm',
+      data: '200MB',
+      tail: 'dung lượng tốc độ cao cộng vào tài khoản Data quản lý trên PRCF để thuê bao có thể truy cập các dịch vụ internet khác và để tránh phát sinh cước ngoài gói.',
     },
-    syntax: 'Soạn DK EX hoặc EX gửi 999',
-    syntax2: 'Soạn HUY EX gửi 999',
-    syntax3: 'Soạn KT All gửi 999',
+    syntax: 'Soạn DK TT7 gửi 1584',
+    syntax2: 'Soạn HUY TT7 gửi 1584',
     fee: {
       text: 'Đăng ký với mức cước',
-      details: '8.000 ĐỒNG',
+      details: '30.000 ĐỒNG',
     },
   },
 ];

@@ -21,7 +21,7 @@ export default function ShortVideoPlayer({ shortVideoData }: ShortVideoPlayerPro
     <section 
       className="relative min-h-screen bg-[url('/images/moment/background.png')] bg-cover bg-center bg-no-repeat"
     >
-      <div className="relative z-5 mx-auto px-4 py-16 pt-32 lg:py-24">
+      <div className="relative z-1 mx-auto px-4 py-16 pt-32 lg:py-24">
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-9 items-center justify-items-center min-h-[80vh]">
           <div className="flex justify-center">
             <div className="relative">

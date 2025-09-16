@@ -112,8 +112,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isValidForProfileType,
     handleBookmark,
   } = usePlayer();
-  const { checkSubOnRender } = useSubtitle({ type: 'fullcreen' });
-  const { checkAudioOnRender } = useAudio();
+  const { checkSubOnRenderAndroidMobile } = useSubtitle({ type: 'fullcreen' });
+  const { checkAudioOnRenderAndroidMobile } = useAudio();
   const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
     dataChannel,
     dataStream,
@@ -321,8 +321,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         Resolution: `${e?.newTrack?.width}x${e?.newTrack?.height}`,
         isManual: '0',
       });
-      checkSubOnRender();
-      checkAudioOnRender();
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     player.addEventListener('trackschanged', (ev: any) => {
@@ -341,8 +341,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
       const isUserManual = sessionStorage.getItem(
         trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION,
       );
-      checkSubOnRender();
-      checkAudioOnRender();
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
       trackingLogChangeResolutionLog113({
         Resolution: `${active.width}x${active.height}`,
         isManual: isUserManual || '0',
@@ -352,8 +352,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     player.addEventListener('abrstatuschanged', (e: any) => {
       console.log('--- PLAYER abrstatuschanged ' + new Date().getTime(), e);
-      checkSubOnRender();
-      checkAudioOnRender();
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
       if (e?.newStatus) {
         trackingLogChangeResolutionLog113({
           Resolution: `${e.newStatus.width}x${e.newStatus.height}`,

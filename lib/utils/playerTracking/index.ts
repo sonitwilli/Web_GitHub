@@ -388,6 +388,7 @@ export const removePlayerSessionStorageWhenRender = () => {
       trackingStoreKey.PLAYER_PARSED_DATA,
       trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN,
       trackingStoreKey.PLAYER_PING_DATA,
+      VIDEO_CURRENT_TIME,
     ],
   });
 };

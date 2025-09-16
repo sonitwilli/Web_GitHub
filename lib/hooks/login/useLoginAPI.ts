@@ -59,6 +59,7 @@ import {
   UNDERSTOOD_BUTTON_TEXT,
   CLOSE_LOGIN_MODAL_NOW,
   LOGIN_ERROR_MESSAGE,
+  QUICK_LOGIN_OTP_CODE,
 } from '@/lib/constant/texts';
 import { Oidc } from '@/lib/oidc';
 import { store } from '@/lib/store';
@@ -762,17 +763,26 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
       if (!deviceIds?.length) return;
 
       try {
+        const isHasQuickLogin = sessionStorage.getItem(QUICK_LOGIN_OTP_CODE);
+
         const responseRemove = await removeDevicesLimit({
           list_ids: deviceIds,
           verify_token: storeVerifyToken,
-          ignore_token: '0',
-          required_login: '0',
+          ignore_token: isHasQuickLogin ? '1' : '0',
+          required_login: isHasQuickLogin ? '1' : '0',
         });
 
         const data = responseRemove?.data;
         const errorCode = data?.error_code;
 
         if (errorCode === '0') {
+          // Quick Login ------------
+          if (isHasQuickLogin) {
+            dispatch(closeLoginModal());
+            window.location.reload();
+            return;
+          }
+          // ------------------------
           await onLoginSuccess(data, handleUserInfo, showNotificationModal);
           cleanupLogin();
           return;

@@ -12,6 +12,7 @@ import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
 import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
 import { ControlPopupType } from '../components/player/core/MobilePopup';
+import { userAgentInfo } from '../utils/ua';
 
 export interface SubtitleItemType {
   language?: string;
@@ -163,6 +164,14 @@ export default function useSubtitle({
     } catch {}
   }, [subs, playerName]);
 
+  const checkSubOnRenderAndroidMobile = useCallback(() => {
+    const device = userAgentInfo();
+    if (!device?.isFromAndroidOs) {
+      return;
+    }
+    checkSubOnRender();
+  }, [checkSubOnRender]);
+
   useEffect(() => {
     // check selected on load
     checkSubOnRender();
@@ -240,5 +249,6 @@ export default function useSubtitle({
     clickSub,
     containerRef,
     checkSubOnRender,
+    checkSubOnRenderAndroidMobile,
   };
 }
