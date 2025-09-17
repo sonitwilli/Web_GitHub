@@ -156,6 +156,15 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
   let vodId = '';
   const slugs = params?.slug || [];
 
+  if (slugs[0] && slugs[0].includes('.html')) {
+    return {
+      redirect: {
+        destination: slugs[0].replace('.html', ''),
+        permanent: false,
+      }
+    };
+  }
+
   if (slugs && slugs?.length) {
     vodId = slugs[0].split('-')?.pop() || '';
   }

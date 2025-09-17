@@ -764,12 +764,14 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
 
       try {
         const isHasQuickLogin = sessionStorage.getItem(QUICK_LOGIN_OTP_CODE);
+        const loginType = localStorage.getItem(TYPE_LOGIN);
 
         const responseRemove = await removeDevicesLimit({
           list_ids: deviceIds,
           verify_token: storeVerifyToken,
           ignore_token: isHasQuickLogin ? '1' : '0',
           required_login: isHasQuickLogin ? '1' : '0',
+          login_type: loginType?.toLowerCase() || '',
         });
 
         const data = responseRemove?.data;
