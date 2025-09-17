@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
+import { viToEn } from '@/lib/utils/methods';
 
 function VodPageContent() {
   usePlayerPageCycle();
@@ -214,6 +215,34 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       const vodTitle = channelRes?.data?.data?.title;
       const vodDescription = channelRes?.data?.data?.description;
       const vodImage = channelRes?.data?.data?.image?.landscape_title;
+      
+      // Access additional properties that might not be in types
+      const vodData = channelRes?.data?.data as Record<string, unknown>;
+      const vodTitleVie = vodData?.title_vie as string;
+      const vodTitleOrigin = vodData?.title_origin as string;
+
+      // Generate canonical slug using viToEn
+      const canonicalSlugBase = viToEn(
+        vodTitleVie || vodTitle || vodTitleOrigin || ''
+      );
+      const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+      
+      // Check if current slug matches canonical slug
+      const currentSlugBase = slugs[0];
+      const hasEpisode = slugs.length > 1;
+      const episodePart = hasEpisode ? `/${slugs[1]}` : '';
+      
+      // Redirect if slug doesn't match canonical format
+      if (currentSlugBase !== canonicalSlug) {
+        const destination = `/xem-video/${canonicalSlug}${episodePart}`;
+        console.log('Redirecting to:', destination);
+        return {
+          redirect: {
+            destination,
+            permanent: true, // 301 redirect for SEO
+          },
+        };
+      }
 
       // Reconstruct full slug including episode part for SEO
       const fullSlug = slugs.length > 1 ? `${slugs[0]}/${slugs[1]}` : slugs[0];
