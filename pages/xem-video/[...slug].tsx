@@ -215,9 +215,12 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       const vodDescription = channelRes?.data?.data?.description;
       const vodImage = channelRes?.data?.data?.image?.landscape_title;
 
+      // Reconstruct full slug including episode part for SEO
+      const fullSlug = slugs.length > 1 ? `${slugs[0]}/${slugs[1]}` : slugs[0];
+      
       const seoProps = createSeoPropsFromVodData(
         vodSeoData,
-        slugs[0],
+        fullSlug,
         vodTitle ? vodTitle : undefined,
         vodDescription || undefined,
         vodImage,
