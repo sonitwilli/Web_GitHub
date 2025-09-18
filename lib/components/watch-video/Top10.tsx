@@ -6,9 +6,9 @@ export default function Top10() {
   return (
     <div className="">
       <div className="">
-        <h1 className="text-white-smoke font-[600] text-[24px] leading-[130%] tracking-[0.48px] mb-[16px]">
+        <h2 className="text-white-smoke font-[600] text-[24px] leading-[130%] tracking-[0.48px] mb-[16px]">
           {top10Data?.meta?.name}
-        </h1>
+        </h2>
 
         <div className="flex flex-col gap-[33px] xl:gap-[24px]">
           {top10Data?.data?.map((movie, index) => (

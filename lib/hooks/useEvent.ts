@@ -10,7 +10,7 @@ interface Props {
 }
 
 export default function useEvent({ slide, block }: Props) {
-  const [checkLive, setCheckLive] = useState<null | boolean | string>(null);
+  const [checkLive, setCheckLive] = useState(null);
   const [preSecond, setPreSecond] = useState<string | number>('');
   const [nextSecond, setNextSecond] = useState<string | number>('');
   const [preMin, setPreMin] = useState<string | number>('');
@@ -24,19 +24,21 @@ export default function useEvent({ slide, block }: Props) {
         ['dang-phat-song', 'sap-phat-song'].includes(viToEn(block?.name || '')))
     );
   }, [slide, block]);
-
   const checkDataLive = () => {
     try {
-      if (!slide) return null;
-
-      const currentTimestamp = Date.now() / 1000;
-      const startTs = parseInt(slide?.start_time || slide?.begin_time || '');
-      const endTs = parseInt(slide?.end_time || '');
-
-      let status: null | boolean | string = null;
-
-      if (currentTimestamp < startTs) {
-        const countdowntime = startTs - currentTimestamp;
+      if (!slide) {
+        return null;
+      }
+      const currentTime = new Date();
+      const currentTimestamp = currentTime.getTime() / 1000;
+      let status = null;
+      if (
+        currentTimestamp <
+        parseInt(slide?.start_time || slide?.begin_time || '')
+      ) {
+        const countdowntime =
+          parseInt(slide?.start_time || slide?.begin_time || '') -
+          currentTimestamp;
 
         if (countdowntime < 3600) {
           if (
@@ -52,37 +54,57 @@ export default function useEvent({ slide, block }: Props) {
               status = `Còn ${min} phút nữa`;
             }
           } else {
-            // Làm tròn tổng số giây còn lại rồi tách phút/giây
-            const total = Math.max(0, Math.round(countdowntime));
-            const curMin = Math.floor(total / 60);
-            const curSec = total % 60;
+            const second = countdowntime % 60;
+            const min = Math.floor(countdowntime / 60);
+            if (countdowntime < 1) {
+              status = null;
+            } else {
+              const currentSecond = Math.round(second);
+              const currentMinute = min;
 
-            const preTotal = total + 1;
-            const preMinVal = Math.floor(preTotal / 60);
-            const preSecVal = preTotal % 60;
+              const nextSecond = currentSecond;
+              const nextMinute = currentMinute;
 
-            const fmt = (v: number) => (v < 10 ? `0${v}` : `${v}`);
+              let preSecond = currentSecond + 1;
+              let preMinute = currentMinute;
 
-            setNextMin(fmt(curMin));
-            setNextSecond(fmt(curSec));
-            setPreMin(fmt(preMinVal));
-            setPreSecond(fmt(preSecVal));
-            status = true;
+              if (preSecond >= 60) {
+                preSecond = 0;
+                preMinute = currentMinute + 1;
+              }
+
+              const formatTime = (value: number) =>
+                value < 10 ? `0${value}` : value.toString();
+
+              setPreSecond(formatTime(preSecond));
+              setNextSecond(formatTime(nextSecond));
+              setPreMin(formatTime(preMinute));
+              setNextMin(formatTime(nextMinute));
+              status = true;
+            }
           }
         } else {
-          status = parseTimeEvent(startTs);
+          status = parseTimeEvent(
+            parseInt(slide?.start_time || slide?.begin_time || ''),
+          );
         }
-      } else if (currentTimestamp > startTs && currentTimestamp < endTs) {
+      } else if (
+        currentTimestamp >
+          parseInt(slide?.start_time || slide?.begin_time || '') &&
+        currentTimestamp < parseInt(slide.end_time || '')
+      ) {
         status = null;
-      } else if (slide.end_time && currentTimestamp > endTs) {
+      } else if (
+        slide.end_time &&
+        currentTimestamp > parseInt(slide.end_time)
+      ) {
         status = 'Đã kết thúc';
       } else if (slide && !slide.end_time) {
         status = null;
       } else {
         status = null;
       }
-
-      /* @ts-ignore */
+      /*@ts-ignore*/
       setCheckLive(status);
     } catch {}
   };

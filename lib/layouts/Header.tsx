@@ -365,11 +365,11 @@ export default function Header() {
 
       const iphoneVersion = detectIPhoneVersion(userAgent);
 
-      // Kiểm tra nếu là iPhone và version < 16 (chặn iOS 15 trở xuống)
-      if (iphoneVersion !== null && iphoneVersion < 1600) {
+      // Kiểm tra nếu là iPhone và version < 16
+      if (iphoneVersion !== null && iphoneVersion < 1500) {
         // Hiển thị thông báo
         const confirmed = window.confirm(
-          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 16 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.',
+          'Phiên bản hệ điều hành của thiết bị không hỗ trợ tính năng này. Vui lòng cập nhật lên iOS 15 để tiếp tục sử dụng. Nhấn OK để được hỗ trợ.',
         );
 
         if (confirmed) {
@@ -658,19 +658,14 @@ export default function Header() {
               )}
 
               <div className="hidden xl:block">
-                {userInfo &&
-                profiles.length &&
-                currentProfile &&
-                !isLoadingUserData ? (
+                {userInfo && profiles.length && currentProfile && !isLoadingUserData ? (
                   <UserDropdownMenu
                     profiles={profiles}
                     currentProfile={currentProfile}
                   />
                 ) : (
                   <button
-                    className={`text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl font-[600] leading-[130%] tracking-[0.36px] ${
-                      isLoadingUserData ? 'hidden' : 'hidden lg:inline-block'
-                    }`}
+                    className={`text-white-smoke text-[18px] hover:cursor-pointer hover:text-fpl font-[600] leading-[130%] tracking-[0.36px] ${isLoadingUserData ? 'hidden' : 'hidden lg:inline-block'}`}
                     onClick={() => dispatch(openLoginModal())}
                   >
                     Đăng nhập

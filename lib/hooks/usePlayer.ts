@@ -587,52 +587,17 @@ export default function usePlayer() {
         },
       ],
     });
-    // const {
-    //   bookmark,
-    //   landing_page,
-    //   is_from_chatbot,
-    //   block_index,
-    //   position_index,
-    //   block_type,
-    //   ...restQuery
-    // } = router.query;
-    // if (
-    //   bookmark !== undefined ||
-    //   landing_page !== undefined ||
-    //   is_from_chatbot !== undefined ||
-    //   block_index ||
-    //   position_index ||
-    //   block_type
-    // ) {
-    //   if (landing_page) {
-    //     saveSessionStorage({
-    //       data: [
-    //         {
-    //           key: trackingStoreKey.PLAYER_IS_LANDING_PAGE,
-    //           value: '0',
-    //         },
-    //       ],
-    //     });
-    //   }
-    //   if (block_index) {
-    //     saveSessionStorage({
-    //       data: [
-    //         {
-    //           key: trackingStoreKey.BLOCK_INDEX,
-    //           value: block_index as string,
-    //         },
-    //       ],
-    //     });
-    //   }
-    //   router.replace(
-    //     {
-    //       pathname: router.pathname,
-    //       query: restQuery,
-    //     },
-    //     undefined,
-    //     { shallow: true },
-    //   );
-    // }
+    const { bookmark, ...restQuery } = router.query;
+    if (bookmark !== undefined) {
+      router.replace(
+        {
+          pathname: router.pathname,
+          query: restQuery,
+        },
+        undefined,
+        { shallow: true },
+      );
+    }
     if (isBackgroundRetryRef) {
       isBackgroundRetryRef.current = false;
     }

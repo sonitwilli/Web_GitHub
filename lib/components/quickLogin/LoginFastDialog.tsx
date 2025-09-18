@@ -271,7 +271,6 @@ export default function LoginFastDialog() {
           numInputs={6}
           inputType="text"
           inputClasses="mb-2"
-          disableAutoMask={true}
           onChange={handleOtpChange}
           onComplete={handleOtpComplete}
         />

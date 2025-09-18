@@ -1,6 +1,17 @@
 {
     "versions": [
         {
+            "version": "8.0.48",
+            "date": "Dự kiến",
+            "content": [
+                "Loại bỏ tham số khi di chuyển giữa các internal link",
+                "Trang /xem-video/ đang có 2 thẻ <H1>. Chuyển thẻ <H1> chỗ 'Top 10 phim bộ xu hướng' thành <H2>",
+                "Tiêu đề trang /xem-truyen-hinh/ đang là <H3>, Chỉnh lại <H1>",
+                "Trạng thái index, follow các trang đang bị khác nhiều so với web cũ. Chỉnh lại theo sheet 'Quy hoach Index, Follow'",
+                "Nội dung có cùng ID, tồn tại nhiều slug khác nhau, Redirect tất cả các slug về slug gốc"
+            ]
+        }, 
+        {
             "version": "8.0.47",
             "date": "Dự kiến",
             "content": [

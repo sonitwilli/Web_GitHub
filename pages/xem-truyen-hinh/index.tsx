@@ -1,5 +1,4 @@
 import { getChannels } from '@/lib/api/channel';
-import { HISTORY_TEXT } from '@/lib/constant/texts';
 import { GetServerSideProps } from 'next';
 
 export const getServerSideProps = (async () => {
@@ -12,7 +11,7 @@ export const getServerSideProps = (async () => {
   }
   return {
     redirect: {
-      destination: `/xem-truyen-hinh/${defaultChannel}?${HISTORY_TEXT.LANDING_PAGE}=1`,
+      destination: `/xem-truyen-hinh/${defaultChannel}`,
       permanent: false,
     },
   };

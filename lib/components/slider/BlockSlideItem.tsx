@@ -159,9 +159,7 @@ export default function BlockSlideItem({
             dataChannel?.title_origin ||
             '',
         )}-${dataChannel?.id}/tap-${Number(slide?.id_trailer) + 1}`;
-        return result?.includes('?')
-          ? `${result}&block_index=${blockIndex}&position_index=${index}`
-          : `${result}?block_index=${blockIndex}&position_index=${index}`;
+        return result?.includes('?') ? `${result}` : `${result}`;
       }
       return `/xem-video/${viToEn(
         dataChannel?.title ||
@@ -174,43 +172,8 @@ export default function BlockSlideItem({
       data: slide || {},
       type: block?.type || '',
     });
-    const isSearchPage = router.pathname.includes('/tim-kiem');
-    const isRelatedItem = block?.type === 'vod_related';
-    const idRelated =
-      sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '';
 
-    if (blockIndex > -1) {
-      return result?.includes('?')
-        ? `${result}&block_index=${blockIndex}&position_index=${index}${
-            isSearchPage
-              ? '&from=Search'
-              : isRelatedItem
-              ? `&from=Related&id_related=${idRelated}`
-              : ''
-          }`
-        : `${result}?block_index=${blockIndex}&position_index=${index}${
-            isSearchPage
-              ? '&from=Search'
-              : isRelatedItem
-              ? `&from=Related&id_related=${idRelated}`
-              : ''
-          }`;
-    }
-    return result?.includes('?')
-      ? `${result}&position_index=${index}${
-          isSearchPage
-            ? '&from=Search'
-            : isRelatedItem
-            ? `&from=Related&id_related=${idRelated}`
-            : ''
-        }`
-      : `${result}?position_index=${index}${
-          isSearchPage
-            ? '&from=Search'
-            : isRelatedItem
-            ? `&from=Related&id_related=${idRelated}`
-            : ''
-        }` || '/';
+    return result;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block, dataChannel, blockIndex, index]);
 
@@ -279,7 +242,7 @@ export default function BlockSlideItem({
     >
       <Link
         prefetch={false}
-        href={slideLink}
+        href={slideLink || '#'}
         title={slide?.title_vie || slide?.title}
         className={`relative block w-full  ${
           block?.type === 'vod_related' ||

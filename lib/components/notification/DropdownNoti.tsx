@@ -192,7 +192,7 @@ export default function DropdownNoti({
     // Open new tab
     if (item.url) {
       const separator = item.url.includes('?') ? '&' : '?';
-      window.open(`${item.url}${separator}from=Inbox`, '_blank');
+      window.open(`${item.url}${separator}`, '_blank');
 
       // Local update inboxList: 'read'
       setInboxList((prev) =>

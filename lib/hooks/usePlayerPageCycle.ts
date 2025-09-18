@@ -38,7 +38,6 @@ export default function usePlayerPageCycle() {
     });
     console.log('--- TRACKING player page cycle', router.query);
     const {
-      bookmark,
       landing_page,
       is_from_chatbot,
       block_index,
@@ -48,7 +47,6 @@ export default function usePlayerPageCycle() {
       ...restQuery
     } = router.query;
     if (
-      bookmark !== undefined ||
       landing_page !== undefined ||
       is_from_chatbot !== undefined ||
       block_index ||

@@ -151,7 +151,7 @@ const BuyPackageComponent = () => {
         className="mt-8 block"
       >
         <Image
-          src="/images/package_desktop.png"
+          src="/images/package_desktop.webp"
           alt="muagoi"
           width={1920}
           height={200}
@@ -159,7 +159,7 @@ const BuyPackageComponent = () => {
           className="rounded-lg cursor-pointer hidden xl:block"
         />
         <Image
-          src="/images/package_mobile.jpg"
+          src="/images/package_mobile.webp"
           alt="muagoi"
           width={1920}
           height={200}
