@@ -6,11 +6,11 @@ import EmblaBlockSlideItem from '@/lib/components/slider/embla/block-slider/Embl
 import ShortVideoContent from '@/lib/components/short-video/ShortVideoContent';
 import { throttle } from 'lodash';
 import DefaultLayout from '@/lib/layouts/Default';
-import { BlockTypeType, BlockItemType } from '@/lib/api/blocks';
+import { BlockTypeType, BlockItemType, getBlockItemData } from '@/lib/api/blocks';
 import { loadJsScript } from '@/lib/utils/methods';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeAdsLoaded } from '@/lib/store/slices/appSlice';
-import { createSeoPropsFromMeta } from '@/lib/utils/seo';
+import { createSeoPropsFromMeta, createSeoPropsFromMetaData } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
 import { changePageBlocks } from '@/lib/store/slices/blockSlice';
 
@@ -51,14 +51,61 @@ export const getServerSideProps = (async (context) => {
     }
   };
 
-  const seoProps = await createSeoPropsFromMeta({
-    pageId: id,
-    fallbackTitle: getBlockTypeTitle(type),
-    fallbackDescription: getBlockTypeDescription(type),
-    pathPrefix: `/block/${type}`,
-  });
+  // Extract the actual block ID from the URL parameter
+  const tagId = id.split('-').pop() || '';
+  
+  const block: BlockItemType = {
+    block_type: (type as BlockTypeType) || 'category',
+    custom_data: tagId === 'becauseyouwatched' ? 'None' : '',
+    id: tagId,
+    type: type,
+  };
 
-  return { props: { seoProps } };
+  try {
+    // Fetch block data to get meta information for SEO
+    const blockResponse = await getBlockItemData({
+      block,
+      page_index: 1,
+      page_size: 1, // Only need meta data, not all content
+    });
+
+    const metaData = blockResponse.data?.meta;
+    
+    if (metaData) {
+      // Create SEO props using the actual API response data
+      const seoProps = createSeoPropsFromMetaData({
+        meta_title: metaData.name,
+        meta_description: metaData.short_description,
+        name: metaData.name,
+        index: 1, // Allow indexing for category pages
+        follow: 1, // Allow following links
+      }, tagId, `/block/${type}`);
+
+      return { props: { seoProps } };
+    } else {
+      // If no meta data available, use fallback
+      const seoProps = await createSeoPropsFromMeta({
+        pageId: tagId,
+        fallbackTitle: getBlockTypeTitle(type),
+        fallbackDescription: getBlockTypeDescription(type),
+        pathPrefix: `/block/${type}`,
+      });
+
+      return { props: { seoProps } };
+    }
+  } catch (error) {
+    console.error('Error fetching block data for SEO:', error);
+    
+    // Fallback to basic SEO if API call fails
+    const seoProps = await createSeoPropsFromMeta({
+      pageId: tagId,
+      fallbackTitle: getBlockTypeTitle(type),
+      fallbackDescription: getBlockTypeDescription(type),
+      pathPrefix: `/block/${type}`,
+    });
+
+    return { props: { seoProps } };
+  }
 }) satisfies GetServerSideProps<{ seoProps: SeoProps }>;
 
 const BlockDetailPage: React.FC = () => {
