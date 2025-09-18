@@ -72,13 +72,19 @@ export const getServerSideProps = (async (context) => {
     const metaData = blockResponse.data?.meta;
     
     if (metaData) {
-      // Create SEO props using the actual API response data
+      const apiMeta = metaData as Record<string, unknown>;
+      const apiTitle = apiMeta?.title as string;
+      const apiName = apiMeta?.name as string;
+      const apiShortDescription = apiMeta?.short_description as string;
+      const apiIndex = apiMeta?.index as number;
+      const apiFollow = apiMeta?.follow as number;
+      
       const seoProps = createSeoPropsFromMetaData({
-        meta_title: metaData.name,
-        meta_description: metaData.short_description,
-        name: metaData.name,
-        index: 1, // Allow indexing for category pages
-        follow: 1, // Allow following links
+        meta_title: apiTitle || apiName,
+        meta_description: apiShortDescription,
+        name: apiName,
+        index: apiIndex || 1,
+        follow: apiFollow || 1,
       }, tagId, `/block/${type}`);
 
       return { props: { seoProps } };
