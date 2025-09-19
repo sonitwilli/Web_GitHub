@@ -541,7 +541,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
+        className={` fixed w-full left-0 top-0 h-[80px] z-[9999] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
           scrollDistance > 300 || isCategoryPage ? '!bg-smoky-black' : ''
         } ${openMobileMenu ? '!bg-smoky-black' : ''}`}
       >

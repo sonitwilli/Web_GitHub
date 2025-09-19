@@ -1,8 +1,16 @@
 {
     "versions": [
         {
-            "version": "8.0.48",
+            "version": "8.0.49",
             "date": "Dự kiến",
+            "content": [
+                "Tích hợp chatbot AI vào web, mobile App",
+                "Live-comment phase 3: Bổ sung tính năng poll"
+            ]
+        }, 
+        {
+            "version": "8.0.48",
+            "date": "18/09/2025",
             "content": [
                 "Loại bỏ tham số khi di chuyển giữa các internal link",
                 "Trang /xem-video/ đang có 2 thẻ <H1>. Chuyển thẻ <H1> chỗ 'Top 10 phim bộ xu hướng' thành <H2>",
@@ -13,7 +21,7 @@
         }, 
         {
             "version": "8.0.47",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Đang xem] Lỗi đang lưu bookmark tập trước đó cho tập đối với trường hợp reload page/vào lại VOD",
                 "[WEB][PlayerVOD] Lỗi auto play lại âm thanh/phụ đề/tốc độ/CLHA mặc định sau khi VOD play 1 thời gian đứng luồng rồi play tiếp"
@@ -21,7 +29,7 @@
         }, 
         {
             "version": "8.0.46",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Navigation bar] Lỗi mất tên category trong menu hamburger",
                 "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 515 người dùng gặp lỗi trong quá trình phát nội dung",
@@ -48,7 +56,7 @@
         }, 
         {
             "version": "8.0.45",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Page] Lỗi tô xanh page",
                 "[WEB][MultiProfile] Đá thiết bị: Lỗi không hiển thị lỗi kết nối với dịch vụ khi nhấn btn Hoàn tất ở màn hình Tạo hồ sơ",
@@ -69,7 +77,7 @@
         }, 
         {
             "version": "8.0.44",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Navigation bar] Lỗi mất tên category trong menu hamburger",
                 "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 515 người dùng gặp lỗi trong quá trình phát nội dung",
@@ -84,7 +92,7 @@
         }, 
         {
             "version": "8.0.43",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Sự kiện] Lỗi không play được sự kiện khi đã đăng nhập",
                 "[WEB][Sự kiện] Lỗi image và redirect khi nhấn title ở block Highlight",
@@ -105,7 +113,7 @@
         }, 
         {
             "version": "8.0.42",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Đang xem] Lỗi không lưu bookmark đối với VOD bộ khác tập 1",
                 "[WEB][ProfileKID] Lỗi hiển thị không đúng deeplink và thanh menu đối với profile kid",
@@ -118,7 +126,7 @@
         }, 
         {
             "version": "8.0.41",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Preview 5p ] Lỗi để play TVC gói K+ bị đen luồng sự kiện / kênh K+",
                 "[Web][TrackingLog][Playback] Ghi nhận sai thông số của log 520 khi người dùng đã hoàn tất các công đoạn khởi tạo và start được frame đầu tiên",
@@ -136,7 +144,7 @@
         }, 
         {
             "version": "8.0.40",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Player] Lỗi không chuyển btn Toàn màn hình thành Thoát toàn màn hình",
                 "[WEB][Page Thể loại] Lỗi đang hiển thị sai poster (đang hiển thị poster không title) + không hiển thị label",
@@ -146,7 +154,7 @@
         }, 
         {
             "version": "8.0.39",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Web V5] Bổ sung button Pause, Next",
                 "[Web][TrackingLog][Playback] Không ghi nhận log 52 khi người dùng thoát xem nội dung VOD",
@@ -168,7 +176,7 @@
         }, 
         {
             "version": "8.0.38",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Thư viện] Lỗi không mất data sau khi thực hiện xóa thành công block Đang theo dõi/Lịch sử xem",
                 "[WEB][Trang chủ] Lỗi khi nhấn phím Left/Right trên keyboard",
@@ -189,7 +197,7 @@
         }, 
         {
             "version": "8.0.37",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Download app] Hiện popup download app khi responsive trên Desktop/PC/laptop",
                 "[WEB][Popup thông báo lỗi] Lỗi hiển thị của trường Nội dung ở popup Lỗi kết nối dịch vụ",
@@ -207,7 +215,7 @@
         }, 
         {
             "version": "8.0.36",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Popup thông báo lỗi] Lỗi hiển thị của trường Nội dung ở popup Lỗi kết nối dịch vụ",
                 "[WEB][Comment] Lỗi không hiển thị reaction khi nhấn giữ",
@@ -230,7 +238,7 @@
         }, 
         {
             "version": "8.0.34",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Thể Thao] Lỗi hiển thị thiếu Bảng xếp hạng ở tab Tất cả ở block Lịch thi đấu, kết quả, BXH",
                 "[WEB][DetailVOD] Lỗi không hiển thị Title description dự kiến công chiếu/thông báo dừng chiếu",
@@ -265,7 +273,7 @@
         }, 
         {
             "version": "8.0.33",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Deeplink] Hiển thị sai format deeplink các giải đấu",
                 "[WEB][Truyền hình] Lỗi chỉ enable timeshift 24h cho kênh set timeshift 48h/ 72h",
@@ -283,7 +291,7 @@
         }, 
         {
             "version": "8.0.32",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][ProfileKID] Lỗi không hiển thị popup chặn đối với nội dung VOD/Truyền hình/Sự kiện (profile thường) khi sử dụng hồ sơ trẻ em",
                 "[WEB][V5][ABR] Lỗi chỉ play chất lượng thấp nhất không switch lên chất lượng cao hơn khi chọn Auto ở luồng H265",
@@ -294,7 +302,7 @@
         }, 
         {
             "version": "8.0.31",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Tìm kiếm] Lỗi back về trang tìm kiếm trước đó khi thực hiện xóa nội dung tìm kiếm ở input",
                 "[ANRMOBI][iOS][Livechat] Lỗi thỉnh thoảng không cập nhật UI cho tin nhắn bị đánh dấu vi phạm",
@@ -320,7 +328,7 @@
         }, 
         {
             "version": "8.0.30",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Landing page] Không hiển thị màn hình 404 khi bấm button Trực tiếp Sự kiện đã kết thúc",
                 "[WEB][Playlist] Lỗi hiển thị khi nhấn vào item TVOD có preview/không có preview ở playlist",
@@ -341,7 +349,7 @@
         }, 
         {
             "version": "8.0.29",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Playlist] Lỗi không play bookmark sau khi reload page ở playlist",
                 "[WEB][Playlist] Lỗi không play bookmark khi chọn ở danh sách phát",
@@ -357,7 +365,7 @@
         }, 
         {
             "version": "8.0.28",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Chia sẻ] Lỗi hiển thị btn Sao chép và URL ở popup chia sẻ ở mode repsonsive",
                 "[WEB][Playlist] Lỗi loading lâu + nháy khi play 1 playlist bất kỳ",
@@ -368,7 +376,7 @@
         }, 
         {
             "version": "8.0.27",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][DetailVOD] Danh sách phát: Lỗi không scroll 3 tab tiếp theo/trước đó khi nhấn vào btn Next/Previous ở tab danh sách",
                 "[WEB][DetailVOD] Lỗi không lưu bookmark VOD",
@@ -380,7 +388,7 @@
         }, 
         {
             "version": "8.0.26",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Web V5] Log Player",
                 "[WEB][Sự kiện] Lỗi không hiện 'LIVE' trên player sự kiện mode mobile",
@@ -394,7 +402,7 @@
         }, 
         {
             "version": "8.0.25",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Xóa tài khoản] Lỗi hiển thị trang 404 khi truy cập deeplink Xóa tài khoản",
                 "[WEB][Thể thao] Lỗi hiển thị ở block Lịch đấu, kết quả, bảng xếp hạng trên trình duyệt safari",
@@ -415,7 +423,7 @@
         },  
         {
             "version": "8.0.24",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[All platforms] Điều chỉnh các mục liên quan điều khoản, chính sách",
                 "[Web V5] Update Footer lấy động từ API",
@@ -434,7 +442,7 @@
         },  
         {
             "version": "8.0.23",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Web V5] Cập nhật vị trí button Chia sẻ, Theo dõi",
                 "[iOS][Livechat][Comment] Lỗi OS12 không mở được web_view livechat/ comment",
@@ -450,7 +458,7 @@
         },  
         {
             "version": "8.0.22",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Sự kiện][Truyền hình] Lỗi player bị scale hoặc zoom che blocks",
                 "[WEB][PlayerVOD] Thumbnail: Lỗi không hiển thị thumbnail khi hover vào thanh progressbar",
@@ -475,7 +483,7 @@
         },  
         {
             "version": "8.0.21",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Tìm kiếm] Lỗi hiển thị khi thực hiện scroll trang",
                 "[WEB][Trang chủ] Lỗi không highlight tab đã chọn ở responsive mobile",
@@ -487,7 +495,7 @@
         },  
         {
             "version": "8.0.20",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Web][Quảng cáo] Bugs quảng cáo inpage",
                 "[WEB][Login] Lỗi hiển thị thông báo 'Đăng nhập thành công' bị lệch và bị che mất mép trái của nội dung ở responsive mobile",
@@ -502,7 +510,7 @@
         },  
         {
             "version": "8.0.19",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Màn hình mua gói] Lỗi UI label 'Đang sử dụng' và thanh menu",
                 "[WEB][MultiProfile] Lỗi đang hiển thị avatar khi chọn vào Tạo/Chỉnh sửa hồ sơ",
@@ -519,7 +527,7 @@
         },         
         {
             "version": "8.0.18",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Web] [Tìm kiếm] Lỗi hiển thị placeholder bị cắt/mất một phần khi đang loading kết quả tìm kiếm ở responsive mobile",
                 "[WEB][Reponsive] Không hiện popup download app ở reponsive mode",
@@ -532,7 +540,7 @@
         }, 
         {
             "version": "8.0.17",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Sự kiện][Truyền hình] Lỗi player bị scale hoặc zoom che blocks",
                 "[WEB][DetailVOD] Lỗi hiển thị sai vị trí của label, btn Theo dõi, btn Chia sẻ ở trang chi tiết VOD ở trình duyệt safari",
@@ -548,7 +556,7 @@
         }, 
         {
             "version": "8.0.16",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Comment] Lỗi nhấn button Like & Reply comment",
                 "[Web][TrackingLog] Không ghi nhận LogId 145 khi Back/Exit/Button/ Thoát browser tại màn hình Limit Devices",
@@ -578,7 +586,7 @@
         },  
         {
             "version": "8.0.15",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Comment] Lỗi tổng số bình luận trên title và hiện button 'Xem thêm bình luận v'",
                 "[WEB][Comment] Không hiện khung chat bình luận đối với nd chưa có comment",
@@ -612,7 +620,7 @@
         },  
         {
             "version": "8.0.14",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Truyền hình] Lỗi không redirect về Trang chủ khi nhấn button Đóng trên popup Thông báo lỗi",
                 "[WEB][Quản lý thiết bị] Lỗi không hiển thị đúng đối với trường hợp mất kết nối internet",
@@ -632,7 +640,7 @@
         },  
         {
             "version": "8.0.13",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Footer] Lỗi khi nhấn các mục ở Footer",
                 "[WEB][Login] Lỗi hiển thị popup thông báo đối với tài khoản bị xóa",
@@ -643,7 +651,7 @@
         },  
         {
             "version": "8.0.12",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Login] Lỗi hiển thị thông báo lỗi khi nhấn btn Tiếp tục ở màn hình Đăng nhập hoặc đăng ký nhiều lần (>10 lần)",
                 "[WEB][Sự kiện] Lỗi player khi play sự kiện A ở 1 khoảng thời gian lâu và chuyển sang sự kiện B",
@@ -655,7 +663,7 @@
         },        
         {
             "version": "8.0.11",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Trang chủ] Lỗi popup Tải app, banner block Horizontal Banner with Title, button switch không cố định",
                 "[Web V5] Quảng cáo Outstream",
@@ -673,7 +681,7 @@
         },
         {
             "version": "8.0.10",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "SEO Google Meta Data",
                 "[Player] Bookmark",
@@ -703,7 +711,7 @@
         },
         {
             "version": "8.0.9",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][PlayerVOD] Lỗi hiển thị popup thông báo lỗi (4032) khi thực hiện đăng nhập sau khi play VOD bất kỳ",
                 "[WEB][Preview VOD] Lỗi không play được preview TVOD trên trình duyệt MS Edge",
@@ -715,7 +723,7 @@
         },  
         {
             "version": "8.0.8",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Notification] Lỗi hiển thị icon có thông báo mới đối với trường hợp Chưa đăng nhập/Không có thông báo mới",
                 "[WEB][Notification] Lỗi không hiển thị popup mục Thông báo khi đăng nhập thành công",
@@ -741,7 +749,7 @@
         },  
         {
             "version": "8.0.7",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Trang xem Playlist Âm nhạc",
                 "[WEB][Login] FID: Lỗi bị giựt màn hình sau khi login FID",
@@ -758,7 +766,7 @@
         },  
         {
             "version": "8.0.6",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Player] Report",
                 "Sidetag Firebase",
@@ -772,7 +780,7 @@
         },            
         {
             "version": "8.0.5",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Điều hướng nội dung Galaxy Play",
                 "[WEB][MultiProfile] Lỗi đối với trường hợp Quên mã PIN khi chuyển đổi hồ sơ",
@@ -786,7 +794,7 @@
         },         
         {
             "version": "8.0.4",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[WEB][Tìm kiếm] Lỗi không hiển thị từ khóa vào input nếu trước đó đã tìm kiếm chính từ khóa đó",
                 "[WEB][Tìm kiếm] Lỗi hiển thị switch các item khi nhấn btn Next/Previous ở các block",
@@ -803,7 +811,7 @@
         },  
         {
             "version": "8.0.3",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Trang xem sự kiện, công chiếu",
                 "Tài khoản: Quản lý thanh toán và gói",
@@ -813,7 +821,7 @@
         },   
         {
             "version": "8.0.2",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Trang xem VOD, Update Player",
                 "Tài khoản: Tổng quan",
@@ -829,7 +837,7 @@
         },        
         {
             "version": "8.0.1",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Trang diễn viên",
                 "Landing Page: chính sách, điều khoản",
@@ -844,7 +852,7 @@
         },
         {
             "version": "8.0.0",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "Trang chủ",
                 "Trang danh mục",
@@ -857,7 +865,7 @@
         },
         {
             "version": "7.22.1",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[All]Cập nhật popup Đăng nhập/Đăng xuất",
                 "[WEB]Điều chỉnh lại Deeplink của short videos",
@@ -868,7 +876,7 @@
         },
         {
             "version": "7.21.16",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[iOS][FiFa] Không điều hướng được khi nhấn button Xem ngay trên banner của OS18",
                 "[WEB][Livechat] Lỗi placeholder đối với ảnh đại diện của bộ sticker"
@@ -876,7 +884,7 @@
         },
         {
             "version": "7.21.15",
-            "date": "Dự kiến",
+            "date": "17/09/2025",
             "content": [
                 "[Sub Online] Các request cho campaign FIFA Club WC 2025",
                 "[Web, Mobile] Bổ sung bộ sticker trên live-comment"

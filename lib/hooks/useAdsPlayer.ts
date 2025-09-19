@@ -4,9 +4,11 @@
 import { usePlayerPageContext } from '../components/player/context/PlayerPageContext';
 import { PLAYER_BOOKMARK_SECOND } from '../constant/texts';
 import { loadJsScript } from '../utils/methods';
+import { userAgentInfo } from '../utils/ua';
 
 export const useAdsPlayer = () => {
-  const { dataChannel, dataStream, previewHandled } = usePlayerPageContext();
+  const { dataChannel, dataStream, previewHandled, streamType } =
+    usePlayerPageContext();
 
   const runAds = () => {
     if (typeof window.Ads !== 'undefined') {
@@ -42,18 +44,24 @@ export const useAdsPlayer = () => {
 
   const handleLoadAds = () => {
     try {
+      const device = userAgentInfo();
+      if (device?.isFromAndroidOs || device?.isFromIos) {
+        return;
+      }
       if (
         /*@ts-ignore*/
         (Number(dataChannel?.enable_ads) == 1 &&
           Number(dataStream?.enable_ads) == 1) ||
         (previewHandled && Number(dataChannel?.enable_ads) == 1)
       ) {
-        if (typeof window.Ads !== 'undefined') {
-          console.log('--- ADS RUN');
-          runAds();
-        } else {
-          console.log('--- ADS INIT');
-          loadAdsCdns();
+        if (streamType === 'vod' || streamType === 'playlist') {
+          if (typeof window.Ads !== 'undefined') {
+            console.log('--- ADS RUN');
+            runAds();
+          } else {
+            console.log('--- ADS INIT');
+            loadAdsCdns();
+          }
         }
       }
     } catch {}

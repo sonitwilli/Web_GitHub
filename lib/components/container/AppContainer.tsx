@@ -208,7 +208,7 @@ export default function AppContainer({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    console.log('--- APP: ', '08:00-15:09', {
+    console.log('--- APP: ', '16:40-19:09', {
       devMode: process.env.NEXT_PUBLIC_ENVIRONMENT,
       deployMode: process.env.NODE_ENV,
       device: userAgentInfo(),
