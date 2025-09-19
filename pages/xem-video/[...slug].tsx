@@ -221,27 +221,30 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       const vodTitleVie = vodData?.title_vie as string;
       const vodTitleOrigin = vodData?.title_origin as string;
 
-      // Generate canonical slug using viToEn
-      const canonicalSlugBase = viToEn(
-        vodTitleVie || vodTitle || vodTitleOrigin || ''
-      );
-      const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
-      
-      // Check if current slug matches canonical slug
-      const currentSlugBase = slugs[0];
-      const hasEpisode = slugs.length > 1;
-      const episodePart = hasEpisode ? `/${slugs[1]}` : '';
-      
-      // Redirect if slug doesn't match canonical format
-      if (currentSlugBase !== canonicalSlug) {
-        const destination = `/xem-video/${canonicalSlug}${episodePart}`;
-        console.log('Redirecting to:', destination);
-        return {
-          redirect: {
-            destination,
-            permanent: true, // 301 redirect for SEO
-          },
-        };
+      // Only apply viToEn canonical slug logic for regular video pages, not playlists
+      if (!resolvedUrl?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
+        // Generate canonical slug using viToEn
+        const canonicalSlugBase = viToEn(
+          vodTitleVie || vodTitle || vodTitleOrigin || ''
+        );
+        const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+        
+        // Check if current slug matches canonical slug
+        const currentSlugBase = slugs[0];
+        const hasEpisode = slugs.length > 1;
+        const episodePart = hasEpisode ? `/${slugs[1]}` : '';
+        
+        // Redirect if slug doesn't match canonical format
+        if (currentSlugBase !== canonicalSlug) {
+          const destination = `/xem-video/${canonicalSlug}${episodePart}`;
+          console.log('Redirecting to:', destination);
+          return {
+            redirect: {
+              destination,
+              permanent: true, // 301 redirect for SEO
+            },
+          };
+        }
       }
 
       // Reconstruct full slug including episode part for SEO
