@@ -170,7 +170,6 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
     vodId = slugs[0].split('-')?.pop() || '';
   }
 
-
   if (vodId) {
     // If this is a playlist route and the path doesn't include a video id
     // perform server-side redirect to the first video in the playlist to
