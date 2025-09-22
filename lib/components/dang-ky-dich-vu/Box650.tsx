@@ -13,14 +13,14 @@ const FPTPlayBox650 = () => {
           </div>
 
         {/* Section 2 - Product Info */}
-        <section className="md:py-[20px] xl:py-[40px]">
+        <section className="py-[20px] xl:py-[40px]">
           <div className="gap-8 items-center">
             <div className="pt-[40px] xl:px-[310px] xl:pt-[96px]">
               <h2 className="text-[22px] xl:text-[32px] font-bold mb-[8px] text-[#333333]">Bộ giải mã FPT Play 650</h2>
-              <h2 className="text-[22px] xl:text-[32px] font-semibold mb-[8px] text-[#333333]">
+              <h2 className="text-[22px] px-[62px] xl:text-[32px] font-semibold mb-[8px] text-[#333333]">
                 Thăng hoa cảm xúc trong không gian của chính bạn.
               </h2>
-              <p className="text-[16px] leading-relaxed mb-[64px] mt-[32px] text-[#333333]">
+              <p className="text-[16px] leading-relaxed mb-[64px] mt-[32px] text-[#333333] pl-[2%] pr-[2%]  ">
                 Dẫn đầu xu hướng điều khiển giọng nói trong hệ sinh thái nhà thông minh với &quot;Google Assistant&quot;, 
                 giờ đây bạn đã có thể trải nghiệm bằng tiếng Việt theo cách mà không đâu khác có được, 
                 hiện đại mang đến sự tự hào công nghệ Việt. Hãy cùng đắm chìm vào kho giải trí với hơn 100 
@@ -45,9 +45,9 @@ const FPTPlayBox650 = () => {
                 {/* subtle dark layer to improve contrast */}
                 <div className="absolute inset-0 bg-black/30" aria-hidden />
 
-                <div className="relative z-10 px-4 md:px-8 text-center">
+                <div className="relative z-1 px-4 md:px-8 text-center">
                   <h2 className="text-[22px] md:text-[22px] xl:text-[32px] font-bold text-white mb-[8px]">Hộp sản phẩm bao gồm</h2>
-                  <p className="text-sm md:text-base text-white/90 max-w-2xl mx-auto mt-[30px] mb-[16px]">
+                  <p className="text-sm md:text-base text-white/90 max-w-2xl px-[60px] mx-auto mt-[30px] mb-[16px]">
                     Lưu ý: Thông tin có thể thay đổi theo các phiên bản khác nhau của sản phẩm.
                   </p>
 
@@ -102,27 +102,27 @@ const FPTPlayBox650 = () => {
 
           {/* Tab Content */}
           {activeTab === 'current' && (
-            <div className="grid md:grid-cols-2 gap-8 items-center">
+            <div className="grid xl:grid-cols-2  gap-8 items-center">
               <div className="text-center">
                 <img src="/images/HDSD/sub-1-section-4.png" alt="Remote Control RHS12X" className="mx-auto rounded-lg shadow-md" />
               </div>
               <div className="space-y-6 text-left">
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Google Assistant - khẩu lệnh Tiếng Việt</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Google Assistant - khẩu lệnh Tiếng Việt</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Người Việt - khẩu lệnh Việt, FPT luôn cố gắng thông qua những tiện ích thông minh để chạm đến trái tim bạn.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Giúp bạn dễ dàng nắm bắt mọi xu hướng.</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Giúp bạn dễ dàng nắm bắt mọi xu hướng.</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Những tin tức kinh tế - xã hội, thể thao, thời tiết và bất kỳ thông tin nào bạn quan tâm, 
                     luôn dễ dàng tiếp cận qua khẩu lệnh &quot;Ok, Google&quot;.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Người bạn đồng hành thông minh.</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Người bạn đồng hành thông minh.</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Hỗ trợ kết nối và điều khiển các thiết bị trong nhà, giúp cho ngôi nhà thông minh lắng nghe 
                     và hiểu mong muốn của bạn trong từng khoảnh khắc.
                   </p>
@@ -138,21 +138,21 @@ const FPTPlayBox650 = () => {
               </div>
               <div className="space-y-6">
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Google Assistant - khẩu lệnh Tiếng Việt</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Google Assistant - khẩu lệnh Tiếng Việt</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Người Việt - khẩu lệnh Việt, FPT luôn cố gắng thông qua những tiện ích thông minh để chạm đến trái tim bạn.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Giúp bạn dễ dàng nắm bắt mọi xu hướng.</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Giúp bạn dễ dàng nắm bắt mọi xu hướng.</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Những tin tức kinh tế - xã hội, thể thao, thời tiết và bất kỳ thông tin nào bạn quan tâm, 
                     luôn dễ dàng tiếp cận qua khẩu lệnh &quot;Ok, Google&quot;.
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-[24px] text-[#333333] font-semibold mb-2">Người bạn đồng hành thông minh.</h3>
-                  <p className="text-gray-600">
+                  <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Người bạn đồng hành thông minh.</h3>
+                  <p className="text-[14px] xl:text-[16px] text-gray-600">
                     Hỗ trợ kết nối và điều khiển các thiết bị trong nhà, giúp cho ngôi nhà thông minh lắng nghe 
                     và hiểu mong muốn của bạn trong từng khoảnh khắc.
                   </p>
@@ -174,9 +174,9 @@ const FPTPlayBox650 = () => {
         <section className="px-[20px] xl:px-[124px] bg-[#F5F5F7]">
           <h2 className="text-[22px] xl:text-[32px] pt-[32px] xl:pt-[80px] mb-[32px] xl:mb-[40px] text-[#333333] font-bold ">Kết nối với TV</h2>
           <div className="bg-white rounded-lg shadow-md space-y-8">
-            <div className ="text-left px-[40px] py-[80px]">
-              <h3 className="text-[24px] text-[#333333] font-semibold mb-4">Sử dụng cáp HDMI để kết nối với TV (Khuyên dùng)</h3>
-              <div className="text-[16px] text-[#333333] space-y-4 mb-4">
+            <div className ="text-left px-[20px] py-[40px] xl:px-[40px] xl:py-[80px]">
+              <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-4">Sử dụng cáp HDMI để kết nối với TV (Khuyên dùng)</h3>
+              <div className="text-[14px] xl:text-[16px] text-[#333333] space-y-4 mb-4">
                 <p>1. Kết nối TV và Box bằng dây HDMI qua cổng HDMI.</p>
                 <p>2. Chuyển nguồn tín hiệu TV sang nguồn HDMI tương ứng.</p>
                 <p>3. Cắm dây nguồn để bật Box.</p>
@@ -185,8 +185,8 @@ const FPTPlayBox650 = () => {
             </div>
             
             <div className="text-left px-[40px] py-[80px]">
-              <h3 className="text-[24px] text-[#333333] font-semibold mb-4">Sử dụng cáp AV để kết nối với TV</h3>
-              <div className="text-[16px] text-[#333333] space-y-4 mb-4">
+              <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-4">Sử dụng cáp AV để kết nối với TV</h3>
+              <div className="text-[14px] xl:text-[16px] text-[#333333] space-y-4 mb-4">
                 <p>1. Kết nối cáp AV (đỏ, trắng, vàng) với cổng AV tương ứng của TV, kết nối đầu còn lại của cáp AV với Box.</p>
                 <p>2. Chuyển nguồn tín hiệu TV sang AV.</p>
                 <p>3. Cắm dây nguồn để bật Box.</p>
@@ -199,22 +199,22 @@ const FPTPlayBox650 = () => {
         {/* Internet Connection (styled like TV Connection Guide) */}
         <section className="px-[20px] xl:px-[124px] bg-[#F5F5F7]">
           <h2 className="text-[22px] xl:text-[32px] pt-[32px] xl:pt-[80px] mb-[32px] xl:mb-[40px] text-[#333333] font-bold">Kết nối với Internet</h2>
-            <div className="bg-white rounded-lg shadow-md space-y-8 py-[80px] px-[40px]">
+            <div className="bg-white rounded-lg shadow-md space-y-8 px-[20px] py-[40px] xl:px-[40px] xl:py-[80px]">
                 <div className="text-left">
-                <h3 className="text-[19px] text-[#333333] font-semibold mb-4">Kết nối mạng Internet qua cổng Ethernet</h3>
-                <div className="text-[16px] text-[#333333] space-y-4 mb-4">
+                <h3 className="text-[16px] xl:text-[19px] text-[#333333] font-semibold mb-4">Kết nối mạng Internet qua cổng Ethernet</h3>
+                <div className="text-[14px] xl:text-[16px] text-[#333333] space-y-4 mb-4">
                     <p>Khi kết nối cáp mạng với cổng Ethernet, Box sẽ tự động kết nối Internet</p>
                 </div>
                 <img src="/images/HDSD/sub-5-section-4.png" alt="Ethernet Connection" className="mx-auto rounded-lg" />
                 </div>
 
                 <div className="text-left">
-                <h3 className="text-[19px] text-[#333333] font-semibold mb-4">Kết nối mạng Internet không dây</h3>
-                <div className="text-[16px] text-[#333333] space-y-4 mb-4">
+                <h3 className="text-[16px] xl:text-[19px] text-[#333333] font-semibold mb-4">Kết nối mạng Internet không dây</h3>
+                <div className="text-[14px] xl:text-[16px] text-[#333333] space-y-4 mb-4">
                     <p>Khi kết nối cáp mạng với cổng Ethernet, Box sẽ tự động kết nối Internet</p>
                 </div>
                 <img src="/images/HDSD/sub-6-section-4.png" alt="WiFi Connection" className="mx-auto rounded-lg" />
-                <p className="text-[16px] text-[#333333]">
+                <p className="text-[14px] xl:text-[16px] text-[#333333]">
                     *Lưu ý: Kết nối cáp với cổng Ethernet sẽ không có tác dụng nếu quý khách đã kết nối Wi-Fi.
                 </p>
                 </div>
@@ -224,24 +224,24 @@ const FPTPlayBox650 = () => {
         {/* Remote Learning Feature */}
         <section className="px-[20px] xl:px-[124px] bg-[#F5F5F7]">
           <h2 className="text-[22px] xl:text-[32px] pt-[32px] xl:pt-[80px] mb-[32px] xl:mb-[40px] text-[#333333] font-bold">Tính năng sao chép điều khiển TV</h2>
-            <div className="bg-white rounded-lg shadow-md space-y-8 py-[80px] px-[40px]">
+            <div className="bg-white rounded-lg shadow-md space-y-8 px-[20px] py-[40px] xl:px-[40px] xl:py-[80px]">
                 <div className="text-center">
-                    <p className="text-[16px] text-[#333333] mb-4">
+                    <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">
                         1. Nhấn giữ phím <strong>SET</strong> cho đến khi đèn sáng đỏ.
                     </p>
                     <img src="/images/HDSD/sub-7-section-4.png" alt="sub-7" className="mx-auto rounded-lg" />
 
-                    <p className="text-[16px] text-[#333333] mb-4">
+                    <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">
                         2. Đặt điều khiển TV đối diện điều khiển Box.
                     </p>
                     <img src="/images/HDSD/sub-8-section-4.png" alt="sub-8" className="mx-auto rounded-lg" />
 
-                    <p className="text-[16px] text-[#333333] mb-4">
+                    <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">
                         3. Nhấn thả phím TV trên điều khiển Box, sau đó nhấn thả phím nguồn trên điều khiển TV, đèn sẽ chớp đỏ và chuyển về màu đỏ khi thành công.
                     </p>
                     <img src="/images/HDSD/sub-9-section-4.png" alt="sub-9" className="mx-auto rounded-lg" />
 
-                    <p className="text-[16px] text-[#333333] mb-4">
+                    <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">
                         4. Nhấn phím <strong>SET</strong> để kết thúc quá trình học.
                     </p>
                     <img src="/images/HDSD/sub-10-section-4.png" alt="sub-10" className="mx-auto rounded-lg" />
@@ -252,7 +252,7 @@ const FPTPlayBox650 = () => {
         {/* Device Configuration */}
         <section className="px-[20px] xl:px-[124px] bg-[#F5F5F7]">
           <h2 className="text-[22px] xl:text-[32px] pt-[32px] xl:pt-[80px] mb-[32px] xl:mb-[40px] text-[#333333] font-bold">Cấu hình thiết bị</h2>
-            <div className="bg-white rounded-lg shadow-md space-y-8 py-[80px] px-[40px]">
+            <div className="bg-white rounded-lg shadow-md space-y-8 px-[20px] py-[40px] xl:px-[40px] xl:py-[80px]">
                 <div className="text-center">
                     <img src="/images/HDSD/sub-11-section-4.png" alt="sub-11" className="mx-auto rounded-lg" />
                     <h3 className="text-[42px] text-[#FF6500] font-semibold mb-4">FPT Play Box T650</h3>
@@ -268,25 +268,25 @@ const FPTPlayBox650 = () => {
         {/* Warranty Policy */}
         <section className="px-[20px] xl:px-[124px] py-[80px] bg-[#F5F5F7] text-left">
           <h2 className="text-[22px] xl:text-[32px] pt-[32px] xl:pt-[80px] mb-[32px] xl:mb-[40px] text-[#333333] font-bold text-center">Chế độ bảo hành</h2>
-          <div className="bg-white px-[40px] py-[80px] rounded-lg shadow-md space-y-4">
+          <div className="bg-white px-[20px] py-[40px] xl:px-[40px] xl:py-[80px] rounded-lg shadow-md space-y-4">
             <div>
-              <h4 className="text-[19px] text-[#333333] font-semibold mb-2">Kính gửi quý khách hàng:</h4>
-                <p className="text-[16px] text-[#333333]">
+              <h4 className="text-[16px] xl:text-[19px] text-[#333333] font-semibold mb-2">Kính gửi quý khách hàng:</h4>
+                <p className="text-[14px] xl:text-[16px] text-[#333333]">
                     Cám ơn quý khách hàng đã mua sản phẩm.
                 </p>
-              <p className="text-[16px] text-[#333333] mb-4">
+              <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">
                 Để bảo vệ quyền lợi chính đáng của quý khách, vui lòng đọc kỹ hướng dẫn sau khi mua sản phẩm.
               </p>
             </div>
 
             <div>
-              <h4 className="text-[19px] text-[#333333] font-semibold mb-2">Chính sách đổi trả/ bảo hành:</h4>
-              <p className="text-[16px] text-[#333333] mb-4">Thời hạn bảo hành: 1 năm kể từ ngày mua hàng.</p>
+              <h4 className="text-[16px] xl:text-[19px] text-[#333333] font-semibold mb-2">Chính sách đổi trả/ bảo hành:</h4>
+              <p className="text-[14px] xl:text-[16px] text-[#333333] mb-4">Thời hạn bảo hành: 1 năm kể từ ngày mua hàng.</p>
             </div>
 
             <div>
-              <h4 className="text-[19px] text-[#333333] font-semibold mb-2">Những trường hợp sau không được bảo hành miễn phí:</h4>
-              <div className="text-[#333333]">
+              <h4 className="text-[16px] xl:text-[19px] text-[#333333] font-semibold mb-2">Những trường hợp sau không được bảo hành miễn phí:</h4>
+              <div className="text-[14px] xl:text-[16px] text-[#333333]">
                 <p>1. Hết hạn bảo hành.</p>
                 <p>2. Sản phẩm lỗi, hỏng trong quá trình cài đặt, sử dụng do người dùng không đọc/ làm theo hướng dẫn sử dụng.</p>
                 <p>3. Sản phẩm lỗi, hỏng do có sự can thiệp của người khác mà không được sự chấp thuận từ FPT Telecom.</p>
