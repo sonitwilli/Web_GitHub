@@ -39,6 +39,7 @@ export interface SeoProps {
   appleMobileWebAppTitle?: string;
   webFallbackUrl?: string;
   webShouldFallback?: boolean;
+  structuredData?: Record<string, unknown>[];
 }
 
 // Default SEO props
@@ -97,6 +98,7 @@ const SeoHead = ({ seo }: { seo: SeoProps }) => {
     appleMobileWebAppTitle,
     webFallbackUrl,
     webShouldFallback = true,
+    structuredData,
   } = seo;
 
   const siteName = 'FPT Play';
@@ -110,6 +112,15 @@ const SeoHead = ({ seo }: { seo: SeoProps }) => {
       <meta name="robots" content={robots} />
       <meta name="googlebot" content={robots} />
       <meta name="author" content={siteName} />
+
+      {/* --- Structured Data (JSON-LD) --- */}
+      {structuredData && structuredData.map((data, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
+        />
+      ))}
 
       {/* Viewport and Basic SEO */}
       <meta

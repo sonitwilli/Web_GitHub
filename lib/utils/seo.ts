@@ -144,6 +144,82 @@ interface VodSeoData {
 }
 
 /**
+ * Generates TV Series structured data for Google Star Rating
+ */
+const generateTVSeriesStructuredData = (
+  vodData: Record<string, unknown>,
+  url: string,
+  title: string,
+  description: string,
+  image?: string,
+): Record<string, unknown> | null => {
+  // Extract rating data
+  const highlightedInfo = vodData.highlighted_info as Array<{ type?: string; avg_rate?: string; count?: string }> | undefined;
+  const ratingInfo = highlightedInfo?.find(info => info.type === 'rating');
+  const ratingValue = ratingInfo?.avg_rate ? parseFloat(ratingInfo.avg_rate) : 0;
+  const reviewCount = ratingInfo?.count ? parseInt(ratingInfo.count.replace(/[()]/g, ''), 10) : 0;
+
+  // Extract actors, directors, and genre data
+  const actors = (vodData.actors as string[]) || [];
+  const directors = (vodData.directors as string[]) || [];
+  const genres = (vodData.genres as string[]) || [];
+  const tagsGenre = (vodData.tags_genre as Array<{ name: string }>) || [];
+  
+  // Get movie release date
+  const movieReleaseDate = vodData.movie_release_date ? parseInt(String(vodData.movie_release_date), 10) : undefined;
+
+  // Extract image data
+  const imageData = vodData.image as { landscape_title?: string; thumb?: string } | undefined;
+  const finalImage = image || 
+                    (vodData.landscape_title as string) || 
+                    (imageData?.landscape_title) || 
+                    (vodData.thumb as string) || 
+                    (imageData?.thumb) || 
+                    (vodData.background as string) || 
+                    (vodData.standing_thumb as string) || 
+                    '';
+
+  const structuredData: Record<string, unknown> = {
+    '@context': 'http://schema.org',
+    '@type': 'TVSeries',
+    url,
+    name: title,
+    description,
+    image: finalImage,
+    thumbnailUrl: finalImage,
+    genre: genres.length > 0 ? genres : tagsGenre.map(item => item.name),
+    actor: actors.map(actor => ({
+      '@type': 'Person',
+      name: actor,
+    })),
+    director: directors.map(director => ({
+      '@type': 'Person',
+      name: director,
+    })),
+    creator: [],
+    contentRating: 'PG',
+    numberOfSeasons: 1,
+  };
+
+  // Only add aggregateRating if we have rating data
+  if (reviewCount > 0) {
+    structuredData.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue,
+      reviewCount,
+    };
+  }
+
+  // Add dates if available
+  if (movieReleaseDate) {
+    structuredData.dateCreated = movieReleaseDate;
+    structuredData.startDate = movieReleaseDate;
+  }
+
+  return structuredData;
+};
+
+/**
  * Creates SEO props from VOD detail data
  */
 export const createSeoPropsFromVodData = (
@@ -152,6 +228,7 @@ export const createSeoPropsFromVodData = (
   fallbackTitle?: string,
   fallbackDescription?: string,
   ogImage?: string,
+  vodData?: Record<string, unknown>,
 ): SeoProps => {
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fptplay.vn';
 
@@ -165,33 +242,42 @@ export const createSeoPropsFromVodData = (
     canonicalUrl = `${siteUrl}/xem-video/${canonicalSlug}`;
   }
 
+  // Use original slug with episode info for robots logic
+  const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
+
+  // Determine final title and description based on SEO data availability
+  const finalTitle = (vodSeoData?.title && vodSeoData.title.trim()) 
+    ? vodSeoData.title 
+    : (fallbackTitle || 'FPT Play');
+  const finalDescription = (vodSeoData?.description && vodSeoData.description.trim()) 
+    ? vodSeoData.description 
+    : (fallbackDescription || 'FPT Play - Xem không giới hạn');
+
+  // Generate structured data if VOD data is available (same logic for both branches)
+  const structuredData: Record<string, unknown>[] = [];
+  if (vodData) {
+    const googleStarRatingData = generateTVSeriesStructuredData(vodData, canonicalUrl, finalTitle, finalDescription, ogImage);
+    if (googleStarRatingData) {
+      structuredData.push(googleStarRatingData);
+    }
+  }
+
   if (!vodSeoData) {
-    // Use original slug with episode info for robots logic
-    const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
     return createDefaultSeoProps({
-      title: fallbackTitle || 'FPT Play',
-      description: fallbackDescription || 'FPT Play - Xem không giới hạn',
+      title: finalTitle,
+      description: finalDescription,
       url: canonicalUrl,
       robots: getRobotsValueFromUrl(originalUrl) || 'index, follow',
       ...(ogImage && { ogImage }),
+      ...(structuredData.length > 0 && { structuredData }),
     });
   }
 
-  // Force replace robots based on URL patterns, use original slug with episode info for robots logic
-  const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
-  console.log('VOD SEO - Original URL for robots logic:', originalUrl);
+  // Force replace robots based on URL patterns for main branch
   const robotsOverride = getRobotsValueFromUrl(originalUrl);
   const robotsValue = robotsOverride || `${vodSeoData.index === 1 ? 'index' : 'noindex'}, ${
     vodSeoData.follow === 1 ? 'follow' : 'nofollow'
   }`;
-
-  // Use SEO data if available, otherwise fallback to main VOD data
-  const finalTitle = (vodSeoData.title && vodSeoData.title.trim()) 
-    ? vodSeoData.title 
-    : (fallbackTitle || 'FPT Play');
-  const finalDescription = (vodSeoData.description && vodSeoData.description.trim()) 
-    ? vodSeoData.description 
-    : (fallbackDescription || 'FPT Play - Xem không giới hạn');
 
   return createDefaultSeoProps({
     title: finalTitle,
@@ -199,6 +285,7 @@ export const createSeoPropsFromVodData = (
     url: canonicalUrl,
     robots: robotsValue,
     ...(ogImage && { ogImage }),
+    ...(structuredData.length > 0 && { structuredData }),
   });
 };
 

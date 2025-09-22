@@ -284,6 +284,7 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
         vodTitle ? vodTitle : undefined,
         vodDescription || undefined,
         vodImage,
+        channelRes?.data?.data as Record<string, unknown>,
       );
 
       if (
