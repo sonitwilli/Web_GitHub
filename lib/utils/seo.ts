@@ -158,6 +158,7 @@ const generateTVSeriesStructuredData = (
   title: string,
   description: string,
   image?: string,
+  seoData?: VodSeoData | null,
 ): Record<string, unknown> | null => {
   // Extract rating data
   const highlightedInfo = vodData.highlighted_info as Array<{ type?: string; avg_rate?: string; count?: string }> | undefined;
@@ -222,6 +223,37 @@ const generateTVSeriesStructuredData = (
     structuredData.startDate = movieReleaseDate;
   }
 
+  // Add all SEO fields if available
+  if (seoData) {
+    // Extract fields that should NOT be in structured data (they're for meta tags)
+    const {
+      max_video_preview,    // Keep this - it's valid for structured data
+      max_image_preview,    // Keep this - it's valid for structured data
+      availableLanguage,
+      canonical,
+      ...otherSeoFields     // Include: sameAs, alternateName, etc.
+    } = seoData;
+
+    // Map specific fields to schema.org properties
+    if (availableLanguage) {
+      structuredData.inLanguage = availableLanguage;
+    }
+    if (canonical) {
+      structuredData.url = canonical;
+    }
+
+    // Add video/image preview settings
+    if (max_video_preview) {
+      structuredData.max_video_preview = max_video_preview;
+    }
+    if (max_image_preview) {
+      structuredData.max_image_preview = max_image_preview;
+    }
+
+    // Add other valid structured data fields (sameAs, alternateName, etc.)
+    Object.assign(structuredData, otherSeoFields);
+  }
+
   return structuredData;
 };
 
@@ -267,18 +299,8 @@ export const createSeoPropsFromVodData = (
   // Generate structured data if VOD data is available (same logic for both branches)
   const structuredData: Record<string, unknown>[] = [];
   if (vodData) {
-    const googleStarRatingData = generateTVSeriesStructuredData(vodData, finalCanonicalUrl, finalTitle, finalDescription, ogImage);
+    const googleStarRatingData = generateTVSeriesStructuredData(vodData, finalCanonicalUrl, finalTitle, finalDescription, ogImage, vodSeoData);
     if (googleStarRatingData) {
-      // Add additional SEO fields to structured data if available
-      if (vodSeoData?.sameAs && vodSeoData.sameAs.length > 0) {
-        googleStarRatingData.sameAs = vodSeoData.sameAs;
-      }
-      if (vodSeoData?.alternateName && vodSeoData.alternateName.length > 0) {
-        googleStarRatingData.alternateName = vodSeoData.alternateName;
-      }
-      if (vodSeoData?.availableLanguage && vodSeoData.availableLanguage.length > 0) {
-        googleStarRatingData.inLanguage = vodSeoData.availableLanguage;
-      }
       structuredData.push(googleStarRatingData);
     }
   }
