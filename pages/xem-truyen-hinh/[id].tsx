@@ -443,7 +443,7 @@ function ChannelPageContent() {
                   width >= 1280
                     ? 'f-container'
                     : 'w-screen hide-scroll border-b border-charleston-green'
-                } ${isSearch ? 'border-0 border-b-0' : 'overflow-auto'}`}
+                } ${isSearch ? 'border-0 border-b-0' : 'overflow-x-auto overflow-y-hidden'}`}
               >
                 <div className={`${width < 1280 ? 'f-container' : ''}`}>
                   {isSearch && (
