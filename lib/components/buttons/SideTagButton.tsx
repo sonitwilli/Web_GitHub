@@ -359,7 +359,7 @@ const SideTagButton: React.FC = () => {
         return (
           <div
             key={index}
-            className="py-4 px-3 z-10 rounded-xl flex flex-col gap-5 w-min sm:flex hidden items-end"
+            className="py-4 px-3 !z-[8] rounded-xl flex flex-col gap-5 w-min sm:flex hidden items-end"
             style={{
               background: bubble.bg_color,
               position: 'fixed',

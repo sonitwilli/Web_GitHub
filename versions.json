@@ -1,6 +1,13 @@
 {
     "versions": [
         {
+            "version": "8.0.50",
+            "date": "Dự kiến",
+            "content": [
+                "Tích hợp quảng cáo top banner trang xem video"
+            ]
+        }, 
+        {
             "version": "8.0.49",
             "date": "Dự kiến",
             "content": [

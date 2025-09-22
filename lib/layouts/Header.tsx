@@ -276,9 +276,9 @@ export default function Header() {
     const handleInitBanner = () => {
       try {
         const currentPath = window.location.pathname;
-        const isPathInRouteNames = Object.values(ROUTE_PATH_TOP_BANNER_ADS).some(
-          (segment) => currentPath.includes(segment),
-        );
+        const isPathInRouteNames = Object.values(
+          ROUTE_PATH_TOP_BANNER_ADS,
+        ).some((segment) => currentPath.includes(segment));
 
         let existedAds = false;
 
@@ -541,7 +541,7 @@ export default function Header() {
   return (
     <>
       <header
-        className={` fixed w-full left-0 top-0 h-[80px] z-[9999] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
+        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
           scrollDistance > 300 || isCategoryPage ? '!bg-smoky-black' : ''
         } ${openMobileMenu ? '!bg-smoky-black' : ''}`}
       >

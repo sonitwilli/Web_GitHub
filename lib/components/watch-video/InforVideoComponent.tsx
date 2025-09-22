@@ -19,7 +19,6 @@ import Categories from './Categories';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
 import { fetchRatingData, RatingData } from '@/lib/api/video';
 import TopBannerAdsVod from '@/lib/components/ads/TopBannerAdsVod';
-import { useAdsTopBannerObserver } from '@/lib/hooks/useAdsTopBannerObserver';
 import VodAchievementInfo from '../vod/VodAchievementInfo';
 
 const RatingStar = dynamic(() => import('./RatingStart'), {
@@ -65,26 +64,6 @@ const InforVideoComponent = (props: PropsVideo) => {
   const { dataVideo } = props;
   const { showModalShare, setShowModalShare } = useModalToggle({});
   const [shouldHideAds, setShouldHideAds] = useState(false);
-  const [hasLoggedElement, setHasLoggedElement] = useState(false);
-  const [hasLoggedVisible, setHasLoggedVisible] = useState(false);
-
-  useAdsTopBannerObserver((element) => {
-    // Chỉ log 1 lần
-    if (!hasLoggedVisible) {
-      setHasLoggedVisible(true);
-    }
-
-    if (element) {
-      // Chỉ log 1 lần
-      if (!hasLoggedElement) {
-        console.log('element', element);
-        setHasLoggedElement(true);
-      }
-      element.classList.remove('tablet:mt-[80px]');
-      element.classList.remove('f-container');
-      element.classList.remove('mt-[40px]');
-    }
-  });
   const slide = useMemo<BlockSlideItemType>(
     /*@ts-ignore*/
     () => {

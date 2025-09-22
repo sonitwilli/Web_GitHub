@@ -504,11 +504,6 @@ export default function BlockSlideItem({
             >
               {slide?.title_vie || slide?.title}
             </span>
-            {block?.block_type === 'participant' && (
-              <>
-                <span className="text-[14px] text-spanish-gray">Diễn viên</span>
-              </>
-            )}
           </h3>
         ) : (
           ''

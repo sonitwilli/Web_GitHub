@@ -17,7 +17,7 @@ const TopBannerAdsVod: React.FC = () => {
   if (!adsLoaded || isPathInRouteNames) return null;
 
   return (
-    <div className="f-container ads_top_banner">
+    <div className="ads_top_banner">
       <ins
         data-aplpm="118-120"
         className="adsplay-placement adsplay-placement-relative"

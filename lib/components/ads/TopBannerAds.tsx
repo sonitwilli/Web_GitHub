@@ -17,7 +17,7 @@ const TopBannerAds: React.FC = () => {
   if (!adsLoaded || isPathInRouteNames) return null;
 
   return (
-    <div className="f-container ads_top_banner mt-[40px] tablet:mt-[80px]">
+    <div className="f-container ads_top_banner">
       <ins
         data-aplpm="114-11030203"
         className="adsplay-placement adsplay-placement-relative"
