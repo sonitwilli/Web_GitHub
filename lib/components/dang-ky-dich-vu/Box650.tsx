@@ -136,7 +136,7 @@ const FPTPlayBox650 = () => {
               <div className="text-center">
                 <img src="/images/HDSD/sub-1.1-section-4.png" alt="Remote Control RHS12X" className="mx-auto rounded-lg shadow-md" />
               </div>
-              <div className="space-y-6">
+              <div className="space-y-6 text-left">
                 <div>
                   <h3 className="text-[16px] xl:text-[24px] text-[#333333] font-semibold mb-2">Google Assistant - khẩu lệnh Tiếng Việt</h3>
                   <p className="text-[14px] xl:text-[16px] text-gray-600">
