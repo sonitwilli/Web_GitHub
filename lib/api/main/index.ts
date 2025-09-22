@@ -127,6 +127,8 @@ export interface Image {
   label_show_time?: LabelShowTime;
   logo?: Logo;
   label_age?: LabelAge;
+  bg_live?: string;
+  bg_time_event?: string;
 }
 
 export interface Redirect {

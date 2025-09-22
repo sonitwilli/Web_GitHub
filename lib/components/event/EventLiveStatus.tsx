@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext, useMemo } from 'react';
 import { formatVietnamDayTimeLabel } from '@/lib/utils/timeUtilsVN';
 import { useDispatch } from 'react-redux';
 import { setIsEndedLiveCountdown } from '@/lib/store/slices/playerSlice';
+import { AppContext } from '@/lib/components/container/AppContainer';
 
 type DataEvent = {
   start_time?: number | string;
@@ -21,6 +22,16 @@ export default function EventLiveStatus({ dataEvent }: Props) {
   const [status, setStatus] = useState<string | null>(null);
   const [eventStatus, setEventStatus] = useState<EventStatus>(null);
   const dispatch = useDispatch();
+  const { configs } = useContext(AppContext);
+
+  // Background images from configs
+  const isLiveBackground = useMemo(() => {
+    return configs?.image?.bg_live;
+  }, [configs]);
+
+  const isTimeEventBackground = useMemo(() => {
+    return configs?.image?.bg_time_event;
+  }, [configs]);
 
   // Kiểm tra trạng thái kết thúc và cập nhật Redux một lần
   useEffect(() => {
@@ -112,11 +123,29 @@ export default function EventLiveStatus({ dataEvent }: Props) {
       )}
 
       {isLive ? (
-        <span className="flex items-center justify-center px-2 sm:px-3 py-1 sm:py-[6px] rounded-md sm:rounded-lg bg-gradient-to-r from-vivid-red to-rosso-corsa text-white text-sm sm:text-base font-medium tracking-wide min-w-[51px] h-8 sm:h-[32px]">
+        <span
+          className="flex items-center justify-center px-2 sm:px-3 py-1 sm:py-[6px] rounded-md sm:rounded-lg bg-gradient-to-r from-vivid-red to-rosso-corsa text-white text-sm sm:text-base font-medium tracking-wide min-w-[51px] h-8 sm:h-[32px]"
+          style={{
+            backgroundImage: isLiveBackground
+              ? `url(${isLiveBackground})`
+              : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
           {status}
         </span>
       ) : (
-        <span className="flex items-center justify-center px-2.5 py-1 bg-jet rounded-md sm:rounded-lg">
+        <span
+          className="flex items-center justify-center px-2.5 py-1 bg-jet rounded-md sm:rounded-lg"
+          style={{
+            backgroundImage: isTimeEventBackground
+              ? `url(${isTimeEventBackground})`
+              : undefined,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+        >
           <span className="text-white-087 font-medium text-sm sm:text-[17px] leading-[20px]">
             {status}
           </span>

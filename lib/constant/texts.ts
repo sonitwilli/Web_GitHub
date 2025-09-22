@@ -356,6 +356,14 @@ export const ROUTE_PATH_TOP_BANNER_ADS = {
   PREMIERE: '/cong-chieu/',
 };
 
+export const ROUTE_PATH_TOP_BANNER_ADS_VOD = {
+  CHANNEL: '/xem-truyen-hinh/',
+  EVENT: '/su-kien/',
+  PLAYLIST: '/playlist/',
+  PREMIERE: '/cong-chieu/',
+  GALAXY_PLAY: '/galaxy-play/xem-video/',
+};
+
 export const AUDIO_CODEC_URI_NAMES_DASH = {
   AAC: 'mp4a.40.2',
   AACHE: 'mp4a.40.5',
