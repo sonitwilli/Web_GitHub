@@ -1,7 +1,7 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import type { FC } from 'react';
 import { ChannelDetailType, ScheduleItem } from '@/lib/api/channel';
-import { PiClockCounterClockwiseBold } from 'react-icons/pi';
 import { MdOutlineKeyboardArrowDown } from 'react-icons/md';
 import { FaCheck } from 'react-icons/fa';
 import Image from 'next/image';
@@ -184,8 +184,8 @@ const BroadcastSchedule: FC<Props> = ({
               <div className="pr-1 flex items-center justify-center">
                 <div className="h-[20.86px] w-[44px] bg-[url('/images/svg/live_icon.svg')] bg-no-repeat" />
               </div>
-              <div className="flex flex-col gap-4 w-full h-[68px] tablet:h-[87px]">
-                <div className="flex items-center gap-6">
+              <div className="flex flex-col w-full">
+                <div className="flex items-center gap-6 mb-4">
                   <p className="text-white-smoke text-sm tablet:text-base line-clamp-1 flex-1">
                     {item.title}
                   </p>
@@ -240,10 +240,9 @@ const BroadcastSchedule: FC<Props> = ({
                   className="object-contain"
                 />
               ) : !showLiveIcon && isPast && isReplayable && isClickable ? (
-                <PiClockCounterClockwiseBold
-                  size={24}
-                  className="text-spanish-gray"
-                />
+                <div className="w-[24px] h-[24px] flex items-center justify-center">
+                  <img src="/images/player/history_timeshift.svg" />
+                </div>
               ) : (
                 <div className="w-[24px] h-[24px] mr-[4px]" />
               )}
@@ -267,23 +266,36 @@ const BroadcastSchedule: FC<Props> = ({
       return;
     if (!targetItemRef.current) return;
 
-    const raf = requestAnimationFrame(() => {
-      const element = targetItemRef.current!;
+    // Add a small delay to ensure DOM is fully rendered
+    const timeoutId = setTimeout(() => {
+      const raf = requestAnimationFrame(() => {
+        const element = targetItemRef.current!;
 
-      let offset = 0;
+        if (!element) return;
 
-      offset =
-        element?.offsetTop -
-        container?.clientHeight / (isFullscreen ? 2.4 : 1.3) +
-        element?.clientHeight / 2;
+        let offset = 0;
 
-      if (container?.clientHeight <= 500 && isFullscreen) {
-        offset = offset - element?.clientHeight;
-      }
-      container?.scrollTo({ top: offset, behavior: 'smooth' });
-    });
+        // Calculate scroll position to center the active item
+        offset =
+          element?.offsetTop -
+          container?.clientHeight / (isFullscreen ? 2.4 : 1.3) +
+          element?.clientHeight / 2;
 
-    return () => cancelAnimationFrame(raf);
+        // Adjust for small containers in fullscreen
+        if (container?.clientHeight <= 500 && isFullscreen) {
+          offset = offset - element?.clientHeight;
+        }
+
+        // Ensure offset is not negative
+        offset = Math.max(0, offset);
+
+        container?.scrollTo({ top: offset, behavior: 'smooth' });
+      });
+
+      return () => cancelAnimationFrame(raf);
+    }, 100); // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timeoutId);
   }, [
     scheduleList,
     currentTime,
@@ -291,11 +303,36 @@ const BroadcastSchedule: FC<Props> = ({
     selectedDate,
     todayKey,
     visible,
+    activeScheduleId, // Add activeScheduleId to dependencies
   ]);
 
   useEffect(() => {
     // console.log('isEndVideo :>> ', isEndVideo);
   }, [isEndVideo]);
+
+  // Additional effect to handle scroll when tab becomes visible
+  useEffect(() => {
+    if (visible && scheduleList.length > 0 && selectedDate === todayKey) {
+      // Force a re-render to ensure scroll happens when tab becomes visible
+      const timeoutId = setTimeout(() => {
+        if (targetItemRef.current && containerRef.current) {
+          const element = targetItemRef.current;
+          const container = containerRef.current;
+
+          let offset =
+            element.offsetTop -
+            container.clientHeight / 1.3 +
+            element.clientHeight / 2;
+          offset = Math.max(0, offset);
+
+          container.scrollTo({ top: offset, behavior: 'smooth' });
+        }
+      }, 200);
+
+      return () => clearTimeout(timeoutId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { width } = useScreenSize();
 

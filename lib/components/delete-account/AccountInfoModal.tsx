@@ -54,6 +54,7 @@ export default forwardRef<AccountInfoModalRef, Props>(function AccountInfoModal(
       {/* Mobile: 343x454, Tablet/PC: 568x578 */}
       <div
         className={`flex flex-col justify-center items-center p-4 tablet:p-8 gap-8 max-h-full overflow-y-auto ${styles.scrollBar} ${styles.modalContainer}`}
+        style={{ maxHeight: '90vh' }}
       >
         {/* Header Section */}
         <div

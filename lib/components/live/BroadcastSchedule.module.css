@@ -17,7 +17,7 @@
 .dropdownContainer {
   background-color: #2c2b2b;
   border-radius: 12px;
-  box-shadow: 0px 8px 36px 16px rgba(0, 0, 0, 0.56);
+  box-shadow: 0px 0px 24px 0px rgba(0, 0, 0, 0.36);
   overflow-y: auto;
   z-index: 2;
   max-height: 342px;

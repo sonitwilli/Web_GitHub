@@ -439,7 +439,7 @@ function ChannelPageContent() {
                 </div>
               )}
               <div
-                className={`ChannelSearch-ChannelTabs mt-[21px] xl:mt-[32px] ${
+                className={`ChannelSearch-ChannelTabs  mt-[48px] tablet:mt-[21px] xl:mt-[32px] ${
                   width >= 1280
                     ? 'f-container'
                     : 'w-screen hide-scroll border-b border-charleston-green'

@@ -280,10 +280,7 @@ export const checkPassword = async ({
     if (response?.data?.data?.status_code === 1) {
       return { success: true };
     } else {
-      return {
-        success: false,
-        error: response?.data?.message || DEFAULT_ERROR_MSG,
-      };
+      throw new Error(response?.data?.message || DEFAULT_ERROR_MSG);
     }
   } catch (error) {
     showToast({
@@ -292,7 +289,7 @@ export const checkPassword = async ({
     });
     return {
       success: false,
-      error: DEFAULT_ERROR_MSG,
+      error: '',
     };
   }
 };

@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-// import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useProfileAvatars } from '@/lib/hooks/useProfileAvatars';
 import { useFetchRecommendedProfile } from '@/lib/hooks/useCreateProfile';
 import { useCreateNewProfile } from '@/lib/hooks/useCreateNewProfile'; // Import the new hook
@@ -22,8 +21,7 @@ import {
   PROFILE_DEFAULT_AVATAR,
 } from '@/lib/constant/texts';
 import { Profile } from '@/lib/api/user';
-import { Avatar } from '@/lib/api/multi-profiles';
-// import { Avatar, verifyProfileName } from '@/lib/api/multi-profiles';
+import { Avatar, verifyProfileName } from '@/lib/api/multi-profiles';
 import Loading from '@/lib/components/common/Loading';
 import styles from './ProfileForm.module.css';
 import { useAppSelector } from '@/lib/store'; // Adjust the import path as needed
@@ -31,7 +29,7 @@ import { CREATE_PROFILE, EDIT_PROFILE } from '@/lib/constant/texts';
 import { deleteProfile } from '@/lib/api/multi-profiles'; // Adjust the import path as needed
 import { useRouter } from 'next/router';
 import { switchProfile } from '@/lib/api/user';
-// import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
+import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
 import { trackingModifyProfileLog103 } from '@/lib/tracking/trackingProfile';
 import useClickOutside from '@/lib/hooks/useClickOutside';
 
@@ -47,7 +45,7 @@ interface ProfileFormProps {
     name: string;
     avatar_id: string;
     avatar_url: string;
-    // display_name: string;
+    display_name: string;
     nickname?: string;
     profile_type: string;
     pin?: string;
@@ -66,7 +64,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   type = 'create',
   loading = false,
   errorUpdate,
-  // listProfiles = [],
+  listProfiles = [],
   onCancel,
   onConfirm,
   onRemovePin,
@@ -75,11 +73,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [isChild, setIsChild] = useState<boolean>(false);
   const [isAvatar, setIsAvatar] = useState<boolean>(false);
   const [name, setName] = useState<string>('');
-  // const [displayName, setDisplayName] = useState<string>('');
-  // const [nickname, setNickname] = useState<string>('');
-  // const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
-  // const [msgWarningEditNickname, setMsgWarningEditNickname] =
-  //   useState<string>('');
+  const [displayName, setDisplayName] = useState<string>('');
+  const [nickname, setNickname] = useState<string>('');
+  const [isEditingNickname, setIsEditingNickname] = useState<boolean>(false);
+  const [msgWarningEditNickname, setMsgWarningEditNickname] =
+    useState<string>('');
   const [modalContent, setModalContent] = useState<ModalContent>({
     title: '',
     content: '',
@@ -102,17 +100,21 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   const [loadingCreate, setLoadingCreate] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const [isErrorCode, setIsErrorCode] = useState<string | null>(null);
-  // const [nicknameErrors, setNicknameErrors] = useState<string[]>([]);
-  // const [isValidatingNickname, setIsValidatingNickname] =
-  //   useState<boolean>(false);
-  // const [nicknameChangeCount, setNicknameChangeCount] = useState<number>(0);
-  // const [initialNickname, setInitialNickname] = useState<string>('');
-  // const [displayNameErrors, setDisplayNameErrors] = useState<string[]>([]);
-  // const [isValidatingDisplayName, setIsValidatingDisplayName] =
-  //   useState<boolean>(false);
-  // const [displayNameChangeCount, setDisplayNameChangeCount] =
-  //   useState<number>(0);
-  // const [initialDisplayName, setInitialDisplayName] = useState<string>('');
+  const [nicknameErrors, setNicknameErrors] = useState<string[]>([]);
+  const [isValidatingNickname, setIsValidatingNickname] =
+    useState<boolean>(false);
+  const [nicknameChangeCount, setNicknameChangeCount] = useState<number>(0);
+  const [initialNickname, setInitialNickname] = useState<string>('');
+  const [displayNameErrors, setDisplayNameErrors] = useState<string[]>([]);
+  const [isValidatingDisplayName, setIsValidatingDisplayName] =
+    useState<boolean>(false);
+  const [displayNameChangeCount, setDisplayNameChangeCount] =
+    useState<number>(0);
+  const [isValidatingName, setIsValidatingName] = useState<boolean>(false);
+  const [nameChangeCount, setNameChangeCount] = useState<number>(0);
+  const [initialName, setInitialName] = useState<string>('');
+  const [nameErrors, setNameErrors] = useState<string[]>([]);
+  const [initialDisplayName, setInitialDisplayName] = useState<string>('');
   const router = useRouter();
   const ref = useClickOutside<HTMLDivElement>(() => {
     if (setShowPinDropdown) setShowPinDropdown(false);
@@ -132,29 +134,29 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     setLoadingCreate,
   });
 
-  // const { info } = useAppSelector((state) => state.user);
+  const { info } = useAppSelector((state) => state.user);
   const { messageConfigs } = useAppSelector((state) => state.app);
-  // const isRootProfile = useMemo(
-  //   () => listProfiles?.find((item) => item?.is_root === '1'),
-  //   [listProfiles],
-  // );
+  const isRootProfile = useMemo(
+    () => listProfiles?.find((item) => item?.is_root === '1'),
+    [listProfiles],
+  );
 
   const getDefailProfile = async () => {
     try {
       const response = await switchProfile(profile?.profile_id || '');
       const data = await response?.data;
-      // if (data?.status === '1') {
-      //   setNickname(data?.data?.nickname || '');
-      //   if (data?.data?.allow_edit_nickname === '1') {
-      //     setMsgWarningEditNickname('');
-      //   } else if (data?.data?.allow_edit_nickname === '0') {
-      //     setIsEditingNickname(true);
-      //     setMsgWarningEditNickname(
-      //       data?.data?.msg_warning_edit_nickname || '',
-      //     );
-      //   }
-      //   return;
-      // }
+      if (data?.status === '1') {
+        setNickname(data?.data?.nickname || '');
+        if (data?.data?.allow_edit_nickname === '1') {
+          setMsgWarningEditNickname('');
+        } else if (data?.data?.allow_edit_nickname === '0') {
+          setIsEditingNickname(true);
+          setMsgWarningEditNickname(
+            data?.data?.msg_warning_edit_nickname || '',
+          );
+        }
+        return;
+      }
       switch (data?.error_code) {
         case '3':
           setModalContent({
@@ -208,25 +210,27 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   useEffect(() => {
     if (name !== profileData?.name) {
-      setName(profileData?.name || profile?.name || '');
+      const initName = profileData?.name || profile?.name || '';
+      setName(initName);
+      setInitialName(initName);
     }
     // Initialize display name and nickname when profileData changes
-    // if (!displayName) {
-    //   const initDisplayName =
-    //     profileData?.display_name || profile?.display_name || '';
-    //   setDisplayName(initDisplayName);
-    //   setInitialDisplayName(initDisplayName);
-    // }
-    // if (!nickname) {
-    //   const base = profileData?.nickname || profile?.nickname || '';
-    //   const nick = removeVietnameseTones(base)
-    //     .toLowerCase()
-    //     .replace(/[^a-z0-9]+/g, '')
-    //     .slice(0, 24);
-    //   setNickname(nick);
-    //   localStorage.setItem('initialNickname', nick);
-    //   setInitialNickname(nick);
-    // }
+    if (!displayName) {
+      const initDisplayName =
+        profileData?.display_name || profile?.display_name || '';
+      setDisplayName(initDisplayName);
+      setInitialDisplayName(initDisplayName);
+    }
+    if (!nickname) {
+      const base = profileData?.nickname || profile?.nickname || '';
+      const nick = removeVietnameseTones(base)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '')
+        .slice(0, 24);
+      setNickname(nick);
+      localStorage.setItem('initialNickname', nick);
+      setInitialNickname(nick);
+    }
     if (
       selectedAvatar.avatar_id !== profileData?.avatar_id ||
       selectedAvatar.avatar_url !== profileData?.avatar_url
@@ -239,43 +243,63 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profileData]);
 
-  // useEffect(() => {
-  //   if (!isEditingNickname) return;
+  useEffect(() => {
+    if (!isEditingNickname) return;
 
-  //   setIsValidatingNickname(false);
+    setIsValidatingNickname(false);
 
-  //   // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi nickname khác giá trị ban đầu
-  //   if (nicknameChangeCount >= 1 && nickname !== initialNickname) {
-  //     const timer = setTimeout(() => {
-  //       (async () => {
-  //         setIsValidatingNickname(true);
-  //         const errs = await validateNickname(nickname);
-  //         setNicknameErrors(errs.slice(0, 1));
-  //         setIsValidatingNickname(false);
-  //       })();
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [nickname, isEditingNickname, nicknameChangeCount, initialNickname]);
+    // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi nickname khác giá trị ban đầu
+    if (nicknameChangeCount >= 1 && nickname !== initialNickname) {
+      const timer = setTimeout(() => {
+        (async () => {
+          setIsValidatingNickname(true);
+          const errs = await validateNickname(nickname);
+          setNicknameErrors(errs.slice(0, 1));
+          setIsValidatingNickname(false);
+        })();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [nickname, isEditingNickname, nicknameChangeCount, initialNickname]);
 
-  // useEffect(() => {
-  //   if (!displayName) return;
+  useEffect(() => {
+    if (!displayName) return;
 
-  //   setIsValidatingDisplayName(false);
+    setIsValidatingDisplayName(false);
 
-  //   // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi displayName khác giá trị ban đầu
-  //   if (displayNameChangeCount >= 1 && displayName !== initialDisplayName) {
-  //     const timer = setTimeout(() => {
-  //       (async () => {
-  //         setIsValidatingDisplayName(true);
-  //         const errs = await validateDisplayName(displayName);
-  //         setDisplayNameErrors(errs.slice(0, 1));
-  //         setIsValidatingDisplayName(false);
-  //       })();
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [displayName, displayNameChangeCount, initialDisplayName]);
+    // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi displayName khác giá trị ban đầu
+    if (displayNameChangeCount >= 1 && displayName !== initialDisplayName) {
+      const timer = setTimeout(() => {
+        (async () => {
+          setIsValidatingDisplayName(true);
+          const errs = await validateDisplayName(displayName);
+          setDisplayNameErrors(errs.slice(0, 1));
+          setIsValidatingDisplayName(false);
+        })();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [displayName, displayNameChangeCount, initialDisplayName]);
+
+  // Validation cho tên hồ sơ
+  useEffect(() => {
+    if (!name) return;
+
+    setIsValidatingName(false);
+
+    // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi name khác giá trị ban đầu
+    if (nameChangeCount >= 1 && name !== initialName) {
+      const timer = setTimeout(() => {
+        (async () => {
+          setIsValidatingName(true);
+          const errs = await validateName(name);
+          setNameErrors(errs.slice(0, 1));
+          setIsValidatingName(false);
+        })();
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [name, nameChangeCount, initialName]);
 
   useEffect(() => {
     // console.log('isError', isError);
@@ -338,7 +362,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       }
       const response = await deleteProfile(
         profile.profile_id || '',
-        profile?.name || ''
+        profile?.name || '',
       );
       if (response?.data?.status === '0') {
         switch (response?.data?.error_code) {
@@ -395,91 +419,125 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     onCancel?.();
   };
 
-  // const validateDisplayName = async (value: string): Promise<string[]> => {
-  //   const v = (value || '').trim();
-  //   const len = v.length;
+  const validateDisplayName = async (value: string): Promise<string[]> => {
+    const v = (value || '').trim();
+    const len = v.length;
 
-  //   // Check if contains only numbers, letters (including Vietnamese characters) and spaces
-  //   const allowed =
-  //     /^[a-zA-Z0-9ÀÁÂÃÈÉÊẾÌĨÍÒÓÔÕÙÚĂĐŨƠàáâãèéêếìĩíòóôõùúăđũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\s]+$/.test(
-  //       v,
-  //     );
+    // Check if contains only numbers, letters (including Vietnamese characters) and spaces
+    const allowed =
+      /^[a-zA-Z0-9ÀÁÂÃÈÉÊẾÌĨÍÒÓÔÕÙÚĂĐŨƠàáâãèéêếìĩíòóôõùúăđũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\s]+$/.test(
+        v,
+      );
 
-  //   // Priority 1: Length and allowed characters
-  //   if (!(len >= 2 && len <= 20) || !allowed || v === '') {
-  //     console.log('Length and allowed characters', v);
+    // Priority 1: Length and allowed characters
+    if (!(len >= 2 && len <= 20) || !allowed || v === '') {
+      console.log('Length and allowed characters', v);
 
-  //     return [
-  //       'Tên hiển thị không hợp lệ. Tên hiển thị bao gồm từ 2 đến 15 ký tự (a-z, 0-9)',
-  //     ];
-  //   }
+      return [
+        'Tên hiển thị không hợp lệ. Tên hiển thị bao gồm từ 2 đến 15 ký tự (a-z, 0-9)',
+      ];
+    }
 
-  //   // Remote validation
-  //   try {
-  //     const apiRes = await verifyProfileName({ display_name: v });
-  //     if (apiRes?.status === '1') {
-  //       return [];
-  //     }
-  //     return [
-  //       apiRes?.message?.content ||
-  //         'Tên hiển thị không hợp lệ. Vui lòng chọn tên hiển thị khác.',
-  //     ];
-  //   } catch {
-  //     return ['Không thể xác thực tên hiển thị. Vui lòng thử lại.'];
-  //   }
-  // };
+    // Remote validation
+    try {
+      const apiRes = await verifyProfileName({ display_name: v });
+      if (apiRes?.status === '1') {
+        return [];
+      }
+      return [
+        apiRes?.message?.content ||
+          'Tên hiển thị không hợp lệ. Vui lòng chọn tên hiển thị khác.',
+      ];
+    } catch {
+      return ['Không thể xác thực tên hiển thị. Vui lòng thử lại.'];
+    }
+  };
 
-  // const validateNickname = async (value: string): Promise<string[]> => {
-  //   const v = (value || '').trim();
-  //   const lower = v.toLowerCase();
-  //   const len = v.length;
-  //   const allowed = /^[a-z0-9._]+$/.test(lower);
+  const validateName = async (value: string): Promise<string[]> => {
+    const v = (value || '').trim();
+    const len = v.length;
 
-  //   if (v === localStorage.getItem('initialNickname')) {
-  //     return [];
-  //   }
+    // Check if contains only numbers, letters (including Vietnamese characters) and spaces
+    const allowed =
+      /^[a-zA-Z0-9ÀÁÂÃÈÉÊẾÌĨÍÒÓÔÕÙÚĂĐŨƠàáâãèéêếìĩíòóôõùúăđũơƯĂẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂưăạảấầẩẫậắằẳẵặẹẻẽềềểỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪễệỉịọỏốồổỗộớờởỡợụủứừỬỮỰỲỴÝỶỸửữựỳýỵỷỹ\s]+$/.test(
+        v,
+      );
 
-  //   // Priority 1
-  //   if (!(len >= 2 && len <= 15) || !allowed || v === '') {
-  //     return [
-  //       'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, 0-9, dấu gạch dưới _ , dấu chấm .)',
-  //     ];
-  //   }
-  //   // Priority 2
-  //   if (/^[_\.]|[_\.]$/.test(v)) {
-  //     return [
-  //       'Biệt danh không bắt đầu hoặc kết thúc bằng dấu gạch dưới, dấu chấm.',
-  //     ];
-  //   }
+    // Priority 1: Length and allowed characters
+    if (!(len >= 1 && len <= 15) || !allowed || v === '') {
+      console.log('Length and allowed characters', v);
 
-  //   // Priority 3
-  //   if (/__|\.\.|_.|._/.test(v)) {
-  //     return [
-  //       'Biệt danh không thể chứa liên tiếp nhiều dấu gạch dưới, dấu chấm.',
-  //     ];
-  //   }
+      return [
+        'Tên hồ sơ không hợp lệ. Tên hồ sơ bao gồm từ 1 đến 15 ký tự (a-z, 0-9)',
+      ];
+    }
 
-  //   // Remote validation
-  //   try {
-  //     const apiRes = await verifyProfileName({ nickname: v });
-  //     if (apiRes?.status === '1') {
-  //       return [];
-  //     }
-  //     return [
-  //       apiRes?.message?.content ||
-  //         'Biệt danh không hợp lệ. Vui lòng chọn biệt danh khác.',
-  //     ];
-  //   } catch {
-  //     return ['Không thể xác thực biệt danh. Vui lòng thử lại.'];
-  //   }
-  // };
+    // Remote validation
+    try {
+      const apiRes = await verifyProfileName({ name: v });
+      if (apiRes?.status === '1') {
+        return [];
+      }
+      return [
+        apiRes?.message?.content ||
+          'Tên hồ sơ không hợp lệ. Vui lòng chọn tên hồ sơ khác.',
+      ];
+    } catch {
+      return ['Không thể xác thực tên hồ sơ. Vui lòng thử lại.'];
+    }
+  };
+
+  const validateNickname = async (value: string): Promise<string[]> => {
+    const v = (value || '').trim();
+    const lower = v.toLowerCase();
+    const len = v.length;
+    const allowed = /^[a-z0-9._]+$/.test(lower);
+
+    if (v === localStorage.getItem('initialNickname')) {
+      return [];
+    }
+
+    // Priority 1
+    if (!(len >= 2 && len <= 15) || !allowed || v === '') {
+      return [
+        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, 0-9, dấu gạch dưới _ , dấu chấm .)',
+      ];
+    }
+    // Priority 2
+    if (/^[_\.]|[_\.]$/.test(v)) {
+      return [
+        'Biệt danh không bắt đầu hoặc kết thúc bằng dấu gạch dưới, dấu chấm.',
+      ];
+    }
+
+    // Priority 3
+    if (/__|\.\.|_.|._/.test(v)) {
+      return [
+        'Biệt danh không thể chứa liên tiếp nhiều dấu gạch dưới, dấu chấm.',
+      ];
+    }
+
+    // Remote validation
+    try {
+      const apiRes = await verifyProfileName({ nickname: v });
+      if (apiRes?.status === '1') {
+        return [];
+      }
+      return [
+        apiRes?.message?.content ||
+          'Biệt danh không hợp lệ. Vui lòng chọn biệt danh khác.',
+      ];
+    } catch {
+      return ['Không thể xác thực biệt danh. Vui lòng thử lại.'];
+    }
+  };
 
   const handleConfirm = async () => {
     const data: {
       name: string;
       avatar_id: string;
       avatar_url: string;
-      // display_name: string;
+      display_name: string;
       profile_type: string;
       pin?: string;
       nickname?: string;
@@ -487,7 +545,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       name: name.trim() || '',
       avatar_id: selectedAvatar.avatar_id || '',
       avatar_url: selectedAvatar.avatar_url || '',
-      // display_name: displayName.trim() || '',
+      display_name: displayName.trim() || '',
       profile_type: isChild
         ? PROFILE_TYPES.KID_PROFILE
         : PROFILE_TYPES.MASTER_PROFILE,
@@ -495,12 +553,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       ...(isRemovePin && { pin: '' }),
     };
 
-    // if (
-    //   title === EDIT_PROFILE &&
-    //   nickname !== localStorage.getItem('initialNickname')
-    // ) {
-    //   data.nickname = nickname.trim() || '';
-    // }
+    if (
+      title === EDIT_PROFILE &&
+      nickname !== localStorage.getItem('initialNickname')
+    ) {
+      data.nickname = nickname.trim() || '';
+    }
 
     if (title === CREATE_PROFILE) {
       createNewProfile(data);
@@ -585,24 +643,45 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           <div className="w-full mb-[24px]">
             <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
               Tên hồ sơ
-              {/* <span className="text-base leading-[1.3] font-normal text-silver-chalice mt-2 inline-block">
+              <span className="text-base leading-[1.3] font-normal text-silver-chalice mt-2 inline-block">
                 Dùng để phân biệt các hồ sơ trong cùng tài khoản và hiển thị
                 trong giao diện chọn hồ sơ. Ví dụ: “Bố”, “Mẹ”, “Bé Na”,...
-              </span> */}
+              </span>
             </p>
-            <input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onBlur={() => setValidNameChange(nameRegex.test(name.trim()))}
-              maxLength={15}
-              className={`${
-                !validNameChange || createError?.message || errorUpdate
-                  ? 'border-scarlet focus:border-scarlet'
-                  : 'border-black-olive-404040 focus:border-gray'
-              } border w-full py-[15px] px-6 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
-            />
-            {!validNameChange && !errorUpdate && (
+            <div className="relative">
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setNameChangeCount((prev) => prev + 1);
+                  if (nameErrors.length) setNameErrors([]);
+                }}
+                onBlur={() => setValidNameChange(nameRegex.test(name.trim()))}
+                maxLength={15}
+                className={`${
+                  !validNameChange ||
+                  createError?.message ||
+                  errorUpdate ||
+                  nameErrors.length
+                    ? 'border-scarlet focus:border-scarlet'
+                    : 'border-black-olive-404040 focus:border-gray'
+                } border w-full py-[15px] pl-6 pr-12 rounded-[104px] bg-[rgba(0,0,0,0.05)] text-white-smoke text-base leading-6 outline-none`}
+              />
+              {isValidatingName && (
+                <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                  <div className="w-4 h-4 border-2 border-white-smoke border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+            </div>
+            {nameErrors.length > 0 && (
+              <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
+                {nameErrors.map((msg, idx) => (
+                  <div key={`name-err-${idx}`}>{msg}</div>
+                ))}
+              </div>
+            )}
+            {!validNameChange && !errorUpdate && !nameErrors.length && (
               <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
                 Tên hồ sơ không hợp lệ. Tên hồ sơ bao gồm từ 1 đến 15 ký tự
                 (a-z, 0-9)
@@ -626,7 +705,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           </div>
 
           {/* Display Name */}
-          {/* <div className="w-full mb-[24px]">
+          <div className="w-full mb-[24px]">
             <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
               Tên hiển thị
             </p>
@@ -664,10 +743,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 ))}
               </div>
             )}
-          </div> */}
+          </div>
 
           {/* Nickname */}
-          {/* {title === EDIT_PROFILE && (
+          {title === EDIT_PROFILE && (
             <div className="w-full mb-[24px]">
               <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
                 Biệt danh
@@ -741,7 +820,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 </div>
               )}
             </div>
-          )} */}
+          )}
           {(profile?.profile_type === PROFILE_TYPES.KID_PROFILE ||
             title === CREATE_PROFILE) && (
             <div className="w-full mb-[24px]">
@@ -818,12 +897,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 </div>
               )}
               {showPinDropdown && (
-                <div ref={ref} className="absolute z-10 right-0 top-[calc(100%+4px)] bg-charleston-green w-[252px] rounded-2xl py-4">
+                <div
+                  ref={ref}
+                  className="absolute z-10 right-0 top-[calc(100%+4px)] bg-charleston-green w-[252px] rounded-2xl py-3"
+                >
                   <div className="hover:bg-black-olive-404040">
                     <div
                       className="py-3 px-4 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
                       onClick={() => {
-                        setShowEditPinModal(true);
+                        setShowEditPinModal(true); 
                         setShowPinDropdown(false);
                       }}
                     >
@@ -844,7 +926,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               )}
             </div>
           </div>
-          {/* {title === EDIT_PROFILE &&
+          {title === EDIT_PROFILE &&
             info?.profile?.profile_id !== profile?.profile_id &&
             profile?.profile_id !== info?.user_id_str && (
               <div className="w-full mb-[24px]">
@@ -879,7 +961,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                   </div>
                 </div>
               </div>
-            )} */}
+            )}
           <ModalConfirm
             modalContent={modalContent}
             open={isOpenModal}
@@ -904,10 +986,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 loading ||
                 loadingCreate ||
                 isLoading ||
-                isCreating
-                  ? // nicknameErrors.length > 0 ||
-                    // displayNameErrors.length > 0
-                    styles.disabledButton
+                isCreating ||
+                nicknameErrors.length > 0 ||
+                displayNameErrors.length > 0
+                  ? styles.disabledButton
                   : styles.enabledButton
               }`}
               disabled={

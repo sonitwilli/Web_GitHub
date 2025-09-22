@@ -61,9 +61,6 @@ export default function SSOCallbackPage() {
       await handleUserInfo(token);
       // Set login type for loginSuccess function to handle redirect properly
       localStorage.setItem(TOKEN, token);
-
-      // Set flag to show login success toast in AppContainer
-      sessionStorage.setItem('show_login_success_toast', 'true');
     }
   }, []);
 

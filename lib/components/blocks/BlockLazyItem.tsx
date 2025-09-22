@@ -14,6 +14,7 @@ interface Props {
   onBlockEmpty?: (isEmpty: boolean) => void;
   isFirstBlock?: boolean;
   isLastBlock?: boolean;
+  showTopBannerAds?: boolean;
 }
 
 export default function BlockLazyItem({
@@ -22,6 +23,7 @@ export default function BlockLazyItem({
   useContainer = true,
   onBlockEmpty,
   isFirstBlock = false,
+  showTopBannerAds = true,
 }: Props) {
   const { ref, inView } = useInView({
     threshold: 0.3,
@@ -89,7 +91,9 @@ export default function BlockLazyItem({
             setIsEmpty={(value: boolean) => setIsEmpty(value)}
             onFetchCompleted={() => setIsFetchAllCompleted(true)}
           />
-          {isFirstBlock && !shouldHideAds && <TopBannerAds />}
+          {isFirstBlock && !shouldHideAds && showTopBannerAds && (
+            <TopBannerAds />
+          )}
           {!isFetchAllCompleted && (
             <>
               <BlockPlaceholder block={block} />
