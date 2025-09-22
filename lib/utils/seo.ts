@@ -185,10 +185,76 @@ export const createSeoPropsFromVodData = (
     vodSeoData.follow === 1 ? 'follow' : 'nofollow'
   }`;
 
+  // Use SEO data if available, otherwise fallback to main VOD data
+  const finalTitle = (vodSeoData.title && vodSeoData.title.trim()) 
+    ? vodSeoData.title 
+    : (fallbackTitle || 'FPT Play');
+  const finalDescription = (vodSeoData.description && vodSeoData.description.trim()) 
+    ? vodSeoData.description 
+    : (fallbackDescription || 'FPT Play - Xem không giới hạn');
+
   return createDefaultSeoProps({
-    ...(vodSeoData.title && { title: vodSeoData.title }),
-    ...(vodSeoData.description && { description: vodSeoData.description }),
+    title: finalTitle,
+    description: finalDescription,
     url: canonicalUrl,
+    robots: robotsValue,
+    ...(ogImage && { ogImage }),
+  });
+};
+
+interface ChannelSeoData {
+  index?: number;
+  follow?: number;
+  description?: string;
+  title?: string;
+  canonical?: string;
+}
+
+/**
+ * Creates SEO props from Channel detail data
+ */
+export const createSeoPropsFromChannelData = (
+  channelSeoData: ChannelSeoData | null | undefined,
+  channelId: string,
+  fallbackTitle?: string,
+  fallbackDescription?: string,
+  ogImage?: string,
+): SeoProps => {
+  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fptplay.vn';
+  const canonicalUrl = `${siteUrl}/xem-truyen-hinh/${channelId}`;
+
+  if (!channelSeoData) {
+    return createDefaultSeoProps({
+      title: fallbackTitle || 'FPT Play - Xem Truyền Hình',
+      description: fallbackDescription || 'FPT Play - Xem truyền hình trực tuyến chất lượng cao',
+      url: canonicalUrl,
+      robots: getRobotsValueFromUrl(canonicalUrl) || 'index, follow',
+      ...(ogImage && { ogImage }),
+    });
+  }
+
+  // Force replace robots based on URL patterns
+  const robotsOverride = getRobotsValueFromUrl(canonicalUrl);
+  const robotsValue = robotsOverride || `${channelSeoData.index === 1 ? 'index' : 'noindex'}, ${
+    channelSeoData.follow === 1 ? 'follow' : 'nofollow'
+  }`;
+
+  // Use SEO data if available, otherwise fallback to main channel data
+  const finalTitle = (channelSeoData.title && channelSeoData.title.trim()) 
+    ? channelSeoData.title 
+    : (fallbackTitle || 'FPT Play - Xem Truyền Hình');
+  const finalDescription = (channelSeoData.description && channelSeoData.description.trim()) 
+    ? channelSeoData.description 
+    : (fallbackDescription || 'FPT Play - Xem truyền hình trực tuyến chất lượng cao');
+
+  const finalUrl = (channelSeoData.canonical && channelSeoData.canonical.trim()) 
+    ? channelSeoData.canonical 
+    : canonicalUrl;
+
+  return createDefaultSeoProps({
+    title: finalTitle,
+    description: finalDescription,
+    url: finalUrl,
     robots: robotsValue,
     ...(ogImage && { ogImage }),
   });
