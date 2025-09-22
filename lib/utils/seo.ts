@@ -141,6 +141,12 @@ interface VodSeoData {
   follow?: number;
   description?: string;
   title?: string;
+  sameAs?: string[];
+  max_video_preview?: string;
+  alternateName?: string[];
+  max_image_preview?: string;
+  availableLanguage?: string[];
+  canonical?: string;
 }
 
 /**
@@ -245,6 +251,11 @@ export const createSeoPropsFromVodData = (
   // Use original slug with episode info for robots logic
   const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
 
+  // Override canonical URL if provided in SEO data
+  const finalCanonicalUrl = (vodSeoData?.canonical && vodSeoData.canonical.trim()) 
+    ? vodSeoData.canonical 
+    : canonicalUrl;
+
   // Determine final title and description based on SEO data availability
   const finalTitle = (vodSeoData?.title && vodSeoData.title.trim()) 
     ? vodSeoData.title 
@@ -256,8 +267,18 @@ export const createSeoPropsFromVodData = (
   // Generate structured data if VOD data is available (same logic for both branches)
   const structuredData: Record<string, unknown>[] = [];
   if (vodData) {
-    const googleStarRatingData = generateTVSeriesStructuredData(vodData, canonicalUrl, finalTitle, finalDescription, ogImage);
+    const googleStarRatingData = generateTVSeriesStructuredData(vodData, finalCanonicalUrl, finalTitle, finalDescription, ogImage);
     if (googleStarRatingData) {
+      // Add additional SEO fields to structured data if available
+      if (vodSeoData?.sameAs && vodSeoData.sameAs.length > 0) {
+        googleStarRatingData.sameAs = vodSeoData.sameAs;
+      }
+      if (vodSeoData?.alternateName && vodSeoData.alternateName.length > 0) {
+        googleStarRatingData.alternateName = vodSeoData.alternateName;
+      }
+      if (vodSeoData?.availableLanguage && vodSeoData.availableLanguage.length > 0) {
+        googleStarRatingData.inLanguage = vodSeoData.availableLanguage;
+      }
       structuredData.push(googleStarRatingData);
     }
   }
@@ -266,7 +287,7 @@ export const createSeoPropsFromVodData = (
     return createDefaultSeoProps({
       title: finalTitle,
       description: finalDescription,
-      url: canonicalUrl,
+      url: finalCanonicalUrl,
       robots: getRobotsValueFromUrl(originalUrl) || 'index, follow',
       ...(ogImage && { ogImage }),
       ...(structuredData.length > 0 && { structuredData }),
@@ -275,14 +296,27 @@ export const createSeoPropsFromVodData = (
 
   // Force replace robots based on URL patterns for main branch
   const robotsOverride = getRobotsValueFromUrl(originalUrl);
-  const robotsValue = robotsOverride || `${vodSeoData.index === 1 ? 'index' : 'noindex'}, ${
+  let robotsValue = robotsOverride || `${vodSeoData.index === 1 ? 'index' : 'noindex'}, ${
     vodSeoData.follow === 1 ? 'follow' : 'nofollow'
   }`;
+
+  // Add max video preview and max image preview directives if provided
+  const additionalRobotsDirectives: string[] = [];
+  if (vodSeoData.max_video_preview && vodSeoData.max_video_preview.trim()) {
+    additionalRobotsDirectives.push(`max-video-preview:${vodSeoData.max_video_preview}`);
+  }
+  if (vodSeoData.max_image_preview && vodSeoData.max_image_preview.trim()) {
+    additionalRobotsDirectives.push(`max-image-preview:${vodSeoData.max_image_preview}`);
+  }
+  
+  if (additionalRobotsDirectives.length > 0) {
+    robotsValue = `${robotsValue}, ${additionalRobotsDirectives.join(', ')}`;
+  }
 
   return createDefaultSeoProps({
     title: finalTitle,
     description: finalDescription,
-    url: canonicalUrl,
+    url: finalCanonicalUrl,
     robots: robotsValue,
     ...(ogImage && { ogImage }),
     ...(structuredData.length > 0 && { structuredData }),
