@@ -23,6 +23,7 @@ import ModalCreditCard, { CreditCardData } from './ModalCreditCard';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import ModalConfirm from '@/lib/components/modal/ModalConfirm';
 import { getPlayerParams } from '@/lib/utils/playerTracking';
+import { TOKEN } from '@/lib/constant/texts';
 const PaymentPackageDetail = () => {
   const currentUser = useSelector((state: RootState) => state.user.info);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -152,7 +153,7 @@ const PaymentPackageDetail = () => {
       }
     };
     if (router.isReady) {
-      if (!isLogged) {
+      if (!isLogged && !localStorage.getItem(TOKEN)) {
         dispatch(openLoginModal());
         return;
       }
@@ -185,7 +186,7 @@ const PaymentPackageDetail = () => {
       JSON.stringify(playerParams || {}),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady]);
+  }, [router.isReady, isLogged]);
 
   const handleSetPlan = (planId: string) => {
     const found = plans.find((p) => String(p.plan_id) === String(planId));
