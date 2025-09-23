@@ -19,7 +19,8 @@ const getRobotsValueFromUrl = (url: string): string | null => {
     url.includes('/mua-goi/') ||
     url.includes('/dien-vien/') ||
     url.includes('/tai-khoan/') ||
-    (url.includes('/xem-video/') && url.includes('/tap-'))
+    (url.includes('/xem-video/') && url.includes('/tap-')) ||
+    (url.includes('/galaxy-play/xem-video/') && url.includes('/tap-'))
   ) {
     return 'noindex, follow';
   }
@@ -252,21 +253,35 @@ export const createSeoPropsFromVodData = (
   fallbackDescription?: string,
   ogImage?: string,
   vodData?: Record<string, unknown>,
+  isGalaxyPlay?: boolean,
+  isPlaylist?: boolean,
 ): SeoProps => {
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fptplay.vn';
 
-  // Handle short-video URLs differently
+  // Handle different URL types
   let canonicalUrl: string;
   if (vodSlug.startsWith('short-videos/')) {
     canonicalUrl = `${siteUrl}/short-videos`;
+  } else if (isPlaylist) {
+    // For playlists, use /playlist/ prefix
+    const canonicalSlug = vodSlug.replace(/\/tap-\d+$/, '');
+    canonicalUrl = `${siteUrl}/playlist/${canonicalSlug}`;
   } else {
     // Remove episode part from slug for canonical URL (e.g., "/tap-1", "/tap-2", etc.)
     const canonicalSlug = vodSlug.replace(/\/tap-\d+$/, '');
-    canonicalUrl = `${siteUrl}/xem-video/${canonicalSlug}`;
+    // Add galaxy-play prefix if it's a Galaxy Play video
+    const pathPrefix = isGalaxyPlay ? '/galaxy-play/xem-video' : '/xem-video';
+    canonicalUrl = `${siteUrl}${pathPrefix}/${canonicalSlug}`;
   }
 
   // Use original slug with episode info for robots logic
-  const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
+  let originalUrl: string;
+  if (isPlaylist) {
+    originalUrl = `${siteUrl}/playlist/${vodSlug}`;
+  } else {
+    const originalPathPrefix = isGalaxyPlay ? '/galaxy-play/xem-video' : '/xem-video';
+    originalUrl = `${siteUrl}${originalPathPrefix}/${vodSlug}`;
+  }
 
   // Override canonical URL if provided in SEO data
   const finalCanonicalUrl = (vodSeoData?.canonical && vodSeoData.canonical.trim()) 
