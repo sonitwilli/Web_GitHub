@@ -166,12 +166,6 @@ const generateTVSeriesStructuredData = (
   const ratingValue = ratingInfo?.avg_rate ? parseFloat(ratingInfo.avg_rate) : 0;
   const reviewCount = ratingInfo?.count ? parseInt(ratingInfo.count.replace(/[()]/g, ''), 10) : 0;
 
-  // Extract actors, directors, and genre data
-  const actors = (vodData.actors as string[]) || [];
-  const directors = (vodData.directors as string[]) || [];
-  const genres = (vodData.genres as string[]) || [];
-  const tagsGenre = (vodData.tags_genre as Array<{ name: string }>) || [];
-  
   // Get movie release date
   const movieReleaseDate = vodData.movie_release_date ? parseInt(String(vodData.movie_release_date), 10) : undefined;
 
@@ -186,26 +180,16 @@ const generateTVSeriesStructuredData = (
                     (vodData.standing_thumb as string) || 
                     '';
 
+  // Determine if it's a TV series or movie based on episode count
+  const episodeTotal = vodData.episode_total ? parseInt(String(vodData.episode_total), 10) : 1;
+  const isMovie = episodeTotal <= 1;
+
   const structuredData: Record<string, unknown> = {
-    '@context': 'http://schema.org',
-    '@type': 'TVSeries',
+    '@context': 'https://schema.org',
+    '@type': isMovie ? 'Movie' : 'TVSeries',
     url,
     name: title,
-    description,
     image: finalImage,
-    thumbnailUrl: finalImage,
-    genre: genres.length > 0 ? genres : tagsGenre.map(item => item.name),
-    actor: actors.map(actor => ({
-      '@type': 'Person',
-      name: actor,
-    })),
-    director: directors.map(director => ({
-      '@type': 'Person',
-      name: director,
-    })),
-    creator: [],
-    contentRating: 'PG',
-    numberOfSeasons: 1,
   };
 
   // Only add aggregateRating if we have rating data
@@ -213,7 +197,9 @@ const generateTVSeriesStructuredData = (
     structuredData.aggregateRating = {
       '@type': 'AggregateRating',
       ratingValue,
-      reviewCount,
+      ratingCount: reviewCount,
+      bestRating: '5',
+      worstRating: '1',
     };
   }
 
@@ -223,35 +209,25 @@ const generateTVSeriesStructuredData = (
     structuredData.startDate = movieReleaseDate;
   }
 
-  // Add all SEO fields if available
+  // Add only the specific SEO fields we need for structured data
   if (seoData) {
-    // Extract fields that should NOT be in structured data (they're for meta tags)
-    const {
-      max_video_preview,    // Keep this - it's valid for structured data
-      max_image_preview,    // Keep this - it's valid for structured data
-      availableLanguage,
-      canonical,
-      ...otherSeoFields     // Include: sameAs, alternateName, etc.
-    } = seoData;
+    // Only extract the fields we actually need
+    const { availableLanguage, canonical, sameAs, alternateName } = seoData;
 
     // Map specific fields to schema.org properties
-    if (availableLanguage) {
-      structuredData.inLanguage = availableLanguage;
+    if (availableLanguage && availableLanguage.length > 0) {
+      structuredData.inLanguage = availableLanguage[0]; // Use first language as string
+      structuredData.availableLanguage = availableLanguage; // Keep array for all languages
     }
     if (canonical) {
       structuredData.url = canonical;
     }
-
-    // Add video/image preview settings
-    if (max_video_preview) {
-      structuredData.max_video_preview = max_video_preview;
+    if (sameAs && sameAs.length > 0) {
+      structuredData.sameAs = sameAs;
     }
-    if (max_image_preview) {
-      structuredData.max_image_preview = max_image_preview;
+    if (alternateName && alternateName.length > 0) {
+      structuredData.alternateName = alternateName;
     }
-
-    // Add other valid structured data fields (sameAs, alternateName, etc.)
-    Object.assign(structuredData, otherSeoFields);
   }
 
   return structuredData;
