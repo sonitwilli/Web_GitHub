@@ -198,8 +198,8 @@ const generateTVSeriesStructuredData = (
       '@type': 'AggregateRating',
       ratingValue,
       ratingCount: reviewCount,
-      bestRating: '5',
-      worstRating: '1',
+      bestRating: 5,
+      worstRating: 1,
     };
   }
 
@@ -212,9 +212,18 @@ const generateTVSeriesStructuredData = (
   // Add only the specific SEO fields we need for structured data
   if (seoData) {
     // Only extract the fields we actually need
-    const { availableLanguage, canonical, sameAs, alternateName } = seoData;
+    const { description, availableLanguage, canonical, sameAs, alternateName } = seoData;
 
     // Map specific fields to schema.org properties
+    if (description && description.trim()) {
+      structuredData.description = description;
+    } else {
+      // Fallback to VOD data description if SEO description is empty
+      const vodDescription = vodData.description as string;
+      if (vodDescription && vodDescription.trim()) {
+        structuredData.description = vodDescription;
+      }
+    }
     if (availableLanguage && availableLanguage.length > 0) {
       structuredData.inLanguage = availableLanguage[0]; // Use first language as string
       structuredData.availableLanguage = availableLanguage; // Keep array for all languages
