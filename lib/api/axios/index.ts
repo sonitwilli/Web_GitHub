@@ -4,6 +4,7 @@ import {
   TOKEN,
   NUMBER_PR,
   TYPE_PR,
+  REVISION,
 } from '@/lib/constant/texts';
 import { base64, md5 } from '@/lib/utils/hash';
 import axios from 'axios';
@@ -51,6 +52,11 @@ axiosInstance.interceptors.request.use(
       if (token) {
         $config.headers.Authorization = `Bearer ${token}`;
       }
+      // revision
+      const revision = localStorage.getItem(REVISION);
+      if (revision) {
+        $config.headers.revision = revision;
+      }
 
       const browserInfo = localStorage.getItem('browser_info');
       if (browserInfo) {
@@ -86,10 +92,10 @@ axiosInstance.interceptors.request.use(
     const suffix = DEFAULT_API_SUFFIX;
     const fullUrl = $config.url || '';
     uriSend = fullUrl || '';
-    if (uriSend[0] === '/') uriSend = uriSend.slice(1)
-    if (uriSend.includes("?")) {
-      const uriSendSplit = uriSend.split("?")
-      uriSend = uriSendSplit[0]
+    if (uriSend[0] === '/') uriSend = uriSend.slice(1);
+    if (uriSend.includes('?')) {
+      const uriSendSplit = uriSend.split('?');
+      uriSend = uriSendSplit[0];
     }
 
     const expireTime = Math.floor(new Date().getTime() / 1000) + 3600;

@@ -835,12 +835,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   );
 
   const handleCallback = useCallback(() => {
-    if (reloadDeviceLimit) {
+    if (reloadDeviceLimit && storeVerifyTokenGetDevicesLimit) {
       handleGetDevicesLimit(storeVerifyTokenGetDevicesLimit);
       setReloadDeviceLimit(false);
       return;
+    } else {
+      goToStep('phone');
     }
-    goToStep('phone');
   }, [
     goToStep,
     reloadDeviceLimit,

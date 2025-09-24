@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import usePlayerPageCycle from '@/lib/hooks/usePlayerPageCycle';
+import { viToEn } from '@/lib/utils/methods';
 
 function VodPageContent() {
   usePlayerPageCycle();
@@ -156,20 +157,20 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
   let vodId = '';
   const slugs = params?.slug || [];
 
+  if (slugs[0] && slugs[0].includes('.html')) {
+    return {
+      redirect: {
+        destination: slugs[0].replace('.html', ''),
+        permanent: false,
+      }
+    };
+  }
+
   if (slugs && slugs?.length) {
     vodId = slugs[0].split('-')?.pop() || '';
   }
 
-  const isGlPage = resolvedUrl?.includes(SOURCE_PROVIDER.GALAXY_PLAY);
-  if (isGlPage) {
-    const fallbackSeoProps = createSeoPropsFromVodData(
-      null,
-      vodId || 'galaxy-play',
-      'FPT Play - Xem video online',
-      'Xem video chất lượng cao trên FPT Play',
-    );
-    return { props: { key: new Date().getTime(), seoProps: fallbackSeoProps } };
-  }
+
   if (vodId) {
     // If this is a playlist route and the path doesn't include a video id
     // perform server-side redirect to the first video in the playlist to
@@ -177,7 +178,40 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
     try {
       if (resolvedUrl?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
         const playlistRes = await getPlaylistDetail(vodId);
-        const videos = playlistRes?.data?.data?.videos || playlistRes?.data?.videos;
+        const playlistData = playlistRes?.data?.data || playlistRes?.data;
+        const videos = playlistData?.videos;
+        const playlistTitle = (playlistData as { title?: string })?.title;
+        
+        // Apply viToEn canonical slug logic for playlists
+        if (playlistTitle) {
+          // Generate canonical slug using viToEn
+          const canonicalSlugBase = viToEn(playlistTitle);
+          const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+          
+          // Check if current slug matches canonical slug
+          const currentSlugBase = slugs[0];
+          const hasVideoId = slugs.length > 1;
+          const videoIdPart = hasVideoId ? `/${slugs[1]}` : '';
+          
+          // Redirect if slug doesn't match canonical format
+          if (currentSlugBase !== canonicalSlug) {
+            // build query string from resolvedUrl (safer fallback)
+            const hasQuery = resolvedUrl?.includes('?');
+            const qs = hasQuery ? resolvedUrl?.split('?').slice(1).join('?') : '';
+            const destination = qs 
+              ? `/playlist/${canonicalSlug}${videoIdPart}?${qs}` 
+              : `/playlist/${canonicalSlug}${videoIdPart}`;
+            console.log('Redirecting playlist to canonical slug:', destination);
+            return {
+              redirect: {
+                destination,
+                permanent: true, // 301 redirect for SEO
+              },
+            };
+          }
+        }
+        
+        // If playlist doesn't have a video id, redirect to first video
         if (Array.isArray(videos) && videos.length && !(slugs && slugs[1])) {
           const firstVideoId = videos[0]?.id;
           if (firstVideoId) {
@@ -205,10 +239,48 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       const vodTitle = channelRes?.data?.data?.title;
       const vodDescription = channelRes?.data?.data?.description;
       const vodImage = channelRes?.data?.data?.image?.landscape_title;
+      
+      // Access additional properties that might not be in types
+      const vodData = channelRes?.data?.data as Record<string, unknown>;
+      const vodTitleVie = vodData?.title_vie as string;
+      const vodTitleOrigin = vodData?.title_origin as string;
 
+      // Only apply viToEn canonical slug logic for regular video pages, not playlists
+      if (!resolvedUrl?.includes(ROUTE_PATH_NAMES.PLAYLIST)) {
+        // Generate canonical slug using viToEn
+        const canonicalSlugBase = viToEn(
+          vodTitleVie || vodTitle || vodTitleOrigin || ''
+        );
+        const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+        
+        // Check if current slug matches canonical slug
+        const currentSlugBase = slugs[0];
+        const hasEpisode = slugs.length > 1;
+        const episodePart = hasEpisode ? `/${slugs[1]}` : '';
+        
+        // Redirect if slug doesn't match canonical format
+        if (currentSlugBase !== canonicalSlug) {
+          // Check if this is a Galaxy Play URL to determine the correct redirect path
+          const isGalaxyPlay = resolvedUrl?.includes(SOURCE_PROVIDER.GALAXY_PLAY);
+          const destination = isGalaxyPlay 
+            ? `/galaxy-play/xem-video/${canonicalSlug}${episodePart}`
+            : `/xem-video/${canonicalSlug}${episodePart}`;
+          console.log('Redirecting to:', destination);
+          return {
+            redirect: {
+              destination,
+              permanent: true, // 301 redirect for SEO
+            },
+          };
+        }
+      }
+
+      // Reconstruct full slug including episode part for SEO
+      const fullSlug = slugs.length > 1 ? `${slugs[0]}/${slugs[1]}` : slugs[0];
+      
       const seoProps = createSeoPropsFromVodData(
         vodSeoData,
-        slugs[0],
+        fullSlug,
         vodTitle ? vodTitle : undefined,
         vodDescription || undefined,
         vodImage,
@@ -217,14 +289,17 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       if (
         channelRes?.data?.data?.source_provider === SOURCE_PROVIDER.GALAXY_PLAY
       ) {
-        const link = `/galaxy-play/${resolvedUrl}`;
-        return {
-          redirect: {
-            destination: link,
-            permanent: false,
-          },
-          props: { key: new Date().getTime(), seoProps },
-        };
+        // Only redirect if not already on galaxy-play route
+        if (!resolvedUrl?.startsWith('/galaxy-play/')) {
+          const link = `/galaxy-play${resolvedUrl}`;
+          return {
+            redirect: {
+              destination: link,
+              permanent: false,
+            },
+          };
+        }
+        return { props: { key: new Date().getTime(), seoProps } };
       } else {
         return { props: { key: new Date().getTime(), seoProps } };
       }

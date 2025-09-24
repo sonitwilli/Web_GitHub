@@ -189,7 +189,7 @@ const AccountInfo: React.FC = () => {
         />
       ) : (
         <>
-          <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[36px] tracking-[0.02em] mb-2">
+          <h1 className="text-[24px] tablet:text-[28px] font-semibold leading-[36px] tracking-[0.02em] mb-2 xl:mt-2">
             Thông tin tài khoản
           </h1>
 

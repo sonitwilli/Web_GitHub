@@ -64,7 +64,7 @@ const PaymentPage: React.FC = () => {
         pathname: '/mua-goi/dich-vu/thanh-toan/that-bai',
         query: {
           status_code: '0',
-          msg: 'Quý khách vui vòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ',
+          msg: 'Quý khách vui lòng thử lại hoặc gọi Tổng đài 19006600 để được hỗ trợ',
         },
       });
     }

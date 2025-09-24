@@ -18,6 +18,7 @@ import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
 import Categories from './Categories';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
 import { fetchRatingData, RatingData } from '@/lib/api/video';
+import TopBannerAdsVod from '@/lib/components/ads/TopBannerAdsVod';
 
 const RatingStar = dynamic(() => import('./RatingStart'), {
   ssr: false,
@@ -61,6 +62,7 @@ const InforVideoComponent = (props: PropsVideo) => {
   } = usePlayerPageContext();
   const { dataVideo } = props;
   const { showModalShare, setShowModalShare } = useModalToggle({});
+  const [shouldHideAds, setShouldHideAds] = useState(false);
   const slide = useMemo<BlockSlideItemType>(
     /*@ts-ignore*/
     () => {
@@ -94,6 +96,7 @@ const InforVideoComponent = (props: PropsVideo) => {
       setRatingInfo(userRating);
     }
   };
+
   useEffect(() => {
     if ((dataVideo?._id || dataVideo?.id) && dataVideo?.ref_id && !ratingInfo) {
       loadRating();
@@ -273,6 +276,40 @@ const InforVideoComponent = (props: PropsVideo) => {
 
   const router = useRouter();
 
+  useEffect(() => {
+    const checkAppName = () => {
+      if (typeof window !== 'undefined') {
+        const appName = localStorage.getItem('app_name');
+        const hideAdsApps = [
+          'Truyền hình',
+          'Học tập',
+          'Thiếu nhi',
+          'Galaxy Play',
+        ];
+        setShouldHideAds(hideAdsApps.includes(appName || ''));
+      }
+    };
+
+    // Initial check when router is ready
+    if (router.isReady) {
+      checkAppName();
+    }
+
+    // Listen for router events to detect when app_name might change
+    const handleRouteComplete = () => {
+      // Add a small delay to ensure app_name is set in localStorage
+      setTimeout(checkAppName, 50);
+    };
+
+    if (router.isReady) {
+      router.events.on('routeChangeComplete', handleRouteComplete);
+    }
+
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteComplete);
+    };
+  }, [router.isReady, router.events]);
+
   const id = useMemo(() => {
     const slugs = router?.query?.slug;
     let rawId: string | undefined = undefined;
@@ -286,182 +323,200 @@ const InforVideoComponent = (props: PropsVideo) => {
   }, [router, streamType]);
   // grid grid-cols-[1fr_minmax(416px,_24.3559%)]
   return (
-    <div className="InforVideoComponent xl:flex">
-      <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
-        <div className="mb-[16px] xl:mb-[24px]">
-          <h1 className="text-white-smoke text-[18px] tablet:text-[20px] xl:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
-            {/* Hiển thị title của tập hiện tại (cho playlist) hoặc dataVideo (cho VOD) */}
-            {streamType === 'playlist' && currentPlaylistVideo?.title
-              ? currentPlaylistVideo.title
-              : dataVideo?.title_vie}
-          </h1>
-          {dataVideo?.title_origin && (
-            <h2 className="text-white-smoke text-[14px] tablet:text-[16px] xl:text-[18px] font-[500] leading-[130%] line-clamp-2 mt-[8px]">
-              {dataVideo?.title_origin}
-            </h2>
-          )}
+    <>
+      {shouldHideAds !== null && !shouldHideAds && (
+        <div className="mb-[24px] xl:mb-[40px]">
+          <TopBannerAdsVod />
         </div>
+      )}
 
-        {/* Reaction buttons */}
-        <div className="flex gap-4 items-center mb-[32px] xl:mb-[40px]">
-          <LikeReaction isChannel isActive={isLiked} onClick={handleReaction} />
-
-          <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
-        </div>
-
-        {/* Hightligh info */}
-        <div className="flex flex-col flex-wrap lg:flex-row lg:justify-between lg:items-center gap-[24px] mb-[24px]">
-          <div className="flex gap-3 flex-wrap items-center">
-            {highlightInfo?.map((item, index) => (
-              <div className="h-[28px]" key={index}>
-                <img
-                  key={index}
-                  /*@ts-ignore*/
-                  src={item.content}
-                  className=" h-full"
-                  alt={`img-${index}`}
-                />
-              </div>
-            ))}
-
-            {ratingInfo && ratingInfo?.content?.[0] && (
-              <VodRating
-                /*@ts-ignore*/
-                hightlightInfo={ratingInfo?.content?.[0]}
-              />
-            )}
-
-            {ratingInfo && (
-              <div className="flex items-center">
-                <RatingStar
-                  itemId={dataVideo?._id ?? dataVideo?.id ?? ''}
-                  refId={dataVideo?.ref_id ?? ''}
-                  appId={dataVideo?.app_id ?? ''}
-                  totalStars={5}
-                  ratingInfo={ratingInfo}
-                  loadRating={() => loadRating()}
-                />
-              </div>
+      <div className="InforVideoComponent xl:flex">
+        <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
+          <div className="mb-[16px] xl:mb-[24px]">
+            <h1 className="text-white-smoke text-[18px] tablet:text-[20px] xl:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
+              {/* Hiển thị title của tập hiện tại (cho playlist) hoặc dataVideo (cho VOD) */}
+              {streamType === 'playlist' && currentPlaylistVideo?.title
+                ? currentPlaylistVideo.title
+                : dataVideo?.title_vie}
+            </h1>
+            {dataVideo?.title_origin && (
+              <h2 className="text-white-smoke text-[14px] tablet:text-[16px] xl:text-[18px] font-[500] leading-[130%] line-clamp-2 mt-[8px]">
+                {dataVideo?.title_origin}
+              </h2>
             )}
           </div>
-        </div>
 
-        <div className="meta_data mb-[16px] xl:mb-[24px] text-spanish-gray text-[14px] xl:text-[16px]">
-          <div className="flex mb-[8px] xl:mb-[12px] gap-[6px] xl:gap-[8px]">
-            {dataVideo?.meta_data?.map((meta, index) => (
-              <div key={index} className="flex gap-[6px] xl:gap-[8px]">
-                <span>{meta}</span>
+          {/* Reaction buttons */}
+          <div className="flex gap-4 items-center mb-[32px] xl:mb-[40px]">
+            <LikeReaction
+              isChannel
+              isActive={isLiked}
+              onClick={handleReaction}
+            />
+
+            <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
+          </div>
+
+          {/* Hightligh info */}
+          <div className="flex flex-col flex-wrap lg:flex-row lg:justify-between lg:items-center gap-[24px] mb-[24px]">
+            <div className="flex gap-3 flex-wrap items-center">
+              {highlightInfo?.map((item, index) => (
+                <div className="h-[28px]" key={index}>
+                  <img
+                    key={index}
+                    /*@ts-ignore*/
+                    src={item.content}
+                    className=" h-full"
+                    alt={`img-${index}`}
+                  />
+                </div>
+              ))}
+
+              {ratingInfo && ratingInfo?.content?.[0] && (
+                <VodRating
+                  /*@ts-ignore*/
+                  hightlightInfo={ratingInfo?.content?.[0]}
+                />
+              )}
+
+              {ratingInfo && (
+                <div className="flex items-center">
+                  <RatingStar
+                    itemId={dataVideo?._id ?? dataVideo?.id ?? ''}
+                    refId={dataVideo?.ref_id ?? ''}
+                    appId={dataVideo?.app_id ?? ''}
+                    totalStars={5}
+                    ratingInfo={ratingInfo}
+                    loadRating={() => loadRating()}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="meta_data mb-[16px] xl:mb-[24px] text-spanish-gray text-[14px] xl:text-[16px]">
+            <div className="flex mb-[8px] xl:mb-[12px] gap-[6px] xl:gap-[8px]">
+              {dataVideo?.meta_data?.map((meta, index) => (
+                <div key={index} className="flex gap-[6px] xl:gap-[8px]">
+                  <span>{meta}</span>
+                  <span>
+                    {index < (dataVideo.meta_data?.length ?? 0) - 1 && '•'}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div>{dataVideo?.maturity_rating?.advisories}</div>
+          </div>
+
+          {dataVideo?.short_description ? (
+            <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
+              <p>{dataVideo?.short_description}</p>
+            </div>
+          ) : (
+            ''
+          )}
+
+          <HandleLongText
+            text={dataVideo?.description}
+            className="HandleLongText max-w-full mb-[16px] xl:mb-[24px]"
+          />
+
+          <div className="flex flex-wrap gap-2 text-spanish-gray text-[14px] xl:text-[16px] mb-[16px] xl:mb-[24px]">
+            {dataVideo?.genres?.map((genre, index) => (
+              <div
+                key={index}
+                className="flex gap-2 break-words whitespace-normal"
+              >
+                <span className="break-words whitespace-normal">{genre}</span>
                 <span>
-                  {index < (dataVideo.meta_data?.length ?? 0) - 1 && '•'}
+                  {index < (dataVideo.genres?.length ?? 0) - 1 && '•'}
                 </span>
               </div>
             ))}
           </div>
 
-          <div>{dataVideo?.maturity_rating?.advisories}</div>
-        </div>
-
-        {dataVideo?.short_description ? (
-          <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
-            <p>{dataVideo?.short_description}</p>
-          </div>
-        ) : (
-          ''
-        )}
-
-        <HandleLongText
-          text={dataVideo?.description}
-          className="HandleLongText max-w-full mb-[16px] xl:mb-[24px]"
-        />
-
-        <div className="flex flex-wrap gap-2 text-spanish-gray text-[14px] xl:text-[16px] mb-[16px] xl:mb-[24px]">
-          {dataVideo?.genres?.map((genre, index) => (
-            <div key={index} className="flex gap-2 break-words whitespace-normal">
-              <span className="break-words whitespace-normal">{genre}</span>
-              <span>{index < (dataVideo.genres?.length ?? 0) - 1 && '•'}</span>
+          {dataChannel?.category?.length ? (
+            <div className="">
+              <Categories />
             </div>
-          ))}
-        </div>
+          ) : (
+            ''
+          )}
 
-        {dataChannel?.category?.length ? (
-          <div className="">
-            <Categories />
-          </div>
-        ) : (
-          ''
-        )}
-
-        {(viewportType !== VIEWPORT_TYPE.DESKTOP &&
-          dataChannel?.episodes &&
-          dataChannel?.episodes?.length > 1) ||
-        (viewportType !== VIEWPORT_TYPE.DESKTOP &&
-          dataPlaylist?.videos &&
-          dataPlaylist?.videos?.length > 1) ||
-        (viewportType !== VIEWPORT_TYPE.DESKTOP &&
-          (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
-            dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
-          dataChannel?.episodes?.length) ? (
-          <div className="ListEspisodeComponent mt-[48px]">
-            <ListEspisodeComponent position="bottom" />
-          </div>
-        ) : (
-          ''
-        )}
-
-        <div className="vod-details mt-[80px] flex flex-col gap-[56px] tablet:gap-[72px] xl:gap-[80px]">
-          {allBlocks?.map((item, index) => (
-            <BlockLazyItem
-              block={item as BlockItemType}
-              useContainer={false}
-              key={index}
-              isFirstBlock={index === 0}
-              isLastBlock={index === (allBlocks?.length || 0) - 1}
-            />
-          ))}
-        </div>
-
-        {viewportType !== VIEWPORT_TYPE.DESKTOP && (
-          <div className="mt-[56px] tablet:mt-[69px]">
-            <Top10 />
-          </div>
-        )}
-
-        {dataChannel?.is_comment === '1' && (
-          <div className="mt-4">
-            <LiveChat roomId={id || ''} type="vod" />
-          </div>
-        )}
-      </div>
-
-      {viewportType === VIEWPORT_TYPE.DESKTOP && (
-        <div className="w-[416px] ml-auto flex-1">
-          {isExpanded &&
-          ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
-            (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
-            ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+          {(viewportType !== VIEWPORT_TYPE.DESKTOP &&
+            dataChannel?.episodes &&
+            dataChannel?.episodes?.length > 1) ||
+          (viewportType !== VIEWPORT_TYPE.DESKTOP &&
+            dataPlaylist?.videos &&
+            dataPlaylist?.videos?.length > 1) ||
+          (viewportType !== VIEWPORT_TYPE.DESKTOP &&
+            (dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
               dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
-              dataChannel?.episodes?.length &&
-              dataChannel?.episodes?.length > 0)) ? (
-            <div className="mb-[72px]">
+            dataChannel?.episodes?.length) ? (
+            <div className="ListEspisodeComponent mt-[48px]">
               <ListEspisodeComponent position="bottom" />
             </div>
           ) : (
             ''
           )}
-          <Top10 />
-        </div>
-      )}
 
-      {showModalShare && (
-        <ModalShare
-          open={showModalShare}
-          onClose={() => setShowModalShare(false)}
-          block={{ type: 'vod' }}
-          slide={slideFromVod}
-          isUseRouteLink
-        />
-      )}
-    </div>
+          <div className="vod-details mt-[80px] flex flex-col gap-[56px] tablet:gap-[72px] xl:gap-[80px]">
+            {allBlocks?.map((item, index) => (
+              <BlockLazyItem
+                block={item as BlockItemType}
+                useContainer={false}
+                key={index}
+                isFirstBlock={index === 0}
+                isLastBlock={index === (allBlocks?.length || 0) - 1}
+                showTopBannerAds={false}
+              />
+            ))}
+          </div>
+
+          {viewportType !== VIEWPORT_TYPE.DESKTOP && (
+            <div className="mt-[56px] tablet:mt-[69px]">
+              <Top10 />
+            </div>
+          )}
+
+          {dataChannel?.is_comment === '1' && (
+            <div className="mt-4">
+              <LiveChat roomId={id || ''} type="vod" />
+            </div>
+          )}
+        </div>
+
+        {viewportType === VIEWPORT_TYPE.DESKTOP && (
+          <div className="w-[416px] ml-auto flex-1">
+            {isExpanded &&
+            ((dataChannel?.episodes && dataChannel?.episodes?.length > 1) ||
+              (dataPlaylist?.videos && dataPlaylist?.videos?.length > 1) ||
+              ((dataChannel?.episode_type === EpisodeTypeEnum.SERIES ||
+                dataChannel?.episode_type === EpisodeTypeEnum.SEASON) &&
+                dataChannel?.episodes?.length &&
+                dataChannel?.episodes?.length > 0)) ? (
+              <div className="mb-[72px]">
+                <ListEspisodeComponent position="bottom" />
+              </div>
+            ) : (
+              ''
+            )}
+            <Top10 />
+          </div>
+        )}
+
+        {showModalShare && (
+          <ModalShare
+            open={showModalShare}
+            onClose={() => setShowModalShare(false)}
+            block={{ type: 'vod' }}
+            slide={slideFromVod}
+            isUseRouteLink
+          />
+        )}
+      </div>
+    </>
   );
 };
 

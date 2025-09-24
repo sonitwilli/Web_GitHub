@@ -37,10 +37,8 @@ export const fetchDataGuarantee = async (routeName: string) => {
 
 export const fetchDataVerifyMACAddress = async (macAddress: string) => {
   try {
-    const res = await axiosInstance.post('user/get_user_login_history', {
-      params: {
-        device_id: macAddress,
-      },
+    const res = await axiosInstance.post('user/get_user_login_history', {      
+      device_id: macAddress,      
     });
     return res;
   } catch {

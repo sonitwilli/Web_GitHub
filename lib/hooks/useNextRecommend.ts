@@ -12,7 +12,6 @@ import {
 } from '../constant/texts';
 import { getNextVideos } from '../api/vod';
 import { getNextVideos as getPlaylistNextVideos } from '../api/playlist';
-import { trackingStoreKey } from '../constant/tracking';
 
 // Extended interface for API response data
 interface ExtendedBlockSlideItemType extends BlockSlideItemType {
@@ -77,6 +76,10 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   const [shouldShow, setShouldShow] = useState(false);
   const countdownRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    console.log('shouldShow :>> ', shouldShow);
+  }, [shouldShow]);
 
   const {
     streamType,
@@ -292,11 +295,21 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
   useEffect(() => {
     if ((isEndVideo ?? 0) > 0) {
       setIsCancelled(false);
-      if (nextRecommendCancelled) {
+    }
+  }, [isEndVideo]);
+
+  useEffect(() => {
+    if ((isEndVideo ?? 0) > 0) {
+      if (
+        hasEndContent &&
+        nextRecommendCancelled &&
+        isFinalEpisode &&
+        isCancelled
+      ) {
         setNextRecommendCancelled?.(false);
       }
     }
-  }, [isEndVideo, nextRecommendCancelled, setNextRecommendCancelled]);
+  }, [isEndVideo]);
 
   // Reset cancelled state when video is still playing and hasn't reached end_content
   useEffect(() => {
@@ -325,11 +338,6 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
     } else {
       linkNextRec = `/xem-video/${viToEn(title)}-${id}`;
     }
-    if (shouldShow) {
-      const idRelated =
-        sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '';
-      linkNextRec = `${linkNextRec}?from=Related&id_related=${idRelated}`;
-    }
     return linkNextRec;
   };
 
@@ -344,14 +352,9 @@ export const useNextRecommend = (): UseNextRecommendReturn => {
       /\s+/g,
       '-',
     );
-    let linkTrailer = `/xem-video/${formattedTitle}-${_id}/tap-${
+    const linkTrailer = `/xem-video/${formattedTitle}-${_id}/tap-${
       parseInt(id_trailer.toString()) + 1
     }`;
-    if (shouldShow) {
-      const idRelated =
-        sessionStorage.getItem(trackingStoreKey.PLAYER_VOD_ID) || '';
-      linkTrailer = `${linkTrailer}?from=Related&id_related=${idRelated}`;
-    }
     return linkTrailer;
   };
 

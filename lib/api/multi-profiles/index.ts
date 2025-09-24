@@ -141,7 +141,7 @@ export const getProfilesAvatarList = async (): Promise<{
 }> => {
   try {
     const response = await axiosInstance.get<AvatarResponse>(
-      'config/profile/avatars',
+      'config/profile/avatars'
     );
     const data = response.data;
 
@@ -172,7 +172,7 @@ export const doFetchRecommendedProfile = async (): Promise<
   } catch (error) {
     console.error(
       'Error fetching recommended profile:',
-      error instanceof Error ? error.message : 'Unknown error',
+      error instanceof Error ? error.message : 'Unknown error'
     );
     throw error;
   }
@@ -203,12 +203,12 @@ export const updateProfile = async (
     pin?: string;
     type?: string;
   },
-  selectedProfile: Profile | null,
+  selectedProfile: Profile | null
 ): Promise<AxiosResponse<ApiResponse>> => {
   try {
     const response = await axiosInstance.post(
       `/config/profile/${selectedProfile?.profile_id}`,
-      { ...params },
+      { ...params }
     );
 
     if (response.data?.status === '1' && params.type !== 'access') {
@@ -220,13 +220,9 @@ export const updateProfile = async (
 
     return response;
   } catch (error) {
-    showToast({
-      title: ERROR_CONNECTION,
-      desc: checkError({ error }),
-    });
     console.error(
       'Error updating profile:',
-      error instanceof Error ? error.message : 'Unknown error',
+      error instanceof Error ? error.message : 'Unknown error'
     );
     throw error;
   }
@@ -234,7 +230,7 @@ export const updateProfile = async (
 
 export const deleteProfile = async (
   profileId: string,
-  profileName: string,
+  profileName: string
 ): Promise<AxiosResponse<ApiResponse>> => {
   try {
     const response = await axiosInstance.post('/config/profile/delete', {
@@ -258,7 +254,7 @@ export const deleteProfile = async (
     });
     console.error(
       'Error deleting profile:',
-      error instanceof Error ? error.message : 'Unknown error',
+      error instanceof Error ? error.message : 'Unknown error'
     );
     throw error;
   }
@@ -310,7 +306,7 @@ export const verifyProfileName = async (params: {
   try {
     const response: AxiosResponse<ApiResponse> = await axiosInstance.post(
       'config/profile/verify_name',
-      params,
+      params
     );
     return response.data;
   } catch (error) {

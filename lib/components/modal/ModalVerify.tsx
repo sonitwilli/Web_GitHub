@@ -498,7 +498,18 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             }
             break;
           case 'do_resend_otp_delete_account_new_flow':
-            await doResendOtpDeleteAccountNewFlow(resendParams);
+            const userPhoneDeleteAccount = currentUser?.user_phone || '';
+            setPhone(userPhoneDeleteAccount);
+
+            const resendDeleteAccountParams: ResendOtpParams = {
+              phone: userPhoneDeleteAccount,
+              countryCode: 'VN',
+              clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+            };
+
+            if (userPhoneDeleteAccount) {
+              await doResendOtpDeleteAccountNewFlow(resendDeleteAccountParams);
+            }
             break;
           case 'do_confirm_otp_change_management_code':
             await doConfirmOtpChangeManagementCode(params);

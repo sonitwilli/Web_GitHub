@@ -44,12 +44,9 @@ export default function BlockHoverItem({ index }: Props) {
       data: slide || {},
       type: block?.type || '',
     });
-    if (blockIndex > -1) {
-      return result?.includes('?')
-        ? `${result}&block_index=${blockIndex}&position_index=${index}`
-        : `${result}?block_index=${blockIndex}&position_index=${index}`;
-    }
     return result || '/';
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block, blockIndex, index]);
   const [isShowPlayer, setIsShowPlayer] = useState(false);
   const playerContainerRef = useRef<HTMLDivElement>(null);

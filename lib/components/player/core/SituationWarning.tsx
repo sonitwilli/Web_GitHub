@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { VIDEO_ID } from '@/lib/constant/texts';
 import styles from './SituationWarning.module.css';
+import { usePlayerPageContext } from '../context/PlayerPageContext';
 
 // ================== INTERFACES ==================
 export interface WarningData {
@@ -33,6 +34,7 @@ const SituationWarning: React.FC<SituationWarningProps> = ({
     boolean | null
   >(null);
   const [currentIndex, setCurrentIndex] = useState<number>(0);
+  const { isExpanded } = usePlayerPageContext();
 
   // ================== REFS FOR COUNTDOWN ==================
   const countdownTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -175,10 +177,16 @@ const SituationWarning: React.FC<SituationWarningProps> = ({
   // ================== RENDER ==================
   return (
     <div
-      className={`w-screen bottom-[70px] tablet:bottom-[111px] absolute left-1/2 transform -translate-x-1/2 z-[1] overflow-hidden flex justify-center items-center`}
+      className={`${
+        isExpanded ? 'w-screen' : 'max-w-full'
+      }  bottom-[70px] tablet:bottom-[111px] absolute left-1/2 transform -translate-x-1/2 z-[1] overflow-hidden flex justify-center items-center`}
     >
       <p
-        className={`max-w-[65vw] font-medium text-[14px] tablet:text-base xl:text-[18px] leading-[130%] tracking-[0.02em] text-center text-white ${styles.situationWarningContent} text-shadow-[0px_0px_5px_rgba(0,0,0,0.8)]`}
+        className={`${
+          isExpanded ? 'max-w-[65vw]' : 'w-fit break-words overflow-hidden'
+        } font-medium text-[14px] tablet:text-base xl:text-[18px] leading-[130%] tracking-[0.02em] text-center text-white ${
+          styles.situationWarningContent
+        } text-shadow-[0px_0px_5px_rgba(0,0,0,0.8)]`}
         dangerouslySetInnerHTML={{
           __html: warningText || currentWarning.content,
         }}

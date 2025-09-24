@@ -1,43 +1,51 @@
-import { GetServerSideProps } from 'next'
+import { GetServerSideProps } from 'next';
 
-const TaiKhoanIdPage = () => null
+const TaiKhoanIdPage = () => null;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params || {}
-  const raw = Array.isArray(id) ? id[0] : id ?? ''
+  const { id } = context.params || {};
+  const raw = Array.isArray(id) ? id[0] : id ?? '';
   // normalize known typo: replace any occurrence of "quan-li" with "quan-ly" (case-insensitive)
   let tab = raw;
   switch (raw) {
     case 'multi-profiles':
-        tab = 'ho-so';
-        break
+      tab = 'ho-so';
+      break;
     case 'thong-tin-ca-nhan':
-        tab = 'tai-khoan';
-        break
+      tab = 'tai-khoan';
+      break;
     case 'quan-li-thiet-bi':
-        tab = 'quan-ly-thiet-bi';
-        break
+      tab = 'quan-ly-thiet-bi';
+      break;
     case 'quan-li-the-thanh-toan':
-        tab = 'thanh-toan-va-goi';
-        break
+      tab = 'thanh-toan-va-goi';
+      break;
     case 'quan-li-gia-han-dich-vu':
-        tab = 'quan-ly-gia-han-dich-vu';
-        break
+      tab = 'quan-ly-gia-han-dich-vu';
+      break;
     case 'dich-vu-da-mua':
-        tab = 'goi-dang-su-dung';
-        break
+      tab = 'goi-dang-su-dung';
+      break;
     default:
-        tab = raw;
+      tab = raw;
   }
-  
-  const destination = `/tai-khoan${tab ? `?tab=${encodeURIComponent(tab)}` : ''}`
+
+  let destination = `/tai-khoan${tab ? `?tab=${encodeURIComponent(tab)}` : ''}`;
+
+  // Add code parameter
+  if (context.query.code) {
+    const separator = destination.includes('?') ? '&' : '?';
+    destination += `${separator}code=${encodeURIComponent(
+      context.query.code as string,
+    )}`;
+  }
 
   return {
     redirect: {
       destination,
       permanent: false,
     },
-  }
-}
+  };
+};
 
-export default TaiKhoanIdPage
+export default TaiKhoanIdPage;

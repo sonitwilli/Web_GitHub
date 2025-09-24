@@ -64,7 +64,7 @@ export default function NotificationPopup({
   const handleClick = () => {
     if (url) {
       const separator = url.includes('?') ? '&' : '?';
-      window.open(`${url}${separator}from=Notification`, '_blank');
+      window.open(`${url}${separator}`, '_blank');
 
       if (message_id) {
         markRead([message_id]);

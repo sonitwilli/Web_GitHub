@@ -41,6 +41,14 @@ export default function Notification() {
   };
 
   useEffect(() => {
+    if (isOffline && open) {
+      setOpen(false);
+      setAllRead(true); // Reset notification state when offline
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOffline]);
+
+  useEffect(() => {
     if (isLogged) {
       const isOpenBefore = sessionStorage.getItem(
         trackingStoreKey.OPEN_NOTIFICATION_BELL,

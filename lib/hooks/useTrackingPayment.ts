@@ -1,14 +1,31 @@
+import { trackingStoreKey } from '../constant/tracking';
 import tracking from '../tracking';
 import { TrackingParams } from '../tracking/tracking-types';
-import { getPlayerParams } from '../utils/playerTracking';
 
+const getPlayerParams = () => {
+  const dataTrackingPlayerForPayment = localStorage.getItem(
+    trackingStoreKey.DATA_TRACKING_PLAYER_FOR_PAYMENT,
+  );
+  const playerParams = JSON.parse(dataTrackingPlayerForPayment || '{}');
+  return playerParams;
+};
 const getPaymentTrackingData = () => {
+  const playerParams = getPlayerParams();
+  const paymentData = JSON.parse(
+    localStorage.getItem('payment_tracking') || '{}',
+  );
+  const functionSession = localStorage.getItem(
+    trackingStoreKey.FUNCTION_SESSION,
+  );
   return {
-    Method: '',
-    PromoCode: '',
-    MonthPrepaid: '',
-    Price: '',
-    function_session: '',
+    Method: paymentData?.payment?.payment_method || '',
+    PromoCode: paymentData?.payment?.data?.coupon?.code || '',
+    MonthPrepaid: paymentData?.payment?.month_prepaid || '',
+    Price: paymentData?.payment?.data?.coupon?.price || '',
+    function_session: functionSession || '',
+    ItemId: playerParams?.ItemId || '',
+    RefItemId: playerParams?.ItemId || '',
+    ItemName: paymentData?.payment?.data?.plan_id || '',
   };
 };
 
@@ -28,6 +45,8 @@ export const trackingRegisterPaymentLog417 = ({
     const playerParams: any = getPlayerParams();
     const paymentParams = getPaymentTrackingData();
     const isTvod = playerParams.FType === '2';
+    console.log('---PAYMENT trackingRegisterPaymentLog417', playerParams);
+
     let LogId = '417';
     Event = Status === 'Success' ? 'RegisteredSuccess' : 'RegisteredFailed';
     if (isTvod) {
@@ -39,7 +58,6 @@ export const trackingRegisterPaymentLog417 = ({
       Event,
       ErrCode,
       ErrMessage,
-      ...playerParams,
       ...paymentParams,
     });
   } catch {}
@@ -53,14 +71,12 @@ export const trackingCancelExtraRegisterLog418 = ({
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
     const paymentParams = getPaymentTrackingData();
     tracking({
       LogId: '418',
       Event: 'CancelExtraRegister',
       ErrCode,
       ErrMessage,
-      ...playerParams,
       ...paymentParams,
     });
   } catch {}
@@ -71,12 +87,10 @@ export const trackingAccessPageLog420 = ({ Event }: TrackingParams) => {
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
     const paymentParams = getPaymentTrackingData();
     tracking({
       LogId: '420',
       Event,
-      ...playerParams,
       ...paymentParams,
     });
   } catch {}

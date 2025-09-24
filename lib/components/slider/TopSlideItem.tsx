@@ -72,10 +72,8 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
       data: slide || {},
       type: block?.type || '',
     });
-    const result = link?.includes('?')
-      ? `${link}&block_index=0&position_index=${index}`
-      : `${link}?block_index=0&position_index=${index}`;
-    return result || '/';
+    return link || '/';
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slide, block, index]);
 
   const isValidCountdown = useMemo(() => {
@@ -219,7 +217,10 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
               {vodDetailHighlight && vodDetailHighlight?.length > 0 && (
                 <div className="max-w-[600px]">
                   <div className="whitespace-nowrap overflow-hidden truncate [&>div]:inline-flex [&>div]:items-center [&>div]:gap-[6px]">
-                    <VodMetaData metaData={vodDetailHighlight} type="top-slide" />
+                    <VodMetaData
+                      metaData={vodDetailHighlight}
+                      type="top-slide"
+                    />
                   </div>
                 </div>
               )}

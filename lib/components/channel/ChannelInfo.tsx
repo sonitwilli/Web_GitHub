@@ -29,9 +29,9 @@ export default function ChannelInfo() {
             />
           </div>
 
-          <h3 className="font-[600] text-[18px] xl:text-[20px] leading-[130%] tracking-[0.4px] text-white-smoke">
+          <h1 className="font-[600] text-[18px] xl:text-[20px] leading-[130%] tracking-[0.4px] text-white-smoke">
             {dataChannel?.alias_name}
-          </h3>
+          </h1>
         </div>
 
         <div>

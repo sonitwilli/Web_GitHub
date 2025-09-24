@@ -98,6 +98,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
     handleProgress,
     handleEnd,
     handlePaused,
+    handleSeeked,
   } = usePlayer();
   const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
     dataChannel,
@@ -438,6 +439,7 @@ const HlsPlayer: React.FC<HlsPlayerProps> = ({
           onProgress={handleProgress}
           onEnded={handleEnd}
           onPause={handlePaused}
+          onSeeked={handleSeeked}
         />
       </div>
       {!isVideoCodecNotSupported && <OverlayLogo />}

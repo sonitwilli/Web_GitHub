@@ -32,6 +32,8 @@ import { getMessageConfigs } from '@/lib/api/app';
 import { handleClearStrorage } from '@/utils/common/handleClearStrorage';
 import useTabActivity from '@/lib/hooks/useTabActivity';
 import { saveSessionStorage } from '@/lib/utils/storage';
+import { showToast } from '@/lib/utils/globalToast';
+import { userAgentInfo } from '@/lib/utils/ua';
 const Chatbot = dynamic(() => import('@/lib/components/chatbot/Chatbot'), {
   ssr: false,
 });
@@ -167,6 +169,20 @@ export default function AppContainer({ children }: Props) {
     handleGetMenus();
     checkUserInteraction();
 
+    // Check and show login success toast
+    const showLoginSuccessToast = sessionStorage.getItem(
+      'show_login_success_toast',
+    );
+    if (showLoginSuccessToast) {
+      showToast({
+        title: 'Đăng nhập thành công',
+        desc: 'Bạn đã đăng nhập thành công. Chúc bạn có trải nghiệm tuyệt vời trên FPT Play.',
+        timeout: 3000,
+      });
+      // Remove the flag after showing toast
+      sessionStorage.removeItem('show_login_success_toast');
+    }
+
     document.addEventListener('mousemove', (event: MouseEvent) => {
       const { clientX, clientY } = event;
       localStorage.setItem(MOUSE_CLIENT_X, clientX.toString());
@@ -192,9 +208,10 @@ export default function AppContainer({ children }: Props) {
   }, []);
 
   useEffect(() => {
-    console.log('--- APP: ', '10:35-11:09', {
+    console.log('--- APP: ', '16:40-19:09', {
       devMode: process.env.NEXT_PUBLIC_ENVIRONMENT,
       deployMode: process.env.NODE_ENV,
+      device: userAgentInfo(),
     });
     const handleRouteChange = (url: string) => {
       if (!errorCodeResult) {

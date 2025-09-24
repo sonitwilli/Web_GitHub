@@ -17,7 +17,8 @@ export default function useFirebase() {
     }
   };
 
-  const initFavorites = (notiData: NotiDataType[]) => {    
+  const initFavorites = (notiData: NotiDataType[]) => {
+    console.log('--- FIREBASE notiData', notiData);
     try {
       dispatch(changeNotiData(notiData));
       handleNotiData(notiData);

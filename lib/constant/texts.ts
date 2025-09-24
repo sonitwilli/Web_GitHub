@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.45';
+export const APP_VERSION = '8.0.51';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -347,6 +347,21 @@ export const ROUTE_PATH_NAMES = {
   EVENT: '/su-kien/',
   PLAYLIST: '/playlist/',
   PREMIERE: '/cong-chieu/',
+};
+
+export const ROUTE_PATH_TOP_BANNER_ADS = {
+  CHANNEL: '/xem-truyen-hinh/',
+  EVENT: '/su-kien/',
+  PLAYLIST: '/playlist/',
+  PREMIERE: '/cong-chieu/',
+};
+
+export const ROUTE_PATH_TOP_BANNER_ADS_VOD = {
+  CHANNEL: '/xem-truyen-hinh/',
+  EVENT: '/su-kien/',
+  PLAYLIST: '/playlist/',
+  PREMIERE: '/cong-chieu/',
+  GALAXY_PLAY: '/galaxy-play/xem-video/',
 };
 
 export const AUDIO_CODEC_URI_NAMES_DASH = {

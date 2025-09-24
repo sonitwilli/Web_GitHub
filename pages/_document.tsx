@@ -17,8 +17,7 @@ export default function Document() {
         />
         <meta name="format-detection" content="telephone=no" />
         <meta name="theme-color" content="#000000" />
-        <link rel="apple-touch-icon" href="/images/pwa/192.png" />
-        <meta name="description" content="Nextjs" />
+        <link rel="apple-touch-icon" href="/images/pwa/192.png" />        
       </Head>
       <body>
         <Main />

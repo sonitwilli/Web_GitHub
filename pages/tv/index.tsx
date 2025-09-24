@@ -61,8 +61,8 @@ export default function LoginFastPage() {
       <Head>
         <title>{title}</title>
         <meta name="description" content={description} />
-        <meta name="robots" content="noindex, nofollow" />
-        <meta name="googlebot" content="noindex, nofollow" />
+        <meta name="robots" content="index, follow" />
+        <meta name="googlebot" content="index, follow" />
         <link rel="canonical" href={canonicalUrl} />
       </Head>
 

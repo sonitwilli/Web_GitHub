@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import PaymentPlans from './PaymentPlans';
 import PaymentMethods from './PaymentMethods';
 import PaymentTotal from './PaymentTotal';
@@ -22,6 +22,8 @@ import { openLoginModal } from '@/lib/store/slices/loginSlice';
 import ModalCreditCard, { CreditCardData } from './ModalCreditCard';
 import { trackingStoreKey } from '@/lib/constant/tracking';
 import ModalConfirm from '@/lib/components/modal/ModalConfirm';
+import { getPlayerParams } from '@/lib/utils/playerTracking';
+import { TOKEN } from '@/lib/constant/texts';
 const PaymentPackageDetail = () => {
   const currentUser = useSelector((state: RootState) => state.user.info);
   const [plans, setPlans] = useState<Plan[]>([]);
@@ -83,7 +85,13 @@ const PaymentPackageDetail = () => {
     formData,
     paymentHubConfig: paymentHubConfig || [],
   });
-
+  useLayoutEffect(() => {
+    const functionSession = new Date().getTime();
+    localStorage.setItem(
+      trackingStoreKey.FUNCTION_SESSION,
+      functionSession.toString(),
+    );
+  }, []);
   useEffect(() => {
     const fetchPlans = async (packageId?: string) => {
       setLoading(true);
@@ -145,7 +153,7 @@ const PaymentPackageDetail = () => {
       }
     };
     if (router.isReady) {
-      if (!isLogged) {
+      if (!isLogged && !localStorage.getItem(TOKEN)) {
         dispatch(openLoginModal());
         return;
       }
@@ -172,8 +180,13 @@ const PaymentPackageDetail = () => {
         localStorage.removeItem(trackingStoreKey.BACK_LINK_PLAY);
       }
     }
+    const playerParams = getPlayerParams();
+    localStorage.setItem(
+      trackingStoreKey.DATA_TRACKING_PLAYER_FOR_PAYMENT,
+      JSON.stringify(playerParams || {}),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.isReady]);
+  }, [router.isReady, isLogged]);
 
   const handleSetPlan = (planId: string) => {
     const found = plans.find((p) => String(p.plan_id) === String(planId));
@@ -204,7 +217,7 @@ const PaymentPackageDetail = () => {
   //   return result ? JSON.parse(JSON.stringify(result)) : null;
   // };
   const handleCouponChange = (couponData: CouponData | null) => {
-    setCoupon(couponData);    
+    setCoupon(couponData);
   };
   type QRModalData = {
     text: { checkUrl: string; returnUrl: string };
@@ -224,7 +237,7 @@ const PaymentPackageDetail = () => {
     setIsSubmitCreditCard(false);
     setFormData({});
   };
-  const handleSubmitCreditCard = (data: CreditCardData) => {    
+  const handleSubmitCreditCard = (data: CreditCardData) => {
     // update formData with credit card information
     setFormData({
       card_number: data.card_number,
@@ -238,7 +251,7 @@ const PaymentPackageDetail = () => {
 
   // Watch for isSubmitCreditCard changes and call handleCheckout
   useEffect(() => {
-    if (isSubmitCreditCard) {      
+    if (isSubmitCreditCard) {
       handleCheckout();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -253,7 +266,7 @@ const PaymentPackageDetail = () => {
         setLoading(false);
         return;
       }
-      const res = await checkout({ coupon: coupon ?? undefined });      
+      const res = await checkout({ coupon: coupon ?? undefined });
       if (
         (isQRMethod(currentGateway) && typeof res === 'object') ||
         (typeof res === 'object' &&

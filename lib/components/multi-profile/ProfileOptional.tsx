@@ -4,7 +4,9 @@ import { MdHistory } from 'react-icons/md';
 import { HiOutlineChevronRight } from 'react-icons/hi';
 import { checkPassword } from '@/lib/api/multi-profiles';
 import ModalFillManagementCode from '@/lib/components/modal/ModalFillCode';
-import ConfirmModal, { ModalContent } from '@/lib/components/modal/ModalConfirm';
+import ConfirmModal, {
+  ModalContent,
+} from '@/lib/components/modal/ModalConfirm';
 import ModalManagementCodeNotice from '@/lib/components/modal/ModalManagementCode';
 import { setSideBarLeft } from '@/lib/store/slices/multiProfiles';
 import { MdOutlineModeEditOutline } from 'react-icons/md';
@@ -19,7 +21,7 @@ import {
   PROFILE_TYPES,
   TYPE_PR,
   SEND_OTP_TYPES,
-  INFORM,
+  INFORM
 } from '@/lib/constant/texts';
 import { useProfileContext } from '@/lib/components/contexts/ProfileContext';
 import { useDispatch, useSelector } from 'react-redux';
@@ -27,6 +29,8 @@ import { RootState } from '@/lib/store';
 import { showToast } from '@/lib/utils/globalToast';
 import { getUserInfo } from '@/lib/api/user';
 import { DETAIL_PR } from '@/lib/constant/texts';
+import { AxiosError } from 'axios';
+import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 
 const ProfileOptional: React.FC = () => {
   const router = useRouter();
@@ -71,7 +75,7 @@ const ProfileOptional: React.FC = () => {
         setSideBarLeft({
           text: 'Quản lý hồ sơ',
           url: `${window?.location?.origin}/tai-khoan?tab=ho-so`,
-        }),
+        })
       );
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +85,7 @@ const ProfileOptional: React.FC = () => {
     if (selectedProfile?.profile_id) {
       getDefailProfile();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProfile?.profile_id]);
 
   const handleDataRoute = () => {
@@ -89,7 +93,7 @@ const ProfileOptional: React.FC = () => {
       setSideBarLeft({
         text: 'Thông tin hồ sơ',
         url: `${window?.location?.origin}/tai-khoan?tab=ho-so&child=quan-ly-va-tuy-chon`,
-      }),
+      })
     );
     router.push(`/tai-khoan?tab=ho-so&child=lich-su-xem`, undefined);
   };
@@ -112,7 +116,8 @@ const ProfileOptional: React.FC = () => {
         case '3':
           setModalContent({
             title: data?.message?.title || 'Hồ sơ đã bị xóa',
-            content: data?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
+            content:
+              data?.message?.content || 'Hồ sơ này đã bị xóa bởi thiết bị khác',
             buttons: {
               accept: 'Đóng',
             },
@@ -123,7 +128,9 @@ const ProfileOptional: React.FC = () => {
         case '4':
           setModalContent({
             title: data?.message?.title || 'Hồ sơ đã bị xóa',
-            content: data?.message?.content || 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
+            content:
+              data?.message?.content ||
+              'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
             buttons: {
               accept: 'Xác nhận',
             },
@@ -150,7 +157,7 @@ const ProfileOptional: React.FC = () => {
     } else {
       if (modalFillManagementCodeRef.current) {
         modalFillManagementCodeRef.current.setError(
-          result.error || DEFAULT_ERROR_MSG,
+          result.error || DEFAULT_ERROR_MSG
         );
       }
     }
@@ -159,7 +166,7 @@ const ProfileOptional: React.FC = () => {
   const handleConfirmModal = () => {
     if (isErrorCode === '3') {
       router.push('/tai-khoan?tab=ho-so');
-      return
+      return;
     }
 
     if (isErrorCode === '4') {
@@ -185,7 +192,7 @@ const ProfileOptional: React.FC = () => {
       ) {
         const response = await getUserInfo();
         const data = await response?.data;
-        if (data) {
+        if (data?.profile?.profile_id) {
           if (data?.allow_pin === '1') {
             setIsConfirmManagementCode(true);
           } else {
@@ -212,8 +219,16 @@ const ProfileOptional: React.FC = () => {
           sessionStorage.setItem('password_form_event', 'update_profile');
         }
       }
-    } catch {
+    } catch (err) {
       // Handle error
+      if (err instanceof AxiosError && err.response?.status === 401) {
+        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+      } else {
+        showToast({
+          title: INFORM,
+          desc: DEFAULT_ERROR_MSG,
+        });
+      }
     } finally {
       setLoading(false);
     }

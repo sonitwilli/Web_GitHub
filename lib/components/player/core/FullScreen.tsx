@@ -19,19 +19,18 @@ export default function FullScreen() {
     }
   }, [isFullscreen]);
   return (
-    <div
-      className="c-control-button c-control-button-fullscreen"
-      onClick={clickFullScreen}
-    >
+    <div className="c-control-button c-control-button-fullscreen">
       {isFullscreen ? (
         <img
           src="/images/player/fullscreen_exit.png"
           className="c-control-button-icon w-[24px] h-[24px] tablet:w-[32px] tablet:h-[32px]"
+          onClick={clickFullScreen}
         />
       ) : (
         <img
           src="/images/player/fullscreen.png"
           className="c-control-button-icon w-[24px] h-[24px] tablet:w-[32px] tablet:h-[32px]"
+          onClick={clickFullScreen}
         />
       )}
       <div className="c-control-hover-text">{text}</div>

@@ -45,6 +45,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { changeInitPlayerTime } from '@/lib/store/slices/trackingSlice';
 import { trackingPlayAttempLog414 } from '@/lib/hooks/useTrackingIPTV';
 import { trackingPlayAttempLog179 } from '@/lib/hooks/useTrackingEvent';
+import useSubtitle from '@/lib/hooks/useSubtitle';
+import useAudio from '@/lib/hooks/useAudio';
 
 export interface ShakaErrorDetailType {
   severity?: number;
@@ -110,7 +112,8 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     isValidForProfileType,
     handleBookmark,
   } = usePlayer();
-
+  const { checkSubOnRenderAndroidMobile } = useSubtitle({ type: 'fullcreen' });
+  const { checkAudioOnRenderAndroidMobile } = useAudio();
   const { getUrlToPlayH264, isVideoCodecNotSupported } = useCodec({
     dataChannel,
     dataStream,
@@ -134,6 +137,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     handleProgress,
     handleEnd,
     handlePaused,
+    handleSeeked,
   } = usePlayer();
   // const router = useRouter();
 
@@ -309,21 +313,36 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
         }
       } catch {}
     });
-    player.addEventListener('adaptation', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('adaptation', (e: any) => {
+      console.log('--- PLAYER adaptation ' + new Date().getTime(), e);
       trackPlayerChange();
+      trackingLogChangeResolutionLog113({
+        Resolution: `${e?.newTrack?.width}x${e?.newTrack?.height}`,
+        isManual: '0',
+      });
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
     });
-    player.addEventListener('trackschanged', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('trackschanged', (ev: any) => {
+      console.log('--- PLAYER trackschanged ' + new Date().getTime(), ev);
       trackPlayerChange();
     });
     player.addEventListener('texttrackvisibility', () => {
       trackPlayerChange();
     });
-    player.addEventListener('variantchanged', () => {
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    player.addEventListener('variantchanged', (ev: any) => {
+      console.log('--- PLAYER variantchanged ' + new Date().getTime(), ev);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const active = player.getVariantTracks().find((t: any) => t.active);
       const isUserManual = sessionStorage.getItem(
         trackingStoreKey.IS_MANUAL_CHANGE_RESOLUTION,
       );
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
       trackingLogChangeResolutionLog113({
         Resolution: `${active.width}x${active.height}`,
         isManual: isUserManual || '0',
@@ -332,19 +351,15 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
     });
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     player.addEventListener('abrstatuschanged', (e: any) => {
+      console.log('--- PLAYER abrstatuschanged ' + new Date().getTime(), e);
+      checkSubOnRenderAndroidMobile();
+      checkAudioOnRenderAndroidMobile();
       if (e?.newStatus) {
         trackingLogChangeResolutionLog113({
           Resolution: `${e.newStatus.width}x${e.newStatus.height}`,
           isManual: '0',
         });
       }
-    });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    player.addEventListener('adaptation', (e: any) => {
-      trackingLogChangeResolutionLog113({
-        Resolution: `${e?.newTrack?.width}x${e?.newTrack?.height}`,
-        isManual: '0',
-      });
     });
 
     player.addEventListener('loading', () => {
@@ -651,6 +666,7 @@ const ShakaPlayer: React.FC<Props> = ({ src, dataChannel, dataStream }) => {
           onProgress={handleProgress}
           onEnded={handleEnd}
           onPause={handlePaused}
+          onSeeked={handleSeeked}
         />
         <div
           className={`ads-instream absolute w-full h-full top-0 left-0 overflow-hidden ${

@@ -43,9 +43,17 @@ export const trackingStopLiveShowLog172 = () => {
     if (typeof window === 'undefined') {
       return;
     }
-    const playerParams = getPlayerParams();
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const playerParams: any = getPlayerParams();
     const playbackTrackingParams = getPlaybackParams();
     /*@ts-ignore*/
+    const oldPlayingSession = sessionStorage.getItem(
+      trackingStoreKey.OLD_PLAYER_PLAYING_SESSION,
+    );
+    if (oldPlayingSession === playerParams.playing_session) {
+      // Kiểm tra chỉ bắn 1 lần log Stop cho cùng 1 playing_session
+      return;
+    }
     tracking({
       LogId: '172',
       Event: 'StopLiveShow',
@@ -59,6 +67,10 @@ export const trackingStopLiveShowLog172 = () => {
         trackingStoreKey.IS_RECOMMEND_ITEM,
       ],
     });
+    sessionStorage.setItem(
+      trackingStoreKey.OLD_PLAYER_PLAYING_SESSION,
+      playerParams.playing_session || '',
+    );
   } catch {}
 };
 
@@ -95,6 +107,7 @@ export const trackingShowBackdropLog177 = ({ Event }: TrackingParams) => {
       Event: Event || 'ShowBackdrop',
       ...playerParams,
       ...playbackTrackingParams,
+      Screen: 'Backdrop',
     });
   } catch {}
 };

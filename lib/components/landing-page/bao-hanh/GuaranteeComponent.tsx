@@ -57,7 +57,7 @@ const GuaranteeComponent = () => {
             setCaptchaRefreshKey((prev) => prev + 1);
             return;
           }
-          setDataMac(res?.data?.data);
+          setDataMac(res?.data);
         }
       } catch {
         showModal('Lỗi', 'Có lỗi xảy ra. Vui lòng thử lại sau.');

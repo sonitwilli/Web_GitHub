@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   AUDIO_CODEC_NAMES,
   AUDIO_NAME_MODE_LIVE,
@@ -22,6 +22,7 @@ import { AudioItemType } from '../components/player/core/AudioButton';
 import { saveSessionStorage } from '../utils/storage';
 import { trackingStoreKey } from '../constant/tracking';
 import { trackingChangeSubAudioLog518 } from './useTrackingPlayback';
+import { userAgentInfo } from '../utils/ua';
 
 export default function useAudio() {
   const { playerName, streamType, audios, isMetaDataLoaded, dataChannel } =
@@ -231,7 +232,7 @@ export default function useAudio() {
     return filteredList;
   }, [audiosAAC]);
 
-  const checkAudioOnRender = async () => {
+  const checkAudioOnRender = useCallback(async () => {
     try {
       if (filterdAudios) {
         saveSessionStorage({
@@ -312,9 +313,6 @@ export default function useAudio() {
                 found.X_LANGUAGE.includes(x?.language)),
           );
           if (f) {
-            // window.shakaPlayer.selectAudioTrack(f);
-            // window.shakaPlayer.selectAudioLanguage(found?.X_SHORT_LANGUAGE);
-            // window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
             window.shakaPlayer.selectAudioLanguage(found?.X_LANGUAGE);
           }
         }
@@ -324,7 +322,23 @@ export default function useAudio() {
         turnOffPlayerSub();
       }, 500);
     } catch {}
-  };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    audiosAAC,
+    streamType,
+    playerName,
+    isMetaDataLoaded,
+    audios,
+    filterdAudios,
+  ]);
+
+  const checkAudioOnRenderAndroidMobile = useCallback(() => {
+    const device = userAgentInfo();
+    if (!device?.isFromAndroidOs) {
+      return;
+    }
+    checkAudioOnRender();
+  }, [checkAudioOnRender]);
 
   useEffect(() => {
     checkAudioOnRender();
@@ -420,5 +434,7 @@ export default function useAudio() {
     clickAudio,
     containerRef,
     filterdAudios,
+    checkAudioOnRender,
+    checkAudioOnRenderAndroidMobile,
   };
 }

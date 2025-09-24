@@ -110,7 +110,7 @@ const Overview: React.FC = () => {
   return (
     <>
       <div className="2xl:max-w-[856px] text-white-smoke">
-        <h1 className="text-[24px] tablet:text-[28px] font-semibold mb-6 sm:mb-4">
+        <h1 className="text-[24px] tablet:text-[28px] font-semibold mb-6 sm:mb-4 xl:mt-2">
           Tổng quan
         </h1>
 
