@@ -59,7 +59,7 @@ const Service3GComponent = () => {
             key={idx}
             className="flex flex-col items-center justify-center h-[247px] w-[393px] text-eerie-black relative"
           >
-            <Image
+            <img
               src={item.src}
               alt={`icon-${idx + 1}`}
               width={234}
@@ -96,12 +96,11 @@ const Service3GComponent = () => {
               className="w-[90%] lg:w-[232px] h-[75px] relative flex items-center justify-center bg-white 
               rounded-xl px-1 py-4 box-border cursor-pointer hover:shadow-2xl transition-shadow duration-150"
             >
-              <Image
+              <img
                 src={logo.src}
                 alt={logo.alt}
                 width={logo.width}
                 height={logo.height}
-                quality={100}
               />
             </div>
           ))}
