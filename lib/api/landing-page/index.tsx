@@ -72,3 +72,14 @@ export const fetchDataDetailInformationDiscount = async (
     return [];
   }
 };
+
+// New API function to fetch data plans from staging API
+export const fetchDataPlans = async () => {
+  try {
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v7.1_w/common/services/data_plans`;
+    const res = await axios.get(url);
+    return res?.data?.data;
+  } catch {
+    return [];
+  }
+};
