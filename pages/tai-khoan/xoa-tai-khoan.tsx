@@ -73,10 +73,6 @@ export default function DeleteAccountPage() {
     return height < 512;
   }, [height]);
 
-  const isLandscape = useMemo(() => {
-    return width > height;
-  }, [width, height]);
-
   // --- Effects ---
   useEffect(() => {
     trackingAccessItemLog108({
@@ -443,9 +439,7 @@ export default function DeleteAccountPage() {
   return (
     <div
       id="delete-account-page"
-      className={`${
-        isLandscape && (isMobile || isTablet) ? 'min-h-screen' : 'min-h-[60vh]'
-      } flex flex-col items-center py-10`}
+      className="min-h-[60vh] flex flex-col items-center py-10"
     >
       {/* Background image (after loaded) */}
       <div className="absolute inset-0 z-[1] opacity-100">
@@ -467,22 +461,16 @@ export default function DeleteAccountPage() {
                   : '/images/mask-tablet.png'
               }`}
               alt="shadow"
-              className={`absolute inset-0 z-[1] left-0 w-full object-cover ${
-                isLandscape && (isMobile || isTablet)
-                  ? 'h-full top-0'
-                  : 'h-auto top-[10px]'
-              }`}
+              className="absolute inset-0 z-[1] top-[10px] left-0 w-full h-auto object-cover"
               loading="lazy"
             />
             {backgroundImage && (
               <img
                 src={backgroundImage}
                 alt="background"
-                className={`w-full transition-opacity duration-300 ${
-                  isLandscape && (isMobile || isTablet)
-                    ? 'h-full object-cover'
-                    : 'h-auto object-fill'
-                } ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
+                className={`w-full h-auto object-fill transition-opacity duration-300 ${
+                  imageLoaded ? 'opacity-100' : 'opacity-0'
+                }`}
                 loading="lazy"
                 onLoad={() => setImageLoaded(true)}
                 onError={() => setImageError(true)}
@@ -497,11 +485,7 @@ export default function DeleteAccountPage() {
           <>
             {backgroundImage && imageLoaded && !imageError && (
               <div
-                className={`absolute inset-0 z-[1] bg-cover opacity-100 transition-opacity duration-300 ${
-                  isLandscape && (isMobile || isTablet)
-                    ? 'bg-center'
-                    : 'bg-top max-md:bg-bottom'
-                }`}
+                className="absolute inset-0 z-[1] bg-cover bg-top max-md:bg-bottom opacity-100 transition-opacity duration-300"
                 style={{ backgroundImage: `url(${backgroundImage})` }}
               />
             )}
@@ -518,11 +502,7 @@ export default function DeleteAccountPage() {
           onClick={() => {
             router.push('/');
           }}
-          className={`absolute z-[10000] left-1/2 -translate-x-1/2 ${
-            isLandscape && (isMobile || isTablet)
-              ? 'top-[20px]'
-              : 'top-[40px] tablet:top-12'
-          }`}
+          className="absolute z-[10000] top-[40px] tablet:top-12 left-1/2 -translate-x-1/2"
         >
           {isMobile || isPortrait ? (
             <img
@@ -551,20 +531,14 @@ export default function DeleteAccountPage() {
         ref={verifyModalRef}
         onDoDeleteAccountNewFlow={doDeleteAccountNewFlow}
         onResend={() => setResendOtp(false)}
-        overlayClass={`fixed inset-0 bg-transparent flex justify-center z-[9999] p-4 ${
-          isLandscape && (isMobile || isTablet)
-            ? 'items-start pt-20'
-            : 'items-center'
-        }`}
+        overlayClass="fixed inset-0 bg-transparent flex justify-center items-center z-[9999] p-4"
         isCustom={false}
         contentClass="bg-eerie-black!"
       />
 
       <NoticeModal
         ref={noticeModalRef}
-        contentClass={`w-full max-w-md bg-eerie-black rounded-[16px] p-[32px] text-white shadow-lg ${
-          isLandscape && (isMobile || isTablet) ? 'mt-20' : ''
-        }`}
+        contentClass="w-full max-w-md bg-eerie-black rounded-[16px] p-[32px] text-white shadow-lg"
         ModalContentClass="text-spanish-gray text-[16px] leading-[130%] tracking-[0.02em] font-normal"
       />
     </div>

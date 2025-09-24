@@ -17,6 +17,7 @@ const ActivePackageCard: React.FC<ActivePackageCardProps> = ({
     <div className="bg-eerie-black rounded-[12px] flex flex-col min-w-[350px] lg:max-w-[420px]">
       <div
         className="text-white py-4 px-6 font-semibold text-base border-b border-charleston-green overflow-hidden text-ellipsis whitespace-nowrap max-w-[420px]"
+        title={name}
       >
         {name}
       </div>

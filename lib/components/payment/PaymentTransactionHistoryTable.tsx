@@ -34,7 +34,7 @@ const PaymentTransactionHistoryTable: React.FC = () => {
   if (loading) {
     return (
       <div className="text-white m-0 max-w-[1136px]">
-        <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold mb-6 xl:mt-1">Lịch sử giao dịch</h2>
+        <h2 className="text-2xl font-semibold mb-6 xl:mt-3">Lịch sử giao dịch</h2>
         <div className="relative min-h-[300px] rounded-t-[16px] rounded-b-[16px]">
           <Loading />
         </div>
@@ -45,7 +45,7 @@ const PaymentTransactionHistoryTable: React.FC = () => {
   if (error && !loading) {
     return (
       <div className="text-white m-0 max-w-[1136px]">
-        <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold mb-6 xl:mt-1">Lịch sử giao dịch</h2>
+        <h2 className="text-2xl font-semibold mb-6 xl:mt-3">Lịch sử giao dịch</h2>
         <div className="rounded-t-[16px] rounded-b-[16px]">
           <ErrorData
             onRetry={() => {
@@ -60,7 +60,7 @@ const PaymentTransactionHistoryTable: React.FC = () => {
   if (transactions.length === 0 && !loading) {
     return (
       <div className="text-white m-0 max-w-[1136px]">
-        <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold mb-6 xl:mt-1">Lịch sử giao dịch</h2>
+        <h2 className="text-2xl font-semibold mb-6 xl:mt-3">Lịch sử giao dịch</h2>
         <div className="rounded-t-[16px] rounded-b-[16px]">
           <NoData />
         </div>
@@ -70,7 +70,7 @@ const PaymentTransactionHistoryTable: React.FC = () => {
 
   return (
     <div className="text-white m-0 max-w-[1136px]">
-      <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold mb-6 xl:mt-1">Lịch sử giao dịch</h2>
+      <h2 className="text-2xl font-semibold mb-6 xl:mt-3">Lịch sử giao dịch</h2>
       <div className="rounded-[16px] overflow-hidden">
         <div
           className={`max-h-[589px] max-w-[768px] md:max-w-full overflow-x-auto overflow-y-auto bg-eerie-black ${styles.tbodyScrollbar}`}

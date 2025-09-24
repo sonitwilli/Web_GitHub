@@ -135,7 +135,6 @@ const verifyUserWithPhoneNumber = async (data?: {
   phone?: string;
   client_id?: string;
   type?: string;
-  mode?: string;
 }): Promise<AxiosResponse<verifyUserWithPhoneNumberResponse>> => {
   try {
     return axiosInstance.post('/account/otp/validate_user', data);
@@ -236,7 +235,6 @@ const removeDevicesLimit = async (data?: {
   verify_token?: string;
   ignore_token?: string;
   required_login?: string;
-  login_type?: string;
 }): Promise<AxiosResponse<onRemoveDevicesResponse>> => {
   try {
     return axiosInstance.post('/account/device/remove', data);

@@ -123,7 +123,7 @@ export default function ChannelItem({
         />
       )}
       {channel.timeshift_limit && channel?.show_icon_timeshift === '1' && (
-        <div className="absolute right-[8px] bottom-[8px] w-[28px] h-[28px]">
+        <div className="absolute right-[6px] bottom-[6px] w-[28px] h-[28px]">
           <img
             src={`/images/timeshift/timeshift_wrapper.png`}
             alt="timeshift"

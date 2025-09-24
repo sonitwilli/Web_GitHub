@@ -19,7 +19,6 @@ import Categories from './Categories';
 import { EpisodeTypeEnum } from '@/lib/api/vod';
 import { fetchRatingData, RatingData } from '@/lib/api/video';
 import TopBannerAdsVod from '@/lib/components/ads/TopBannerAdsVod';
-import VodAchievementInfo from '../vod/VodAchievementInfo';
 
 const RatingStar = dynamic(() => import('./RatingStart'), {
   ssr: false,
@@ -333,11 +332,6 @@ const InforVideoComponent = (props: PropsVideo) => {
 
       <div className="InforVideoComponent xl:flex">
         <div className="xl:pr-[80px] xl:w-[calc(100%-416px)]">
-          {/* achievement info */}{' '}
-          {dataVideo?.achievement_info &&
-            dataVideo?.achievement_info?.length > 0 && (
-              <VodAchievementInfo slide={dataVideo as BlockSlideItemType} />
-            )}
           <div className="mb-[16px] xl:mb-[24px]">
             <h1 className="text-white-smoke text-[18px] tablet:text-[20px] xl:text-[32px] font-[600] leading-[130%] tracking-[0.64px] line-clamp-2">
               {/* Hiển thị title của tập hiện tại (cho playlist) hoặc dataVideo (cho VOD) */}
@@ -351,6 +345,7 @@ const InforVideoComponent = (props: PropsVideo) => {
               </h2>
             )}
           </div>
+
           {/* Reaction buttons */}
           <div className="flex gap-4 items-center mb-[32px] xl:mb-[40px]">
             <LikeReaction
@@ -361,6 +356,7 @@ const InforVideoComponent = (props: PropsVideo) => {
 
             <ShareReaction isChannel onClick={() => setShowModalShare(true)} />
           </div>
+
           {/* Hightligh info */}
           <div className="flex flex-col flex-wrap lg:flex-row lg:justify-between lg:items-center gap-[24px] mb-[24px]">
             <div className="flex gap-3 flex-wrap items-center">
@@ -397,6 +393,7 @@ const InforVideoComponent = (props: PropsVideo) => {
               )}
             </div>
           </div>
+
           <div className="meta_data mb-[16px] xl:mb-[24px] text-spanish-gray text-[14px] xl:text-[16px]">
             <div className="flex mb-[8px] xl:mb-[12px] gap-[6px] xl:gap-[8px]">
               {dataVideo?.meta_data?.map((meta, index) => (
@@ -411,6 +408,7 @@ const InforVideoComponent = (props: PropsVideo) => {
 
             <div>{dataVideo?.maturity_rating?.advisories}</div>
           </div>
+
           {dataVideo?.short_description ? (
             <div className="max-w-full text-[18px] xl:text-[20px] mb-[16px] xl:mb-[24px]">
               <p>{dataVideo?.short_description}</p>
@@ -418,10 +416,12 @@ const InforVideoComponent = (props: PropsVideo) => {
           ) : (
             ''
           )}
+
           <HandleLongText
             text={dataVideo?.description}
             className="HandleLongText max-w-full mb-[16px] xl:mb-[24px]"
           />
+
           <div className="flex flex-wrap gap-2 text-spanish-gray text-[14px] xl:text-[16px] mb-[16px] xl:mb-[24px]">
             {dataVideo?.genres?.map((genre, index) => (
               <div
@@ -435,6 +435,7 @@ const InforVideoComponent = (props: PropsVideo) => {
               </div>
             ))}
           </div>
+
           {dataChannel?.category?.length ? (
             <div className="">
               <Categories />
@@ -442,6 +443,7 @@ const InforVideoComponent = (props: PropsVideo) => {
           ) : (
             ''
           )}
+
           {(viewportType !== VIEWPORT_TYPE.DESKTOP &&
             dataChannel?.episodes &&
             dataChannel?.episodes?.length > 1) ||
@@ -458,6 +460,7 @@ const InforVideoComponent = (props: PropsVideo) => {
           ) : (
             ''
           )}
+
           <div className="vod-details mt-[80px] flex flex-col gap-[56px] tablet:gap-[72px] xl:gap-[80px]">
             {allBlocks?.map((item, index) => (
               <BlockLazyItem
@@ -470,11 +473,13 @@ const InforVideoComponent = (props: PropsVideo) => {
               />
             ))}
           </div>
+
           {viewportType !== VIEWPORT_TYPE.DESKTOP && (
             <div className="mt-[56px] tablet:mt-[69px]">
               <Top10 />
             </div>
           )}
+
           {dataChannel?.is_comment === '1' && (
             <div className="mt-4">
               <LiveChat roomId={id || ''} type="vod" />

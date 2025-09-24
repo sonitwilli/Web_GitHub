@@ -15,7 +15,7 @@ export default function ChannelSearch() {
     setSearchKey,
     setChannelsBySearchKeyShown,
   } = ctx;
-
+  
   // Separate input value from search key that drives results
   const [inputValue, setInputValue] = useState(searchKey || '');
   const [canShowDropdown, setCanShowDropdown] = useState(false);
@@ -63,12 +63,12 @@ export default function ChannelSearch() {
   const onKeyUp = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.code === 'Enter') {
       setCanShowDropdown(false);
-
+      
       // Update search key and results only on Enter
       if (setSearchKey) {
         setSearchKey(inputValue);
       }
-
+      
       if (setChannelsBySearchKeyShown) {
         // If empty string, show all channels
         if (!inputValue || inputValue.trim() === '') {
@@ -91,7 +91,7 @@ export default function ChannelSearch() {
     <div className="relative">
       {/* input */}
       <div
-        className={`relative border-[1px] border-black-olive rounded-[16px] overflow-hidden w-[576px] max-w-full ${styles.form}`}
+        className={`relative border-[2px] border-black-olive rounded-[16px] overflow-hidden w-[576px] max-w-full ${styles.form}`}
       >
         <button
           aria-label="Search"

@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import { trackingRegisteredProfileLog102 } from '../tracking/trackingProfile';
 import {
   DEFAULT_ERROR_MSG,
+  ERROR_CONNECTION,
   PROFILE_TYPES,
 } from '../constant/texts';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
@@ -58,10 +59,7 @@ export const useCreateNewProfile = ({
           });
           router.push('/tai-khoan?tab=ho-so');
         } else {
-          showToast({
-            title: 'Tạo hồ sơ không thành công',
-            desc: data?.message?.content || '',
-          });
+          throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
         if (err instanceof AxiosError && err.response?.status === 401) {
@@ -69,7 +67,7 @@ export const useCreateNewProfile = ({
         } else {
           setError(null);
           showToast({
-            title: 'Tạo hồ sơ không thành công',
+            title: ERROR_CONNECTION,
             desc: DEFAULT_ERROR_MSG,
           });
         }

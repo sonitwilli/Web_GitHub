@@ -176,7 +176,7 @@ export const getHistoryView = async (
   profileId: string,
   pageIndex: number = 1,
   pageSize: number = 100,
-  drm: number = 1,
+  drm: number = 1
 ): Promise<AxiosResponse<HistoryViewResponse>> => {
   try {
     return await axiosInstance.get('/playos/block/history_view/0', {
@@ -203,15 +203,14 @@ interface DeleteProfileHistoryResponse {
 
 // Function to delete profile history
 export const deleteProfileHistory = async (
-  profileId: string,
+  profileId: string
 ): Promise<AxiosResponse<DeleteProfileHistoryResponse>> => {
   try {
-    return await axiosInstance.post(
-      'config/personal_content/remove/history_view',
-      {
+    return await axiosInstance.post('config/personal_content/remove/history_view', {
+      params: {
         profile_id: profileId,
       },
-    );
+    });
   } catch (error) {
     console.error('Error deleting profile history:', error);
     return {} as AxiosResponse<DeleteProfileHistoryResponse>;

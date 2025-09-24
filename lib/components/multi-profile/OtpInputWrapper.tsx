@@ -16,7 +16,6 @@ interface ProfileOtpInputProps {
   inputType?: 'tel' | 'password' | 'text';
   shouldAutoFocus?: boolean;
   defaultValue?: string[];
-  disableAutoMask?: boolean;
   onChange?: (otp: string) => void;
   onComplete?: (otp: string) => void;
 }
@@ -28,7 +27,6 @@ const ProfileOtpInput: React.FC<ProfileOtpInputProps> = ({
   inputType = 'tel',
   shouldAutoFocus = false,
   defaultValue = [],
-  disableAutoMask = false,
   onChange,
   onComplete,
 }) => {
@@ -190,7 +188,6 @@ const ProfileOtpInput: React.FC<ProfileOtpInputProps> = ({
             inputClasses={inputClasses}
             isLastChild={i === numInputs - 1}
             shouldAutoFocus={shouldAutoFocus}
-            disableAutoMask={disableAutoMask}
             onChange={handleOnChange}
             onKeyDown={handleOnKeyDown}
             onPaste={handleOnPaste}

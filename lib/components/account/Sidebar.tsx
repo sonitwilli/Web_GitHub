@@ -55,7 +55,6 @@ const SidebarAccount: React.FC = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [menuList, setMenuList] = useState<MenuItem[]>([]); // State để lưu menuList
   const [isLoading, setIsLoading] = useState(true); // State để xử lý loading
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null); // State để track hover
 
   // Map id từ API với icon tương ứng
   const iconMap: Record<string, IconType> = {
@@ -231,11 +230,9 @@ const SidebarAccount: React.FC = () => {
                 }
                 className="menu-item transition-colors xl:w-full flex-shrink-0"
                 shallow={!item?.url?.startsWith('/')}
-                onMouseEnter={() => setHoveredItem(item.url || '')}
-                onMouseLeave={() => setHoveredItem(null)}
               >
                 <div
-                  className={`inline-flex items-center justify-center xl:justify-start gap-0 xl:gap-4 text-base whitespace-nowrap xl:whitespace-normal font-medium w-full xl:rounded-[10px] px-4 py-4 xl:p-4 border-b-2 xl:border-b-0 transition-all duration-200 group ${
+                  className={`inline-flex items-center justify-center xl:justify-start gap-0 xl:gap-4 text-base whitespace-nowrap xl:whitespace-normal font-medium w-full xl:rounded-[10px] px-4 py-4 xl:p-4 border-b-2 xl:border-b-0 transition-all duration-200 ${
                     tab === item.url
                       ? 'text-white border-b-[2px] border-fpl xl:border-transparent xl:bg-charleston-green'
                       : 'text-silver-chalice border-b-[2px] border-black-olive-404040 xl:border-transparent xl:hover:bg-eerie-black hover:text-white'
@@ -245,29 +242,14 @@ const SidebarAccount: React.FC = () => {
                     {item.url === 'tai-khoan' ? (
                       <ReactSVG
                         src="/images/settings/settings_account_box.svg"
-                        className="w-[24px] h-[24px] transition-colors"
-                        style={{
-                          filter:
-                            hoveredItem === item.url
-                              ? 'brightness(0) invert(1)'
-                              : 'none',
-                        }}
+                        className="w-[24px] h-[24px]"
                       />
                     ) : item.url === 'thu-vien' ? (
-                      <BookMarkIcon
-                        className="w-[24px] h-[24px] transition-colors"
-                        fill={hoveredItem === item.url ? '#FFFFFF' : '#B0B0B0'}
-                      />
+                      <BookMarkIcon className="w-[24px] h-[24px]" />
                     ) : item.url === 'quan-ly-thiet-bi' ? (
-                      <LaptopIcon
-                        className="w-[24px] h-[24px] transition-colors"
-                        fill={hoveredItem === item.url ? '#FFFFFF' : '#B0B0B0'}
-                      />
+                      <LaptopIcon className="w-[24px] h-[24px]" />
                     ) : (
-                      <item.icon
-                        size={24}
-                        className="group-hover:text-white transition-colors"
-                      />
+                      <item.icon size={24} />
                     )}
                   </span>
                   <span className="text-center xl:text-left">{item.title}</span>
@@ -275,13 +257,10 @@ const SidebarAccount: React.FC = () => {
               </Link>
             ))
           )}
-          <div className="max-w-fit xl:max-w-full border-b-[2px] border-black-olive-404040 rounded-0 xl:border-b-0  flex items-center gap-4 p-4 hover:bg-eerie-black w-full xl:rounded-[10px] hover:text-white flex-shrink-0 group">
-            <FiLogOut
-              size={24}
-              className="text-dark-gray hidden xl:block group-hover:text-white transition-colors"
-            />
+          <div className="max-w-fit xl:max-w-full border-b-[2px] border-black-olive-404040 rounded-0 xl:border-b-0  flex items-center gap-4 p-4 hover:bg-eerie-black w-full xl:rounded-[10px] hover:text-white flex-shrink-0">
+            <FiLogOut size={24} className="text-dark-gray hidden xl:block" />
             <button
-              className="menu-item text-base font-[500] text-silver-chalice transition-colors text-left w-full cursor-pointer group-hover:text-white"
+              className="menu-item text-base font-[500] text-silver-chalice transition-colors text-left w-full cursor-pointer"
               onClick={logOutAction}
             >
               Đăng xuất

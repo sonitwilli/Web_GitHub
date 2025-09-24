@@ -150,9 +150,8 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
               block?.block_type
             } block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)]
                hover:text-white hover:cursor-pointer duration-400 absolute top-0 ${
-                 block?.type === 'vod_related' || block?.type === 'trailer'
-                   ? '-left-[8px] w-[156px] bg-gradient-to-l from-smoky-black/1 to-smoky-black justify-start text-white-smoke pb-[20px] pointer-events-none'
-                   : block?.type === 'famous_people'
+                 block?.type === 'vod_related' ||
+                 block?.type === 'famous_people'
                    ? '-left-[8px] w-[156px] bg-gradient-to-l from-smoky-black/1 to-smoky-black justify-start text-white-smoke pb-[20px]'
                    : '-left-[50px]'
                }  -translate-y-1/2 ${prevBtnDisabled ? '!hidden' : ''} ${
@@ -163,24 +162,21 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                 block?.block_type === 'auto_expansion'
                   ? ''
                   : block?.type === 'vod_related' ||
-                    block?.type === 'trailer' ||
                     block?.type === 'famous_people'
                   ? `${imageHeight / 2 + 24}px`
                   : `${imageHeight / 2}px`
               }`,
               height: `${
-                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'famous_people'
+                block?.type === 'vod_related' || block?.type === 'famous_people'
                   ? imageHeight + 75
                   : ''
               }px`,
             }}
           >
-            <div className={block?.type === 'vod_related' || block?.type === 'trailer' ? 'pointer-events-auto' : ''}>
-              <PrevButton
-                onClick={onPrevButtonClick}
-                disabled={prevBtnDisabled}
-              />
-            </div>
+            <PrevButton
+              onClick={onPrevButtonClick}
+              disabled={prevBtnDisabled}
+            />
           </div>
 
           <div
@@ -188,9 +184,7 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
               block?.block_type
             } block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)] hover:text-white hover:cursor-pointer duration-400 absolute top-0 
               ${
-                block?.type === 'vod_related' || block?.type === 'trailer'
-                  ? '-right-[8px] w-[156px] bg-gradient-to-r from-smoky-black/1 to-smoky-black justify-end text-white-smoke pb-[20px] pointer-events-none'
-                  : block?.type === 'famous_people'
+                block?.type === 'vod_related' || block?.type === 'famous_people'
                   ? '-right-[8px] w-[156px] bg-gradient-to-r from-smoky-black/1 to-smoky-black justify-end text-white-smoke pb-[20px]'
                   : '-right-[50px]'
               }  -translate-y-1/2 ${nextBtnDisabled ? '!hidden' : ''} ${
@@ -203,24 +197,21 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                 block?.block_type === 'auto_expansion'
                   ? ''
                   : block?.type === 'vod_related' ||
-                    block?.type === 'trailer' ||
                     block?.type === 'famous_people'
                   ? `${imageHeight / 2 + 24}px`
                   : `${imageHeight / 2}px`
               }`,
               height: `${
-                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'famous_people'
+                block?.type === 'vod_related' || block?.type === 'famous_people'
                   ? imageHeight + 75
                   : ''
               }px`,
             }}
           >
-            <div className={block?.type === 'vod_related' || block?.type === 'trailer' ? 'pointer-events-auto' : ''}>
-              <NextButton
-                onClick={onNextButtonClick}
-                disabled={nextBtnDisabled}
-              />
-            </div>
+            <NextButton
+              onClick={onNextButtonClick}
+              disabled={nextBtnDisabled}
+            />
           </div>
         </div>
       </div>

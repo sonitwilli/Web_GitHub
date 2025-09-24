@@ -278,21 +278,12 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
       // Reconstruct full slug including episode part for SEO
       const fullSlug = slugs.length > 1 ? `${slugs[0]}/${slugs[1]}` : slugs[0];
       
-      // Check if this is a Galaxy Play video
-      const isGalaxyPlay = channelRes?.data?.data?.source_provider === SOURCE_PROVIDER.GALAXY_PLAY;
-      
-      // Check if this is a playlist
-      const isPlaylist = resolvedUrl?.includes(ROUTE_PATH_NAMES.PLAYLIST);
-      
       const seoProps = createSeoPropsFromVodData(
         vodSeoData,
         fullSlug,
         vodTitle ? vodTitle : undefined,
         vodDescription || undefined,
         vodImage,
-        channelRes?.data?.data as Record<string, unknown>,
-        isGalaxyPlay,
-        isPlaylist,
       );
 
       if (

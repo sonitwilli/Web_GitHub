@@ -6,8 +6,10 @@ const formatMacAddress = (value: string) => {
 };
 
 const formatDate = (input: string) => {
-  const [datePart] = input.split(' ');
-  const [year, month, day] = datePart.split('-');
+  const date = new Date(input);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
   return `${day}/${month}/${year}`;
 };
 

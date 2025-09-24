@@ -157,7 +157,7 @@ const ProfileOptional: React.FC = () => {
     } else {
       if (modalFillManagementCodeRef.current) {
         modalFillManagementCodeRef.current.setError(
-          result.error || ''
+          result.error || DEFAULT_ERROR_MSG
         );
       }
     }

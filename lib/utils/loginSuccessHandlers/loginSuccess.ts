@@ -12,9 +12,6 @@ export const loginSuccess = () => {
       currentPath.includes('xoa-tai-khoan') || currentPath === '/';
     const isSSOCallback = currentPath.includes('login/sso/callback');
 
-    // Set flag to show login success toast in AppContainer
-    sessionStorage.setItem('show_login_success_toast', 'true');
-
     if (typeLogin === 'fid' && isSSOCallback) {
       reloadPreviousPath();
       return;

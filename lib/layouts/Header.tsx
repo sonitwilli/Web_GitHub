@@ -237,6 +237,8 @@ export default function Header() {
             if (typeof initFn === 'function') {
               try {
                 setTimeout(() => {
+                  window._inited = false
+                  window._currentPathname  = ""
                   initFn();
                 }, 1000);
               } catch {}

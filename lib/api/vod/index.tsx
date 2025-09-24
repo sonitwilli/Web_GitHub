@@ -60,12 +60,6 @@ export interface VodDetailType {
     follow?: number;
     description?: string;
     title?: string;
-    sameAs?: string[];
-    max_video_preview?: string;
-    alternateName?: string[];
-    max_image_preview?: string;
-    availableLanguage?: string[];
-    canonical?: string;
   };
   short_description?: string;
   source_provider?: string;

@@ -50,10 +50,7 @@ export default function LibraryBlockItem({
   });
 
   const dataSlide = useMemo(() => {
-    return data?.slice(
-      0,
-      queryId ? 100000 : Number(configs?.number_item_of_page) || 30,
-    );
+    return data?.slice(0, Number(configs?.number_item_of_page) || 30);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
@@ -186,11 +183,7 @@ export default function LibraryBlockItem({
                   : 'text-[18px] sm:text-[24px]'
               } font-[700] leading-[1.3] text-white-smoke pl-0 sm:pl-[16px]`}
             >
-              {queryId === '2'
-                ? 'Lịch sử xem'
-                : queryId === '3'
-                ? 'Đang theo dõi'
-                : ''}
+              {queryId === '2' ? 'Lịch sử xem' : 'Đang theo dõi'}
             </h2>
           }
           {Array.isArray(data) &&

@@ -1,6 +1,13 @@
 {
     "versions": [
         {
+            "version": "8.0.51",
+            "date": "Dự kiến",
+            "content": [
+                "Fix lỗi payment khi reload"
+            ]
+        }, 
+        {
             "version": "8.0.50",
             "date": "Dự kiến",
             "content": [

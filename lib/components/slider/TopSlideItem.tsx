@@ -14,11 +14,7 @@ import useBlockPlayer from '@/lib/hooks/useBlockPlayer';
 import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeIsMutedTrailerPlayer } from '@/lib/store/slices/appSlice';
 import useScreenSize, { VIEWPORT_TYPE } from '@/lib/hooks/useScreenSize';
-import { AppContext } from '@/lib/components/container/AppContainer';
-import { useContext } from 'react';
 import dynamic from 'next/dynamic';
-import VodAchievementInfo from '../vod/VodAchievementInfo';
-
 const BlockPlayerShaka = dynamic(
   () => import('@/lib/components/player/hls/BlockPlayerShaka'),
   {
@@ -44,17 +40,6 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
   } = useEvent({ slide, block });
 
   const { viewportType } = useScreenSize();
-  const { configs } = useContext(AppContext);
-
-  // Background images from configs
-  const isLiveBackground = useMemo(() => {
-    return configs?.image?.bg_live;
-  }, [configs]);
-
-  const isTimeEventBackground = useMemo(() => {
-    return configs?.image?.bg_time_event;
-  }, [configs]);
-
   const {
     isStartPlayTrailer,
     setIsStartPlayTrailer,
@@ -205,10 +190,6 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
           onMouseLeave={() => setIsHoveredDescription(false)}
           className={`${styles.infoContainer} mt-[24px] tablet:mt-0 mb-[32px] tablet:mb-0 px-[16px] tablet:px-0 z-[1] tablet:absolute tablet:left-[24px] xl:left-[48px] tablet:right-[16px] bigscreen:left-[104px] tablet:bottom-[24px] tablet:w-1/2 xl:w-[632px] xl:bottom-[280px] 2xl:bottom-[340px]`}
         >
-          {/* achievement info */}
-          {slide?.achievement_info && slide?.achievement_info?.length > 0 && (
-            <VodAchievementInfo slide={slide} />
-          )}
           {/* title image */}
           <div>
             <div className="w-full">
@@ -290,16 +271,7 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
 
           {isShowLiveLabel &&
             (checkLive && !isValidCountdown ? (
-              <div
-                className="mt-[12px] text-[14px] bg-jet px-[8px] py-[1px] w-fit rounded-[4px]"
-                style={{
-                  backgroundImage: isTimeEventBackground
-                    ? `url(${isTimeEventBackground})`
-                    : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
+              <div className="mt-[12px] text-[14px] bg-jet px-[8px] py-[1px] w-fit rounded-[4px]">
                 {checkLive}
               </div>
             ) : (
@@ -335,16 +307,7 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
                     </div>
                   </div>
                 ) : (
-                  <div
-                    className="bg-vivid-red inline-block px-[8px] py-[1px] text-[14px] rounded-[4px] font-[500] mt-[12px]"
-                    style={{
-                      backgroundImage: isLiveBackground
-                        ? `url(${isLiveBackground})`
-                        : undefined,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }}
-                  >
+                  <div className="bg-vivid-red inline-block px-[8px] py-[1px] text-[14px] rounded-[4px] font-[500] mt-[12px]">
                     {slide?.label_event &&
                     slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU'
                       ? 'Công chiếu'

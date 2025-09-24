@@ -19,8 +19,7 @@ const getRobotsValueFromUrl = (url: string): string | null => {
     url.includes('/mua-goi/') ||
     url.includes('/dien-vien/') ||
     url.includes('/tai-khoan/') ||
-    (url.includes('/xem-video/') && url.includes('/tap-')) ||
-    (url.includes('/galaxy-play/xem-video/') && url.includes('/tap-'))
+    (url.includes('/xem-video/') && url.includes('/tap-'))
   ) {
     return 'noindex, follow';
   }
@@ -142,106 +141,7 @@ interface VodSeoData {
   follow?: number;
   description?: string;
   title?: string;
-  sameAs?: string[];
-  max_video_preview?: string;
-  alternateName?: string[];
-  max_image_preview?: string;
-  availableLanguage?: string[];
-  canonical?: string;
 }
-
-/**
- * Generates TV Series structured data for Google Star Rating
- */
-const generateTVSeriesStructuredData = (
-  vodData: Record<string, unknown>,
-  url: string,
-  title: string,
-  description: string,
-  image?: string,
-  seoData?: VodSeoData | null,
-): Record<string, unknown> | null => {
-  // Extract rating data
-  const highlightedInfo = vodData.highlighted_info as Array<{ type?: string; avg_rate?: string; count?: string }> | undefined;
-  const ratingInfo = highlightedInfo?.find(info => info.type === 'rating');
-  const ratingValue = ratingInfo?.avg_rate ? parseFloat(ratingInfo.avg_rate) : 0;
-  const reviewCount = ratingInfo?.count ? parseInt(ratingInfo.count.replace(/[()]/g, ''), 10) : 0;
-
-  // Get movie release date
-  const movieReleaseDate = vodData.movie_release_date ? parseInt(String(vodData.movie_release_date), 10) : undefined;
-
-  // Extract image data
-  const imageData = vodData.image as { landscape_title?: string; thumb?: string } | undefined;
-  const finalImage = image || 
-                    (vodData.landscape_title as string) || 
-                    (imageData?.landscape_title) || 
-                    (vodData.thumb as string) || 
-                    (imageData?.thumb) || 
-                    (vodData.background as string) || 
-                    (vodData.standing_thumb as string) || 
-                    '';
-
-  // Determine if it's a TV series or movie based on episode count
-  const episodeTotal = vodData.episode_total ? parseInt(String(vodData.episode_total), 10) : 1;
-  const isMovie = episodeTotal <= 1;
-
-  const structuredData: Record<string, unknown> = {
-    '@context': 'https://schema.org',
-    '@type': isMovie ? 'Movie' : 'TVSeries',
-    url,
-    name: title,
-    image: finalImage,
-  };
-
-  // Only add aggregateRating if we have rating data
-  if (reviewCount > 0) {
-    structuredData.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue,
-      ratingCount: reviewCount,
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
-
-  // Add dates if available
-  if (movieReleaseDate) {
-    structuredData.dateCreated = movieReleaseDate;
-    structuredData.startDate = movieReleaseDate;
-  }
-
-  // Add only the specific SEO fields we need for structured data
-  if (seoData) {
-    // Only extract the fields we actually need
-    const { description, availableLanguage, canonical, sameAs, alternateName } = seoData;
-
-    // Map specific fields to schema.org properties
-    if (description && description.trim()) {
-      structuredData.description = description;
-    } else {
-      // Fallback to VOD data description if SEO description is empty
-      const vodDescription = vodData.description as string;
-      if (vodDescription && vodDescription.trim()) {
-        structuredData.description = vodDescription;
-      }
-    }
-    if (availableLanguage && availableLanguage.length > 0) {
-      structuredData.inLanguage = availableLanguage[0]; // Use first language as string
-      structuredData.availableLanguage = availableLanguage; // Keep array for all languages
-    }
-    if (canonical) {
-      structuredData.url = canonical;
-    }
-    if (sameAs && sameAs.length > 0) {
-      structuredData.sameAs = sameAs;
-    }
-    if (alternateName && alternateName.length > 0) {
-      structuredData.alternateName = alternateName;
-    }
-  }
-
-  return structuredData;
-};
 
 /**
  * Creates SEO props from VOD detail data
@@ -252,152 +152,43 @@ export const createSeoPropsFromVodData = (
   fallbackTitle?: string,
   fallbackDescription?: string,
   ogImage?: string,
-  vodData?: Record<string, unknown>,
-  isGalaxyPlay?: boolean,
-  isPlaylist?: boolean,
 ): SeoProps => {
   const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fptplay.vn';
 
-  // Handle different URL types
+  // Handle short-video URLs differently
   let canonicalUrl: string;
   if (vodSlug.startsWith('short-videos/')) {
     canonicalUrl = `${siteUrl}/short-videos`;
-  } else if (isPlaylist) {
-    // For playlists, use /playlist/ prefix
-    const canonicalSlug = vodSlug.replace(/\/tap-\d+$/, '');
-    canonicalUrl = `${siteUrl}/playlist/${canonicalSlug}`;
   } else {
     // Remove episode part from slug for canonical URL (e.g., "/tap-1", "/tap-2", etc.)
     const canonicalSlug = vodSlug.replace(/\/tap-\d+$/, '');
-    // Add galaxy-play prefix if it's a Galaxy Play video
-    const pathPrefix = isGalaxyPlay ? '/galaxy-play/xem-video' : '/xem-video';
-    canonicalUrl = `${siteUrl}${pathPrefix}/${canonicalSlug}`;
-  }
-
-  // Use original slug with episode info for robots logic
-  let originalUrl: string;
-  if (isPlaylist) {
-    originalUrl = `${siteUrl}/playlist/${vodSlug}`;
-  } else {
-    const originalPathPrefix = isGalaxyPlay ? '/galaxy-play/xem-video' : '/xem-video';
-    originalUrl = `${siteUrl}${originalPathPrefix}/${vodSlug}`;
-  }
-
-  // Override canonical URL if provided in SEO data
-  const finalCanonicalUrl = (vodSeoData?.canonical && vodSeoData.canonical.trim()) 
-    ? vodSeoData.canonical 
-    : canonicalUrl;
-
-  // Determine final title and description based on SEO data availability
-  const finalTitle = (vodSeoData?.title && vodSeoData.title.trim()) 
-    ? vodSeoData.title 
-    : (fallbackTitle || 'FPT Play');
-  const finalDescription = (vodSeoData?.description && vodSeoData.description.trim()) 
-    ? vodSeoData.description 
-    : (fallbackDescription || 'FPT Play - Xem không giới hạn');
-
-  // Generate structured data if VOD data is available (same logic for both branches)
-  const structuredData: Record<string, unknown>[] = [];
-  if (vodData) {
-    const googleStarRatingData = generateTVSeriesStructuredData(vodData, finalCanonicalUrl, finalTitle, finalDescription, ogImage, vodSeoData);
-    if (googleStarRatingData) {
-      structuredData.push(googleStarRatingData);
-    }
+    canonicalUrl = `${siteUrl}/xem-video/${canonicalSlug}`;
   }
 
   if (!vodSeoData) {
+    // Use original slug with episode info for robots logic
+    const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
     return createDefaultSeoProps({
-      title: finalTitle,
-      description: finalDescription,
-      url: finalCanonicalUrl,
+      title: fallbackTitle || 'FPT Play',
+      description: fallbackDescription || 'FPT Play - Xem không giới hạn',
+      url: canonicalUrl,
       robots: getRobotsValueFromUrl(originalUrl) || 'index, follow',
       ...(ogImage && { ogImage }),
-      ...(structuredData.length > 0 && { structuredData }),
     });
   }
 
-  // Force replace robots based on URL patterns for main branch
+  // Force replace robots based on URL patterns, use original slug with episode info for robots logic
+  const originalUrl = `${siteUrl}/xem-video/${vodSlug}`;
+  console.log('VOD SEO - Original URL for robots logic:', originalUrl);
   const robotsOverride = getRobotsValueFromUrl(originalUrl);
-  let robotsValue = robotsOverride || `${vodSeoData.index === 1 ? 'index' : 'noindex'}, ${
+  const robotsValue = robotsOverride || `${vodSeoData.index === 1 ? 'index' : 'noindex'}, ${
     vodSeoData.follow === 1 ? 'follow' : 'nofollow'
   }`;
 
-  // Add max video preview and max image preview directives if provided
-  const additionalRobotsDirectives: string[] = [];
-  if (vodSeoData.max_video_preview && vodSeoData.max_video_preview.trim()) {
-    additionalRobotsDirectives.push(`max-video-preview:${vodSeoData.max_video_preview}`);
-  }
-  if (vodSeoData.max_image_preview && vodSeoData.max_image_preview.trim()) {
-    additionalRobotsDirectives.push(`max-image-preview:${vodSeoData.max_image_preview}`);
-  }
-  
-  if (additionalRobotsDirectives.length > 0) {
-    robotsValue = `${robotsValue}, ${additionalRobotsDirectives.join(', ')}`;
-  }
-
   return createDefaultSeoProps({
-    title: finalTitle,
-    description: finalDescription,
-    url: finalCanonicalUrl,
-    robots: robotsValue,
-    ...(ogImage && { ogImage }),
-    ...(structuredData.length > 0 && { structuredData }),
-  });
-};
-
-interface ChannelSeoData {
-  index?: number;
-  follow?: number;
-  description?: string;
-  title?: string;
-  canonical?: string;
-}
-
-/**
- * Creates SEO props from Channel detail data
- */
-export const createSeoPropsFromChannelData = (
-  channelSeoData: ChannelSeoData | null | undefined,
-  channelId: string,
-  fallbackTitle?: string,
-  fallbackDescription?: string,
-  ogImage?: string,
-): SeoProps => {
-  const siteUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://fptplay.vn';
-  const canonicalUrl = `${siteUrl}/xem-truyen-hinh/${channelId}`;
-
-  if (!channelSeoData) {
-    return createDefaultSeoProps({
-      title: fallbackTitle || 'FPT Play - Xem Truyền Hình',
-      description: fallbackDescription || 'FPT Play - Xem truyền hình trực tuyến chất lượng cao',
-      url: canonicalUrl,
-      robots: getRobotsValueFromUrl(canonicalUrl) || 'index, follow',
-      ...(ogImage && { ogImage }),
-    });
-  }
-
-  // Force replace robots based on URL patterns
-  const robotsOverride = getRobotsValueFromUrl(canonicalUrl);
-  const robotsValue = robotsOverride || `${channelSeoData.index === 1 ? 'index' : 'noindex'}, ${
-    channelSeoData.follow === 1 ? 'follow' : 'nofollow'
-  }`;
-
-  // Use SEO data if available, otherwise fallback to main channel data
-  const finalTitle = (channelSeoData.title && channelSeoData.title.trim()) 
-    ? channelSeoData.title 
-    : (fallbackTitle || 'FPT Play - Xem Truyền Hình');
-  const finalDescription = (channelSeoData.description && channelSeoData.description.trim()) 
-    ? channelSeoData.description 
-    : (fallbackDescription || 'FPT Play - Xem truyền hình trực tuyến chất lượng cao');
-
-  const finalUrl = (channelSeoData.canonical && channelSeoData.canonical.trim()) 
-    ? channelSeoData.canonical 
-    : canonicalUrl;
-
-  return createDefaultSeoProps({
-    title: finalTitle,
-    description: finalDescription,
-    url: finalUrl,
+    ...(vodSeoData.title && { title: vodSeoData.title }),
+    ...(vodSeoData.description && { description: vodSeoData.description }),
+    url: canonicalUrl,
     robots: robotsValue,
     ...(ogImage && { ogImage }),
   });

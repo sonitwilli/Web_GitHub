@@ -24,7 +24,7 @@ export default function LibraryBlock() {
     typeof router.query.id === 'string' ? router.query.id : undefined;
   const [isEmpty, setIsEmpty] = useState<boolean[]>([]);
   const [isError, setIsError] = useState<boolean[]>([]);
-  const [isDataLoading, setIsDataLoading] = useState<boolean>(true);
+  const [isDataLoading, setIsDataLoading] = useState<boolean>(false);
   const reloadRefs = useRef<(() => void)[]>([]);
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export default function LibraryBlock() {
     } else {
       setTimeout(() => {
         setIsDataLoading(false);
-      }, 500); // Simulate a delay for loading state
+      }, 0); // Simulate a delay for loading state
     }
   }, [isLoading]);
 
@@ -95,7 +95,7 @@ export default function LibraryBlock() {
   if (isLoading || isDataLoading) {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
-        <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+        <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px] min-h-[300px]">
@@ -108,7 +108,7 @@ export default function LibraryBlock() {
   if (pageDataError && pageDataStatus !== '0') {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
-        <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+        <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px]">
@@ -119,13 +119,13 @@ export default function LibraryBlock() {
   }
 
   if (
-    (typeof blocksSortedRecommendNotHighlight === 'undefined' && !isDataLoading) ||
-    (!blocksSortedRecommendNotHighlight?.length && !isDataLoading) ||
-    (pageDataStatus === '0' && !isDataLoading)
+    (typeof blocksSortedRecommendNotHighlight === 'undefined' && !isLoading) ||
+    (!blocksSortedRecommendNotHighlight?.length && !isLoading) ||
+    (pageDataStatus === '0' && !isLoading)
   ) {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
-        <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+        <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {!queryId ? LIBRARY_TITLE : filteredBlocks[0]?.name}
         </h1>
         <div className="flex flex-col gap-[56px]">
@@ -135,7 +135,7 @@ export default function LibraryBlock() {
     ); // No blocks to display
   }
 
-  if (filteredBlocks.length === 0 && !allBlocksError && !isDataLoading) {
+  if (filteredBlocks.length === 0 && !allBlocksError && !isLoading) {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
         <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-[16px]">
@@ -156,12 +156,12 @@ export default function LibraryBlock() {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
         {!queryId && (
-          <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {pageData?.data?.meta?.name}
           </h1>
         )}
         {queryId && filteredBlocks.length === 1 && (
-          <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {filteredBlocks[0]?.name}
           </h1>
         )}
@@ -173,19 +173,19 @@ export default function LibraryBlock() {
   }
 
   if (
-    (allBlocksEmpty && !allBlocksError && !isDataLoading) ||
-    (filteredBlocks.length === 1 && isEmpty[0] && !isError[0] && !isDataLoading) ||
-    (filteredBlocks.length === 1 && isEmpty[1] && !isError[1] && !isDataLoading)
+    (allBlocksEmpty && !allBlocksError && !isLoading) ||
+    (filteredBlocks.length === 1 && isEmpty[0] && !isError[0] && !isLoading) ||
+    (filteredBlocks.length === 1 && isEmpty[1] && !isError[1] && !isLoading)
   ) {
     return (
       <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
         {!queryId && (
-          <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {pageData?.data?.meta?.name}
           </h1>
         )}
         {queryId && filteredBlocks.length === 1 && (
-          <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {filteredBlocks[0]?.name}
           </h1>
         )}
@@ -199,13 +199,13 @@ export default function LibraryBlock() {
   return (
     <div className="relative mt-[7px] max-w-[1200px] px-0 xl:px-[40px]">
       {!queryId && (
-        <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+        <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
           {pageData?.data?.meta?.name}
         </h1>
       )}
       {(queryId && filteredBlocks.length === 1 && allBlocksError) ||
         (queryId && filteredBlocks.length === 1 && allBlocksEmpty && (
-          <h1 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
+          <h1 className="text-[20px] sm:text-[28px] font-semibold leading-[1.3] text-white-smoke mb-[24px] sm:mb-[32px] pl-0 sm:pl-[16px]">
             {filteredBlocks[0]?.name}
           </h1>
         ))}

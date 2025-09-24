@@ -3,7 +3,7 @@ import { updateProfile, ApiResponse } from '@/lib/api/multi-profiles'; // Adjust
 import { Profile } from '@/lib/api/user';
 import { AxiosError, AxiosResponse } from 'axios';
 import { trackingModifyProfileLog103 } from '../tracking/trackingProfile';
-import { PROFILE_TYPES } from '../constant/texts';
+import { ERROR_CONNECTION, PROFILE_TYPES } from '../constant/texts';
 import { checkError } from '../utils/profile';
 import { showToast } from '../utils/globalToast';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
@@ -59,10 +59,7 @@ export const useUpdateProfile = ({
           onUpdateSuccess?.();
         } else {
           // setError(data?.message?.content || null);
-          showToast({
-            title: 'Chỉnh sửa hồ sơ không thành công',
-            desc: data?.message?.content || '',
-          });
+          throw new Error(data?.message?.content as unknown as string);
         }
       } catch (err) {
         if (err instanceof AxiosError && err.response?.status === 401) {
@@ -71,7 +68,7 @@ export const useUpdateProfile = ({
         } else {
           setError(null);
           showToast({
-            title: 'Chỉnh sửa hồ sơ không thành công',
+            title: ERROR_CONNECTION,
             desc: checkError({ error: err }),
           });
         }

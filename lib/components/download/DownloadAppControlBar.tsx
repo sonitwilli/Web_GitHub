@@ -9,17 +9,12 @@ interface DownloadAppProps {
   className?: string;
 }
 
-// Interface cho Google Analytics gtag
-interface GtagFunction {
-  (
-    command: 'event',
-    action: string,
-    parameters?: Record<string, unknown>,
-  ): void;
-}
-
 interface WindowWithGtag extends Window {
-  gtag?: GtagFunction;
+  gtag?: (
+    command: string,
+    action: string,
+    params: Record<string, unknown>,
+  ) => void;
 }
 
 export default function DownloadApp({ className }: DownloadAppProps) {
@@ -46,7 +41,6 @@ export default function DownloadApp({ className }: DownloadAppProps) {
       url: `${process.env.NEXT_PUBLIC_BASE_URL}/ung-dung/download`,
       text: 'Tải xuống',
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Gọi API khi component mount
@@ -72,8 +66,7 @@ export default function DownloadApp({ className }: DownloadAppProps) {
   }
 
   // Ẩn ở một số trang đặc biệt hoặc khi mobile menu mở
-  const shouldHide =
-    router.pathname.includes('/minigame/vong-quay-may-man') || openMobileMenu;
+  const shouldHide = router.pathname.includes('/minigame/vong-quay-may-man') || openMobileMenu;
 
   if (shouldHide || isManuallyHidden) return null;
 

@@ -309,7 +309,6 @@ export interface BlockSlideItemType {
   description?: string;
   is_recommend?: boolean;
   is_coming_soon?: string;
-  achievement_info?: SlideHightlightInfoType[];
 }
 
 export interface SlideHightlightInfoType {

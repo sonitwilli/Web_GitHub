@@ -13,7 +13,7 @@ import { trackingLoadBlockDisplayLog511 } from '@/lib/hooks/useTrackingHome';
 
 export const getServerSideProps = (async () => {
   const seoProps = await createSeoPropsFromMeta({
-    pageId: '',
+    pageId: 'home',
     fallbackTitle:
       'FPT Play - Trang Chủ | Xem Phim, Show, Anime, TV, Thể Thao Miễn Phí',
     fallbackDescription:

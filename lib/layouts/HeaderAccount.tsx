@@ -14,8 +14,10 @@ export default function Header() {
             <img
               src={configs?.image?.logo?.tv || '/images/logo.png'}
               alt="logo"
+              width={125}
+              height={52}
               style={{ height: 'auto' }}
-              className="w-[94px] h-auto min-w-[94px] tablet:w-[102px] tablet:min-w-[102px] xl:w-[120px] xl:min-w-[144px]"
+              className="w-[125px] h-auto min-w-[125px]"
             />
           </a>
         </div>

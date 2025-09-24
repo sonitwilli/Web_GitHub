@@ -32,5 +32,8 @@ declare global {
     };
     checkErrorInterRef: NodeJS.Timeout | null;
     safariCheckErrorInterRef: NodeJS.Timeout | null;
+    _inited?: boolean;
+    _currentPathname?: string;
+
   }
 }

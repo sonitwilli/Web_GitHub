@@ -220,7 +220,7 @@ const SummaryCommentPage: React.FC = () => {
       setRouteBred('default');
       localStorage.removeItem('tabsSum');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idMovie]);
 
   useEffect(() => {
@@ -544,7 +544,7 @@ const SummaryCommentPage: React.FC = () => {
 
   const handleScroll = () => {
     if (scrollContainerRef.current) {
-      scrollToCaret();
+      scrollToBottom();
     }
   };
 
@@ -572,41 +572,18 @@ const SummaryCommentPage: React.FC = () => {
     action();
   };
 
-  const scrollToCaret = () => {
-    if (textAreaRef.current && scrollContainerRef.current) {
-      const textarea = textAreaRef.current;
-      const scrollContainer = scrollContainerRef.current;
-
-      // Lấy vị trí của caret
-      const caretPosition = textarea.selectionStart;
-      const textBeforeCaret = textarea.value.substring(0, caretPosition);
-
-      // Tạo một element tạm để đo chiều cao của text trước caret
-      const tempDiv = document.createElement('div');
-      tempDiv.style.cssText = window.getComputedStyle(textarea).cssText;
-      tempDiv.style.position = 'absolute';
-      tempDiv.style.visibility = 'hidden';
-      tempDiv.style.height = 'auto';
-      tempDiv.style.width = textarea.offsetWidth + 'px';
-      tempDiv.textContent = textBeforeCaret;
-
-      document.body.appendChild(tempDiv);
-      const caretTop = tempDiv.offsetHeight;
-      document.body.removeChild(tempDiv);
-
-      // Tính toán vị trí scroll để caret hiển thị ở giữa container
-      const containerHeight = scrollContainer.offsetHeight;
-      const textareaTop = textarea.offsetTop;
-      const targetScrollTop = textareaTop + caretTop - containerHeight / 2;
-
-      // Scroll đến vị trí đã tính toán
-      scrollContainer.scrollTop = Math.max(0, targetScrollTop);
+  const scrollToBottom = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop =
+        scrollContainerRef.current.scrollHeight;
     }
   };
 
   const fetchDataMessage = async (id: string) => {
     try {
       setLoading(true);
+      console.log('fetching message');
+
       const tabs = (await getWithExpiry('tabsSum')) || [];
       const isActivedTab = (await getWithExpiry('isActived')) || [];
       const firstLoad = (router.query['first-load'] as string) || '1';

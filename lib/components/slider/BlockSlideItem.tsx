@@ -69,18 +69,17 @@ export default function BlockSlideItem({
   const { configs } = appCtx;
   const router = useRouter();
   const [posterOverlaysReady, setPosterOverlaysReady] = useState<string[]>([]);
+  // handle for poster overlays
 
-  // ----------- Handle Background Labels ------------
-
-  const isLiveBackground = useMemo(() => {
-    return configs?.image?.bg_live;
-  }, [configs]);
-
-  const isTimeEventBackground = useMemo(() => {
-    return configs?.image?.bg_time_event;
-  }, [configs]);
-
-  // -----------------------
+  // Logic kiểm tra từng status
+  const isNewItem = useMemo(() => {
+    return (
+      slide?.is_new === '1' &&
+      configs?.image?.icon_new &&
+      block?.block_type !== 'highlight' &&
+      block?.block_type !== 'horizontal_highlight'
+    );
+  }, [slide, configs, block]);
 
   const hasTopRight = false; // custom lại nếu cần
 
@@ -114,11 +113,19 @@ export default function BlockSlideItem({
   // Tổng hợp positionLabelsStatus
   const positionLabelsStatus = useMemo(
     () => ({
+      TL: Boolean(isNewItem),
       TR: Boolean(hasTopRight),
       BL: Boolean(hasBottomLeft || checkLive || isShowLiveLabel),
       BR: Boolean(isOverlayPlaylist),
     }),
-    [hasTopRight, hasBottomLeft, checkLive, isShowLiveLabel, isOverlayPlaylist],
+    [
+      isNewItem,
+      hasTopRight,
+      hasBottomLeft,
+      checkLive,
+      isShowLiveLabel,
+      isOverlayPlaylist,
+    ],
   );
 
   const handlePosterOverlays = useCallback((positionRibbons: string[]) => {
@@ -332,6 +339,17 @@ export default function BlockSlideItem({
             )}
           </div>
 
+          {isNewItem && (
+            <div className="absolute left-[8px] top-[8px] flex flex-col gap-[8px] items-start">
+              <img
+                key={`label-img=${index}`}
+                src={configs?.image?.icon_new}
+                alt="new content"
+                className="h-[20px]"
+              />
+            </div>
+          )}
+
           {isOverlayPlaylist && (
             <div className="absolute bottom-[8px] right-[8px] black-bg text-[10px] font-[700] whitespace-nowrap px-[10px] py-[5px] rounded-[5px]">
               {slide?.playlist_total} VIDEOS
@@ -344,18 +362,10 @@ export default function BlockSlideItem({
             </div>
           )}
 
-          {isShowLiveLabel &&
+          {!isNewItem &&
+            isShowLiveLabel &&
             (checkLive && !isValidCountdown ? (
-              <div
-                className="absolute bottom-[8px] left-[8px] bg-jet text-[12px] font-bold whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087"
-                style={{
-                  backgroundImage: isTimeEventBackground
-                    ? `url(${isTimeEventBackground})`
-                    : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
+              <div className="absolute bottom-[6px] left-[6px] bg-jet text-[12px] font-bold whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087">
                 {checkLive}
               </div>
             ) : (
@@ -391,61 +401,25 @@ export default function BlockSlideItem({
                     </div>
                   </div>
                 ) : (
-                  <div className="absolute bottom-[8px] left-[8px] flex items-center justify-center rounded-[6px] font-semibold text-[12px] leading-[100%] text-white">
+                  <div className="absolute bottom-[6px] left-[6px] flex items-center justify-center rounded-[6px] font-semibold text-[12px] leading-[100%] text-white">
                     {slide?.label_event &&
                     slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] uppercase font-bold">
                         Công chiếu
                       </div>
                     ) : slide?.label_event &&
                       slide?.label_event?.toUpperCase() === 'LIVE' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] w-[35px] flex items-center justify-center uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] w-[35px] flex items-center justify-center uppercase font-bold">
                         LIVE
                       </div>
                     ) : slide?.label_event &&
                       slide?.label_event?.toUpperCase() === 'ĐANG PHÁT' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] w-[78px] flex items-center justify-center uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
+                      <div className="text-[12px] whitespace-nowrap bg-gradient-to-r from-vivid-red to-rosso-corsa px-[6px] py-[4px] rounded-[6px] w-[78px] flex items-center justify-center uppercase font-bold">
                         Đang phát
                       </div>
                     ) : (
                       checkLive && (
-                        <div
-                          className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087 font-bold bg-jet"
-                          style={{
-                            backgroundImage: isTimeEventBackground
-                              ? `url(${isTimeEventBackground})`
-                              : undefined,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                          }}
-                        >
+                        <div className="text-[12px] whitespace-nowrap bg-jet px-[6px] py-[4px] rounded-[6px] text-white-087 font-bold">
                           {checkLive}
                         </div>
                       )
@@ -504,6 +478,11 @@ export default function BlockSlideItem({
             >
               {slide?.title_vie || slide?.title}
             </span>
+            {block?.block_type === 'participant' && (
+              <>
+                <span className="text-[14px] text-spanish-gray">Diễn viên</span>
+              </>
+            )}
           </h3>
         ) : (
           ''

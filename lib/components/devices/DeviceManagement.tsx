@@ -158,7 +158,7 @@ const DeviceManagement: React.FC = () => {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold text-white leading-9">Quản lý thiết bị</h2>
+          <h2 className="text-2xl font-bold text-white">Quản lý thiết bị</h2>
         </div>
         <div className="w-full min-h-[200px] mx-auto relative">
           <Loading />
@@ -170,7 +170,7 @@ const DeviceManagement: React.FC = () => {
     return (
       <div>
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold text-white leading-9">Quản lý thiết bị</h2>
+          <h2 className="text-2xl font-bold text-white">Quản lý thiết bị</h2>
         </div>
         <div className="w-full min-h-[200px] mx-auto relative">
           <ErrorData onRetry={refetch} />
@@ -185,7 +185,7 @@ const DeviceManagement: React.FC = () => {
   return (
     <div className="max-w-[856px]">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold text-white leading-9">Quản lý thiết bị</h2>
+        <h2 className="text-2xl font-bold text-white">Quản lý thiết bị</h2>
         <button
           className={`text-base xl:mt-3 font-semibold line-[1.3] px-4 py-[10px] bg-charleston-green text-white-smoke rounded-[40px] transition ${
             selectedDevice === null

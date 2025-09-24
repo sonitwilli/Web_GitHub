@@ -422,11 +422,6 @@ const ForgetPasswordModalProfile = forwardRef<
             desc: HAVING_ERROR,
           });
           return;
-        } else {
-          showToast({
-            title: ERROR_CONNECTION,
-            desc: DEFAULT_ERROR_MSG,
-          });
         }
       }
     }

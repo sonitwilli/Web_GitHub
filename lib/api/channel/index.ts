@@ -9,7 +9,6 @@ import {
 } from '@/lib/utils/posterOverlays/types';
 import { axiosServer } from '../axios/server';
 import { PlayListVideo } from '../playlist';
-import { SlideHightlightInfoType } from '../blocks';
 
 export interface ChannelResponseType {
   status?: string;
@@ -153,7 +152,6 @@ export interface ChannelDetailType extends VodDetailType {
   nation?: string;
   landscape?: string;
   landscape_title?: string;
-  achievement_info?: SlideHightlightInfoType[];
 }
 
 export interface Seo {

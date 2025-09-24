@@ -24,21 +24,6 @@ import { useRouter } from 'next/router';
 import { setSituationWarningVisible } from '@/lib/hooks/useSituationWarningVisibility';
 import useCodec from '@/lib/hooks/useCodec';
 
-// Interface cho Google Analytics gtag
-interface GtagFunction {
-  (
-    command: 'event',
-    action: string,
-    parameters?: Record<string, unknown>,
-  ): void;
-}
-
-declare global {
-  interface Window {
-    gtag?: GtagFunction;
-  }
-}
-
 // Raw warning data from server (with string timestamps)
 interface RawWarningData {
   from: string;
@@ -116,6 +101,7 @@ const WatchVideoComponent = () => {
   const dispatch = useAppDispatch();
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const [adsExist, setAdsExist] = useState(false);
+
   // State for warning data - only set once when first data arrives
   const [warningData, setWarningData] = useState<WarningData[]>([]);
 
@@ -433,7 +419,7 @@ const WatchVideoComponent = () => {
           </div>
 
           {!isDetailError ? (
-            <div className="f-container mt-[24px] xl:mt-[40px]">
+            <div className="f-container mt-[40px]">
               <InforVideoComponent dataVideo={dataChannel} />
             </div>
           ) : (

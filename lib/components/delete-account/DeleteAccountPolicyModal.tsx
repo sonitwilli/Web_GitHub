@@ -65,7 +65,6 @@ export default forwardRef<DeleteAccountPolicyModalRef, Props>(
         {/* Mobile: 343x400+, Tablet/PC: 576x540 */}
         <div
           className={`flex flex-col justify-center items-center p-6 tablet:p-8 gap-6 tablet:gap-8 max-h-full overflow-y-auto ${styles.policyModalContainer}`}
-          style={{ maxHeight: '90vh' }}
         >
           {/* Header Section */}
           <div
