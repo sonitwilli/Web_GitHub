@@ -106,14 +106,14 @@ const Service3GComponent = () => {
           ))}
 
           <div className="w-full">
-            <PackageControl selectedTelcos={selectedTelcos} />
+            <PackageControl selectedTelcos={selectedTelcos} data={data} />
           </div>
         </div>
       </div>
 
       {/* Điều khoản và dịch vụ */}
       <div className="flex items-center justify-center w-full bg-white text-bg-gray mt-[-100px]">
-        <PoliciesComponent />
+        <PoliciesComponent data={data} />
       </div>
     </div>
   );

@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
 import { BsChevronLeft, BsChevronRight } from 'react-icons/bs';
-import type { PackageItem, Labels } from './types';
+import type { PackageItem } from './types';
 
 type Props = {
   id?: string;
   title: string;
   packages: PackageItem[];
   showControls?: boolean;
-  labels?: Labels | null;
 };
 
 export default function PackageCarousel({
@@ -16,7 +15,6 @@ export default function PackageCarousel({
   title,
   packages,
   showControls = false,
-  labels,
 }: Props) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: 'center',
@@ -65,35 +63,10 @@ export default function PackageCarousel({
                   <span className="text-2xl font-bold text-center mb-4">
                     {_package.name}
                   </span>
-                  <span className="my-3">{_package.description}</span>
-                  <div className="font-bold">
-                    {labels?.dataFee}&nbsp;
-                    {typeof _package.details === 'string' ? (
-                      <span className="font-light">{_package.details}</span>
-                    ) : (
-                      <span className="font-light">
-                        {_package.details.head}{' '}
-                        <span className="text-fpl">
-                          {_package.details.data}
-                        </span>{' '}
-                        {_package.details.tail}
-                      </span>
-                    )}
-                  </div>
-                  <div className="my-3">
-                    <span className="font-bold">{labels?.registerSyntax}&nbsp; </span>
-                    <span>{_package.syntax}</span>
-                  </div>
-                  <div className="my-3">
-                    <span className="font-bold">{labels?.cancelSyntax}&nbsp; </span>
-                    <span>{_package.syntax2}</span>
-                  </div>
-                  {_package.syntax3 && (
-                    <div className="my-3">
-                      <span className="font-bold">{labels?.checkData}&nbsp;{' '}</span>
-                      <span>{_package.syntax3}</span>
-                    </div>
-                  )}
+                  <div 
+                    className="my-3 [&_b]:font-bold leading-8"
+                    dangerouslySetInnerHTML={{ __html: _package.content }}
+                  />
 
                   <div className="text-center mt-auto">
                     <button className="bg-dim-gray hover:bg-bg-gray text-white px-10 py-2 rounded-xl text-sm w-fit">
