@@ -1,33 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { fetchDataPlans } from '../../../../lib/api/landing-page';
-import type { Policies } from './types';
+import React from 'react';
+import type { DichVuData } from './types';
 
-export default function PoliciesComponent() {
-  const [policies, setPolicies] = useState<Policies | null>(null);
+type PoliciesProps = {
+  data: DichVuData | null;
+};
 
-  useEffect(() => {
-    let mounted = true;
-    
-    const getData = async () => {
-      try {
-        const d = await fetchDataPlans();
-        if (mounted && d) {
-          setPolicies(d.policies);
-        }
-      } catch {}
-    };
-    
-    getData();
-    
-    return () => {
-      mounted = false;
-    };
-  }, []);
+export default function PoliciesComponent({ data }: PoliciesProps) {
+  if (!data?.policies) return null;
 
-  if (!policies) return null;
-
-  const columns = policies?.columns || [];
-  const title = policies?.title || '';
+  const columns = data.policies.columns || [];
+  const title = data.policies.title || '';
 
   return (
     <div className="py-20 flex justify-center">
