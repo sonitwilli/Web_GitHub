@@ -2,7 +2,7 @@ import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 import PackageControl from './PackageControl';
 import PoliciesComponent from './Policies';
-import { fetchDataDichVu } from '../../../../lib/api/landing-page';
+import { fetchDataPlans } from '../../../../lib/api/landing-page';
 import type { DichVuData } from './types';
 
 const Service3GComponent = () => {
@@ -15,9 +15,26 @@ const Service3GComponent = () => {
 
   useEffect(() => {
     let mounted = true;
-    fetchDataDichVu()
-      .then((d) => mounted && setData(d))
-      .catch(() => {});
+    
+    const getData = async () => {
+      try {
+        const d = await fetchDataPlans();
+        if (mounted && d) {
+          // Transform the API response to match the expected structure
+          const transformedData = {
+            iconData: d.icon_data || [],
+            logoBrand: d.logo_brand || [],
+            packages: d.packages || {},
+            policies: d.policies || { title: '', columns: [] },
+            telcos: d.telcos || {}
+          };
+          setData(transformedData);
+        }
+      } catch {}
+    };
+    
+    getData();
+    
     return () => {
       mounted = false;
     };

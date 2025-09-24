@@ -75,30 +75,13 @@ export const fetchDataDetailInformationDiscount = async (
   }
 };
 
-// dich-vu helpers: try remote endpoint then fallback to local data.json
-import localDichVu from '../../components/landing-page/dich-vu/data.json';
-
-export const fetchDataDichVu = async (remoteUrl?: string) => {
+// New API function to fetch data plans from staging API
+export const fetchDataPlans = async () => {
   try {
-    const url = remoteUrl || `${process.env.NEXT_PUBLIC_API_LANDING_PAGE}/dich-vu`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/v7.1_w/common/services/data_plans`;
     const res = await axios.get(url);
-    return res?.data?.data ?? localDichVu;
+    return res?.data?.data;
   } catch {
-    return localDichVu;
-  }
-};
-
-export const fetchDichVuPackages = async (
-  telco: keyof typeof localDichVu.packages,
-  remoteUrl?: string,
-) => {
-  const localPackages = (localDichVu.packages && localDichVu.packages[telco]) || [];
-  try {
-    const url = remoteUrl || `${process.env.NEXT_PUBLIC_API_LANDING_PAGE}/dich-vu/packages/${telco}`;
-    const res = await axios.get(url);
-    const remoteData = res?.data?.data;
-    return remoteData !== undefined ? remoteData : localPackages;
-  } catch {
-    return localPackages;
+    return [];
   }
 };

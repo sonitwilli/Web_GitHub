@@ -1,5 +1,5 @@
 import PackageCarousel from './PackageCarousel';
-import { fetchDataDichVu } from '../../../../lib/api/landing-page';
+import { fetchDataPlans } from '../../../../lib/api/landing-page';
 import React, { useEffect, useState } from 'react';
 import type { DichVuData, PackageItem } from './types';
 
@@ -13,11 +13,25 @@ export default function PackageControl(props: selectedProps) {
 
   useEffect(() => {
     let mounted = true;
-    fetchDataDichVu()
-      .then((d) => {
-        if (mounted) setData(d);
-      })
-      .catch(() => {});
+    
+    const getData = async () => {
+      try {
+        const d = await fetchDataPlans();
+        if (mounted && d) {
+          // Transform the API response to match the expected structure
+          const transformedData = {
+            iconData: d.icon_data || [],
+            logoBrand: d.logo_brand || [],
+            packages: d.packages || {},
+            policies: d.policies || { title: '', columns: [] },
+            telcos: d.telcos || {}
+          };
+          setData(transformedData);
+        }
+      } catch {}
+    };
+    
+    getData();
     return () => {
       mounted = false;
     };

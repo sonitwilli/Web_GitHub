@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetchDataDichVu } from '../../../../lib/api/landing-page';
+import { fetchDataPlans } from '../../../../lib/api/landing-page';
 import type { Policies } from './types';
 
 export default function PoliciesComponent() {
@@ -7,9 +7,18 @@ export default function PoliciesComponent() {
 
   useEffect(() => {
     let mounted = true;
-    fetchDataDichVu()
-      .then((d) => mounted && setPolicies(d?.policies))
-      .catch(() => {});
+    
+    const getData = async () => {
+      try {
+        const d = await fetchDataPlans();
+        if (mounted && d) {
+          setPolicies(d.policies);
+        }
+      } catch {}
+    };
+    
+    getData();
+    
     return () => {
       mounted = false;
     };
