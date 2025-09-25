@@ -17,13 +17,36 @@ export default function ChannelTabs() {
   const { groups } = channelPageData || {};
   useEffect(() => {
     if (groups && groups?.length > 0) {
-      if (setSelectedGroup) setSelectedGroup(groups[0]);
+      // Try to restore selected group from localStorage (client-side only)
+      if (typeof window !== 'undefined') {
+        const savedGroupId = localStorage.getItem('selectedChannelGroupId');
+        const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
+        
+        if (savedGroup && setSelectedGroup) {
+          setSelectedGroup(savedGroup);
+        } else if (setSelectedGroup) {
+          // Fall back to first group if no saved group or saved group not found
+          setSelectedGroup(groups[0]);
+          if (groups[0].id) {
+            localStorage.setItem('selectedChannelGroupId', groups[0].id);
+          }
+        }
+      } else if (setSelectedGroup) {
+        // Server-side: just set the first group
+        setSelectedGroup(groups[0]);
+      }
     }
   }, [groups, setSelectedGroup]);
 
   const clickTab = useCallback(
     (group: ChannelGroupType) => {
-      if (setSelectedGroup) setSelectedGroup(group);
+      if (setSelectedGroup) {
+        setSelectedGroup(group);
+        // Save selected group to localStorage (client-side only)
+        if (typeof window !== 'undefined' && group.id) {
+          localStorage.setItem('selectedChannelGroupId', group.id);
+        }
+      }
     },
     [setSelectedGroup],
   );
