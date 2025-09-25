@@ -43,7 +43,6 @@ export default function ChannelItem({
     }
     router.push({
       pathname: `/xem-truyen-hinh/${channel.id}`,
-      query: { group: router.query.group },
     });
     console.log('selectedGroup', selectedGroup, isSuggest);
     sessionStorage.setItem(
