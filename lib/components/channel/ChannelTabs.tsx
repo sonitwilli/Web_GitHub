@@ -3,8 +3,10 @@ import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import { useCallback, useContext, useEffect } from 'react';
 import { RiSearchLine } from 'react-icons/ri';
 import styles from './ChannelTabs.module.css';
+import { useRouter } from 'next/router';
 
 export default function ChannelTabs() {
+  const router = useRouter();
   const ctx = useContext(ChannelPageContext);
   const {
     channelPageData,
@@ -23,7 +25,30 @@ export default function ChannelTabs() {
         const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
         
         if (savedGroup) {
-          setSelectedGroup(savedGroup);
+          // Check if current channel (from deeplink) belongs to the saved tab
+          const currentChannelId = router.query.id as string;
+          const currentChannel = channelPageData?.channels?.find(channel => channel.id === currentChannelId);
+          
+          // If saved group is 'all' type, always use it (all channels belong to 'all')
+          if (savedGroup.type === 'all') {
+            setSelectedGroup(savedGroup);
+          } else if (currentChannel && currentChannel.group_id === savedGroup.id) {
+            // Current channel belongs to saved group, use saved group
+            setSelectedGroup(savedGroup);
+          } else {
+            // Current channel doesn't belong to saved group, reset to 'All Channels'
+            localStorage.removeItem('selectedChannelGroupId');
+            const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
+            if (allChannelsGroup) {
+              setSelectedGroup(allChannelsGroup);
+              localStorage.setItem('selectedChannelGroupId', allChannelsGroup.id || '');
+            } else {
+              setSelectedGroup(groups[0]);
+              if (groups[0].id) {
+                localStorage.setItem('selectedChannelGroupId', groups[0].id);
+              }
+            }
+          }
         } else {
           // Default to 'All Channels' tab if no saved tab or saved tab not found
           const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
@@ -48,7 +73,7 @@ export default function ChannelTabs() {
         }
       }
     }
-  }, [groups, setSelectedGroup]);
+  }, [groups, setSelectedGroup, channelPageData, router.query.id]);
 
   const clickTab = useCallback(
     (group: ChannelGroupType) => {
