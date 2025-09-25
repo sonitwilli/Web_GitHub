@@ -17,13 +17,35 @@ export default function ChannelTabs() {
   const { groups } = channelPageData || {};
   useEffect(() => {
     if (groups && groups?.length > 0 && setSelectedGroup) {
-      // Always default to 'All Channels' tab
-      const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
-      if (allChannelsGroup) {
-        setSelectedGroup(allChannelsGroup);
+      // Try to restore selected tab from localStorage
+      if (typeof window !== 'undefined') {
+        const savedGroupId = localStorage.getItem('selectedChannelGroupId');
+        const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
+        
+        if (savedGroup) {
+          setSelectedGroup(savedGroup);
+        } else {
+          // Default to 'All Channels' tab if no saved tab or saved tab not found
+          const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
+          if (allChannelsGroup) {
+            setSelectedGroup(allChannelsGroup);
+            localStorage.setItem('selectedChannelGroupId', allChannelsGroup.id || '');
+          } else {
+            // Fallback to first group if 'all' type not found
+            setSelectedGroup(groups[0]);
+            if (groups[0].id) {
+              localStorage.setItem('selectedChannelGroupId', groups[0].id);
+            }
+          }
+        }
       } else {
-        // Fallback to first group if 'all' type not found
-        setSelectedGroup(groups[0]);
+        // Server-side: default to 'All Channels' tab
+        const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
+        if (allChannelsGroup) {
+          setSelectedGroup(allChannelsGroup);
+        } else {
+          setSelectedGroup(groups[0]);
+        }
       }
     }
   }, [groups, setSelectedGroup]);
@@ -32,6 +54,10 @@ export default function ChannelTabs() {
     (group: ChannelGroupType) => {
       if (setSelectedGroup) {
         setSelectedGroup(group);
+        // Save selected tab to localStorage for persistence across navigation
+        if (typeof window !== 'undefined' && group.id) {
+          localStorage.setItem('selectedChannelGroupId', group.id);
+        }
       }
     },
     [setSelectedGroup],

@@ -44,6 +44,12 @@ export default function ChannelItem({
     router.push({
       pathname: `/xem-truyen-hinh/${channel.id}`,
     });
+    
+    // If navigating from suggested channels (right sidebar), always clear saved tab to reset to "All Channels"
+    if (isSuggest && typeof window !== 'undefined') {
+      localStorage.removeItem('selectedChannelGroupId');
+    }
+    
     console.log('selectedGroup', selectedGroup, isSuggest);
     sessionStorage.setItem(
       trackingStoreKey.CHANNEL_SELECTED_GROUP,
