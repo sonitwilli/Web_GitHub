@@ -276,6 +276,9 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
   const handlePaused = () => {
     setIsPlaying(false);
     setIsPaused(true);
+    if (videoRef?.current) {
+      videoRef.current.pause();
+    }
   };
 
   const clickPlay = () => {
@@ -397,7 +400,12 @@ export default function AutoExpansionSlideItem({ slide }: Props) {
               isHover || isPlaying ? 'flex' : 'hidden pointer-events-none'
             }`}
             ref={videoContainerRef}
-            onClick={() => handlePaused()}
+            onClick={() => {
+              if (videoRef?.current) {
+                videoRef.current.pause();
+              }
+              handlePaused();
+            }}
           >
             <video
               ref={videoRef}
