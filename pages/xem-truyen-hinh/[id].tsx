@@ -4,6 +4,7 @@ import {
   ChannelItemType,
   ChannelResponseDataType,
   getChannels,
+  getChannelDetail,
   ScheduleData,
   ScheduleItem,
 } from '@/lib/api/channel';
@@ -33,7 +34,7 @@ import ChannelsByGroup from '@/lib/components/channel/ChannelsByGroup';
 import type { GetServerSideProps } from 'next';
 import slug from 'slug';
 import dynamic from 'next/dynamic';
-import { createSeoPropsFromMeta } from '@/lib/utils/seo';
+import { createSeoPropsFromChannelData } from '@/lib/utils/seo';
 import type { SeoProps } from '@/lib/components/seo/SeoHead';
 
 import PlayerPageContextWrapper from '@/lib/components/player/context/PlayerPageContextWrapper';
@@ -439,11 +440,11 @@ function ChannelPageContent() {
                 </div>
               )}
               <div
-                className={`ChannelSearch-ChannelTabs mt-[21px] xl:mt-[32px] ${
+                className={`ChannelSearch-ChannelTabs  mt-[48px] tablet:mt-[21px] xl:mt-[32px] ${
                   width >= 1280
                     ? 'f-container'
                     : 'w-screen hide-scroll border-b border-charleston-green'
-                } ${isSearch ? 'border-0 border-b-0' : 'overflow-auto'}`}
+                } ${isSearch ? 'border-0 border-b-0' : 'overflow-x-auto overflow-y-hidden'}`}
               >
                 <div className={`${width < 1280 ? 'f-container' : ''}`}>
                   {isSearch && (
@@ -527,16 +528,46 @@ export default function ChannelPage() {
   );
 }
 
+// Create fallback SEO props for channel pages
+const createFallbackSeoProps = (channelId?: string) => {
+  return createSeoPropsFromChannelData(
+    null,
+    channelId || 'unknown',
+    'FPT Play - Xem Truyền Hình | TV Online Chất Lượng Cao',
+    'Xem truyền hình trực tuyến chất lượng cao trên FPT Play - Hàng trăm kênh TV trong nước và quốc tế, cập nhật 24/7.',
+  );
+};
+
 export const getServerSideProps = (async (context) => {
   const { id } = context.params as { id: string };
 
-  const seoProps = await createSeoPropsFromMeta({
-    pageId: id,
-    fallbackTitle: 'FPT Play - Xem Truyền Hình | TV Online Chất Lượng Cao',
-    fallbackDescription:
-      'Xem truyền hình trực tuyến chất lượng cao trên FPT Play - Hàng trăm kênh TV trong nước và quốc tế, cập nhật 24/7.',
-    pathPrefix: '/xem-truyen-hinh',
-  });
+  if (id) {
+    try {
+      const channelRes = await getChannelDetail({ channelId: id });
+      const channelData = channelRes?.data?.Channel;
+      
+      const channelSeoData = channelData?.seo;
+      const channelName = channelData?.name || channelData?.alias_name;
+      const channelDescription = channelData?.description;
+      const channelThumb = channelData?.thumb || channelData?.original_logo;
 
-  return { props: { seoProps, key: new Date().getTime() } };
+      const seoProps = createSeoPropsFromChannelData(
+        channelSeoData,
+        id,
+        channelName ? channelName : undefined,
+        channelDescription || undefined,
+        channelThumb,
+      );
+
+      return { props: { seoProps, key: new Date().getTime() } };
+    } catch {
+      const fallbackSeoProps = createFallbackSeoProps(id);
+      return {
+        props: { key: new Date().getTime(), seoProps: fallbackSeoProps },
+      };
+    }
+  } else {
+    const fallbackSeoProps = createFallbackSeoProps();
+    return { props: { key: new Date().getTime(), seoProps: fallbackSeoProps } };
+  }
 }) satisfies GetServerSideProps<{ seoProps: SeoProps; key: number }>;

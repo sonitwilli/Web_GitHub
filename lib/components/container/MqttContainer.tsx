@@ -1,40 +1,51 @@
-import { getMqttConfigs } from '@/lib/api/mqtt';
-import { MQTT_CONFIG } from '@/lib/constant/texts';
 import { useMqtt } from '@/lib/hooks/useMqtt';
-import { useAppDispatch, useAppSelector } from '@/lib/store';
-import { changeMqttConfig } from '@/lib/store/slices/mqttSlice';
-import { useEffect, useRef } from 'react';
+import { store, useAppDispatch, useAppSelector } from '@/lib/store';
+import {
+  changeIsAlreadyGetMqttConfig,
+  changeIsAlreadyRunConnect,
+} from '@/lib/store/slices/mqttSlice';
+import { useEffect } from 'react';
 
 export default function MqttContainer() {
   const { configs: appConfigs } = useAppSelector((state) => state.app);
-  const { connectMqtt } = useMqtt();
+  const { handleGetMqttConfigs, connectMqtt } = useMqtt();
   const dispatch = useAppDispatch();
-  const isCheck = useRef(false);
-  const handleGetMqttConfigs = async () => {
-    try {
-      const res = await getMqttConfigs();
-      if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(
-          MQTT_CONFIG,
-          JSON.stringify(res?.data?.data || {}),
-        );
-      }
-      dispatch(changeMqttConfig(res?.data?.data || {}));
-    } catch {}
-  };
+  const { isGetMqttConfigSuccess, isAlreadyRunConnect } = useAppSelector(
+    (s) => s.mqtt,
+  );
   const handleCheckConfigs = async () => {
     if (appConfigs) {
-      if (isCheck?.current) {
-        return;
-      }
       const keys = Object.keys(appConfigs);
       if (keys.length > 0) {
-        isCheck.current = true;
+        const { isAlreadyGetMqttConfig } = store.getState().mqtt;
+        if (isAlreadyGetMqttConfig) {
+          return;
+        }
+        dispatch(changeIsAlreadyGetMqttConfig(true));
         await handleGetMqttConfigs();
-        connectMqtt();
       }
     }
   };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleConnectMqtt = () => {
+    try {
+      connectMqtt();
+    } catch {}
+  };
+
+  useEffect(() => {
+    if (isGetMqttConfigSuccess && !isAlreadyRunConnect) {
+      dispatch(changeIsAlreadyRunConnect(new Date().getTime()));
+      handleConnectMqtt();
+    }
+  }, [
+    isGetMqttConfigSuccess,
+    isAlreadyRunConnect,
+    dispatch,
+    handleConnectMqtt,
+  ]);
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {

@@ -262,6 +262,26 @@ const ListEspisodeComponent = ({ position }: Props) => {
     }
   }, [handleScroll, isFullscreen, position]);
 
+  // Auto-scroll pagination tabs when current page changes
+  useEffect(() => {
+    if (!emblaApi || isManualPageChange) return;
+
+    // Calculate which tab index should be visible for the current page
+    const targetTabIndex = currentPage - 1;
+    
+    // Get current visible range of the carousel
+    const slides = emblaApi.slideNodes();
+    const slidesInView = emblaApi.slidesInView();
+    
+    // Check if the target tab is already visible
+    const isTargetVisible = slidesInView.includes(targetTabIndex);
+    
+    if (!isTargetVisible && slides.length > 0) {
+      // Scroll to show the target tab
+      emblaApi.scrollTo(targetTabIndex);
+    }
+  }, [currentPage, emblaApi, isManualPageChange]);
+
   useEffect(() => {
     if (!emblaApi) return;
     const onSelect = () => {

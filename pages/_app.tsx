@@ -66,6 +66,12 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
     });
 
   const checkDeviceId = () => {
+    if (typeof window !== 'undefined') {
+      if (window.name !== 'exist') {
+        window.name = 'exist';
+        sessionStorage.removeItem(TAB_ID);
+      }
+    }
     const deviceId = localStorage.getItem(DEVICE_ID);
     const tabId = sessionStorage.getItem(TAB_ID);
     if (!deviceId) {

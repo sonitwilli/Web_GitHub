@@ -331,19 +331,26 @@ const CreateManagementCodeModal = forwardRef<
 
             <button
               type="button"
-              onClick={handleSubmit(onSubmit)}
+              onClick={
+                password.length > 0 &&
+                confirmPassword.length > 0 &&
+                password === confirmPassword &&
+                !errorResponseNewPassword
+                  ? handleSubmit(onSubmit)
+                  : undefined
+              }
               disabled={
                 password.length > 0 &&
                 confirmPassword.length > 0 &&
                 password !== confirmPassword
               }
-              className={`cursor-pointer w-full mt-[16px] h-12 rounded-[40px] text-base font-medium ${
+              className={`w-full mt-[16px] h-12 rounded-[40px] text-base font-medium ${
                 password.length > 0 &&
                 confirmPassword.length > 0 &&
                 password === confirmPassword &&
                 !errorResponseNewPassword
-                  ? styles.enabledButton
-                  : styles.disabledButton
+                  ? `${styles.enabledButton} cursor-pointer`
+                  : `${styles.disabledButton} cursor-not-allowed`
               }`}
             >
               Xác nhận

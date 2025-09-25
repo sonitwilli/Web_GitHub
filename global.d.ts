@@ -1,4 +1,4 @@
-import Hls from "hls.js";
+import Hls from 'hls.js';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export {};
@@ -34,6 +34,5 @@ declare global {
     safariCheckErrorInterRef: NodeJS.Timeout | null;
     _inited?: boolean;
     _currentPathname?: string;
-
   }
 }

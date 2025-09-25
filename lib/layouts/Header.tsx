@@ -163,8 +163,7 @@ export default function Header() {
   const [isLoadingUserData, setIsLoadingUserData] = useState(true);
 
   const currentProfile = useMemo(() => {
-    const userProfileId =
-      userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
+    const userProfileId = userInfo?.info?.profile?.profile_id || isTabMultiPrf?.profile_id;
     return profiles.find((p) => p.profile_id === userProfileId);
   }, [profiles, userInfo, isTabMultiPrf]);
   const { adsLoaded } = useAppSelector((state) => state.app);
@@ -192,7 +191,7 @@ export default function Header() {
   useEffect(() => {
     const localUser = localStorage.getItem(USER);
     if (!userInfo?.info?.profile?.profile_id && localUser) {
-      dispatch(changeUserInfo(localUser as UserInfoResponseType));
+      dispatch(changeUserInfo(JSON.parse(localUser as string) as UserInfoResponseType));
       fetchProfiles();
     } else {
       // Nếu không có user data để load, set loading = false
@@ -237,8 +236,8 @@ export default function Header() {
             if (typeof initFn === 'function') {
               try {
                 setTimeout(() => {
-                  window._inited = false
-                  window._currentPathname  = ""
+                  window._inited = false;
+                  window._currentPathname = '';
                   initFn();
                 }, 1000);
               } catch {}

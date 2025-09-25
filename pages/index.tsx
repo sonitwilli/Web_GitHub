@@ -13,7 +13,7 @@ import { trackingLoadBlockDisplayLog511 } from '@/lib/hooks/useTrackingHome';
 
 export const getServerSideProps = (async () => {
   const seoProps = await createSeoPropsFromMeta({
-    pageId: 'home',
+    pageId: '',
     fallbackTitle:
       'FPT Play - Trang Chủ | Xem Phim, Show, Anime, TV, Thể Thao Miễn Phí',
     fallbackDescription:
@@ -56,7 +56,7 @@ export default function HomePage() {
         >
           <div className="mb-[40px] xl:mb-0">
             {highLightBlockData?.data &&
-            highLightBlockData?.data?.length > 0 ? (
+            highLightBlockData?.data?.length > 0 && blocksSortedRecommend?.length > 0 ? (
               <EmblaTopSlider
                 slidesItems={highLightBlockData || {}}
                 block={highLightBlock}

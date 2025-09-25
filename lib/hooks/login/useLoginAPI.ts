@@ -59,6 +59,7 @@ import {
   UNDERSTOOD_BUTTON_TEXT,
   CLOSE_LOGIN_MODAL_NOW,
   LOGIN_ERROR_MESSAGE,
+  QUICK_LOGIN_OTP_CODE,
 } from '@/lib/constant/texts';
 import { Oidc } from '@/lib/oidc';
 import { store } from '@/lib/store';
@@ -294,6 +295,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           phone,
           client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
           type: 'login_fpl',
+          mode: 'interactive',
         });
 
         const { error_code, data, msg } =
@@ -373,9 +375,11 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
     async ({
       phone,
       verifyToken,
+      method,
     }: {
       phone?: string;
       verifyToken?: string;
+      method?: string;
     }) => {
       try {
         const resSendOTP = await onSendOTP({
@@ -383,6 +387,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
           type_otp: 'login_fpl',
           verify_token: verifyToken || '',
+          method_otp: method || '',
         });
 
         const dataSendOTP = resSendOTP.data;
@@ -467,12 +472,13 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   );
 
   const handleReSendOTP = useCallback(
-    async ({ phone }: { phone?: string }) => {
+    async ({ phone, method }: { phone?: string; method?: string }) => {
       try {
         const resReSendOTP = await onResendOTP({
           phone: phone || '',
           client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
           type_otp: 'login_fpl',
+          method_otp: method || '',
         });
 
         const dataReSendOTP = resReSendOTP?.data;
@@ -683,7 +689,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
   );
 
   const handleVerifyOTP = useCallback(
-    async ({ phone, otpCode }: { phone?: string; otpCode?: string }) => {
+    async ({ phone, otpCode, method }: { phone?: string; otpCode?: string; method?: string }) => {
       try {
         if (!phone || !otpCode) return;
         reset.verify(); // reset
@@ -693,6 +699,7 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
           client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
           type_otp: 'login_fpl',
           otp_code: otpCode,
+          method_otp: method || '',
         });
 
         const data = resVerifyOTP?.data;
@@ -762,17 +769,28 @@ export function useLoginAPI({}: { visible: boolean; onClose: () => void }) {
       if (!deviceIds?.length) return;
 
       try {
+        const isHasQuickLogin = sessionStorage.getItem(QUICK_LOGIN_OTP_CODE);
+        const loginType = localStorage.getItem(TYPE_LOGIN);
+
         const responseRemove = await removeDevicesLimit({
           list_ids: deviceIds,
           verify_token: storeVerifyToken,
-          ignore_token: '0',
-          required_login: '0',
+          ignore_token: isHasQuickLogin ? '1' : '0',
+          required_login: isHasQuickLogin ? '1' : '0',
+          login_type: loginType?.toLowerCase() || '',
         });
 
         const data = responseRemove?.data;
         const errorCode = data?.error_code;
 
         if (errorCode === '0') {
+          // Quick Login ------------
+          if (isHasQuickLogin) {
+            dispatch(closeLoginModal());
+            window.location.reload();
+            return;
+          }
+          // ------------------------
           await onLoginSuccess(data, handleUserInfo, showNotificationModal);
           cleanupLogin();
           return;

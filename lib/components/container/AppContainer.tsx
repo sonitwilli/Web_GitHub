@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useMemo, useState } from 'react';
 import { ConfigDataType, getConfigs } from '@/lib/api/main';
 import { getMenus, MenuItem } from '@/lib/api/menu';
 import { setCookie } from 'cookies-next';
@@ -34,11 +34,19 @@ import useTabActivity from '@/lib/hooks/useTabActivity';
 import { saveSessionStorage } from '@/lib/utils/storage';
 import { showToast } from '@/lib/utils/globalToast';
 import { userAgentInfo } from '@/lib/utils/ua';
+import { subscribeFirebaseNoti } from '@/lib/utils/firebaseNotiManager';
+import { DetailMessageItem } from '@/lib/plugins/firebase';
 const Chatbot = dynamic(() => import('@/lib/components/chatbot/Chatbot'), {
   ssr: false,
 });
 const MqttContainer = dynamic(
   () => import('@/lib/components/container/MqttContainer'),
+  {
+    ssr: false,
+  },
+);
+const NotificationPopup = dynamic(
+  () => import('@/lib/components/notification/NotificationPopup'),
   {
     ssr: false,
   },
@@ -74,6 +82,14 @@ export default function AppContainer({ children }: Props) {
     (state: RootState) => state.loginFlow,
   );
   const { checkUserInfo, checkLoginComplete } = useCheckUserInfo();
+
+  const { notiData } = useAppSelector((state) => state.firebase);
+  const [detailNoti, setDetailNoti] = useState<DetailMessageItem | null>(null);
+  const shouldHideNotification = useMemo(() => {
+    if (!detailNoti?.type_id || typeof window === 'undefined') return false;
+    return router.asPath.includes(detailNoti.type_id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [detailNoti]);
 
   const checkLogin = () => {
     if (localStorage && localStorage?.getItem(TOKEN)) {
@@ -160,6 +176,15 @@ export default function AppContainer({ children }: Props) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router.isReady, menus]);
+
+  useEffect(() => {
+    if (notiData && notiData.length > 0) {
+      subscribeFirebaseNoti(notiData, (newNoti) => {
+        setDetailNoti(null);
+        setTimeout(() => setDetailNoti(newNoti), 50);
+      });
+    }
+  }, [notiData]);
 
   useEffect(() => {
     checkUserInfo();
@@ -249,6 +274,17 @@ export default function AppContainer({ children }: Props) {
       }}
     >
       <MqttContainer />
+      {detailNoti &&
+        (detailNoti.title || detailNoti.body) &&
+        !shouldHideNotification && (
+          <NotificationPopup
+            title={detailNoti.title}
+            body={detailNoti.body}
+            image={detailNoti.image}
+            url={detailNoti.url}
+            message_id={detailNoti.message_id}
+          />
+        )}
       {children}
       {info?.chatbot === '1' ? <Chatbot /> : ''}
     </AppContext.Provider>

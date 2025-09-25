@@ -82,7 +82,7 @@ const ProfileInfo: React.FC = () => {
     return (
       <div className="select-none font-normal">
         <div className="profile-info">
-          <h1 className="profile-info__title text-[20px] tablet:text-[28px] font-semibold text-white leading-9 xl:mt-[9px]">
+          <h1 className="profile-info__title text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold text-white leading-9 xl:mt-[9px]">
             {profilesMetaData?.title_manager || 'Quản lý hồ sơ'}
           </h1>
           <ErrorData onRetry={refetchProfiles} />
@@ -94,11 +94,11 @@ const ProfileInfo: React.FC = () => {
   return (
     <div className="select-none font-normal">
       <div className="profile-info">
-        <h1 className="profile-info__title text-[20px] tablet:text-[28px] font-semibold text-white leading-9 xl:mt-[9px]">
+        <h1 className="profile-info__title text-[20px] tablet:text-[24px] xl:text-[28px] font-semibold text-white leading-9 xl:mt-[9px]">
           {profilesMetaData?.title_manager || 'Quản lý hồ sơ'}
         </h1>
         {profilesList && profilesList.length > 0 ? (
-          <div className="profile-info__list-user mt-6 flex max-w-[914px] flex-col items-start gap-4 rounded-lg">
+          <div className="profile-info__list-user mt-6 flex max-w-[856px] flex-col items-start gap-4 rounded-lg">
             {profilesList.map((item, idx) => (
               <ProfileUser
                 key={idx}

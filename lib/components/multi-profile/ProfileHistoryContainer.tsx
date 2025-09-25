@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { ERROR_CONNECTION, HAVING_ERROR } from '@/lib/constant/texts';
 import NoData from '../empty-data/NoData';
 import ErrorData from '../error/ErrorData';
+import { wait } from '@/lib/utils/promise';
 
 interface ProfileHistoryData {
   list_history: HistoryItem[];
@@ -62,25 +63,29 @@ const ProfileHistoryContainer: React.FC = () => {
       setSideBarLeft({
         text: 'Thông tin hồ sơ',
         url: `${window?.location?.origin}/tai-khoan?tab=ho-so&child=quan-ly-va-tuy-chon`,
-      })
+      }),
     );
 
-    let user: Profile | null = selectedProfile;
-    if (!user && typeof window !== 'undefined') {
-      try {
-        const userTemp = localStorage.getItem('userSelected');
-        if (userTemp) {
-          user = JSON.parse(userTemp);
+    const getDataProfile = async () => {
+      let user: Profile | null = selectedProfile;
+      if (!user && typeof window !== 'undefined') {
+        try {
+          const userTemp = localStorage.getItem('userSelected');
+          if (userTemp) {
+            user = JSON.parse(userTemp);
+          }
+        } catch (err) {
+          console.error('Error parsing userSelected from localStorage:', err);
         }
-      } catch (err) {
-        console.error('Error parsing userSelected from localStorage:', err);
       }
-    }
-    setUserSelect(user);
+      setUserSelect(user);
 
-    if (user?.profile_id) {
-      getProfileHistory(user);
-    }
+      if (user?.profile_id) {
+        await wait({ time: 1000 });
+        getProfileHistory(user);
+      }
+    };
+    getDataProfile();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProfile]);
 
@@ -116,7 +121,7 @@ const ProfileHistoryContainer: React.FC = () => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isPerPage]
+    [isPerPage],
   );
 
   const deleteProfileHistory = async (profile_id: string) => {
@@ -125,11 +130,13 @@ const ProfileHistoryContainer: React.FC = () => {
 
       if (res?.data.status === '1') {
         setProfileHistory({ list_history: [] });
-        if (userSelect) {
-          getProfileHistory(userSelect);
-        }
+        // if (userSelect) {
+        //   await wait({ time: 1000 });
+        //   getProfileHistory(userSelect);
+        // }
         confirmModalRef.current?.closeModal();
       } else {
+        confirmModalRef.current?.closeModal();
         // Assume showToast is a utility function
         showToast({
           title: res?.data?.message?.title || ERROR_CONNECTION,
@@ -171,9 +178,9 @@ const ProfileHistoryContainer: React.FC = () => {
   };
 
   return (
-    <div className="profile-history min-h-[60vh] select-none font-normal text-white xl:mt-[9px]">
-      <div className="profile-history-group flex max-w-full xl:max-w-[914px] items-center justify-between flex-shrink-0">
-        <span className="text-[20px] xl:text-2xl font-medium">
+    <div className="profile-history min-h-[60vh] select-none font-normal text-white xl:mt-[4px]">
+      <div className="profile-history-group flex max-w-full xl:max-w-[856px] items-center justify-between flex-shrink-0">
+        <span className="text-[24px] xl:text-[28px] font-medium">
           Lịch sử xem của {userSelect?.name}
         </span>
         {profileHistory?.list_history?.length > 0 && (
@@ -187,7 +194,7 @@ const ProfileHistoryContainer: React.FC = () => {
         )}
       </div>
       {profileHistory?.list_history?.length > 0 && !isLoading ? (
-        <div className="profile-history__selected mt-6 max-w-full xl:max-w-[914px] rounded-lg bg-eerie-black p-6">
+        <div className="profile-history__selected mt-6 max-w-full xl:max-w-[856px] rounded-lg bg-eerie-black p-6">
           <ProfileHistory
             data={dataWatching}
             isMore={dataWatching.length < profileHistory.list_history.length}

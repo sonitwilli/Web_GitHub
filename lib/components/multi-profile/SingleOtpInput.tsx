@@ -8,6 +8,7 @@ export interface SingleOtpInputProps {
   inputType?: 'tel' | 'password' | 'text';
   isLastChild?: boolean;
   shouldAutoFocus?: boolean;
+  disableAutoMask?: boolean;
   onPaste?: (event: React.ClipboardEvent<HTMLInputElement>) => void;
   onFocus?: () => void;
   onBlur?: () => void;
@@ -19,7 +20,9 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
   value = '',
   focus = false,
   inputClasses = '',
+  inputType = 'tel',
   shouldAutoFocus = false,
+  disableAutoMask = false,
   onPaste,
   onFocus,
   onBlur,
@@ -51,7 +54,7 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
   }, [inputClasses]);
 
   useEffect(() => {
-    if (model) {
+    if (model && !disableAutoMask) {
       setShowPassword(false);
       const timer = setTimeout(() => {
         setShowPassword(true);
@@ -61,7 +64,7 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
     } else {
       setShowPassword(false);
     }
-  }, [model]);
+  }, [model, disableAutoMask]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // Only allow numeric input
@@ -112,7 +115,7 @@ const SingleOtpInput: React.FC<SingleOtpInputProps> = ({
         id={focus ? 'otp-input-focus' : undefined}
         ref={inputRef}
         value={model}
-        type={showPassword ? 'password' : 'tel'}
+        type={showPassword ? 'password' : inputType}
         inputMode="numeric"
         pattern="[0-9]*"
         min="0"

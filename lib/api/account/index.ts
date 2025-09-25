@@ -58,10 +58,12 @@ export const validateDisableUser = async (): Promise<
 export const sendOtpDeleteAccountNewFlow = async (
   phone: string,
   verify_token: string,
+  method_otp?: string,
 ): Promise<AxiosResponse<SendOtpNewFlowResponse>> => {
   return axiosInstance.post('/account/otp/send', {
     phone,
     type_otp: SEND_OTP_TYPES.DELETE_ACCOUNT,
+    method_otp,
     verify_token,
     client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
   });

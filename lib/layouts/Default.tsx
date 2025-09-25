@@ -7,9 +7,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import useFirebase from '../hooks/useFirebase';
 import ScrollTop from '../components/buttons/ScrollTop';
 import { AppContext } from '../components/container/AppContainer';
-import { subscribeFirebaseNoti } from '../utils/firebaseNotiManager';
-import { useAppSelector } from '../store';
-import { DetailMessageItem } from '../plugins/firebase';
+
 import PreventKidModal from '@/lib/components/modal/PreventKidModal';
 import { useRouter } from 'next/router';
 import SideTagButton from '@/lib/components/buttons/SideTagButton';
@@ -28,13 +26,6 @@ const BlockHoverItem = dynamic(
   },
 );
 
-const NotificationPopup = dynamic(
-  () => import('../components/notification/NotificationPopup'),
-  {
-    ssr: false,
-  },
-);
-
 const DownloadAppControlBar = dynamic(
   () => import('@/lib/components/download/DownloadAppControlBar'),
   { ssr: false },
@@ -47,8 +38,7 @@ interface Props {
 function DefaultLayoutContent({ children }: Props) {
   const router = useRouter();
   useFirebase();
-  const { notiData } = useAppSelector((state) => state.firebase);
-  const [detailNoti, setDetailNoti] = useState<DetailMessageItem | null>(null);
+
   const { hasBlockedRoute } = useNetwork();
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
@@ -71,15 +61,6 @@ function DefaultLayoutContent({ children }: Props) {
 
   //   return false;
   // }, []);
-
-  useEffect(() => {
-    if (notiData && notiData.length > 0) {
-      subscribeFirebaseNoti(notiData, (newNoti) => {
-        setDetailNoti(null);
-        setTimeout(() => setDetailNoti(newNoti), 50);
-      });
-    }
-  }, [notiData]);
 
   useEffect(() => {
     if (hasBlockedRoute) {
@@ -131,16 +112,6 @@ function DefaultLayoutContent({ children }: Props) {
       <Header />
       <main className={`${isMinHeightScreen ? 'min-h-screen' : ''}`}>
         {children}
-
-        {detailNoti && (detailNoti.title || detailNoti.body) && (
-          <NotificationPopup
-            title={detailNoti.title}
-            body={detailNoti.body}
-            image={detailNoti.image}
-            url={detailNoti.url}
-            message_id={detailNoti.message_id}
-          />
-        )}
 
         {width >= 1280 ? (
           <div className={`${block?.id && slide?.id ? '' : 'hidden'}`}>

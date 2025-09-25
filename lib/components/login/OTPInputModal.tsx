@@ -9,15 +9,20 @@ import {
 } from '@/lib/api/login';
 import ClickAnimation from '../animation/ClickAnimation';
 import { LOGIN_PHONE_NUMBER } from '@/lib/constant/texts';
+import { SwitchModeType } from '@/lib/api/login';
 
 type Props = {
   resPhoneInput?: verifyUserWithPhoneNumberResponse['data'] | null;
   resSendOTP?: onSendOTPResponse | null;
   resVerifyOTP?: onSubmitVerifyOTPResponse | null;
   error?: string;
-  handleSendOTP: (phone?: string, verifyToken?: string) => void;
-  handleReSendOTP: (phone?: string) => void;
-  handleVerifyOTP: (phone?: string, otpCode?: string) => void;
+  handleSendOTP: (
+    phone?: string,
+    verifyToken?: string,
+    method?: string,
+  ) => void;
+  handleReSendOTP: (phone?: string, method?: string) => void;
+  handleVerifyOTP: (phone?: string, otpCode?: string, method?: string) => void;
   onClose: () => void;
   otpCountdown: number;
 };
@@ -42,7 +47,10 @@ export default function OTPInputModal({
   const [isOtpValid, setIsOtpValid] = useState(false);
   const [errorResponse, setErrorResponse] = useState('');
   const [isLoadingReSendOTP, setIsLoadingReSendOTP] = useState(false);
-
+  const [showOtherMethods, setShowOtherMethods] = useState(false);
+  const [selectedMethod, setSelectedMethod] = useState<string>('');
+  const [switchMode, setSwitchMode] = useState<SwitchModeType | null>(null);
+  const [showOtherOtpMethods, setShowOtherOtpMethods] = useState(false);
   const otp = watch('otp');
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -79,6 +87,26 @@ export default function OTPInputModal({
   }, [otp, otpLength]);
 
   useEffect(() => {
+    if (
+      resPhoneInput?.switch_mode?.modes?.length &&
+      resPhoneInput.switch_mode.modes.length > 0
+    ) {
+      setSelectedMethod(resPhoneInput.switch_mode.default?.method || '');
+      setSwitchMode(resPhoneInput.switch_mode);
+    }
+  }, [resPhoneInput]);
+
+  useEffect(() => {
+    if (
+      resSendOTP?.data?.switch_mode?.modes?.length &&
+      resSendOTP.data.switch_mode.modes.length > 0
+    ) {
+      setSelectedMethod(resSendOTP.data.switch_mode.default?.method || '');
+      setSwitchMode(resSendOTP.data.switch_mode);
+    }
+  }, [resSendOTP]);
+
+  useEffect(() => {
     setErrorResponse(error || '');
   }, [error]);
 
@@ -90,32 +118,39 @@ export default function OTPInputModal({
     }
   };
 
-  const clickSendOTP = () => {
+  const clickSendOTP = (method: string) => {
     handleSendOTP(
       localStorage.getItem(LOGIN_PHONE_NUMBER) as string,
       resPhoneInput?.verify_token,
+      method,
     );
     setTimeout(() => inputRef.current?.focus(), 500);
   };
 
-  const clickReSendOTP = () => {
+  const clickReSendOTP = (method: string) => {
+    console.log('method', method);
     if (isLoadingReSendOTP || countdown > 0) return; // Prevent spam clicking and countdown
 
     setIsLoadingReSendOTP(true);
     setErrorResponse(''); // Clear previous errors
 
-    handleReSendOTP(localStorage.getItem(LOGIN_PHONE_NUMBER) as string);
+    handleReSendOTP(localStorage.getItem(LOGIN_PHONE_NUMBER) as string, method);
     setTimeout(() => inputRef.current?.focus(), 500);
   };
 
   const handleOtpSubmit = ({ otp }: { otp: string }) => {
     // Gọi API xác thực OTP tại đây nếu cần
-    handleVerifyOTP(localStorage.getItem(LOGIN_PHONE_NUMBER) as string, otp);
+    handleVerifyOTP(
+      localStorage.getItem(LOGIN_PHONE_NUMBER) as string,
+      otp,
+      selectedMethod,
+    );
     if (document.fullscreenElement) document.exitFullscreen();
   };
 
   const renderDescription = () => {
     const phone = resPhoneInput?.mask_phone || '';
+
     if (responseMsg.includes(phone)) {
       const [part1, part2] = responseMsg.split(phone);
       return (
@@ -138,7 +173,7 @@ export default function OTPInputModal({
           {' '}
           {resPhoneInput?.text_format?.[0] || 'Nhận mã OTP ngay'}{' '}
         </span>
-        để tiếp tục. Mã OTP sẽ được gửi đến số điện thoại
+        để nhận mã xác thực được gửi đến số điện thoại
         <span className="text-white-smoke font-semibold">
           {' '}
           {resPhoneInput?.text_format?.[1] || resPhoneInput?.mask_phone}{' '}
@@ -148,7 +183,7 @@ export default function OTPInputModal({
   };
 
   return (
-    <div className="fixed top-1/2 left-1/2 z-[1002] w-[320px] tablet:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] p-[24px] tablet:p-[32px] bg-eerie-black">
+    <div className="fixed top-1/2 left-1/2 z-[1002] w-[320px] tablet:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] p-[24px] pb-[8px] tablet:p-[32px] tablet:pb-[8px] bg-eerie-black">
       <div>
         <h1 className="text-[20px] mb-4 tablet:mb-8 tablet:text-2xl text-center tablet:text-left font-semibold text-smoke-white">
           {title || 'Xác thực mã OTP'}
@@ -157,15 +192,71 @@ export default function OTPInputModal({
         {renderDescription()}
 
         {!resSendOTP ? (
-          <button
-            onClick={clickSendOTP}
-            className="relative h-12 w-full rounded-[52px] fpl-bg text-white-smoke font-medium cursor-pointer"
-          >
-            {'Nhận mã OTP ngay'}
-            <div className="absolute top-1/2 right-4 w-[70px] h-[70px] tablet:w-[100px] tablet:h-[100px] -translate-y-1/2">
-              <ClickAnimation />
-            </div>
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={() =>
+                clickSendOTP(resPhoneInput?.switch_mode?.default?.method || '')
+              }
+              className="relative h-12 w-full rounded-[52px] fpl-bg text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 mb-[24px]"
+            >
+              {resPhoneInput?.switch_mode?.default?.icon && (
+                <img
+                  src={resPhoneInput.switch_mode.default.icon}
+                  alt="icon"
+                  className="w-6 h-6"
+                />
+              )}
+              {resPhoneInput?.switch_mode?.default?.text || 'Nhận mã OTP ngay'}
+              <div className="absolute top-1/2 right-4 w-[70px] h-[70px] tablet:w-[100px] tablet:h-[100px] -translate-y-1/2">
+                <ClickAnimation />
+              </div>
+            </button>
+
+            {/* Hiển thị text "Chọn phương thức khác" nếu có modes */}
+            {switchMode?.modes && switchMode.modes.length > 0 && (
+              <div className="text-center">
+                {!showOtherMethods && (
+                  <button
+                    onClick={() => setShowOtherMethods(!showOtherMethods)}
+                    className="text-fpl transition-colors text-[16px] font-medium mb-[24px]"
+                  >
+                    Chọn phương thức khác
+                  </button>
+                )}
+
+                {/* Dropdown hiển thị các phương thức khác */}
+                {showOtherMethods && (
+                  <div className="mt-2 space-y-2">
+                    {switchMode.modes.map((mode, index) => {
+                      if (mode.method !== switchMode?.default?.method) {
+                        return (
+                          <button
+                            key={index}
+                            onClick={() => {
+                              clickSendOTP(mode.method || '');
+                              setSelectedMethod(mode.method || '');
+                              setShowOtherMethods(false);
+                            }}
+                            className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors mb-[24px]"
+                          >
+                            {mode.icon && (
+                              <img
+                                src={mode.icon}
+                                alt="icon"
+                                className="w-6 h-6"
+                              />
+                            )}
+                            {mode.text}
+                          </button>
+                        );
+                      }
+                      return null;
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         ) : (
           <form
             onSubmit={handleSubmit(handleOtpSubmit)}
@@ -213,7 +304,7 @@ export default function OTPInputModal({
             ) : (
               <button
                 type="button"
-                onClick={clickReSendOTP}
+                onClick={() => clickReSendOTP(selectedMethod || '')}
                 disabled={isLoadingReSendOTP}
                 className="row-span-1 w-[138px] h-[48px] tablet:h-14 rounded-[52px] fpl-bg text-white-smoke text-[14px] tablet:text-base font-medium cursor-pointer hover:opacity-90 active:scale-[0.98]"
               >
@@ -242,6 +333,42 @@ export default function OTPInputModal({
             >
               Xác nhận
             </button>
+
+            {/* Hiển thị các phương thức OTP khác */}
+            {switchMode?.modes && switchMode.modes.length > 0 && (
+              <div className="col-span-2 mt-6">
+                <p
+                  className="text-[16px] font-medium text-spanish-gray mb-4 text-center"
+                  onClick={() => setShowOtherOtpMethods(!showOtherOtpMethods)}
+                >
+                  Bạn chưa nhận được mã?{' '}
+                  <span className="text-fpl">Chọn phương thức khác</span>
+                </p>
+                <div className="space-y-[20px]" hidden={!showOtherOtpMethods}>
+                  {switchMode.modes.map((mode, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        clickReSendOTP(mode.method || '');
+                        setSelectedMethod(mode.method || '');
+                      }}
+                      className="w-full h-12 cursor-pointer rounded-[40px] bg-charleston-green hover:bg-black-olive-404040 transition-colors flex items-center justify-center gap-3 px-4"
+                    >
+                      {mode.icon && (
+                        <img
+                          src={mode.icon}
+                          alt="icon"
+                          className="w-6 h-6 flex-shrink-0"
+                        />
+                      )}
+                      <span className="text-white-smoke font-normal text-[16px] text-center">
+                        {mode.text}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </form>
         )}
       </div>

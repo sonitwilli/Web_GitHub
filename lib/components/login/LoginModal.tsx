@@ -235,12 +235,12 @@ export default function LoginModal({ visible, onClose }: Props) {
             resSendOTP={resSendOTP}
             resVerifyOTP={resVerifyOTP}
             error={errors.otp}
-            handleSendOTP={(phone, verifyToken) =>
-              handlers.handleSendOTP({ phone, verifyToken })
+            handleSendOTP={(phone, verifyToken, method) =>
+              handlers.handleSendOTP({ phone, verifyToken, method })
             }
-            handleReSendOTP={(phone) => handlers.handleReSendOTP({ phone })}
-            handleVerifyOTP={(phone, otpCode) =>
-              handlers.handleVerifyOTP({ phone, otpCode })
+            handleReSendOTP={(phone, method) => handlers.handleReSendOTP({ phone, method })}
+            handleVerifyOTP={(phone, otpCode, method) =>
+              handlers.handleVerifyOTP({ phone, otpCode, method })
             }
             onClose={onClose}
             otpCountdown={otpCountdown}

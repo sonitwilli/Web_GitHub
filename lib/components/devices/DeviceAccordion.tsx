@@ -33,7 +33,7 @@ const DeviceAccordion: React.FC<DeviceAccordionProps> = ({
 
   return (
     <div
-      className={`bg-eerie-black rounded-xl mb-3 transition-all ${
+      className={`bg-eerie-black rounded-xl mb-4 transition-all ${
         expanded ? 'shadow-lg' : ''
       } ${isWhitelist ? 'cursor-not-allowed' : 'cursor-pointer'}`}
       onClick={isWhitelist ? undefined : onSelect}

@@ -13,6 +13,20 @@ export interface LoginParamsType {
   otp_code?: string;
 }
 
+
+export interface SwitchModeDefaultType {
+  icon?: string;
+  method?: string;
+  text?: string;
+}
+
+export interface SwitchModeType {
+  default?: SwitchModeDefaultType;
+  title?: string;
+  description?: string;
+  modes?: SwitchModeDefaultType[];
+}
+
 // --- Output ---
 export interface verifyUserWithPhoneNumberResponse {
   data?: {
@@ -23,6 +37,7 @@ export interface verifyUserWithPhoneNumberResponse {
     text_format?: string[];
     text_button?: string;
     seconds?: string;
+    switch_mode?: SwitchModeType;
   };
   error_code?: string;
   msg?: string;
@@ -37,6 +52,7 @@ export interface onSendOTPResponse {
     otp_length?: number | string;
     seconds?: number | string;
     title?: string;
+    switch_mode?: SwitchModeType;
   };
   error_code?: string;
   msg?: string;
@@ -135,6 +151,7 @@ const verifyUserWithPhoneNumber = async (data?: {
   phone?: string;
   client_id?: string;
   type?: string;
+  mode?: string;
 }): Promise<AxiosResponse<verifyUserWithPhoneNumberResponse>> => {
   try {
     return axiosInstance.post('/account/otp/validate_user', data);
@@ -159,6 +176,7 @@ const onSendOTP = async (data?: {
   phone?: string;
   client_id?: string;
   type_otp?: string;
+  method_otp?: string;
   verify_token?: string;
 }): Promise<AxiosResponse<onSendOTPResponse>> => {
   try {
@@ -172,6 +190,7 @@ const onResendOTP = async (data?: {
   phone?: string;
   client_id?: string;
   type_otp?: string;
+  method_otp?: string;
 }): Promise<AxiosResponse<onSendOTPResponse>> => {
   try {
     return axiosInstance.post('/account/otp/resend_otp', data);
@@ -199,6 +218,7 @@ const onSubmitVerifyOTP = async (data?: {
   client_id?: string;
   type_otp?: string;
   otp_code?: string;
+  method_otp?: string;
 }): Promise<AxiosResponse<onSubmitVerifyOTPResponse>> => {
   try {
     return axiosInstance.post('/account/otp/verify', data);
@@ -235,6 +255,7 @@ const removeDevicesLimit = async (data?: {
   verify_token?: string;
   ignore_token?: string;
   required_login?: string;
+  login_type?: string;
 }): Promise<AxiosResponse<onRemoveDevicesResponse>> => {
   try {
     return axiosInstance.post('/account/device/remove', data);

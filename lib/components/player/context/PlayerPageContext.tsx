@@ -402,7 +402,6 @@ export function PlayerPageContextProvider({ children }: Props) {
   const isEndedLiveCountdown = useSelector(
     (state: RootState) => state.player.isEndedLiveCountdown,
   );
-  const { isLogged } = useAppSelector((state) => state.user);
   const [previewHandled, setPreviewHandled] = useState(false);
   // const checkScreen = () => {
   //   if (typeof window === 'undefined') {
@@ -645,6 +644,7 @@ export function PlayerPageContextProvider({ children }: Props) {
           break;
         case 'on_refresh':
           window.location.reload();
+          break;
         case 'on_understood':
           router.push('/');
           break;
@@ -944,6 +944,12 @@ export function PlayerPageContextProvider({ children }: Props) {
             setShowLoginPlayer(true);
             setShowModalLogin(true);
             if (streamType === 'vod' || streamType === 'playlist') {
+              dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+            }
+            if (
+              (streamType === 'event' || streamType === 'premiere') &&
+              response?.data?.require_vip_plan
+            ) {
               dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
             }
           } else if (status === 406) {
@@ -1362,10 +1368,6 @@ export function PlayerPageContextProvider({ children }: Props) {
       // Re-init lại player flow sau khi chuẩn bị xong
       setDataStream({}); // <- force clear để Player component re-render lại
       getData(); // Gọi lại để fetch stream & phát lại
-    } else if (isPrepareLive === true) {
-      if (!isLogged && dataStream?.trailer_url) {
-        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPrepareLive, fetchChannelCompleted]);
