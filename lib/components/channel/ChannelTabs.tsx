@@ -3,10 +3,8 @@ import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import { useCallback, useContext, useEffect } from 'react';
 import { RiSearchLine } from 'react-icons/ri';
 import styles from './ChannelTabs.module.css';
-import { useRouter } from 'next/router';
 
 export default function ChannelTabs() {
-  const router = useRouter();
   const ctx = useContext(ChannelPageContext);
   const {
     channelPageData,
@@ -19,38 +17,38 @@ export default function ChannelTabs() {
   const { groups } = channelPageData || {};
   useEffect(() => {
     if (groups && groups?.length > 0) {
-      if (setSelectedGroup) setSelectedGroup(groups[0]);
-    }
-    if (router.isReady) {
-      const groupId = router.query.group;
-      const found = groups?.find(
-        (item: ChannelGroupType) => item.id === groupId,
-      );
-      if (found) {
-        if (setSelectedGroup) setSelectedGroup(found);
+      // Try to restore selected group from localStorage (client-side only)
+      if (typeof window !== 'undefined') {
+        const savedGroupId = localStorage.getItem('selectedChannelGroupId');
+        const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
+        
+        if (savedGroup && setSelectedGroup) {
+          setSelectedGroup(savedGroup);
+        } else if (setSelectedGroup) {
+          // Fall back to first group if no saved group or saved group not found
+          setSelectedGroup(groups[0]);
+          if (groups[0].id) {
+            localStorage.setItem('selectedChannelGroupId', groups[0].id);
+          }
+        }
+      } else if (setSelectedGroup) {
+        // Server-side: just set the first group
+        setSelectedGroup(groups[0]);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, router]);
+  }, [groups, setSelectedGroup]);
 
   const clickTab = useCallback(
     (group: ChannelGroupType) => {
-      if (router.isReady) {
-        if (setSelectedGroup) setSelectedGroup(group);
-        router.push(
-          {
-            query: {
-              ...router.query,
-              group: group?.id,
-            },
-          },
-          undefined,
-          { shallow: true },
-        );
+      if (setSelectedGroup) {
+        setSelectedGroup(group);
+        // Save selected group to localStorage (client-side only)
+        if (typeof window !== 'undefined' && group.id) {
+          localStorage.setItem('selectedChannelGroupId', group.id);
+        }
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router],
+    [setSelectedGroup],
   );
 
   const clickSearch = () => {
