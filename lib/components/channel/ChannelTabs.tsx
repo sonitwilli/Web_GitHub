@@ -3,10 +3,8 @@ import { ChannelPageContext } from '@/pages/xem-truyen-hinh/[id]';
 import { useCallback, useContext, useEffect } from 'react';
 import { RiSearchLine } from 'react-icons/ri';
 import styles from './ChannelTabs.module.css';
-import { useRouter } from 'next/router';
 
 export default function ChannelTabs() {
-  const router = useRouter();
   const ctx = useContext(ChannelPageContext);
   const {
     channelPageData,
@@ -21,36 +19,13 @@ export default function ChannelTabs() {
     if (groups && groups?.length > 0) {
       if (setSelectedGroup) setSelectedGroup(groups[0]);
     }
-    if (router.isReady) {
-      const groupId = router.query.group;
-      const found = groups?.find(
-        (item: ChannelGroupType) => item.id === groupId,
-      );
-      if (found) {
-        if (setSelectedGroup) setSelectedGroup(found);
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [groups, router]);
+  }, [groups, setSelectedGroup]);
 
   const clickTab = useCallback(
     (group: ChannelGroupType) => {
-      if (router.isReady) {
-        if (setSelectedGroup) setSelectedGroup(group);
-        router.push(
-          {
-            query: {
-              ...router.query,
-              group: group?.id,
-            },
-          },
-          undefined,
-          { shallow: true },
-        );
-      }
+      if (setSelectedGroup) setSelectedGroup(group);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [router],
+    [setSelectedGroup],
   );
 
   const clickSearch = () => {
