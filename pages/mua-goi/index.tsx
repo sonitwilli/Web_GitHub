@@ -24,8 +24,8 @@ export default BuyPackagePage;
 export const getServerSideProps = (async () => {
   const seoProps = await createSeoPropsFromMeta({
     pageId: 'mua-goi',
-    fallbackTitle: 'FPT Play - Mua Gói | Các Gói Dịch Vụ Giải Trí Hấp Dẫn',
-    fallbackDescription: 'Khám phá và mua các gói dịch vụ FPT Play với giá ưu đãi - Truy cập không giới hạn phim bộ, phim lẻ, thể thao và nhiều nội dung hấp dẫn khác.',
+    fallbackTitle: 'Đăng Ký Mua Gói FPT Play - Xem Ngay Nội Dung Yêu Thích',
+    fallbackDescription: 'Chọn gói FPT Play để xem phim, show, anime, thể thao và truyền hình trên nhiều thiết bị cùng lúc. Giải trí liền mạch, không giới hạn.',
     pathPrefix: '/mua-goi',
   });
 

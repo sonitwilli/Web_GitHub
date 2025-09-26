@@ -7,6 +7,7 @@ const getRobotsValueFromUrl = (url: string): string | null => {
   if (
     url.endsWith('/tv') || 
     url.includes('/tv?') || 
+    url.endsWith('/mua-goi') ||
     (url.includes('/xem-video/') && !url.includes('/tap-'))
   ) {
     return 'index, follow';
