@@ -17,60 +17,42 @@ export default function ChannelTabs() {
     channelsBySearchKey,
   } = ctx;
   const { groups } = channelPageData || {};
+  
   useEffect(() => {
-    if (groups && groups?.length > 0 && setSelectedGroup) {
-      // Try to restore selected tab from localStorage
-      if (typeof window !== 'undefined') {
-        const savedGroupId = localStorage.getItem('selectedChannelGroupId');
-        const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
-        
-        if (savedGroup) {
-          // Check if current channel (from deeplink) belongs to the saved tab
-          const currentChannelId = router.query.id as string;
-          const currentChannel = channelPageData?.channels?.find(channel => channel.id === currentChannelId);
-          
-          // If saved group is 'all' type, always use it (all channels belong to 'all')
-          if (savedGroup.type === 'all') {
-            setSelectedGroup(savedGroup);
-          } else if (currentChannel && currentChannel.group_id === savedGroup.id) {
-            // Current channel belongs to saved group, use saved group
-            setSelectedGroup(savedGroup);
-          } else {
-            // Current channel doesn't belong to saved group, reset to 'All Channels'
-            localStorage.removeItem('selectedChannelGroupId');
-            const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
-            if (allChannelsGroup) {
-              setSelectedGroup(allChannelsGroup);
-              localStorage.setItem('selectedChannelGroupId', allChannelsGroup.id || '');
-            } else {
-              setSelectedGroup(groups[0]);
-              if (groups[0].id) {
-                localStorage.setItem('selectedChannelGroupId', groups[0].id);
-              }
-            }
-          }
-        } else {
-          // Default to 'All Channels' tab if no saved tab or saved tab not found
-          const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
-          if (allChannelsGroup) {
-            setSelectedGroup(allChannelsGroup);
-            localStorage.setItem('selectedChannelGroupId', allChannelsGroup.id || '');
-          } else {
-            // Fallback to first group if 'all' type not found
-            setSelectedGroup(groups[0]);
-            if (groups[0].id) {
-              localStorage.setItem('selectedChannelGroupId', groups[0].id);
-            }
-          }
-        }
+    if (!groups?.length || !setSelectedGroup) return;
+
+    const defaultGroup = groups.find((group: ChannelGroupType) => group.type === 'all') || groups[0];
+
+    // Server-side rendering: just set default group
+    if (typeof window === 'undefined') {
+      setSelectedGroup(defaultGroup);
+      return;
+    }
+
+    // Client-side: check localStorage and validate with current channel
+    const savedGroupId = localStorage.getItem('selectedChannelGroupId');
+    const savedGroup = groups.find((group: ChannelGroupType) => group.id === savedGroupId);
+
+    if (savedGroup) {
+      // Check if current channel belongs to saved group
+      const currentChannelId = router.query.id as string;
+      const currentChannel = channelPageData?.channels?.find(channel => channel.id === currentChannelId);
+
+      if (currentChannel && currentChannel.group_id === savedGroup.id) {
+        setSelectedGroup(savedGroup);
       } else {
-        // Server-side: default to 'All Channels' tab
-        const allChannelsGroup = groups.find((group: ChannelGroupType) => group.type === 'all');
-        if (allChannelsGroup) {
-          setSelectedGroup(allChannelsGroup);
-        } else {
-          setSelectedGroup(groups[0]);
+        // Reset to default and clear localStorage
+        localStorage.removeItem('selectedChannelGroupId');
+        setSelectedGroup(defaultGroup);
+        if (defaultGroup?.id) {
+          localStorage.setItem('selectedChannelGroupId', defaultGroup.id);
         }
+      }
+    } else {
+      // No saved group, use default
+      setSelectedGroup(defaultGroup);
+      if (defaultGroup?.id) {
+        localStorage.setItem('selectedChannelGroupId', defaultGroup.id);
       }
     }
   }, [groups, setSelectedGroup, channelPageData, router.query.id]);
@@ -79,7 +61,6 @@ export default function ChannelTabs() {
     (group: ChannelGroupType) => {
       if (setSelectedGroup) {
         setSelectedGroup(group);
-        // Save selected tab to localStorage for persistence across navigation
         if (typeof window !== 'undefined' && group.id) {
           localStorage.setItem('selectedChannelGroupId', group.id);
         }
