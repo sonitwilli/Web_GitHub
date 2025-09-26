@@ -6,6 +6,7 @@ import { setUser, setToken } from '@/lib/store/slices/userSlice'; // Adjust base
 import { NUMBER_PR, TOKEN, TYPE_PR, USER } from '../constant/texts';
 import { deleteCookie } from 'cookies-next';
 import { AxiosError } from 'axios';
+import { useMqtt } from './useMqtt';
 
 interface User {
   user_id_str?: string;
@@ -19,7 +20,7 @@ interface LogoutState {
 export const useLogout = () => {
   const dispatch = useDispatch();
   const router = useRouter();
-
+  const { handleStopMqttUser } = useMqtt();
   const handleLogout = useCallback(
     async (state: LogoutState) => {
       try {
@@ -37,18 +38,32 @@ export const useLogout = () => {
         deleteCookie(NUMBER_PR);
         deleteCookie(TYPE_PR);
 
+        handleStopMqttUser({
+          cb: async () => {
+            setTimeout(async () => {
+              await router.push('/');
+              router.reload();
+            }, 200);
+          },
+        });
+
         // Redirect to home page
-        await router.push('/');
-        router.reload();
       } catch (error) {
-        if(error instanceof AxiosError && error.response?.status === 401) {
-          await router.push('/');
-        router.reload();
+        if (error instanceof AxiosError && error.response?.status === 401) {
+          handleStopMqttUser({
+            cb: async () => {
+              setTimeout(async () => {
+                await router.push('/');
+                router.reload();
+              }, 200);
+            },
+          });
         }
         console.error('Logout failed:', error);
         // Optionally handle error (e.g., show toast notification)
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch, router],
   );
 

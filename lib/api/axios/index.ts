@@ -7,10 +7,11 @@ import {
   REVISION,
 } from '@/lib/constant/texts';
 import { base64, md5 } from '@/lib/utils/hash';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
 import { browserRealVersion } from '@/lib/utils/getBrowser';
 import moment from 'moment';
+import { stopMqttManual } from '@/lib/hooks/useMqtt';
 
 export interface BrowserInfo {
   name?: string;
@@ -124,7 +125,13 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error),
+  (error) => {
+    const er = (error || {}) as AxiosError;
+    if (er?.status === 401) {
+      stopMqttManual();
+    }
+    return Promise.reject(error);
+  },
 );
 
 export { axiosInstance };

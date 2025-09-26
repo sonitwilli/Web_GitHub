@@ -4,10 +4,11 @@ import {
   NUMBER_PR,
   TYPE_PR,
 } from '@/lib/constant/texts';
+import { stopMqttManual } from '@/lib/hooks/useMqtt';
 import { base64, md5 } from '@/lib/utils/hash';
 import { browserInfo, getUserAgent, UserAgentType } from '@/lib/utils/methods';
 import { Secure } from '@/lib/utils/secure';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { getCookie } from 'cookies-next';
 
 export interface BrowserInfo {
@@ -62,7 +63,9 @@ axiosInstancePingDrm.interceptors.request.use(
     const fullUrl = $config.url || '';
     const arr = fullUrl.split(DEFAULT_API_SUFFIX);
     uriSend = arr[0] || '';
-    uriSend = uriSend.includes('?') ? uriSend.substr(0, uriSend.indexOf('?')) : uriSend;
+    uriSend = uriSend.includes('?')
+      ? uriSend.substr(0, uriSend.indexOf('?'))
+      : uriSend;
 
     const expireTime = Math.floor(new Date().getTime() / 1000) + 3600;
     const neKeyUser =
@@ -97,7 +100,14 @@ axiosInstancePingDrm.interceptors.request.use(
 
 axiosInstancePingDrm.interceptors.response.use(
   (response) => response,
-  (error) => Promise.reject(error),
+  // (error) => Promise.reject(error),
+  (error) => {
+    const er = (error || {}) as AxiosError;
+    if (er?.status === 401) {
+      stopMqttManual();
+    }
+    return Promise.reject(error);
+  },
 );
 
 export { axiosInstancePingDrm };

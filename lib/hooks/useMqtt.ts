@@ -3,7 +3,13 @@
 
 import { useEffect, useRef } from 'react';
 import mqtt, { MqttClient } from 'mqtt';
-import { MQTT_CONFIG } from '../constant/texts';
+import {
+  MQTT_CONFIG,
+  MQTT_CONNECT_SUCCESS,
+  MQTT_PUBLISH_STATUS,
+  MQTT_SUBSCRIBE_SUCCESS,
+  MQTT_SUBSCRIBE_TOPIC,
+} from '../constant/texts';
 import { store, useAppDispatch } from '../store';
 import { getMqttConfigs, MqttConfigType } from '../api/mqtt';
 import {
@@ -13,6 +19,63 @@ import {
   changeIsSubscribeSuccess,
   changeMqttConfig,
 } from '../store/slices/mqttSlice';
+import { removeSessionStorage, saveSessionStorage } from '../utils/storage';
+
+export const stopMqttManual = () => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  const connected = sessionStorage.getItem(MQTT_CONNECT_SUCCESS);
+  const subed = sessionStorage.getItem(MQTT_SUBSCRIBE_SUCCESS);
+  const topic = sessionStorage.getItem(MQTT_SUBSCRIBE_TOPIC);
+  if (
+    !window.mqttClient ||
+    connected !== 'true' ||
+    subed !== 'true' ||
+    !topic
+  ) {
+    return;
+  }
+  try {
+    console.log('--- MQTT Start UnSubscribe ' + new Date().toISOString(), {
+      topic,
+    });
+    window.mqttClient.unsubscribe(topic, (err, granted) => {
+      if (!err) {
+        console.log(
+          '--- MQTT UnSubscribe success ' + new Date().toISOString(),
+          { topic, granted },
+        );
+        saveSessionStorage({
+          data: [
+            {
+              key: MQTT_SUBSCRIBE_SUCCESS,
+              value: 'false',
+            },
+          ],
+        });
+        store.dispatch(changeIsSubscribeSuccess(false));
+        if (window.mqttClient?.connected) {
+          window.mqttClient.end(true, () => {
+            saveSessionStorage({
+              data: [
+                {
+                  key: MQTT_CONNECT_SUCCESS,
+                  value: 'false',
+                },
+              ],
+            });
+            console.log('--- MQTT Client ended ' + new Date().toISOString());
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            window.mqttClient = null;
+            store.dispatch(changeIsConnected(false));
+          });
+        }
+      }
+    });
+  } catch {}
+};
 
 export const useMqtt = () => {
   const retryConfigDelay = useRef(0);
@@ -105,64 +168,136 @@ export const useMqtt = () => {
 
   const subscribeUserAndDevice = ({
     action,
-  }: { action?: 'sub' | 'unsub' } = {}) => {
+    cbSuccess,
+    cbFailed,
+    cbAll,
+  }: {
+    action?: 'sub' | 'unsub';
+    cbSuccess?: () => void;
+    cbFailed?: () => void;
+    cbAll?: () => void;
+  } = {}) => {
+    if (action === 'unsub') {
+      const topic = sessionStorage.getItem(MQTT_SUBSCRIBE_TOPIC);
+      if (topic && window.mqttClient) {
+        console.log('--- MQTT Start UnSubscribe ' + new Date().toISOString(), {
+          topic,
+          action,
+        });
+        window.mqttClient.unsubscribe(topic, (err, granted) => {
+          if (!err) {
+            console.log(
+              '--- MQTT UnSubscribe success ' + new Date().toISOString(),
+              { topic, granted },
+            );
+            if (cbSuccess) {
+              cbSuccess();
+            }
+            if (cbAll) {
+              cbAll();
+            }
+            dispatch(changeIsSubscribeSuccess(false));
+            saveSessionStorage({
+              data: [
+                {
+                  key: MQTT_SUBSCRIBE_SUCCESS,
+                  value: 'false',
+                },
+              ],
+            });
+          } else {
+            console.log(
+              '--- MQTT UnSubscribe failed ' + new Date().toISOString(),
+              {
+                topic,
+                err,
+              },
+            );
+            if (cbFailed) {
+              cbFailed();
+            }
+            if (cbAll) {
+              cbAll();
+            }
+            dispatch(changeIsSubscribeSuccess(false));
+          }
+        });
+      }
+      return;
+    }
     try {
       const lc = localStorage?.getItem('user');
       const tk = localStorage?.getItem('token');
       const dv = sessionStorage.getItem('tabId');
 
-      if (lc && tk && dv) {
+      if (lc && tk && dv && window.mqttClient) {
         const user = JSON.parse(lc);
         if (user?.user_id_str) {
           const topic = `remote/${user?.user_id_str}/${dv}`;
-          console.log(
-            '--- MQTT Start Subscribe/UnSubscribe ' + new Date().toISOString(),
+          saveSessionStorage({
+            data: [
+              {
+                key: MQTT_SUBSCRIBE_TOPIC,
+                value: topic,
+              },
+            ],
+          });
+          console.log('--- MQTT Start Subscribe ' + new Date().toISOString(), {
+            topic,
+            action,
+          });
+          window.mqttClient.subscribe(
+            topic,
             {
-              topic,
+              qos: (Number(getRealConfigs()?.option?.qos) || 0) as 0 | 1 | 2,
             },
-          );
-          if (action === 'unsub') {
-            window.mqttClient.unsubscribe(topic, (err, granted) => {
+            (err, granted) => {
               if (!err) {
                 console.log(
-                  '--- MQTT UnSubscribe success ' + new Date().toISOString(),
+                  '--- MQTT Subscribe success ' + new Date().toISOString(),
                   { topic, granted },
                 );
+                dispatch(changeIsSubscribeSuccess(true));
+                saveSessionStorage({
+                  data: [
+                    {
+                      key: MQTT_SUBSCRIBE_SUCCESS,
+                      value: 'true',
+                    },
+                  ],
+                });
+                if (cbSuccess) {
+                  cbSuccess();
+                }
+                if (cbAll) {
+                  cbAll();
+                }
               } else {
+                saveSessionStorage({
+                  data: [
+                    {
+                      key: MQTT_SUBSCRIBE_SUCCESS,
+                      value: 'false',
+                    },
+                  ],
+                });
+                dispatch(changeIsSubscribeSuccess(false));
                 console.log(
-                  '--- MQTT UnSubscribe failed ' + new Date().toISOString(),
+                  '--- MQTT Subscribe failed ' + new Date().toISOString(),
                   {
                     topic,
                     err,
                   },
                 );
-              }
-            });
-          } else {
-            window.mqttClient.subscribe(
-              topic,
-              {
-                qos: (Number(getRealConfigs()?.option?.qos) || 0) as 0 | 1 | 2,
-              },
-              (err, granted) => {
-                if (!err) {
-                  console.log(
-                    '--- MQTT Subscribe success ' + new Date().toISOString(),
-                    { topic, granted },
-                  );
-                  dispatch(changeIsSubscribeSuccess(true));
-                } else {
-                  console.log(
-                    '--- MQTT Subscribe failed ' + new Date().toISOString(),
-                    {
-                      topic,
-                      err,
-                    },
-                  );
+                if (cbFailed) {
+                  cbFailed();
                 }
-              },
-            );
-          }
+                if (cbAll) {
+                  cbAll();
+                }
+              }
+            },
+          );
         }
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -172,6 +307,14 @@ export const useMqtt = () => {
   };
 
   const handleConnected = () => {
+    saveSessionStorage({
+      data: [
+        {
+          key: MQTT_CONNECT_SUCCESS,
+          value: 'true',
+        },
+      ],
+    });
     dispatch(changeIsConnected(true));
     const configData = getRealConfigs();
     retryConfigDelay.current = 0;
@@ -184,6 +327,15 @@ export const useMqtt = () => {
     subscribeTimeout.current = setTimeout(() => {
       subscribeUserAndDevice();
     }, 500);
+  };
+
+  const handleStopMqttUser = ({ cb }: { cb?: () => void } = {}) => {
+    subscribeUserAndDevice({
+      action: 'unsub',
+      cbAll: () => {
+        disconnectMqtt({ cb });
+      },
+    });
   };
 
   const handleExpiredToken = () => {
@@ -256,15 +408,25 @@ export const useMqtt = () => {
             ev,
           );
           handleConnected();
-          window.mqttClient.on('message', (topic, payload) => {
-            console.log(
-              `--- MQTT message for topic ${topic}: ${payload} ` +
-                new Date().toISOString(),
-            );
-            // Handle message here
-          });
+          if (window.mqttClient) {
+            window.mqttClient.on('message', (topic, payload) => {
+              console.log(
+                `--- MQTT message for topic ${topic}: ${payload} ` +
+                  new Date().toISOString(),
+              );
+              // Handle message here
+            });
+          }
         });
         window.mqttClient.on('disconnect', (packet) => {
+          saveSessionStorage({
+            data: [
+              {
+                key: MQTT_CONNECT_SUCCESS,
+                value: 'false',
+              },
+            ],
+          });
           // khi token expired
           console.log(
             '--- MQTT Disconnect: ' + new Date().toISOString(),
@@ -293,12 +455,9 @@ export const useMqtt = () => {
 
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         /*@ts-ignore*/
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        window.mqttClient.on('close', (ev: any) => {
-          console.log(
-            `--- MQTT Connection Closed ` + new Date().toISOString(),
-            ev,
-          );
+
+        window.mqttClient.on('close', () => {
+          console.log(`--- MQTT Connection Closed ` + new Date().toISOString());
         });
 
         window.mqttClient.on('reconnect', () => {
@@ -315,8 +474,9 @@ export const useMqtt = () => {
             'time: ',
             time,
           );
-
-          window.mqttClient.options.reconnectPeriod = time * 1000;
+          if (window.mqttClient) {
+            window.mqttClient.options.reconnectPeriod = time * 1000;
+          }
         });
       }
     } catch {}
@@ -345,9 +505,17 @@ export const useMqtt = () => {
   };
 
   useEffect(() => {
-    // window.addEventListener('beforeunload', () => {
-    //   subscribeUserAndDevice({ action: 'unsub' });
-    // });
+    window.addEventListener('beforeunload', () => {
+      removeSessionStorage({
+        data: [
+          MQTT_CONNECT_SUCCESS,
+          MQTT_SUBSCRIBE_SUCCESS,
+          MQTT_PUBLISH_STATUS,
+          MQTT_SUBSCRIBE_TOPIC,
+          MQTT_CONFIG,
+        ],
+      });
+    });
     return () => {
       clearAllTimeoutMqtt();
     };
@@ -358,12 +526,13 @@ export const useMqtt = () => {
     disconnectMqtt,
     handleGetMqttConfigs,
     subscribeUserAndDevice,
+    handleStopMqttUser,
   };
 };
 
-// Extend window interface
+// Extend window int = {}erface
 declare global {
   interface Window {
-    mqttClient: MqttClient;
+    mqttClient: MqttClient | null;
   }
 }

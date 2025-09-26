@@ -102,7 +102,7 @@ export const TEXT_TRACK_LANGUAGE = {
   zh: 'Tiếng Trung',
   zho: 'Tiếng Trung',
 };
-export const APP_VERSION = '8.0.51';
+export const APP_VERSION = '8.1.0';
 export const PATH_BEFORE_LOGIN_SSO = 'path_before_login_sso';
 export const RUNNING_PLAYER = 'running_player'; // VIDEOJS || SHAKA
 export const RUNNING_MERCHANT = 'running_merchant';
@@ -611,3 +611,7 @@ export const DebugLog = 'DebugLog';
 export const DebugLog_CREATED_TIME = 'DebugLog_CREATED_TIME';
 export const SENTRY_LIMIT = 'SENTRY_LIMIT'; // minute
 export const EXPIRED_TIME = 'EXPIRED_TIME';
+export const MQTT_SUBSCRIBE_TOPIC = 'MQTT_SUBSCRIBE_TOPIC';
+export const MQTT_CONNECT_SUCCESS = 'MQTT_CONNECT_SUCCESS';
+export const MQTT_SUBSCRIBE_SUCCESS = 'MQTT_SUBSCRIBE_SUCCESS';
+export const MQTT_PUBLISH_STATUS = 'MQTT_PUBLISH_STATUS';

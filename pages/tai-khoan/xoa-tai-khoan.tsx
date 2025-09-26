@@ -42,12 +42,14 @@ import {
   trackingLog198,
 } from '@/lib/hooks/useTrackingModule';
 import { resetProfiles } from '@/lib/store/slices/multiProfiles';
+import { useMqtt } from '@/lib/hooks/useMqtt';
 
 export default function DeleteAccountPage() {
   const router = useRouter();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user.info);
   const { isOffline } = useNetwork();
+  const { handleStopMqttUser } = useMqtt();
 
   const verifyModalRef = useRef<VerifyModalNewRef>(null);
   const noticeModalRef = useRef<NoticeModalRef>(null);
@@ -362,6 +364,7 @@ export default function DeleteAccountPage() {
           sessionStorage.clear();
           dispatch(resetProfiles());
         }
+        handleStopMqttUser();
       } else if (result?.status === '401' || result?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       } else {

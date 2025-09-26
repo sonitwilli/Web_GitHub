@@ -1,6 +1,37 @@
 {
     "versions": [
         {
+            "version": "8.1.0",
+            "date": "Dự kiến",
+            "content": [
+                "[SEO] Update SEO",
+                "[Nâng cấp All] Luật điện ảnh: Tính năng xoá Profile",
+                "[All] Bổ sung trường biệt danh cho profile",
+                "[All platforms] Cập nhật các blocks, hình ảnh cho các loại label",
+                "[Web+mobile] [BE]Bổ sung param đăng nhập phương thức khi quá thiết bị",
+                "Chuẩn hóa alias Đạo diễn/ Diễn viên",
+                "[WEB][Landing Page] Lỗi chồng nội dung landing page short video lên button Tải xuống",
+                "[WEB][Block] Lỗi vẫn phát âm thanh khi pause trên mobile mode tại block New VOD Detail",
+                "[WEB][Truyền hình] Lỗi không cố định phần category section trên mode responsive",
+                "[WEB][CCU] Lỗi không hiển thị lại popup thông báo giới hạn thiết bị khi xem K+ khi chọn button thử lại",
+                "[WEB][CCU] Lỗi vẫn xem được kênh K+ trên tab thứ 2,3 khi duplicate",
+                "[WEB][Bookmark] Lỗi không phát lại từ đầu đối với các trường hợp nhấn btn Next ở thanh controlbar và player/autonext",
+                "[WEB][MultiProfile] Quản lý hồ sơ: Lỗi không xóa thành công lịch sử xem khi thực hiện xóa tất cả",
+                "[WEB][MultiProfile/Login] Lỗi không đồng bộ avatar ở các tab khi thực hiện login/logout/chuyển đổi profile",
+                "[WEB][MultiProfile] Lỗi không hiển thị toast thông báo Lỗi kết nối dịch vụ đối với trường hợp lỗi API khi nhấn btn Xác nhận ở màn hình Nhập mã quản lý/Thiết lập mã quản lý",
+                "[WEB][MultiProfile] Thiết lập mã quản lý: Lỗi vẫn action khi nhấn vào btn Xác nhận trạng thái disable",
+                "[WEB][Thư viện] Lỗi không hiển thị đủ item mà api trả về ở trang chi tiết Lịch sử xem/Đang theo dõi (hiện tại chỉ cho hiển thị 30 item)",
+                "[Web][ChatbotAI] Dạng lịch phát sóng: Chưa play được timeshift focus vào đúng khung giờ đối với lịch phát sóng đã phát",
+                "[WEB][Sự kiện] Lỗi countdown 00:60 ở Highlight",
+                "[WEB][Login] Lỗi không thao tác nhập sđt ở màn hình Đăng nhập hoặc đăng ký ở thiết bị ios version 15.x",
+                "[WEB][QuickLogin] Lỗi mask mã code ở màn hình đăng nhập nhanh",
+                "[WEB][XoaTaiKhoan] Lỗi hiển thị sai số lượng item dịch vụ đã mua ở mode responsive",
+                "[WEB][Sự kiện] Lỗi vào sự kiện công chiếu chưa tới giờ phát khi chưa login",
+                "[WEB][Quicklogin] Lỗi hiển thị màn hình đá thiết bị sau khi đã đăng nhập thành công",
+                "[WEB][Login] Lỗi không hiển thị toast thông báo đăng nhập thành công"
+            ]
+        }, 
+        {
             "version": "8.0.51",
             "date": "Dự kiến",
             "content": [
