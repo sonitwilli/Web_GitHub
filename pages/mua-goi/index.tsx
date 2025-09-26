@@ -26,7 +26,7 @@ export const getServerSideProps = (async () => {
     pageId: 'mua-goi',
     fallbackTitle: 'Đăng Ký Mua Gói FPT Play - Xem Ngay Nội Dung Yêu Thích',
     fallbackDescription: 'Chọn gói FPT Play để xem phim, show, anime, thể thao và truyền hình trên nhiều thiết bị cùng lúc. Giải trí liền mạch, không giới hạn.',
-    pathPrefix: '/mua-goi',
+    // pathPrefix: '/mua-goi',
   });
 
   return { props: { seoProps, key: new Date().getTime() } };
