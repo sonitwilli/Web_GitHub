@@ -150,7 +150,7 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
               block?.block_type
             } block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)]
                hover:text-white hover:cursor-pointer duration-400 absolute top-0 ${
-                 block?.type === 'vod_related' || block?.type === 'trailer'
+                 block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season'
                    ? '-left-[8px] w-[156px] bg-gradient-to-l from-smoky-black/1 to-smoky-black justify-start text-white-smoke pb-[20px] pointer-events-none'
                    : block?.type === 'famous_people'
                    ? '-left-[8px] w-[156px] bg-gradient-to-l from-smoky-black/1 to-smoky-black justify-start text-white-smoke pb-[20px]'
@@ -164,18 +164,19 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                   ? ''
                   : block?.type === 'vod_related' ||
                     block?.type === 'trailer' ||
+                    block?.type === 'vod_season' ||
                     block?.type === 'famous_people'
                   ? `${imageHeight / 2 + 24}px`
                   : `${imageHeight / 2}px`
               }`,
               height: `${
-                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'famous_people'
+                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season' || block?.type === 'famous_people'
                   ? imageHeight + 75
                   : ''
               }px`,
             }}
           >
-            <div className={block?.type === 'vod_related' || block?.type === 'trailer' ? 'pointer-events-auto' : ''}>
+            <div className={block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season' ? 'pointer-events-auto' : ''}>
               <PrevButton
                 onClick={onPrevButtonClick}
                 disabled={prevBtnDisabled}
@@ -188,7 +189,7 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
               block?.block_type
             } block-slider-arrow hidden xl:flex items-center justify-center text-[rgba(255,255,255,0.3)] hover:text-white hover:cursor-pointer duration-400 absolute top-0 
               ${
-                block?.type === 'vod_related' || block?.type === 'trailer'
+                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season'
                   ? '-right-[8px] w-[156px] bg-gradient-to-r from-smoky-black/1 to-smoky-black justify-end text-white-smoke pb-[20px] pointer-events-none'
                   : block?.type === 'famous_people'
                   ? '-right-[8px] w-[156px] bg-gradient-to-r from-smoky-black/1 to-smoky-black justify-end text-white-smoke pb-[20px]'
@@ -204,18 +205,19 @@ const EmblaBlockSlider: React.FC<PropType> = (props) => {
                   ? ''
                   : block?.type === 'vod_related' ||
                     block?.type === 'trailer' ||
+                    block?.type === 'vod_season' ||
                     block?.type === 'famous_people'
                   ? `${imageHeight / 2 + 24}px`
                   : `${imageHeight / 2}px`
               }`,
               height: `${
-                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'famous_people'
+                block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season' || block?.type === 'famous_people'
                   ? imageHeight + 75
                   : ''
               }px`,
             }}
           >
-            <div className={block?.type === 'vod_related' || block?.type === 'trailer' ? 'pointer-events-auto' : ''}>
+            <div className={block?.type === 'vod_related' || block?.type === 'trailer' || block?.type === 'vod_season' ? 'pointer-events-auto' : ''}>
               <NextButton
                 onClick={onNextButtonClick}
                 disabled={nextBtnDisabled}
