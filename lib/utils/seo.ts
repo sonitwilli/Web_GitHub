@@ -8,6 +8,7 @@ const getRobotsValueFromUrl = (url: string): string | null => {
     url.endsWith('/tv') || 
     url.includes('/tv?') || 
     url.endsWith('/mua-goi') ||
+    url.includes('/thong-tin') ||
     (url.includes('/xem-video/') && !url.includes('/tap-'))
   ) {
     return 'index, follow';
@@ -29,7 +30,6 @@ const getRobotsValueFromUrl = (url: string): string | null => {
   // noindex, nofollow
   if (
     url.includes('/su-kien/') ||
-    url.includes('/thong-tin/') ||
     url.includes('/cong-chieu/') ||
     url.includes('/block/highlight/')
   ) {
