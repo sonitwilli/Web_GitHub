@@ -15,9 +15,9 @@ export const getServerSideProps = (async () => {
   const seoProps = await createSeoPropsFromMeta({
     pageId: '',
     fallbackTitle:
-      'FPT Play - Trang Chủ | Xem Phim, Show, Anime, TV, Thể Thao Miễn Phí',
+      'FPT Play: Xem Không Giới Hạn Phim, Show, Anime, TV, Thể Thao',
     fallbackDescription:
-      'Trang chủ FPT Play - Nền tảng giải trí trực tuyến hàng đầu Việt Nam. Xem miễn phí hàng ngàn bộ phim, show TV, anime, thể thao trực tiếp và chương trình truyền hình chất lượng cao.',
+      'Xem không giới hạn kho phim, anime đặc sắc, show đỉnh độc quyền, thể thao 24 giờ và các chương trình truyền hình trực tuyến mọi lúc mọi nơi.',
     pathPrefix: '',
   });
 

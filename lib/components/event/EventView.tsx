@@ -20,6 +20,8 @@ import { useDownloadBarControl } from '@/lib/hooks/useDownloadBarControl';
 import useCodec from '@/lib/hooks/useCodec';
 import React from 'react';
 import { isArray } from 'lodash';
+import VodAchievementInfo from '../vod/VodAchievementInfo';
+import { BlockSlideItemType } from '@/lib/api/blocks';
 
 const ShareReaction = dynamic(() => import('../reaction/ShareReaction'), {
   ssr: false,
@@ -464,6 +466,13 @@ const EventView = ({ dataEvent, eventId }: Props) => {
           <div className="xl:grid xl:grid-cols-[1fr_432px]">
             <div className="flex flex-col gap-6 sm:flex-row sm:justify-between sm:items-end">
               <div className="flex flex-col">
+                {/* achievement info */}
+                {dataChannel?.achievement_info &&
+                  dataChannel?.achievement_info?.length > 0 && (
+                    <VodAchievementInfo
+                      slide={dataChannel as BlockSlideItemType}
+                    />
+                  )}
                 {dataChannel?.original_logo && dataChannel?.alias_name && (
                   <div className="flex items-center gap-[8px] mb-[16px">
                     <div className="bg-white-smoke rounded-full w-[40px] h-[40px] tablet:w-[48px] tablet:h-[48px] flex items-center justify-center px-[7px]">
@@ -478,18 +487,15 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                     </h3>
                   </div>
                 )}
-
                 <div className="text-[20px] tablet:text-[32px] font-semibold leading-[130%] mb-[16px] xl:mb-[24px] line-clamp-1 overflow-hidden text-ellipsis">
                   {dataEvent?.title}
                 </div>
-
                 <div className="mb-[32px] xl:mb-[40px]">
                   <ShareReaction
                     isChannel
                     onClick={() => setShowModalShare(true)}
                   />
                 </div>
-
                 {/* Meta Data & Maturity Rating */}
                 {(() => {
                   const validMetaData = isArray(dataEvent?.meta_data)
@@ -541,7 +547,6 @@ const EventView = ({ dataEvent, eventId }: Props) => {
                     </div>
                   );
                 })()}
-
                 <div className="text-[20px] font-semibold">
                   <EventLiveStatus dataEvent={dataEvent} />
                 </div>

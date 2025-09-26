@@ -402,6 +402,7 @@ export default function usePlayer() {
   };
 
   const handlePlaying = async () => {
+    dispatch(setShakaErrorDetail(undefined));
     // try {
     //   if (
     //     dataChannel?.verimatrix === true ||
