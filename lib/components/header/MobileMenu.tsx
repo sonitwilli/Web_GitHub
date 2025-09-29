@@ -230,6 +230,11 @@ export default function MobileMenu({ menus }: Props) {
                         'lastActiveMenu',
                         JSON.stringify(menu),
                       );
+                      
+                      // Clear channel group selection when navigating to channel from mobile menu
+                      if (menu.page_id === 'channel' || menu.id === 'channel') {
+                        localStorage.removeItem('selectedChannelGroupId');
+                      }
                     }
                     clickLinkItem({
                       menuItem: menu,

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "cross-env ENVIRONMENT=development next dev --port 8888 --hostname next.fptplay.vn -H 0.0.0.0",
     "dev1": "cross-env ENVIRONMENT=development next dev --port 8888 --hostname next.fptplay.vn -H 0.0.0.0",
-    "staging": "cross-env ENVIRONMENT=staging next dev --port 8888 --hostname next.fptplay.vn",
+    "staging": "cross-env ENVIRONMENT=staging next dev --port 8888 --hostname next.fptplay.vn -H 0.0.0.0",
     "production": "cross-env ENVIRONMENT=production next dev --port 80 --hostname next.fptplay.vn",
     "build-dev": "next lint && cross-env ENVIRONMENT=development next build",
     "build-dev1": "next lint && cross-env ENVIRONMENT=development next build",
