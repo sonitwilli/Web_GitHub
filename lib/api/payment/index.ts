@@ -2,6 +2,7 @@ import { axiosInstance } from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 import { SEND_OTP_TYPES } from '@/lib/constant/texts';
 import { PAYMENT_HUB_CONFIG } from '@/lib/constant/paymentMethods';
+import { SwitchModeType } from '@/lib/api/login';
 
 // Interface for generic API response
 export interface ApiResponse<T = unknown> {
@@ -83,6 +84,7 @@ export interface SendOtpNewFlowParams {
   phone?: string;
   type?: string;
   verify_token?: string;
+  method_otp?: string;
   client_id?: string;
   type_otp?: string;
 }
@@ -99,14 +101,19 @@ export interface SendOtpNewFlowResponseData {
   mask_phone?: string;
   otp_length?: string;
   text_format?: string[];
+  error_code?: string;
+  switch_mode?: SwitchModeType;
+  msg?: string;
   title?: string;
 }
 
 // doSendOtpNewFlow
 export const doSendOtpNewFlow = async ({
   phone,
+  method_otp,
 }: {
   phone: string;
+  method_otp?: string;
 }): Promise<{
   validateResponse: AxiosResponse<ApiResponse<ValidateOtpResponseData>>;
   sendResponse: AxiosResponse<ApiResponse<SendOtpNewFlowResponseData>>;
@@ -137,6 +144,7 @@ export const doSendOtpNewFlow = async ({
       phone,
       type_otp: SEND_OTP_TYPES.DELETE_AUTO_EXTEND,
       verify_token: validateResponse.data.data.verify_token,
+      method_otp,
       client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
     };
 

@@ -36,6 +36,9 @@ import { showToast } from '@/lib/utils/globalToast';
 import { userAgentInfo } from '@/lib/utils/ua';
 import { subscribeFirebaseNoti } from '@/lib/utils/firebaseNotiManager';
 import { DetailMessageItem } from '@/lib/plugins/firebase';
+// const Viewport = dynamic(() => import('../debug/Viewport'), {
+//   ssr: false,
+// });
 const Chatbot = dynamic(() => import('@/lib/components/chatbot/Chatbot'), {
   ssr: false,
 });
@@ -287,6 +290,7 @@ export default function AppContainer({ children }: Props) {
         )}
       {children}
       {info?.chatbot === '1' ? <Chatbot /> : ''}
+      {/* <Viewport /> */}
     </AppContext.Provider>
   );
 }

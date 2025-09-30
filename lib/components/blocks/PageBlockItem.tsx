@@ -317,7 +317,7 @@ export default function PageBlockItem({
             : ''
         }`}
       >
-        <h2 className="text-[16px] 2xl:text-[24px] pr-[16px] md:pr-0 font-[600] text-white-smoke truncate max-w-[90%]">
+        <h2 className="text-[16px] 2xl:text-[24px] pr-[16px] md:pr-[1] font-[600] text-white-smoke truncate max-w-[90%]">
           {blockData?.meta?.name || block?.name}
         </h2>
         {blockData?.meta?.short_description && (

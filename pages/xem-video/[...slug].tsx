@@ -139,11 +139,14 @@ export default function VodPage() {
 
 // Create fallback SEO props for video pages
 const createFallbackSeoProps = (slug?: string, pathname?: string) => {
+  // Ensure we have a valid slug, fallback to safe defaults
+  const safeSlug = slug && slug !== 'undefined' && slug.trim() !== '' 
+    ? slug 
+    : (pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST) ? 'fpt-play-playlist' : 'fpt-play-video');
+    
   return createSeoPropsFromVodData(
     null,
-    slug || pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST)
-      ? 'fpt-play-playlist'
-      : 'fpt-play-video',
+    safeSlug,
     pathname?.includes(ROUTE_PATH_NAMES.PLAYLIST)
       ? 'FPT Play - Xem playlist online'
       : 'FPT Play - Xem video online',
@@ -186,28 +189,32 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
         if (playlistTitle) {
           // Generate canonical slug using viToEn
           const canonicalSlugBase = viToEn(playlistTitle);
-          const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
           
-          // Check if current slug matches canonical slug
-          const currentSlugBase = slugs[0];
-          const hasVideoId = slugs.length > 1;
-          const videoIdPart = hasVideoId ? `/${slugs[1]}` : '';
-          
-          // Redirect if slug doesn't match canonical format
-          if (currentSlugBase !== canonicalSlug) {
-            // build query string from resolvedUrl (safer fallback)
-            const hasQuery = resolvedUrl?.includes('?');
-            const qs = hasQuery ? resolvedUrl?.split('?').slice(1).join('?') : '';
-            const destination = qs 
-              ? `/playlist/${canonicalSlug}${videoIdPart}?${qs}` 
-              : `/playlist/${canonicalSlug}${videoIdPart}`;
-            console.log('Redirecting playlist to canonical slug:', destination);
-            return {
-              redirect: {
-                destination,
-                permanent: true, // 301 redirect for SEO
-              },
-            };
+          // Only proceed with redirect if we have a valid canonical slug base
+          if (canonicalSlugBase && canonicalSlugBase.trim() !== '') {
+            const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+            
+            // Check if current slug matches canonical slug
+            const currentSlugBase = slugs[0];
+            const hasVideoId = slugs.length > 1;
+            const videoIdPart = hasVideoId ? `/${slugs[1]}` : '';
+            
+            // Redirect if slug doesn't match canonical format
+            if (currentSlugBase !== canonicalSlug) {
+              // build query string from resolvedUrl (safer fallback)
+              const hasQuery = resolvedUrl?.includes('?');
+              const qs = hasQuery ? resolvedUrl?.split('?').slice(1).join('?') : '';
+              const destination = qs 
+                ? `/playlist/${canonicalSlug}${videoIdPart}?${qs}` 
+                : `/playlist/${canonicalSlug}${videoIdPart}`;
+              console.log('Redirecting playlist to canonical slug:', destination);
+              return {
+                redirect: {
+                  destination,
+                  permanent: true, // 301 redirect for SEO
+                },
+              };
+            }
           }
         }
         
@@ -251,27 +258,31 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
         const canonicalSlugBase = viToEn(
           vodTitleVie || vodTitle || vodTitleOrigin || ''
         );
-        const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
         
-        // Check if current slug matches canonical slug
-        const currentSlugBase = slugs[0];
-        const hasEpisode = slugs.length > 1;
-        const episodePart = hasEpisode ? `/${slugs[1]}` : '';
-        
-        // Redirect if slug doesn't match canonical format
-        if (currentSlugBase !== canonicalSlug) {
-          // Check if this is a Galaxy Play URL to determine the correct redirect path
-          const isGalaxyPlay = resolvedUrl?.includes(SOURCE_PROVIDER.GALAXY_PLAY);
-          const destination = isGalaxyPlay 
-            ? `/galaxy-play/xem-video/${canonicalSlug}${episodePart}`
-            : `/xem-video/${canonicalSlug}${episodePart}`;
-          console.log('Redirecting to:', destination);
-          return {
-            redirect: {
-              destination,
-              permanent: true, // 301 redirect for SEO
-            },
-          };
+        // Only proceed with redirect if we have a valid canonical slug base
+        if (canonicalSlugBase && canonicalSlugBase.trim() !== '') {
+          const canonicalSlug = `${canonicalSlugBase}-${vodId}`;
+          
+          // Check if current slug matches canonical slug
+          const currentSlugBase = slugs[0];
+          const hasEpisode = slugs.length > 1;
+          const episodePart = hasEpisode ? `/${slugs[1]}` : '';
+          
+          // Redirect if slug doesn't match canonical format
+          if (currentSlugBase !== canonicalSlug) {
+            // Check if this is a Galaxy Play URL to determine the correct redirect path
+            const isGalaxyPlay = resolvedUrl?.includes(SOURCE_PROVIDER.GALAXY_PLAY);
+            const destination = isGalaxyPlay 
+              ? `/galaxy-play/xem-video/${canonicalSlug}${episodePart}`
+              : `/xem-video/${canonicalSlug}${episodePart}`;
+            console.log('Redirecting to:', destination);
+            return {
+              redirect: {
+                destination,
+                permanent: true, // 301 redirect for SEO
+              },
+            };
+          }
         }
       }
 
@@ -313,8 +324,7 @@ export const getServerSideProps = (async ({ params, resolvedUrl }) => {
         return { props: { key: new Date().getTime(), seoProps } };
       }
     } catch {
-      const { pathname } = useRouter();
-      const fallbackSeoProps = createFallbackSeoProps(vodId, pathname);
+      const fallbackSeoProps = createFallbackSeoProps(vodId, resolvedUrl);
       return {
         props: { key: new Date().getTime(), seoProps: fallbackSeoProps },
       };

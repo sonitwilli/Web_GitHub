@@ -1,4 +1,6 @@
 import { BlockSlideItemType, SlideHightlightInfoType } from '@/lib/api/blocks';
+import { useMemo } from 'react';
+
 interface Props {
   star?: string;
   count?: string;
@@ -9,6 +11,11 @@ interface Props {
 }
 
 export default function VodRating({ type, hightlightInfo }: Props) {
+  const bgColor = useMemo(
+    () => String(hightlightInfo?.bg_color || hightlightInfo?.bg || '#2C2C2C'),
+    [hightlightInfo],
+  );
+
   if (
     !hightlightInfo ||
     (!hightlightInfo.avg_rate &&
@@ -20,9 +27,12 @@ export default function VodRating({ type, hightlightInfo }: Props) {
 
   return (
     <div
-      className={`h-[28px] flex items-center w-fit gap-[8px] bg-raisin-black-08 border border-white-01 tablet:px-[5px] xl:px-[7px] rounded-[5px] xl:rounded-[7px] ${
+      className={`h-[28px] flex items-center w-fit gap-[8px] border border-white-01 tablet:px-[5px] xl:px-[7px] rounded-[5px] xl:rounded-[7px] ${
         type === 'hovered-slide' ? '!bg-transparent !border-0 !px-0' : ''
       }`}
+      style={{
+        backgroundColor: bgColor,
+      }}
     >
       {hightlightInfo?.icon && (
         <img

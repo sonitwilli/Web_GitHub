@@ -69,6 +69,7 @@ import {
   trackingStartChannelLog41,
 } from '@/lib/hooks/useTrackingIPTV';
 import { trackingLog512 } from '@/lib/tracking/trackingModule';
+import { UAParser } from 'ua-parser-js';
 export interface PlayerModalType {
   content?: ModalContent;
   closeKey?: ModalCloseKey;
@@ -720,6 +721,31 @@ export function PlayerPageContextProvider({ children }: Props) {
       statusWatch = true;
       return true;
     }
+    try {
+      const parser = new UAParser();
+      const result = parser.getResult();
+      const device = result.device.type
+        ? result.device.type.charAt(0).toUpperCase() +
+          result.device.type.slice(1)
+        : 'Desktop';
+      const uaInfor = userAgentInfo();
+      if (device?.toUpperCase()?.includes('TABLET') || uaInfor?.isFromIpad) {
+        if (openPlayerNoticeModal) {
+          openPlayerNoticeModal({
+            submitKey: 'on_mobile',
+            content: {
+              title: 'Thông báo',
+              content: TEXT_OS_NOT_SUPPORT,
+              buttons: {
+                accept: 'Mở ứng dụng',
+              },
+            },
+          });
+        }
+        return;
+      }
+    } catch {}
+
     if (!isFromPc) {
       if (openPlayerNoticeModal) {
         openPlayerNoticeModal({
@@ -1559,6 +1585,7 @@ export function PlayerPageContextProvider({ children }: Props) {
         isHboGo,
         isQNet,
         isTDM,
+        /*@ts-ignore*/
         isRequiredBrowser,
         playerName,
         setPlayerName,

@@ -1,5 +1,5 @@
 import { Episode } from '@/lib/api/vod';
-import { useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { useVodPageContext } from '../player/context/VodPageContext';
@@ -7,6 +7,7 @@ import CustomImage from '../common/CustomImage';
 import { scalePosterOverlayUrl, scaleImageUrl } from '@/lib/utils/methods';
 import { usePlayerPageContext } from '../player/context/PlayerPageContext';
 import { useAppSelector } from '@/lib/store';
+import { AppContext } from '../container/AppContainer';
 
 type PropsEspisodes = {
   episode?: Episode;
@@ -19,6 +20,10 @@ const EpisodeItem = (props: PropsEspisodes) => {
   const { episode = {} } = props;
   const [isImageError, setIsImageError] = useState(false);
   const { isFullscreen } = useAppSelector((s) => s.player);
+  const { configs } = useContext(AppContext);
+  const isTimeEventBackground = useMemo(() => {
+    return configs?.image?.bg_time_event || '/images/bg_time_event_default.png';
+  }, [configs]);
 
   const link = useMemo(() => {
     const { slug } = router.query;
@@ -62,12 +67,10 @@ const EpisodeItem = (props: PropsEspisodes) => {
     >
       <div className="rounded-[8px] overflow-hidden w-[128px] relative min-w-[128px]">
         <CustomImage
-          src={
-            scaleImageUrl({
-              imageUrl: episode?.thumb || episode?.landscape,
-              width: 150,
-            })
-          }
+          src={scaleImageUrl({
+            imageUrl: episode?.thumb || episode?.landscape,
+            width: 150,
+          })}
           containerClassName="w-full"
           imageRatio="pb-[56.25%]"
           alt={episode.thumb || episode.landscape}
@@ -83,12 +86,28 @@ const EpisodeItem = (props: PropsEspisodes) => {
             height={24}
           />
         ) : (
-          <div
-            className="absolute flex items-center py-[2px] px-[4px] justify-center text-[12px]
-                bottom-[4px] right-[4px] bg-black/40 rounded-[6px] font-semibold"
-          >
-            {episode.duration_s}
-          </div>
+          episode.duration_s && (
+            <div
+              className="absolute flex items-center justify-center 
+                bottom-[4px] right-[4px] overflow-hidden w-fit"
+            >
+              {/* Background image layer - chỉ phủ phần text + padding */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+                  borderTopRightRadius: '4px',
+                  borderBottomRightRadius: '4px',
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+              {/* Text layer - đảm bảo text luôn ở trên */}
+              <span className="relative z-1 py-[2px] px-[4px] text-[12px] font-semibold">
+                {episode.duration_s}
+              </span>
+            </div>
+          )
         )}
 
         {episode?.is_vip && episode?.ribbon_episode && (

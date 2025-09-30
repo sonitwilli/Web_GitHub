@@ -294,6 +294,7 @@ const SidebarAccount: React.FC = () => {
           open={modalOpen}
           onSubmit={() => setModalOpen(false)}
           onCancel={handleSubmit}
+          onAfterClose={() => setModalOpen(false)}
           onHidden={() => setModalOpen(false)}
         />
       </div>

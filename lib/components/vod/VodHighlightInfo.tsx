@@ -20,6 +20,7 @@ export default function VodHighlightInfo({ slide }: Props) {
       slide?.highlighted_info?.filter((item) => item?.type === 'rating') || []
     );
   }, [slide]);
+
   return (
     <div className="flex items-center gap-[12px]">
       {imagesInfo &&

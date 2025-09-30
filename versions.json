@@ -1,6 +1,17 @@
 {
     "versions": [
         {
+            "version": "8.1.1",
+            "date": "Dự kiến",
+            "content": [
+                "[WEB][Truyền hình] Lỗi auto focus tab Tất cả các kênh khi vào Truyền hình hoặc f5",
+                "[Web] Update logic lỗi khi bị mất kết nối Internet",
+                "[WEB][DetailVOD] Block Diễn viên: Lỗi hiển thị mất chữ title block đối với mode responsive",
+                "[WEB][Truyền hình] Lỗi auto focus tab Tất cả các kênh khi vào Truyền hình hoặc f5",
+                "[WEB][XoaProfile] Lỗi không highlight cam khi hover vào btn Xóa ở field Xóa hồ sơ"
+            ]
+        }, 
+        {
             "version": "8.1.0",
             "date": "Dự kiến",
             "content": [

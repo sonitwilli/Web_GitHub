@@ -15,6 +15,8 @@ import {
 } from '@/lib/constant/texts'; // Adjust path as needed
 import { setVerifyToken } from '@/lib/store/slices/accountSlice';
 import { setStoreVerifyToken } from '@/lib/store/slices/otpSlice';
+import { SwitchModeType } from '@/lib/api/login';
+import { convertMsg } from '@/lib/utils/profile';
 
 // Interfaces for function parameters and responses
 export interface VerifyOtpParams {
@@ -55,6 +57,7 @@ export interface VerifyContent {
   placeholder_input?: string;
   button?: { action: string; content: string }[];
   link_resent?: { action: string; content: string }[];
+  switch_mode?: SwitchModeType;
 }
 
 // Định nghĩa kiểu cho dữ liệu phản hồi từ API (cả thành công và lỗi)
@@ -1008,18 +1011,9 @@ export const doResendOtpForgetManagementCode = async (
       phone: params.phone,
       client_id: params.clientId || process.env.NEXT_PUBLIC_CLIENT_ID,
       type_otp: SEND_OTP_TYPES.FORGET_MANAGEMENT_CODE,
+      method_otp: params.typeOtp,
     });
     const result = response.data;
-    const convertMsg = (data: {
-      msg: string;
-      text_format?: { text: string }[];
-    }) => {
-      let msg = data.msg;
-      data.text_format?.forEach((format) => {
-        msg = msg.replace(format.text, `<b>${format.text}</b>`);
-      });
-      return msg;
-    };
     switch (result.error_code) {
       case '0':
         setVerifyContent((prev: VerifyContent) => ({
@@ -1489,18 +1483,9 @@ export const doResendOtpDeleteAutoExtend = async (
       phone: params.phone,
       client_id: params.clientId || process.env.NEXT_PUBLIC_CLIENT_ID,
       type_otp: SEND_OTP_TYPES.DELETE_AUTO_EXTEND,
+      method_otp: params.typeOtp,
     });
     const result = response.data;
-    const convertMsg = (data: {
-      msg: string;
-      text_format?: { text: string }[];
-    }) => {
-      let msg = data.msg;
-      data.text_format?.forEach((format) => {
-        msg = msg.replace(format.text, `<b>${format.text}</b>`);
-      });
-      return msg;
-    };
 
     switch (result.error_code) {
       case '0':

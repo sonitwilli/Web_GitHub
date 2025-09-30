@@ -26,11 +26,11 @@ export default function EventLiveStatus({ dataEvent }: Props) {
 
   // Background images from configs
   const isLiveBackground = useMemo(() => {
-    return configs?.image?.bg_live;
+    return configs?.image?.bg_live || '/images/bg_live_default.png';
   }, [configs]);
 
   const isTimeEventBackground = useMemo(() => {
-    return configs?.image?.bg_time_event;
+    return configs?.image?.bg_time_event || '/images/bg_time_event_default.png';
   }, [configs]);
 
   // Kiểm tra trạng thái kết thúc và cập nhật Redux một lần
@@ -91,7 +91,7 @@ export default function EventLiveStatus({ dataEvent }: Props) {
           setEventStatus('scheduled'); // Chỉ hiển thị "Phát sóng vào" khi còn hơn 1 giờ
         }
       } else if (now >= start && now <= end) {
-        setStatus(dataEvent?.label_event || 'LIVE');
+        setStatus(dataEvent?.label_event || 'Live');
         setEventStatus('live');
       } else if (now > end) {
         setStatus('Đã kết thúc');
@@ -123,30 +123,36 @@ export default function EventLiveStatus({ dataEvent }: Props) {
       )}
 
       {isLive ? (
-        <span
-          className="flex items-center justify-center px-2 sm:px-3 py-1 sm:py-[6px] rounded-md sm:rounded-lg bg-gradient-to-r from-vivid-red to-rosso-corsa text-white text-sm sm:text-base font-medium tracking-wide min-w-[51px] h-8 sm:h-[32px]"
-          style={{
-            backgroundImage: isLiveBackground
-              ? `url(${isLiveBackground})`
-              : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          {status}
+        <span className="relative flex items-center justify-center rounded-md text-white px-[8px] py-[4.5px] text-sm sm:text-base font-[600] h-[22px] tablet:h-[28px] w-fit overflow-hidden">
+          {/* Background image layer - chỉ phủ phần text + padding */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `url(${isLiveBackground}) no-repeat left center / auto 100%`,
+              borderTopRightRadius: '8px',
+              borderBottomRightRadius: '8px',
+              width: '100%',
+              height: '100%',
+            }}
+          />
+          {/* Text layer - đảm bảo text luôn ở trên */}
+          <span className="relative z-1">{status}</span>
         </span>
       ) : (
-        <span
-          className="flex items-center justify-center px-2.5 py-1 bg-jet rounded-md sm:rounded-lg"
-          style={{
-            backgroundImage: isTimeEventBackground
-              ? `url(${isTimeEventBackground})`
-              : undefined,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-        >
-          <span className="text-white-087 font-medium text-sm sm:text-[17px] leading-[20px]">
+        <span className="relative flex items-center justify-center px-[8px] py-[4.5px] rounded-md sm:rounded-lg h-[22px] tablet:h-[28px] w-fit overflow-hidden">
+          {/* Background image layer - chỉ phủ phần text + padding */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+              borderTopRightRadius: '8px',
+              borderBottomRightRadius: '8px',
+              width: '100%',
+              height: '100%',
+            }}
+          />
+          {/* Text layer - đảm bảo text luôn ở trên */}
+          <span className="relative z-1 text-white-087 font-medium text-sm sm:text-[17px] leading-[20px]">
             {status}
           </span>
         </span>

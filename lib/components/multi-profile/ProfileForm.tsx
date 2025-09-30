@@ -954,7 +954,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                         });
                         setIsOpenModal(true);
                       }}
-                      className="cursor-pointer text-white-smoke text-base leading-6 font-medium outline-0 bg-transparent p-0 m-0"
+                      className="cursor-pointer text-white-smoke hover:text-fpl text-base leading-6 font-medium outline-0 bg-transparent p-0 m-0"
                     >
                       Xóa
                     </button>

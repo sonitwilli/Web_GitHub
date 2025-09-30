@@ -79,6 +79,12 @@ export default function OTPInputModal({
   }, [otpCountdown]);
 
   useEffect(() => {
+    if (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) {
+      setShowOtherOtpMethods(false);
+    }
+  }, [countdown, switchMode]);
+
+  useEffect(() => {
     if (typeof otp === 'string' && otpLength > 0) {
       setIsOtpValid(otp.length === otpLength);
     } else {
@@ -218,7 +224,7 @@ export default function OTPInputModal({
                 {!showOtherMethods && (
                   <button
                     onClick={() => setShowOtherMethods(!showOtherMethods)}
-                    className="text-fpl transition-colors text-[16px] font-medium mb-[24px]"
+                    className="cursor-pointer text-white-smoke hover:text-fpl transition-colors text-[16px] font-medium mb-[24px]"
                   >
                     Chọn phương thức khác
                   </button>
@@ -337,12 +343,16 @@ export default function OTPInputModal({
             {/* Hiển thị các phương thức OTP khác */}
             {switchMode?.modes && switchMode.modes.length > 0 && (
               <div className="col-span-2 mt-6">
-                <p
-                  className="text-[16px] font-medium text-spanish-gray mb-4 text-center"
-                  onClick={() => setShowOtherOtpMethods(!showOtherOtpMethods)}
-                >
+                <p className="text-[16px] font-medium text-spanish-gray mb-4 text-center">
                   Bạn chưa nhận được mã?{' '}
-                  <span className="text-fpl">Chọn phương thức khác</span>
+                  <span
+                    className={`${
+                      (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) ? 'text-gray' : 'text-fpl'
+                    }`}
+                    onClick={() => (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) ? null : setShowOtherOtpMethods(!showOtherOtpMethods)}
+                  >
+                    Chọn phương thức khác
+                  </span>
                 </p>
                 <div className="space-y-[20px]" hidden={!showOtherOtpMethods}>
                   {switchMode.modes.map((mode, index) => (

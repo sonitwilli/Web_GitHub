@@ -337,10 +337,6 @@ const EventView = ({ dataEvent, eventId }: Props) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log('dataChannel', dataChannel);
-  }, [dataChannel]);
-
   return (
     <>
       <div

@@ -72,12 +72,13 @@ export default function BlockSlideItem({
 
   // ----------- Handle Background Labels ------------
 
+  // Background images from configs
   const isLiveBackground = useMemo(() => {
-    return configs?.image?.bg_live;
+    return configs?.image?.bg_live || '/images/bg_live_default.png';
   }, [configs]);
 
   const isTimeEventBackground = useMemo(() => {
-    return configs?.image?.bg_time_event;
+    return configs?.image?.bg_time_event || '/images/bg_time_event_default.png';
   }, [configs]);
 
   // -----------------------
@@ -333,8 +334,27 @@ export default function BlockSlideItem({
           </div>
 
           {isOverlayPlaylist && (
-            <div className="absolute bottom-[8px] right-[8px] black-bg text-[10px] font-[700] whitespace-nowrap px-[10px] py-[5px] rounded-[5px]">
-              {slide?.playlist_total} VIDEOS
+            <div className="absolute h-[22px] w-fit bottom-[8px] right-[8px] text-[13px] font-[700] whitespace-nowrap overflow-hidden text-white-087">
+              {/* Background image layer - chỉ phủ phần text + padding */}
+              <div
+                className="absolute inset-0"
+                style={{
+                  background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+                  borderTopRightRadius: '6.29px',
+                  borderBottomRightRadius: '6.29px',
+                  width: '100%',
+                  height: '100%',
+                }}
+              />
+              {/* Text layer - đảm bảo text luôn ở trên */}
+              <span className="relative flex items-center justify-center gap-[3.14px] z-1 h-full px-[6.3px] py-[3.14px]">
+                <img
+                  src="/images/svg/icon_playlist.svg"
+                  alt="icon_playlist"
+                  className="w-[16px] h-[16px] object-contain"
+                />
+                <span>{slide?.playlist_total} videos</span>
+              </span>
             </div>
           )}
 
@@ -346,17 +366,20 @@ export default function BlockSlideItem({
 
           {isShowLiveLabel &&
             (checkLive && !isValidCountdown ? (
-              <div
-                className="absolute bottom-[8px] left-[8px] bg-jet text-[12px] font-bold whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087"
-                style={{
-                  backgroundImage: isTimeEventBackground
-                    ? `url(${isTimeEventBackground})`
-                    : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {checkLive}
+              <div className="absolute bottom-[8px] left-[8px] h-[22px] text-[12px] font-bold whitespace-nowrap px-[5px] py-[4px] text-white-087 overflow-hidden rounded-[6px]">
+                {/* Background image layer - chỉ phủ phần text + padding */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+                    borderTopRightRadius: '6px',
+                    borderBottomRightRadius: '6px',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+                {/* Text layer - đảm bảo text luôn ở trên */}
+                <span className="relative z-1">{checkLive}</span>
               </div>
             ) : (
               <>
@@ -391,64 +414,44 @@ export default function BlockSlideItem({
                     </div>
                   </div>
                 ) : (
-                  <div className="absolute bottom-[8px] left-[8px] flex items-center justify-center rounded-[6px] font-semibold text-[12px] leading-[100%] text-white">
-                    {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
-                        Công chiếu
+                  <div className="absolute bottom-[8px] left-[8px] rounded-[6px] font-semibold text-[12px] leading-[100%] text-white overflow-hidden">
+                    {slide?.label_event ? (
+                      <div className="h-[22px] w-fit flex items-center justify-center text-center whitespace-nowrap px-[5px] py-[4px] rounded-[6px] font-bold">
+                        {/* Background image layer - chỉ phủ phần text + padding */}
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            background: `url(${isLiveBackground}) no-repeat left center / auto 100%`,
+                            borderTopRightRadius: '6px',
+                            borderBottomRightRadius: '6px',
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+                        {/* Text layer - đảm bảo text luôn ở trên */}
+                        <span className="relative z-1">
+                          {slide?.label_event}
+                        </span>
                       </div>
-                    ) : slide?.label_event &&
-                      slide?.label_event?.toUpperCase() === 'LIVE' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] w-[35px] flex items-center justify-center uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
-                        LIVE
-                      </div>
-                    ) : slide?.label_event &&
-                      slide?.label_event?.toUpperCase() === 'ĐANG PHÁT' ? (
-                      <div
-                        className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] w-[78px] flex items-center justify-center uppercase font-bold bg-gradient-to-r from-vivid-red to-rosso-corsa"
-                        style={{
-                          backgroundImage: isLiveBackground
-                            ? `url(${isLiveBackground})`
-                            : undefined,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      >
-                        Đang phát
+                    ) : checkLive ? (
+                      <div className="h-[22px] w-fit flex items-center justify-center text-center leading-[100%] text-[12px] font-bold whitespace-nowrap px-[5px] py-[4px] text-white-087 overflow-hidden rounded-[6px]">
+                        {/* Background image layer - chỉ phủ phần text + padding */}
+                        <div
+                          className="absolute inset-0"
+                          style={{
+                            background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+                            borderTopRightRadius: '6px',
+                            borderBottomRightRadius: '6px',
+                            width: '100%',
+                            height: '100%',
+                          }}
+                        />
+
+                        {/* Text layer - đảm bảo text luôn ở trên */}
+                        <span className="relative z-1">{checkLive}</span>
                       </div>
                     ) : (
-                      checkLive && (
-                        <div
-                          className="text-[12px] whitespace-nowrap px-[6px] py-[4px] rounded-[6px] text-white-087 font-bold bg-jet"
-                          style={{
-                            backgroundImage: isTimeEventBackground
-                              ? `url(${isTimeEventBackground})`
-                              : undefined,
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                          }}
-                        >
-                          {checkLive}
-                        </div>
-                      )
+                      ''
                     )}
                   </div>
                 )}

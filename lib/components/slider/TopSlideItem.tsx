@@ -48,11 +48,11 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
 
   // Background images from configs
   const isLiveBackground = useMemo(() => {
-    return configs?.image?.bg_live;
+    return configs?.image?.bg_live || '/images/bg_live_default.png';
   }, [configs]);
 
   const isTimeEventBackground = useMemo(() => {
-    return configs?.image?.bg_time_event;
+    return configs?.image?.bg_time_event || '/images/bg_time_event_default.png';
   }, [configs]);
 
   const {
@@ -290,17 +290,20 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
 
           {isShowLiveLabel &&
             (checkLive && !isValidCountdown ? (
-              <div
-                className="mt-[12px] text-[14px] bg-jet px-[8px] py-[1px] w-fit rounded-[4px]"
-                style={{
-                  backgroundImage: isTimeEventBackground
-                    ? `url(${isTimeEventBackground})`
-                    : undefined,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                }}
-              >
-                {checkLive}
+              <div className="relative inline-flex items-center justify-center h-[23px] w-fit text-center px-[8px] py-[1px] text-[14px] mt-[12px] leading-[100%] overflow-hidden rounded-[4px]">
+                {/* Background image layer - chỉ phủ phần text + padding */}
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background: `url(${isTimeEventBackground}) no-repeat left center / auto 100%`,
+                    borderTopRightRadius: '6px',
+                    borderBottomRightRadius: '6px',
+                    width: '100%',
+                    height: '100%',
+                  }}
+                />
+                {/* Text layer - đảm bảo text luôn ở trên */}
+                <span className="relative z-1">{checkLive}</span>
               </div>
             ) : (
               <>
@@ -334,34 +337,24 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
                       </div>
                     </div>
                   </div>
-                ) : (
-                  <div
-                    className="bg-vivid-red inline-block px-[8px] py-[1px] text-[14px] rounded-[4px] font-[500] mt-[12px]"
-                    style={{
-                      backgroundImage: isLiveBackground
-                        ? `url(${isLiveBackground})`
-                        : undefined,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center',
-                    }}
-                  >
-                    {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === 'CÔNG CHIẾU'
-                      ? 'Công chiếu'
-                      : ''}
-
-                    {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === 'LIVE'
-                      ? 'LIVE'
-                      : ''}
-
-                    {slide?.label_event &&
-                    slide?.label_event?.toUpperCase() === 'ĐANG PHÁT'
-                      ? 'Đang phát'
-                      : ''}
-
-                    {slide && !slide?.label_event ? 'LIVE' : ''}
+                ) : slide?.label_event ? (
+                  <div className="relative inline-flex items-center justify-center h-[23px] w-fit text-center px-[8px] py-[1px] text-[14px] font-[700] mt-[12px] leading-[100%] overflow-hidden rounded-[4px]">
+                    {/* Background image layer - chỉ phủ phần text + padding */}
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `url(${isLiveBackground}) no-repeat left center / auto 100%`,
+                        borderTopRightRadius: '6px',
+                        borderBottomRightRadius: '6px',
+                        width: '100%',
+                        height: '100%',
+                      }}
+                    />
+                    {/* Text layer - đảm bảo text luôn ở trên */}
+                    <span className="relative z-1">{slide?.label_event}</span>
                   </div>
+                ) : (
+                  ''
                 )}
               </>
             ))}

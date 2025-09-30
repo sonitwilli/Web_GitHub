@@ -9,7 +9,11 @@ import PaymentRenewalTableHeader from '@/lib/components/payment/PaymentRenewalTa
 import PaymentRenewalTableRow from '@/lib/components/payment/PaymentRenewalTableRow';
 import styles from './PaymentRenewalTable.module.css';
 import { useAutoExtend } from '@/lib/hooks/useAutoExtend';
-import { Token, doSendOtpNewFlow } from '@/lib/api/payment';
+import {
+  SendOtpNewFlowResponseData,
+  Token,
+  doSendOtpNewFlow,
+} from '@/lib/api/payment';
 // import Loading from '@/lib/components/common/Loading';
 import ConfirmModal, {
   ModalContent,
@@ -44,6 +48,8 @@ import {
   trackingLog187,
   trackingLog188,
 } from '@/lib/hooks/useTrackingModule';
+import { ApiResponse } from '@/lib/api/payment';
+import { convertMsg } from '@/lib/utils/profile';
 
 const PaymentRenewalTable: React.FC = () => {
   const [openMenuIdx, setOpenMenuIdx] = useState<number | null>(null);
@@ -81,13 +87,17 @@ const PaymentRenewalTable: React.FC = () => {
 
   // Helper function để đảm bảo ref được truy cập an toàn
   const openVerifyModal = useCallback(
-    (otpData: { mask_phone?: string; seconds?: number }, phone: string) => {
+    (otpData: ApiResponse<SendOtpNewFlowResponseData>, phone: string) => {
       const tryOpenModal = (attempt = 0) => {
         if (verifyModalRef.current) {
           verifyModalRef.current.verifyContent = {
             title: 'Xác thực mã OTP',
-            content: `<div style="text-align:center;"><div style="color: rgba(255,255,255,0.6)">Nhập mã OTP được gửi qua tin nhắn SMS đến số điện thoại <span style="color: #f5f5f5"><b>${otpData?.mask_phone}</b></span></div></div>`,
+            content: `<div style="text-align:center;"><div style="color: rgba(255,255,255,0.6)">${convertMsg({
+              msg: otpData.msg || '',
+              text_format: otpData.data?.text_format || [],
+            })}</div></div>`,
             placeholder_input: 'Nhập mã OTP',
+            switch_mode: otpData?.data?.switch_mode,
             button: [
               {
                 action: 'do_confirm_otp_delete_auto_extend',
@@ -97,7 +107,7 @@ const PaymentRenewalTable: React.FC = () => {
             link_resent: [
               {
                 action: 'do_resend_otp_delete_auto_extend',
-                content: 'Gửi lại',
+                content: 'Gửi lại OTP',
               },
             ],
           };
@@ -105,7 +115,7 @@ const PaymentRenewalTable: React.FC = () => {
           verifyModalRef.current.openModal?.();
           if (verifyModalRef.current?.handleCountDownResend) {
             verifyModalRef.current.handleCountDownResend({
-              seconds: Number(otpData?.seconds),
+              seconds: Number(otpData?.data?.seconds),
             });
           }
         } else if (attempt < 10) {
@@ -226,12 +236,19 @@ const PaymentRenewalTable: React.FC = () => {
       }
 
       // Gọi trực tiếp API mà không cập nhật state trong useAutoExtend
-      const result = await doSendOtpNewFlow({ phone });
+      const result = await doSendOtpNewFlow({ phone, method_otp: '' });
 
       const errorCode = result?.sendResponse?.data?.error_code;
       switch (errorCode) {
         case '0':
-          openVerifyModal(result?.sendResponse?.data?.data || {}, phone);
+          openVerifyModal(
+            result?.sendResponse?.data || {
+              data: { mask_phone: '', seconds: 0 },
+              error_code: '0',
+              msg: '',
+            },
+            phone,
+          );
           break;
         case '2':
           handleError22(Number(result?.sendResponse?.data?.data?.seconds));

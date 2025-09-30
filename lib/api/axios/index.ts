@@ -12,6 +12,9 @@ import { getCookie } from 'cookies-next';
 import { browserRealVersion } from '@/lib/utils/getBrowser';
 import moment from 'moment';
 import { stopMqttManual } from '@/lib/hooks/useMqtt';
+import { showToast } from '@/lib/utils/globalToast';
+import React from 'react';
+import NoInternetIcon from '@/lib/components/icons/NoInternetIcon';
 
 export interface BrowserInfo {
   name?: string;
@@ -22,6 +25,26 @@ const axiosInstance = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api/${process.env.NEXT_PUBLIC_API_VERSION}`,
   timeout: 10000,
 });
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Check for network error and show popup
+    if (error.message && error.message.toUpperCase().includes('NETWORK')) {
+      // Skip showing toast for web-ott URLs
+      const currentUrl =
+        typeof window !== 'undefined' ? window.location.href : '';
+      if (!currentUrl.includes('web-ott')) {
+        showToast({
+          title: 'Mất kết nối mạng',
+          customIcon: React.createElement(NoInternetIcon),
+          timeout: 3000,
+        });
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 axiosInstance.interceptors.request.use(
   async ($config) => {

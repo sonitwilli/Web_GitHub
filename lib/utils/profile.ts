@@ -117,7 +117,7 @@ export const convertMsg = ({
       for (const text of msgArray) {
         if (text_format.includes(text)) {
           convertTexts.push(
-            `<span style="color: white" class="nvm"><b>${text}</b></span>`,
+            `<span style="color: #F5F5F4" class="nvm"><b>${text}</b></span>`,
           );
         } else {
           convertTexts.push(text);

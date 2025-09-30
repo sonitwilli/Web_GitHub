@@ -157,6 +157,7 @@ const ForgetPasswordModalProfile = forwardRef<
         phone,
         type_otp: SEND_OTP_TYPES.FORGET_MANAGEMENT_CODE,
         verify_token: verifyResult?.data?.verify_token,
+        method_otp: '',
         client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
       });
 
@@ -195,12 +196,12 @@ const ForgetPasswordModalProfile = forwardRef<
           if (verifyModalRef.current) {
             verifyModalRef.current.verifyContent = {
               title: 'Xác thực mã OTP',
-              content: `<div className="text-center"><div style="color: #959595;">${convertMsg(
+              content: `<div style="color: #959595;">${convertMsg(
                 {
                   msg: result?.msg || '',
                   text_format: result?.data?.text_format || [],
                 },
-              )}</div></div>`,
+              )}</div>`,
               placeholder_input: 'Nhập mã OTP',
               button: [
                 {
@@ -211,9 +212,10 @@ const ForgetPasswordModalProfile = forwardRef<
               link_resent: [
                 {
                   action: 'do_resend_otp_forget_management_code',
-                  content: 'Gửi lại',
+                  content: 'Gửi lại OTP',
                 },
               ],
+              switch_mode: result?.data?.switch_mode,
             };
             verifyModalRef.current.phone = phone;
             setResendOtp(true);

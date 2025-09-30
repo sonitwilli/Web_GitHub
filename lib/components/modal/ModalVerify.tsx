@@ -19,6 +19,7 @@ import { NoticeModalRef } from '@/lib/components/modal/ModalNotice';
 import styles from './ModalVerify.module.css';
 import ModalManagementCode from './ModalManagementCode';
 import { setOtpType } from '@/lib/store/slices/otpSlice';
+import { SwitchModeType } from '@/lib/api/login';
 
 // Interface for VerifyContent
 export interface VerifyContent {
@@ -27,6 +28,7 @@ export interface VerifyContent {
   placeholder_input?: string;
   button?: { action: string; content: string }[];
   link_resent?: { action: string; content: string }[];
+  switch_mode?: SwitchModeType;
 }
 
 // Interface for VerifyModalNewProps
@@ -91,12 +93,18 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
     const verifyInputRef = useRef<HTMLInputElement>(null);
     const noticeModalRef = useRef<NoticeModalRef>(null);
     const modalManagementCodeRef = useRef<ModalManagementCodeRef>(null);
-
+    const [showOtherMethods, setShowOtherMethods] = useState(false);
     const modalType = useMemo(() => {
       const allowPin = currentUser?.allow_pin;
 
       return allowPin !== '1' ? 'forget' : 'management';
     }, [currentUser]);
+
+    useEffect(() => {
+      if (resendTimeout > 0) {
+        setShowOtherMethods(false);
+      }
+    }, [resendTimeout]);
 
     // Initialize useOtp hook with options
     const {
@@ -172,7 +180,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
         const maskPhone = localStorage.getItem(MASK_PHONE) || formatPhone();
         setVerifyContent((prev) => ({
           ...prev,
-          content: `<div style="text-align:center;"><div style="color: #959595;">Nhấn nút <b style="color: white">Gửi lại</b> mã để nhận OTP được gửi đến số điện thoại <b style="color: white">${maskPhone}</b></div></div>`,
+          content: `<div style="color: #959595;">Nhấn nút <b style="color: white">Gửi lại</b> mã để nhận OTP được gửi đến số điện thoại <b style="color: white">${maskPhone}</b></div>`,
         }));
       },
       focusInput: () => {
@@ -215,6 +223,27 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
     useEffect(() => {
       // console.log('isRegister', isRegister);
     }, [isRegister]);
+
+    // Memoize the content to prevent unnecessary re-renders
+    const memoizedContent = useMemo(() => {
+      if (verifyContent.placeholder_input === 'Nhập số điện thoại') {
+        return null;
+      }
+
+      if (!verifyContent.content) {
+        return null;
+      }
+
+      return (
+        <div
+          key="verify-content-stable"
+          className="text-left text-white mt-4 mb-8"
+          dangerouslySetInnerHTML={{
+            __html: verifyContent.content as string,
+          }}
+        />
+      );
+    }, [verifyContent.content, verifyContent.placeholder_input]);
 
     const formatPhone = useCallback(() => {
       if (!currentUser?.user_phone) return '';
@@ -360,7 +389,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
       }, 1000);
     };
 
-    const onSubmit = async (action: string) => {
+    const onSubmit = async (action: string, typeOtp: string = '') => {
       if (isDisableButtonConfirm || !action) return;
 
       setWrongOtpMsg(null);
@@ -379,6 +408,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
           phone,
           countryCode: 'VN',
           clientId: process.env.NEXT_PUBLIC_CLIENT_ID,
+          typeOtp,
         };
 
         switch (action) {
@@ -549,7 +579,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             setOtpPinCode(null);
             setWrongOtpMsg(null);
           }}
-          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-[360px] sm:h-[410px] bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
+          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-[360px] sm:h-auto bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
           overlayClassName={
             overlayClass ||
             `fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]`
@@ -590,32 +620,43 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                   )}
                 </div>
               ) : (
-                verifyContent.content && (
-                  <p
-                    className="text-center text-white mt-4 mb-8"
-                    dangerouslySetInnerHTML={{
-                      __html: verifyContent.content as string,
-                    }}
-                  />
-                )
+                memoizedContent
               )}
               {verifyContent.placeholder_input !== 'Nhập số điện thoại' && (
                 <div className="form-container mb-[32px]">
-                  <input
-                    ref={verifyInputRef}
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    className={`${styles['no-spinners']} ${
-                      wrongOtpMsg
-                        ? 'border-scarlet focus:border-scarlet'
-                        : 'border-black-olive-404040 focus:border-gray'
-                    } border outline-0 w-full h-[56px] px-4 bg-[rgba(0,0,0,0.05)] text-white placeholder-davys-grey text-base rounded-[104px] focus:ring-0`}
-                    placeholder={verifyContent.placeholder_input}
-                    value={form.verify_input}
-                    onChange={(e) => handleInputChange(e, 6)}
-                    onPaste={handlePaste}
-                  />
+                  <div className="flex items-center gap-3 justify-between">
+                    <input
+                      ref={verifyInputRef}
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      className={`${styles['no-spinners']} ${
+                        wrongOtpMsg
+                          ? 'border-scarlet focus:border-scarlet'
+                          : 'border-black-olive-404040 focus:border-gray'
+                      } border outline-0 w-full h-[56px] px-4 bg-[rgba(0,0,0,0.05)] text-white placeholder-davys-grey text-base rounded-[104px] focus:ring-0`}
+                      placeholder={verifyContent.placeholder_input}
+                      value={form.verify_input}
+                      onChange={(e) => handleInputChange(e, 6)}
+                      onPaste={handlePaste}
+                    />
+                    {Array.isArray(verifyContent.link_resent) &&
+                      verifyContent.link_resent.map((item, index) => (
+                        <button
+                          key={index}
+                          className={`font-semibold text-base ${
+                            resendTimeout
+                              ? 'text-spanish-gray bg-charleston-green h-[56px] w-[56px] rounded-full flex-none cursor-default pointer-events-none'
+                              : 'text-white-smoke text-nowrap h-[56px] px-6 rounded-[40px] fpl-bg cursor-pointer'
+                          }`}
+                          onClick={() =>
+                            resendTimeout ? null : onSubmit(item.action, '')
+                          }
+                        >
+                          {resendTimeout ? `${resendTimeout}s` : item.content}
+                        </button>
+                      ))}
+                  </div>
                   {wrongOtpMsg && (
                     <div className="text-scarlet text-sm mt-2 font-[400] text-left">
                       {wrongOtpMsg}
@@ -643,34 +684,68 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                         onClick={() =>
                           onSubmit(
                             form.verify_input.length === 6 ? item.action : '',
+                            '',
                           )
                         }
                       >
                         {item.content}
                       </button>
                     ))}
-                  <div className="text-center text-white mt-[24px]">
-                    <p>
+                  <div className="flex items-center justify-center gap-2 mt-[24px]">
+                    <p className="text-spanish-gray text-base font-medium">
                       Chưa nhận được mã?{' '}
-                      {Array.isArray(verifyContent.link_resent) &&
-                        verifyContent.link_resent.map((item, index) => (
-                          <span
-                            key={index}
-                            className={`font-semibold ${
-                              resendTimeout
-                                ? 'text-dim-gray cursor-default pointer-events-none'
-                                : 'text-safety-orange cursor-pointer'
-                            }`}
-                            onClick={() =>
-                              resendTimeout ? null : onSubmit(item.action)
-                            }
-                          >
-                            {item.content}
-                            {resendTimeout ? ` (${resendTimeout}s)` : ''}
-                          </span>
-                        ))}
                     </p>
+                    {verifyContent?.switch_mode?.modes &&
+                      verifyContent.switch_mode.modes.length > 0 && (
+                        <div className="text-center">
+                          <button
+                            onClick={() =>
+                              resendTimeout
+                                ? null
+                                : setShowOtherMethods(!showOtherMethods)
+                            }
+                            className={`transition-colors text-[16px] font-medium ${
+                              resendTimeout
+                                ? 'text-gray cursor-default pointer-events-none'
+                                : 'text-fpl cursor-pointer'
+                            }`}
+                          >
+                            Chọn phương thức khác
+                          </button>
+                        </div>
+                      )}
                   </div>
+                  {/* Dropdown hiển thị các phương thức khác */}
+                  {showOtherMethods && (
+                    <div className="flex flex-col gap-[20px] mt-6">
+                      {verifyContent?.switch_mode?.modes &&
+                        verifyContent?.switch_mode?.modes.length > 0 &&
+                        verifyContent.switch_mode.modes.map((mode, index) => {
+                          return (
+                            <button
+                              key={index}
+                              onClick={() => {
+                                onSubmit(
+                                  verifyContent?.link_resent?.[0]?.action || '',
+                                  mode.method || '',
+                                );
+                                setShowOtherMethods(false);
+                              }}
+                              className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors"
+                            >
+                              {mode.icon && (
+                                <img
+                                  src={mode.icon}
+                                  alt="icon"
+                                  className="w-6 h-6"
+                                />
+                              )}
+                              {mode.text}
+                            </button>
+                          );
+                        })}
+                    </div>
+                  )}
                 </>
               ) : (
                 <button
@@ -680,7 +755,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                       : styles.disabledButton
                   }`}
                   onClick={() =>
-                    onSubmit(form.verify_input ? 'do_register' : '')
+                    onSubmit(form.verify_input ? 'do_register' : '', '')
                   }
                 >
                   Xác nhận

@@ -15,6 +15,9 @@ export const userAgentInfo = () => {
         isFromAndroidOs: !!res?.os?.name?.toUpperCase()?.includes('ANDROID'),
         isMacOS: !!res?.os?.name?.toUpperCase()?.includes('MAC'),
         isFromIos: !!res?.os?.name?.toUpperCase()?.includes('IOS'),
+        isFromIpad:
+          !!res?.os?.name?.toUpperCase()?.includes('MAC') &&
+          'ontouchend' in document,
         ...res,
       };
     } catch {}
