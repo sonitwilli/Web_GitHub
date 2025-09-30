@@ -579,6 +579,11 @@ export default function Header() {
                               'lastActiveMenu',
                               JSON.stringify(menu),
                             );
+                            
+                            // Clear channel group selection when navigating to channel from header
+                            if (menu.page_id === 'channel' || menu.id === 'channel') {
+                              localStorage.removeItem('selectedChannelGroupId');
+                            }
                           }
                           clickLinkItem({
                             menuItem: menu,
