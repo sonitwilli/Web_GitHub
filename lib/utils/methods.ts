@@ -114,7 +114,11 @@ export const scaleImageUrl = ({
   height?: number;
   notWebp?: boolean;
 }) => {
-  if (typeof window === 'undefined') return imageUrl;
+  // Return early if no valid imageUrl is provided
+  if (!imageUrl || imageUrl === 'undefined' || typeof window === 'undefined') {
+    return imageUrl;
+  }
+  
   const queryParams = new URLSearchParams();
   if (height) queryParams.set('h', String(height));
   if (width) {
@@ -158,7 +162,11 @@ export const scalePosterOverlayUrl = ({
   height?: number;
   notWebp?: boolean;
 }) => {
-  if (typeof window === 'undefined') return imageUrl;
+  // Return early if no valid imageUrl is provided
+  if (!imageUrl || imageUrl === 'undefined' || typeof window === 'undefined') {
+    return imageUrl;
+  }
+  
   const queryParams = new URLSearchParams();
   if (height) queryParams.set('h', String(height));
   if (width) {
