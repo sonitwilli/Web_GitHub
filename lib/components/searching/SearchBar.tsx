@@ -17,6 +17,7 @@ type SearchFormProps = {
   resetInput: () => void;
   isActive: boolean;
   handleInputFocus: () => void;
+  shouldAutoFocus?: boolean;
 };
 
 const SearchingBar = ({
@@ -26,12 +27,15 @@ const SearchingBar = ({
   resetInput,
   isActive,
   handleInputFocus,
+  shouldAutoFocus = true,
 }: SearchFormProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { clickChatbot } = useChatbot();
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    if (shouldAutoFocus) {
+      inputRef.current?.focus();
+    }
+  }, [shouldAutoFocus]);
   const { configs } = useContext(AppContext);
   const { info } = useAppSelector((s) => s.user);
   const isShowChatbot = useMemo(() => {
