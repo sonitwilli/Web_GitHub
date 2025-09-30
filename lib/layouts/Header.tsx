@@ -20,7 +20,7 @@ import { useDispatch } from 'react-redux';
 import useScroll from '@/lib/hooks/useScroll';
 import { IoMdCard } from 'react-icons/io';
 import DownloadApp from '../components/download/DownloadApp';
-import { checkActive, loadJsScript } from '../utils/methods';
+import { checkActive, loadJsScript, getUserAgent } from '../utils/methods';
 import { useAppDispatch, useAppSelector } from '../store';
 import useMenu from '../hooks/useMenu';
 import { ACCOUNT } from '@/lib/constant/texts';
@@ -168,6 +168,24 @@ export default function Header() {
   }, [profiles, userInfo, isTabMultiPrf]);
   const { adsLoaded } = useAppSelector((state) => state.app);
   const { fetchProfiles, profiles: profilesList } = useProfileList();
+
+  // Device detection to hide download app on mobile/tablet
+  const [isDesktopDevice, setIsDesktopDevice] = useState(true); // Default to desktop for SSR
+
+  useEffect(() => {
+    // Only run device detection on client side to avoid hydration mismatch
+    if (typeof window !== 'undefined') {
+      try {
+        const userAgent = getUserAgent();
+        const deviceType = userAgent?.device?.type;
+        // Show download app only on desktop (not mobile or tablet)
+        const isDesktop = !deviceType || deviceType === 'desktop' || (!deviceType);
+        setIsDesktopDevice(isDesktop);
+      } catch {
+        setIsDesktopDevice(true); // Fallback to desktop if detection fails
+      }
+    }
+  }, []);
 
   // Load Ads script globally (moved from pages/index.tsx)
   useEffect(() => {
@@ -542,8 +560,10 @@ export default function Header() {
   return (
     <>
       <header
-        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 bg-smoky-black tablet:bg-transparent ${
-          scrollDistance > 300 || isCategoryPage ? '!bg-smoky-black' : ''
+        className={` fixed w-full left-0 top-0 h-[80px] z-[10] flex flex-col justify-center duration-800 ${
+          isDesktopDevice ? 'tablet:bg-transparent' : 'bg-smoky-black'
+        } ${
+          (scrollDistance > 300 && isDesktopDevice) || (isCategoryPage && isDesktopDevice) ? '!bg-smoky-black' : ''
         } ${openMobileMenu ? '!bg-smoky-black' : ''}`}
       >
         <div className="f-container self-stretch flex items-center justify-between">
@@ -639,7 +659,7 @@ export default function Header() {
                 </div>
               )}
 
-              {currentProfile?.profile_type !== PROFILE_TYPES.KID_PROFILE && (
+              {currentProfile?.profile_type !== PROFILE_TYPES.KID_PROFILE && isDesktopDevice && (
                 <div className="hidden tablet:block">
                   <DownloadApp />
                 </div>
