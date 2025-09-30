@@ -165,6 +165,7 @@ const SearchingPage = () => {
           resetInput={resetInput}
           isActive={isActive}
           handleInputFocus={handleInputFocus}
+          shouldAutoFocus={!query.k}
         />
 
         {/* <div> */}
