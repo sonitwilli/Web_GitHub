@@ -31,6 +31,7 @@ export interface PosterOverlayItem {
   size?: 'large' | 'small';
   zIndex?: number;
   error?: boolean;
+  group_account?: string[] | null;
 }
 
 export type PositionLabelsStatus = Record<string, boolean>;

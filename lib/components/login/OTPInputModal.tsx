@@ -224,7 +224,7 @@ export default function OTPInputModal({
                 {!showOtherMethods && (
                   <button
                     onClick={() => setShowOtherMethods(!showOtherMethods)}
-                    className="cursor-pointer text-white-smoke hover:text-fpl transition-colors text-[16px] font-medium mb-[24px]"
+                    className="cursor-pointer text-fpl transition-colors text-[16px] font-medium mb-[24px]"
                   >
                     Chọn phương thức khác
                   </button>

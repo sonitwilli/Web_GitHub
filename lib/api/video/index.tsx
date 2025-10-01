@@ -10,6 +10,7 @@ export interface RatingContentItem {
   count_origin?: number;
   icon?: string;
   type?: string;
+  bg_color?: string;
 }
 
 export interface RatingUserData {

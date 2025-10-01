@@ -696,7 +696,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                       Chưa nhận được mã?{' '}
                     </p>
                     {verifyContent?.switch_mode?.modes &&
-                      verifyContent.switch_mode.modes.length > 0 && (
+                      verifyContent.switch_mode.modes.length > 1 && (
                         <div className="text-center">
                           <button
                             onClick={() =>

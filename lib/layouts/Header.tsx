@@ -198,7 +198,7 @@ export default function Header() {
             appDispatch({ type: 'app/changeAdsLoaded', payload: true });
           },
         });
-      }, 5000);
+      }, 1000);
 
       return () => {
         clearTimeout(timer);

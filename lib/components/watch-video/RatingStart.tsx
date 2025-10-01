@@ -146,6 +146,10 @@ const RatingStar: React.FC<RatingStarProps> = ({
   };
 
   const hightlightInfo = useMemo(() => ratingInfo?.content?.[0], [ratingInfo]);
+  const bgColor = useMemo(
+    () => hightlightInfo?.bg_color || hightlightInfo?.bg || '#2C2C2C',
+    [hightlightInfo],
+  );
 
   if (!isNotEmptyObject(hightlightInfo as HighlightedInfo | null)) {
     return null;
@@ -154,7 +158,12 @@ const RatingStar: React.FC<RatingStarProps> = ({
   return (
     <div className="flex h-[32px]">
       {!hightlightInfo?.avg_rate && !isEditRating && !rating && (
-        <div className="flex items-center gap-2 p-2 bg-charleston-green rounded-[8px] mr-3">
+        <div
+          className="flex items-center gap-2 p-2 rounded-[8px] mr-3 border border-white/10"
+          style={{
+            backgroundColor: bgColor,
+          }}
+        >
           <FaStar size={18} className="text-fpl" />
           <p className="text-spanish-gray text-base font-[450] leading-[130%] mt-[2px] whitespace-nowrap">
             {generalInfoMessage.rating_content.action_no_rating}

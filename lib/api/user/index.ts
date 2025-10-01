@@ -34,6 +34,7 @@ export interface UserInfoResponseType {
   contract_number?: string;
   chatbot?: string;
   current_profile?: profileDeleted;
+  group_account?: string[];
 }
 
 export interface profileDeleted {
@@ -128,7 +129,7 @@ interface UpdateProfileRequest {
 export const loginProfile = async (
   data: LoginProfileRequest = {
     profile_id: '',
-  }
+  },
 ): Promise<AxiosResponse<LoginProfileResponse>> => {
   try {
     return await axiosInstance.post('/config/profile/login', data);
@@ -149,7 +150,7 @@ const checkPassword = async (
       client_id: process.env.NEXT_PUBLIC_CLIENT_ID || '',
       type: 'profile',
     },
-  }
+  },
 ): Promise<AxiosResponse<CheckPasswordResponse>> => {
   try {
     return await axiosInstance.post('/user/checkpass', data);
@@ -159,7 +160,7 @@ const checkPassword = async (
 };
 
 export const switchProfile = async (
-  profile_id: string
+  profile_id: string,
 ): Promise<AxiosResponse<SwitchProfileResponse>> => {
   try {
     return await axiosInstance.get(`/config/profile/${profile_id}`);
@@ -170,7 +171,7 @@ export const switchProfile = async (
 
 export const updateProfile = async (
   profile_id: string,
-  data: UpdateProfileRequest = { params: { pin: '' }, profile_id: '' }
+  data: UpdateProfileRequest = { params: { pin: '' }, profile_id: '' },
 ): Promise<AxiosResponse<SwitchProfileResponse>> => {
   try {
     return await axiosInstance.post(`/config/profile/${profile_id}`, data);
@@ -183,7 +184,7 @@ export const checkProfilePin = async (
   data: CheckProfilePinRequest = {
     profile_id: '',
     pin: '',
-  }
+  },
 ): Promise<AxiosResponse<SwitchProfileResponse>> => {
   try {
     return await axiosInstance.post('/config/profile/verify_pin', { ...data });

@@ -45,7 +45,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
   const [isSelectionMode, setIsSelectionMode] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [checkedSlides, setCheckedSlides] = useState<boolean[]>(
-    slidesItems ? new Array(slidesItems.length).fill(false) : []
+    slidesItems ? new Array(slidesItems.length).fill(false) : [],
   );
   const { deleteData, response } = useDeleteDataBlock();
 
@@ -69,7 +69,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
         return newCheckedSlides;
       });
     },
-    []
+    [],
   );
 
   // Xử lý chọn tất cả
@@ -82,7 +82,19 @@ const LibrarySlide: React.FC<PropType> = (props) => {
   const handleDelete = async () => {
     // In a real app, call an API to delete items here
     setIsSelectionMode(false);
-    await deleteData?.(block?.type);
+    const selectedItems = checkedSlides
+      .map((checked, index) => {
+        if (checked && slidesItems?.[index]) {
+          return {
+            id: slidesItems[index]?.id || '',
+            type: slidesItems[index]?.type || '',
+          };
+        }
+        return null;
+      })
+      .filter((item): item is { id: string; type: string } => item !== null);
+
+    await deleteData?.(block?.type, selectedItems, selectAllChecked);
     setIsModal(false);
   };
 
@@ -95,7 +107,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [response]
+    [response],
   );
 
   useEffect(() => {
@@ -111,10 +123,10 @@ const LibrarySlide: React.FC<PropType> = (props) => {
   };
 
   // Toggle selection mode
-  // const toggleSelectionMode = () => {
-  //   setIsSelectionMode(!isSelectionMode);
-  //   setCheckedSlides(new Array(slidesItems?.length || 0).fill(false));
-  // };
+  const toggleSelectionMode = () => {
+    setIsSelectionMode(!isSelectionMode);
+    setCheckedSlides(new Array(slidesItems?.length || 0).fill(false));
+  };
 
   const onSelect = useCallback(() => {
     if (!emblaMainApi) return;
@@ -152,19 +164,13 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       <div className={`block-slider ${slideClassName}`}>
         {/* Selection controls */}
         {slidesItems && slidesItems.length > 0 && (
-          <div className="flex items-center gap-2 mb-6 absolute top-[-10px] right-0">
+          <div className="flex items-center gap-2 mb-6 absolute top-[-2px] right-0">
             {!isSelectionMode && queryId && (
-              // <button
-              //   onClick={toggleSelectionMode}
-              //   className="px-4 py-[10px] text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
-              // >
-              //   Chọn nội dung để xóa
-              // </button>
               <button
-                onClick={() => setIsModal(true)}
-                className="px-4 py-[10px] cursor-pointer text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
+                onClick={toggleSelectionMode}
+                className="px-4 cursor-pointer py-[10px] text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
               >
-                Xóa tất cả
+                Chọn nội dung để xóa
               </button>
             )}
 
@@ -206,9 +212,11 @@ const LibrarySlide: React.FC<PropType> = (props) => {
                   Chọn tất cả
                 </label>
                 <button
-                  onClick={handleDelete}
-                  disabled={!selectAllChecked}
-                  className={`px-4 py-[10px] text-[16px] font-semibold leading-[1.3] rounded-[40px] ${
+                  onClick={() => setIsModal(true)}
+                  disabled={
+                    checkedSlides?.length > 0 && !checkedSlides?.includes(true)
+                  }
+                  className={`px-4 py-[10px] cursor-pointer text-[16px] font-semibold leading-[1.3] rounded-[40px] ${
                     checkedSlides?.length > 0 && checkedSlides?.includes(true)
                       ? 'bg-fpl text-white-smoke'
                       : 'bg-eerie-black text-davys-grey'
@@ -218,7 +226,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
                 </button>
                 <button
                   onClick={handleCancel}
-                  className="px-4 py-[10px] text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
+                  className="px-4 py-[10px] cursor-pointer text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
                 >
                   Hủy
                 </button>
@@ -290,11 +298,8 @@ const LibrarySlide: React.FC<PropType> = (props) => {
                 'Xóa nội dung theo dõi'
               : blockMeta?.btn_info?.popup_info?.title || 'Xóa lịch sử xem',
           content:
-            blockMeta?.name === FOLLOWING
-              ? blockMeta?.btn_info?.popup_info?.description ||
-                'Bạn muốn xóa vĩnh viễn nội dung theo dõi của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại'
-              : blockMeta?.btn_info?.popup_info?.description ||
-                'Bạn muốn xóa vĩnh viễn lịch sử xem của hồ sơ này? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại',
+            blockMeta?.btn_info?.popup_info?.description ||
+            'Bạn muốn xóa những nội dung đã chọn? Các thông tin sau khi bị xóa sẽ không thể khôi phục lại',
           buttons: {
             cancel: 'Đóng',
             accept: 'Xóa',

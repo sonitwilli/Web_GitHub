@@ -19,12 +19,13 @@ import {
   PIN_TYPES,
   PROFILE_TYPES,
   PROFILE_DEFAULT_AVATAR,
+  ERROR_DELETE_PROFILE,
 } from '@/lib/constant/texts';
 import { Profile } from '@/lib/api/user';
 import { Avatar, verifyProfileName } from '@/lib/api/multi-profiles';
 import Loading from '@/lib/components/common/Loading';
 import styles from './ProfileForm.module.css';
-import { useAppSelector } from '@/lib/store'; // Adjust the import path as needed
+import { useAppDispatch, useAppSelector } from '@/lib/store'; // Adjust the import path as needed
 import { CREATE_PROFILE, EDIT_PROFILE } from '@/lib/constant/texts';
 import { deleteProfile } from '@/lib/api/multi-profiles'; // Adjust the import path as needed
 import { useRouter } from 'next/router';
@@ -32,6 +33,10 @@ import { switchProfile } from '@/lib/api/user';
 import { removeVietnameseTones } from '@/lib/utils/removeVietnameseTones';
 import { trackingModifyProfileLog103 } from '@/lib/tracking/trackingProfile';
 import useClickOutside from '@/lib/hooks/useClickOutside';
+import { AxiosError } from 'axios';
+import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
+import { showToast } from '@/lib/utils/globalToast';
+import { checkError } from '@/lib/utils/profile';
 
 interface ProfileFormProps {
   errorUpdate?: string | null;
@@ -124,6 +129,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     useFetchRecommendedProfile({
       setIsError,
     });
+  const dispatch = useAppDispatch();
 
   // Sử dụng hook useCreateNewProfile
   const {
@@ -136,10 +142,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   const { info } = useAppSelector((state) => state.user);
   const { messageConfigs } = useAppSelector((state) => state.app);
+  
   const isRootProfile = useMemo(
     () => listProfiles?.find((item) => item?.is_root === '1'),
     [listProfiles],
   );
+
+  useEffect(() => {
+    console.log('messageConfigs', messageConfigs);
+  }, [messageConfigs]);
 
   const getDefailProfile = async () => {
     try {
@@ -172,9 +183,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           break;
         case '4':
           setModalContent({
-            title: data?.message?.title || 'Hồ sơ đã bị xóa',
+            title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
             content:
-              data?.message?.content ||
+              messageConfigs?.profile?.action_delete?.msg_deleted ||
               'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
             buttons: {
               accept: 'Xác nhận',
@@ -381,9 +392,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             break;
           case '4':
             setModalContent({
-              title: response?.data?.message?.title || 'Hồ sơ đã bị xóa',
+              title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
               content:
-                response?.data?.message?.content ||
                 messageConfigs?.profile?.action_delete?.msg_deleted ||
                 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
               buttons: {
@@ -411,6 +421,15 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         router.push('/tai-khoan?tab=ho-so');
       }
     } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 401) {
+        dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
+      } else {
+        
+    showToast({
+      title: ERROR_DELETE_PROFILE,
+      desc: checkError({ error }),
+    });
+      }
       console.error('Error deleting profile:', error);
     }
   };

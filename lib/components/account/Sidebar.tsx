@@ -22,6 +22,7 @@ import { ALREADY_SHOWN_MODAL_MANAGEMENT_CODE } from '@/lib/constant/texts';
 import BookMarkIcon from '../icons/BookMarkIcon';
 import LaptopIcon from '../icons/LaptopIcon';
 import { trackingLog180 } from '@/lib/hooks/useTrackingModule';
+import { useAccountGroupCache } from '@/lib/hooks/useAccountGroupCache';
 
 interface MenuItem {
   id?: string;
@@ -43,6 +44,7 @@ const SidebarAccount: React.FC = () => {
   const router = useRouter();
   const { tab, id } = router.query;
   const { logout } = useLogout();
+  const { forceResetToAnonymous } = useAccountGroupCache();
   const { token, info } = useAppSelector((state) => state.user);
   const [modalContent, setModalContent] = useState<ModalContent>({
     title: '',
@@ -197,6 +199,7 @@ const SidebarAccount: React.FC = () => {
         user: info || {},
       };
       trackingLog180();
+      forceResetToAnonymous();
       await logout(logoutState);
     } catch (error) {
       console.error('Logout failed:', error);

@@ -13,7 +13,6 @@ export interface LoginParamsType {
   otp_code?: string;
 }
 
-
 export interface SwitchModeDefaultType {
   icon?: string;
   method?: string;
@@ -79,6 +78,7 @@ export interface onLoginResponse {
     access_token_type?: string;
     title?: string;
     verify_token?: string;
+    login_type?: string;
   };
 }
 

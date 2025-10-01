@@ -327,7 +327,11 @@ const NoticeModal = forwardRef<NoticeModalRef, NoticeModalProps>(
                 if (response?.data?.status === 'success') {
                   if (reloadData) reloadData(); // Gọi reloadData nếu có
                 } else {
-                  throw new Error(response?.data?.message || 'Xóa thất bại');
+                  throw new Error(
+                    typeof response?.data?.message === 'string'
+                      ? response.data.message
+                      : response?.data?.message?.content || 'Xóa thất bại',
+                  );
                 }
               }
               break;

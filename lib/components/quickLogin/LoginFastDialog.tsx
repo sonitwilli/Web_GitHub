@@ -14,6 +14,7 @@ import {
   CLOSE_LOGIN_MODAL_NOW,
   CONFIRM_BUTTON_TEXT,
   QUICK_LOGIN_OTP_CODE,
+  TYPE_LOGIN,
 } from '@/lib/constant/texts';
 import { useDispatch } from 'react-redux';
 import { openLoginModal } from '@/lib/store/slices/loginSlice';
@@ -156,6 +157,14 @@ export default function LoginFastDialog() {
           });
           break;
       }
+
+      // handle to set TYPE_LOGIN
+      setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          const loginType = resp.data?.login_type as string;
+          localStorage.setItem(TYPE_LOGIN, loginType);
+        }
+      });
     } catch (err: unknown) {
       let fallbackMessage = DEFAULT_ERROR_MSG;
 

@@ -366,7 +366,7 @@ export default function BlockSlideItem({
 
           {isShowLiveLabel &&
             (checkLive && !isValidCountdown ? (
-              <div className="absolute bottom-[8px] left-[8px] h-[22px] text-[12px] font-bold whitespace-nowrap px-[5px] py-[4px] text-white-087 overflow-hidden rounded-[6px]">
+              <div className="absolute flex items-center justify-center bottom-[8px] left-[8px] h-[22px] text-[12px] font-bold whitespace-nowrap px-[5px] py-[4px] text-white-087 overflow-hidden rounded-[6px]">
                 {/* Background image layer - chỉ phủ phần text + padding */}
                 <div
                   className="absolute inset-0"

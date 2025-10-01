@@ -40,14 +40,28 @@ const LibrarySlideItem: React.FC<PropType> = (props) => {
     }
   };
 
+  const handleLabelClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (onCheckboxChange) {
+      onCheckboxChange(index, !isChecked);
+    }
+  };
+
   return (
-    <div ref={slideRef} className="embla__slide transition-all duration-300 hover:scale-[1.05]">
+    <div
+      ref={slideRef}
+      className="embla__slide transition-all duration-300 hover:scale-[1.05]"
+    >
       {isSelectionMode && (
         <div
           onClick={handleDivClick}
-          className="absolute top-0 z-[2] w-[calc(100%-16px)] h-[calc(100%-47px)] bg-black-05 rounded-2xl"
+          className="absolute cursor-pointer top-0 z-[2] w-[calc(100%-16px)] h-[calc(100%-34px)] bg-black-05 rounded-2xl"
         >
-          <label className="mr-2 cursor-pointer absolute z-[1] top-[11px] right-0 left-auto">
+          <label
+            className="mr-2 cursor-pointer absolute z-[1] top-[11px] right-0 left-auto"
+            onClick={handleLabelClick}
+          >
             <input
               type="checkbox"
               checked={isChecked}

@@ -3,19 +3,32 @@ import { axiosInstance } from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 import { showToast } from '@/lib/utils/globalToast';
 import { ERROR_CONNECTION, HAVING_ERROR } from '../constant/texts';
-import { useAppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '@/lib/store';
 import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
-
 export interface PageDataResponseType {
-  message?: string;
+  message?: messageDelete;
   status?: string;
 }
 
+interface messageDelete {
+  title?: string;
+  content?: string;
+}
+
 interface UseDeleteDataBlockResult {
-  deleteData?: (type?: string) => Promise<AxiosResponse<PageDataResponseType>>;
+  deleteData?: (
+    type?: string,
+    items?: ItemsDelete[],
+    deleteAll?: boolean,
+  ) => Promise<AxiosResponse<PageDataResponseType>>;
   isLoading?: boolean;
   error?: Error | null;
   response?: AxiosResponse<PageDataResponseType> | null;
+}
+
+interface ItemsDelete {
+  id?: string;
+  type?: string;
 }
 
 export const useDeleteDataBlock = (): UseDeleteDataBlockResult => {
@@ -23,16 +36,35 @@ export const useDeleteDataBlock = (): UseDeleteDataBlockResult => {
   const [error, setError] = useState<Error | null>(null);
   const [response, setResponse] =
     useState<AxiosResponse<PageDataResponseType> | null>(null);
+  const { info } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
   const deleteData = useCallback(
-    async (type?: string): Promise<AxiosResponse<PageDataResponseType>> => {
+    async (
+      type?: string,
+      items?: ItemsDelete[],
+      deleteAll?: boolean,
+    ): Promise<AxiosResponse<PageDataResponseType>> => {
       setIsLoading(true);
       setError(null);
       try {
-        const res = await axiosInstance.post(
-          `config/personal_content/remove/${type}`,
-        );
+        let res = null;
+        if (deleteAll) {
+          res = await axiosInstance.post(
+            `config/personal_content/remove/${type}`,
+            {
+              profile_id: info?.profile?.profile_id,
+            },
+          );
+        } else {
+          res = await axiosInstance.post(
+            'config/personal_content/remove/history_view',
+            {
+              profile_id: info?.profile?.profile_id,
+              items,
+            },
+          );
+        }
         setResponse(res);
         setIsLoading(false);
         const {
@@ -82,6 +114,7 @@ export const useDeleteDataBlock = (): UseDeleteDataBlockResult => {
         return {} as AxiosResponse<PageDataResponseType>;
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [dispatch],
   );
 

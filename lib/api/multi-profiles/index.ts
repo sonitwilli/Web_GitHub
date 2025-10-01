@@ -3,7 +3,6 @@ import { AxiosError, AxiosResponse } from 'axios';
 import {
   DEFAULT_ERROR_MSG,
   ERROR_CONNECTION,
-  ERROR_DELETE_PROFILE,
 } from '@/lib/constant/texts';
 import { showToast } from '@/lib/utils/globalToast';
 import { checkError } from '@/lib/utils/profile';
@@ -248,10 +247,6 @@ export const deleteProfile = async (
 
     return response;
   } catch (error) {
-    showToast({
-      title: ERROR_DELETE_PROFILE,
-      desc: checkError({ error }),
-    });
     console.error(
       'Error deleting profile:',
       error instanceof Error ? error.message : 'Unknown error'
@@ -280,7 +275,7 @@ export const checkPassword = async ({
     if (response?.data?.data?.status_code === 1) {
       return { success: true };
     } else {
-      throw new Error(response?.data?.message || DEFAULT_ERROR_MSG);
+      return { success: false, error: response?.data?.message || DEFAULT_ERROR_MSG };
     }
   } catch (error) {
     showToast({

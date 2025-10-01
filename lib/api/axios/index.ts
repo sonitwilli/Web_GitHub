@@ -26,6 +26,8 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
+const skipToastUrls = ['web-ott', 'layout/footer', 'playos/block', 'master.m3u8', 'channel'];
+
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -34,7 +36,8 @@ axiosInstance.interceptors.response.use(
       // Skip showing toast for web-ott URLs
       const currentUrl =
         typeof window !== 'undefined' ? window.location.href : '';
-      if (!currentUrl.includes('web-ott')) {
+      
+      if (!skipToastUrls.some((url) => currentUrl.includes(url))) {
         showToast({
           title: 'Mất kết nối mạng',
           customIcon: React.createElement(NoInternetIcon),

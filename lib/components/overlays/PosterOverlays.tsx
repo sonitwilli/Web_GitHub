@@ -11,6 +11,7 @@ import {
   PositionType,
 } from '@/lib/utils/posterOverlays/types';
 import { scalePosterOverlayUrl } from '@/lib/utils/methods';
+import { useAccountGroupCache } from '@/lib/hooks/useAccountGroupCache';
 
 type Props = {
   posterOverlays?: PosterOverlayItem[];
@@ -213,6 +214,7 @@ const PosterOverlay: React.FC<Props> = ({
   blockType = '',
   onHandlePosterOverlays,
 }) => {
+  const { filterPosterOverlaysByGroup } = useAccountGroupCache();
   const [listPoster, setListPoster] =
     useState<PosterOverlayItem[]>(posterOverlays);
   const [isReady, setIsReady] = useState(false);
@@ -376,14 +378,16 @@ const PosterOverlay: React.FC<Props> = ({
 
   useEffect(() => {
     if (posterOverlays.length) {
-      setListPoster(posterOverlays);
+      // Filter poster overlays based on user group access
+      const filteredOverlays = filterPosterOverlaysByGroup(posterOverlays);
+      setListPoster(filteredOverlays);
       setIsReady(true);
     } else {
       // Nếu không có posterOverlays, reset state và gọi callback với empty array
       setListPoster([]);
       setIsReady(true);
     }
-  }, [posterOverlays]);
+  }, [posterOverlays, filterPosterOverlaysByGroup]);
 
   // Safari fallback: Force render after timeout if intersection observer fails
   useEffect(() => {
@@ -403,19 +407,19 @@ const PosterOverlay: React.FC<Props> = ({
 
     const result: string[] = [];
 
-    const hasTopRibbon = (posterOverlays || []).some(
+    const hasTopRibbon = (listPoster || []).some(
       (o) =>
         o.type === 'ribbon_overlay' &&
         ['tl', 'tc', 'tr'].includes((o.position || '').toLowerCase()),
     );
 
-    const hasMidRibbon = (posterOverlays || []).some(
+    const hasMidRibbon = (listPoster || []).some(
       (o) =>
         o.type === 'ribbon_overlay' &&
         ['ml', 'mr'].includes((o.position || '').toLowerCase()),
     );
 
-    const hasBottomRibbon = (posterOverlays || []).some(
+    const hasBottomRibbon = (listPoster || []).some(
       (o) =>
         o.type === 'ribbon_overlay' &&
         ['bl', 'br'].includes((o.position || '').toLowerCase()),
@@ -436,7 +440,7 @@ const PosterOverlay: React.FC<Props> = ({
     if (result.length > 0) {
       onHandlePosterOverlays(result); // ['top-ribbon', 'mid-ribbon', 'bottom-ribbon']
     }
-  }, [isReady, onHandlePosterOverlays, posterOverlays]);
+  }, [isReady, onHandlePosterOverlays, listPoster]);
 
   const handleImageError = useCallback(
     (err: React.SyntheticEvent<HTMLImageElement>) => {

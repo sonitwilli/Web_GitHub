@@ -40,6 +40,7 @@ export type HighlightedInfo = {
   avg_rate?: string;
   icon?: string;
   content?: string;
+  bg?: string;
 };
 
 type PropsVideo = {

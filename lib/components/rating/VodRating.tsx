@@ -27,7 +27,7 @@ export default function VodRating({ type, hightlightInfo }: Props) {
 
   return (
     <div
-      className={`h-[28px] flex items-center w-fit gap-[8px] border border-white-01 tablet:px-[5px] xl:px-[7px] rounded-[5px] xl:rounded-[7px] ${
+      className={`h-[28px] flex items-center w-fit gap-[8px] border border-white/10 tablet:px-[5px] xl:px-[7px] rounded-[5px] xl:rounded-[7px] ${
         type === 'hovered-slide' ? '!bg-transparent !border-0 !px-0' : ''
       }`}
       style={{
