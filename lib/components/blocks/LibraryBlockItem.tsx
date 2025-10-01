@@ -70,11 +70,11 @@ export default function LibraryBlockItem({
     [blockData],
   );
 
-  const handleReloadData = useCallback(() => {
+  const handleReloadData = useCallback((time?: number) => {
     if (queryId) {
-      getBlockData(1000, 2000);
+      getBlockData(1000, time || 2000);
     } else {
-      getBlockData(31, 2000);
+      getBlockData(31, time || 2000);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryId]);

@@ -16,6 +16,7 @@ interface ModalWrapperProps {
   shouldCloseOnEsc?: boolean;
   shouldCloseOnOverlayClick?: boolean;
   htmlOpenClassName?: string;
+  bodyOpenClassName?: string; // Added prop to control body scroll
   onRequestClose?: () => void;
   onAfterOpen?: () => void;
   onAfterClose?: () => void;
@@ -33,6 +34,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
   shouldCloseOnEsc = false,
   shouldCloseOnOverlayClick = false,
   htmlOpenClassName,
+  bodyOpenClassName,
   onAfterOpen,
   onAfterClose,
   portalTarget, // Added portal target prop
@@ -63,6 +65,7 @@ const ModalWrapper: React.FC<ModalWrapperProps> = ({
       overlayClassName={overlayClassName}
       ariaHideApp={false}
       htmlOpenClassName={htmlOpenClassName}
+      bodyOpenClassName={bodyOpenClassName}
       onAfterOpen={onAfterOpen}
       onAfterClose={onAfterClose}
       parentSelector={portalTarget ? () => portalTarget : undefined} // Added parentSelector for custom portal

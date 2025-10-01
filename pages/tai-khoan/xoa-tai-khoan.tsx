@@ -79,12 +79,37 @@ export default function DeleteAccountPage() {
     return width > height;
   }, [width, height]);
 
+  const isLandscapeMobileTablet = useMemo(() => {
+    return isLandscape && (isMobile || isTablet);
+  }, [isLandscape, isMobile, isTablet]);
+
   // --- Effects ---
   useEffect(() => {
     trackingAccessItemLog108({
       Event: 'DeactivateAccount',
     });
   }, []);
+
+  // Handle body scroll for landscape mode on mobile/tablet
+  useEffect(() => {
+    if (isLandscapeMobileTablet) {
+      // Allow body scroll in landscape mode
+      document.body.style.overflow = 'auto';
+      document.body.style.position = 'relative';
+    } else {
+      // Default behavior for portrait mode
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    return () => {
+      // Cleanup on unmount
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isLandscapeMobileTablet]);
 
   useEffect(() => {
     if (configs?.image?.bg_signin_signup_tv) {
@@ -446,9 +471,7 @@ export default function DeleteAccountPage() {
   return (
     <div
       id="delete-account-page"
-      className={`${
-        isLandscape && (isMobile || isTablet) ? 'min-h-screen' : 'min-h-[60vh]'
-      } flex flex-col items-center py-10`}
+      className={`min-h-screen flex flex-col items-center py-10`}
     >
       {/* Background image (after loaded) */}
       <div className="absolute inset-0 z-[1] opacity-100">
@@ -521,7 +544,7 @@ export default function DeleteAccountPage() {
           onClick={() => {
             router.push('/');
           }}
-          className={`absolute z-[10000] left-1/2 -translate-x-1/2 ${
+          className={`absolute z-[9999] left-1/2 -translate-x-1/2 ${
             isLandscape && (isMobile || isTablet)
               ? 'top-[20px]'
               : 'top-[40px] tablet:top-12'
@@ -555,10 +578,11 @@ export default function DeleteAccountPage() {
         onDoDeleteAccountNewFlow={doDeleteAccountNewFlow}
         onResend={() => setResendOtp(false)}
         overlayClass={`fixed inset-0 bg-transparent flex justify-center z-[9999] p-4 ${
-          isLandscape && (isMobile || isTablet)
-            ? 'items-start pt-20'
+          isLandscapeMobileTablet
+            ? 'items-start pt-20 overflow-y-auto'
             : 'items-center'
         }`}
+        bodyOpenClass={isLandscapeMobileTablet ? '' : undefined}
         isCustom={false}
         contentClass="bg-eerie-black!"
       />

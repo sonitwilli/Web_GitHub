@@ -104,6 +104,21 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
     setAppNameAppId(currentRoute, currentRoute);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Register custom Service Worker for offline fallback
+  useEffect(() => {
+    if ('serviceWorker' in navigator && typeof window !== 'undefined') {
+      navigator.serviceWorker
+        .register('/sw-custom.js')
+        .then((registration) => {
+          console.log('Custom SW registered:', registration);
+        })
+        .catch((error) => {
+          console.error('SW registration failed:', error);
+        });
+    }
+  }, []);
+
   useEffect(() => {
     const handleStart = (urlTo: string) => {
       setLoading(true);

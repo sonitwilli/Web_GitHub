@@ -8,13 +8,11 @@ import ConnectInternetIcon from '@/lib/components/icons/ConnectInternetIcon';
 interface NetworkContextType {
   isOnline: boolean;
   isOffline: boolean;
-  hasBlockedRoute: boolean;
 }
 
 const NetworkContext = createContext<NetworkContextType>({
   isOnline: true,
   isOffline: false,
-  hasBlockedRoute: false,
 });
 
 export const useNetwork = () => useContext(NetworkContext);
@@ -26,7 +24,6 @@ interface Props {
 const NetworkProvider: React.FC<Props> = ({ children }) => {
   const { isOnline, isOffline } = useNetworkStatus();
   const [hasShownOfflineToast, setHasShownOfflineToast] = useState(false);
-  const [hasBlockedRoute, setHasBlockedRoute] = useState(false);
   const router = useRouter();
   const [currentUrl, setCurrentUrl] = useState(router.asPath);
 
@@ -36,7 +33,12 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
       const handleRouteChangeStart = (url: string) => {
         // Prevent navigation if offline
         if (router.asPath !== url) {
-          setHasBlockedRoute(true);
+          // Show toast khi user cố navigate
+          showToast({
+            title: 'Không có kết nối mạng',
+            customIcon: <NoInternetIcon />,
+            timeout: 3000,
+          });
 
           // Restore URL to current/original state
           setTimeout(() => {
@@ -56,7 +58,12 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
       const handleBeforePopState = () => {
         // Prevent browser back/forward when offline
         if (isOffline) {
-          setHasBlockedRoute(true);
+          // Show toast khi user dùng back/forward
+          showToast({
+            title: 'Không có kết nối mạng',
+            customIcon: <NoInternetIcon />,
+            timeout: 3000,
+          });
           return false;
         }
         return true;
@@ -70,7 +77,12 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         if (link && link.href && link.href !== window.location.href) {
           event.preventDefault();
           event.stopPropagation();
-          setHasBlockedRoute(true);
+          // Show toast khi user click link
+          showToast({
+            title: 'Không có kết nối mạng',
+            customIcon: <NoInternetIcon />,
+            timeout: 3000,
+          });
           return false;
         }
       };
@@ -129,17 +141,11 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         });
         setHasShownOfflineToast(false);
       }
-      // Reset blocked route status when back online - KHÔNG RELOAD TRANG
-      console.log('✅ Network back online - hiding NetworkError (no reload)');
-      setHasBlockedRoute(false);
-
-      // ✅ QUAN TRỌNG: Chỉ hiển thị thông báo và ẩn NetworkError,
-      // KHÔNG reload trang để giữ nguyên trạng thái hiện tại của user
     }
   }, [isOnline, isOffline, hasShownOfflineToast, router.asPath]);
 
   return (
-    <NetworkContext.Provider value={{ isOnline, isOffline, hasBlockedRoute }}>
+    <NetworkContext.Provider value={{ isOnline, isOffline }}>
       {children}
     </NetworkContext.Provider>
   );

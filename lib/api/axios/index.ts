@@ -26,17 +26,32 @@ const axiosInstance = axios.create({
   timeout: 10000,
 });
 
-const skipToastUrls = ['web-ott', 'layout/footer', 'playos/block', 'master.m3u8', 'channel'];
+const skipToastUrls = [
+  'web-ott',
+  'playos/block',
+  'master.m3u8',
+  'channel',
+];
 
+// Interceptor: Handle network errors - Ưu tiên cao nhất
 axiosInstance.interceptors.response.use(
   (response) => response,
   (error) => {
-    // Check for network error and show popup
-    if (error.message && error.message.toUpperCase().includes('NETWORK')) {
+    const er = (error || {}) as AxiosError;
+
+    // Check NETWORK error - Nhiều cách để bắt network error
+    const isNetworkError =
+      !er.response && // Không có response từ server
+      (er.code === 'ERR_NETWORK' || // Axios network error code
+        er.code === 'ECONNABORTED' || // Connection aborted
+        (er.message && er.message.toUpperCase().includes('NETWORK')) || // Message chứa "network"
+        er.message === 'Network Error'); // Chính xác message
+
+    if (isNetworkError) {
       // Skip showing toast for web-ott URLs
       const currentUrl =
         typeof window !== 'undefined' ? window.location.href : '';
-      
+
       if (!skipToastUrls.some((url) => currentUrl.includes(url))) {
         showToast({
           title: 'Mất kết nối mạng',
@@ -44,7 +59,15 @@ axiosInstance.interceptors.response.use(
           timeout: 3000,
         });
       }
+      // QUAN TRỌNG: Return resolved promise để KHÔNG vào catch
+      return Promise.resolve({ data: null }) as unknown as Promise<never>;
     }
+
+    // Check 401 - stop MQTT
+    if (er?.status === 401) {
+      stopMqttManual();
+    }
+
     return Promise.reject(error);
   },
 );
@@ -147,17 +170,6 @@ axiosInstance.interceptors.request.use(
     return $config;
   },
   (error) => Promise.reject(error),
-);
-
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const er = (error || {}) as AxiosError;
-    if (er?.status === 401) {
-      stopMqttManual();
-    }
-    return Promise.reject(error);
-  },
 );
 
 export { axiosInstance };

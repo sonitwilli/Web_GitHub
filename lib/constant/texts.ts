@@ -347,6 +347,7 @@ export const ROUTE_PATH_NAMES = {
   EVENT: '/su-kien/',
   PLAYLIST: '/playlist/',
   PREMIERE: '/cong-chieu/',
+  SEARCH: '/tim-kiem/',
 };
 
 export const ROUTE_PATH_TOP_BANNER_ADS = {

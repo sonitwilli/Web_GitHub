@@ -36,6 +36,7 @@ interface VerifyModalNewProps {
   resendOtp?: boolean;
   contentClass?: string;
   overlayClass?: string;
+  bodyOpenClass?: string;
   customUi?: {
     dialogClass?: string;
     hideHeaderClose?: boolean;
@@ -67,6 +68,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
     {
       contentClass = '',
       overlayClass = '',
+      bodyOpenClass = '',
       onResend,
       onHandleCancelMethods,
       onHandleDeleteMethods,
@@ -584,6 +586,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             overlayClass ||
             `fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]`
           }
+          bodyOpenClassName={bodyOpenClass}
           shouldCloseOnEsc={false}
           shouldCloseOnOverlayClick={false}
         >

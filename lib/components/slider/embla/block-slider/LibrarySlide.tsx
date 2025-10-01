@@ -25,7 +25,7 @@ type PropType = {
   slidesItems?: BlockSlideItemType[];
   slideClassName?: string;
   blockMeta?: BlockMetaType;
-  reloadData?: () => void;
+  reloadData?: (time?: number) => void;
 };
 
 interface LibraryContextType {
@@ -103,7 +103,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       if (response) {
         const { data } = response;
         if (data?.status === '0') return;
-        reloadData?.();
+        reloadData?.(data?.data?.refetch_delay ? Number(data?.data?.refetch_delay) : 2000);
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -164,7 +164,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       <div className={`block-slider ${slideClassName}`}>
         {/* Selection controls */}
         {slidesItems && slidesItems.length > 0 && (
-          <div className="flex items-center gap-2 mb-6 absolute top-[-2px] right-0">
+          <div className="flex items-center gap-4 mb-6 absolute top-[-2px] right-0">
             {!isSelectionMode && queryId && (
               <button
                 onClick={toggleSelectionMode}
@@ -176,7 +176,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
 
             {isSelectionMode && (
               <>
-                <label className="flex items-center text-white cursor-pointer">
+                <label className="flex items-center text-white-smoke cursor-pointer font-normal">
                   <input
                     type="checkbox"
                     checked={selectAllChecked}
@@ -189,7 +189,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
                       ${
                         selectAllChecked
                           ? 'bg-fpl border-fpl'
-                          : 'bg-transparent'
+                          : 'bg-transparent border-silver-chalice'
                       }`}
                   >
                     {selectAllChecked && (
@@ -211,25 +211,28 @@ const LibrarySlide: React.FC<PropType> = (props) => {
                   </span>
                   Chọn tất cả
                 </label>
-                <button
-                  onClick={() => setIsModal(true)}
-                  disabled={
-                    checkedSlides?.length > 0 && !checkedSlides?.includes(true)
-                  }
-                  className={`px-4 py-[10px] cursor-pointer text-[16px] font-semibold leading-[1.3] rounded-[40px] ${
-                    checkedSlides?.length > 0 && checkedSlides?.includes(true)
-                      ? 'bg-fpl text-white-smoke'
-                      : 'bg-eerie-black text-davys-grey'
-                  }`}
-                >
-                  Xóa
-                </button>
-                <button
-                  onClick={handleCancel}
-                  className="px-4 py-[10px] cursor-pointer text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
-                >
-                  Hủy
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={() => setIsModal(true)}
+                    disabled={
+                      checkedSlides?.length > 0 &&
+                      !checkedSlides?.includes(true)
+                    }
+                    className={`px-[25px] h-[40px] cursor-pointer text-[16px] font-semibold leading-[1.3] rounded-[40px] ${
+                      checkedSlides?.length > 0 && checkedSlides?.includes(true)
+                        ? 'fpl-bg text-white-smoke'
+                        : 'bg-eerie-black text-davys-grey'
+                    }`}
+                  >
+                    Xóa
+                  </button>
+                  <button
+                    onClick={handleCancel}
+                    className="px-[25px] h-[40px] cursor-pointer text-[16px] font-semibold leading-[1.3] text-white-smoke bg-charleston-green rounded-[40px]"
+                  >
+                    Hủy
+                  </button>
+                </div>
               </>
             )}
           </div>

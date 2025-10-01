@@ -19,7 +19,8 @@ import {
   PIN_TYPES,
   PROFILE_TYPES,
   PROFILE_DEFAULT_AVATAR,
-  ERROR_DELETE_PROFILE,
+  ERROR_CONNECTION,
+  HAVING_ERROR,
 } from '@/lib/constant/texts';
 import { Profile } from '@/lib/api/user';
 import { Avatar, verifyProfileName } from '@/lib/api/multi-profiles';
@@ -36,8 +37,6 @@ import useClickOutside from '@/lib/hooks/useClickOutside';
 import { AxiosError } from 'axios';
 import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 import { showToast } from '@/lib/utils/globalToast';
-import { checkError } from '@/lib/utils/profile';
-
 interface ProfileFormProps {
   errorUpdate?: string | null;
   profile?: Profile;
@@ -142,7 +141,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   const { info } = useAppSelector((state) => state.user);
   const { messageConfigs } = useAppSelector((state) => state.app);
-  
+
   const isRootProfile = useMemo(
     () => listProfiles?.find((item) => item?.is_root === '1'),
     [listProfiles],
@@ -183,7 +182,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           break;
         case '4':
           setModalContent({
-            title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
+            title:
+              messageConfigs?.profile?.action_delete?.title_deleted ||
+              'Hồ sơ đã bị xóa',
             content:
               messageConfigs?.profile?.action_delete?.msg_deleted ||
               'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
@@ -392,7 +393,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             break;
           case '4':
             setModalContent({
-              title: messageConfigs?.profile?.action_delete?.title_deleted || 'Hồ sơ đã bị xóa',
+              title:
+                messageConfigs?.profile?.action_delete?.title_deleted ||
+                'Hồ sơ đã bị xóa',
               content:
                 messageConfigs?.profile?.action_delete?.msg_deleted ||
                 'Hồ sơ này đã bị xóa. Nhấn “Xác nhận” để chuyển qua sử dụng hồ sơ mặc định.',
@@ -402,6 +405,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
             });
             setIsOpenModal(true);
             setIsErrorCode('4');
+            break;
+          case '1':
+            showToast({
+              title: response?.data?.message?.title || ERROR_CONNECTION,
+              desc: response?.data?.message?.content || HAVING_ERROR,
+            });
             break;
           default:
             setIsErrorCode(null);
@@ -424,11 +433,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       if (error instanceof AxiosError && error.response?.status === 401) {
         dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
       } else {
-        
-    showToast({
-      title: ERROR_DELETE_PROFILE,
-      desc: checkError({ error }),
-    });
+        showToast({
+          title: ERROR_CONNECTION,
+          desc: HAVING_ERROR,
+        });
       }
       console.error('Error deleting profile:', error);
     }
@@ -924,7 +932,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     <div
                       className="py-3 px-4 flex items-center whitespace-nowrap text-base leading-6 cursor-pointer transition-colors"
                       onClick={() => {
-                        setShowEditPinModal(true); 
+                        setShowEditPinModal(true);
                         setShowPinDropdown(false);
                       }}
                     >

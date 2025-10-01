@@ -8,8 +8,6 @@ import { changeTimeOpenModalRequireLogin } from '@/lib/store/slices/appSlice';
 
 import dynamic from 'next/dynamic';
 import { AppContext } from '@/lib/components/container/AppContainer';
-import { useNetwork } from '../components/contexts/NetworkProvider';
-import NetworkError from '../components/error/NetworkError';
 
 const AppModal = dynamic(() => import('@/lib/components/modal/AppModal'), {
   ssr: false,
@@ -29,7 +27,6 @@ export default function DefaultLayout({ children }: Props) {
   const appCtx = useContext(AppContext);
   const { checkLoginComplete } = appCtx;
   const [isRouting, setIsRouting] = useState(false);
-  const { hasBlockedRoute } = useNetwork();
 
   // Track routing state để tránh popup hiện khi đang routing
   useEffect(() => {
@@ -84,22 +81,6 @@ export default function DefaultLayout({ children }: Props) {
     checkLoginComplete,
     isRouting,
   ]);
-
-  useEffect(() => {
-    if (hasBlockedRoute) {
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.documentElement.style.overflow = '';
-    }
-
-    return () => {
-      document.documentElement.style.overflow = '';
-    };
-  }, [hasBlockedRoute]);
-
-  if (hasBlockedRoute) {
-    return <NetworkError />;
-  }
 
   return (
     <div className="min-h-screen flex flex-col">

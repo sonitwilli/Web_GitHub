@@ -1,301 +1,141 @@
-/* Scroll bar styling for AccountInfoModal */
+/* Landscape mode specific styles */
+.accountInfoModalWrapper {
+  /* Base modal wrapper styles */
+}
+
+/* Modal overlay background */
+.modalOverlay {
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(0px) !important;
+}
+
+.modalContainer {
+  /* Container styles */
+}
+
+.headerSection {
+  /* Header section styles */
+}
+
+.headerTitle {
+  /* Title styles */
+}
+
+.headerDescription {
+  /* Description styles */
+}
+
+.contentSection {
+  /* Content section styles */
+}
+
+.infoRow {
+  /* Info row styles */
+}
+
+.labelText {
+  /* Label text styles */
+}
+
+.valueText {
+  /* Value text styles */
+}
+
+.servicesLabel {
+  /* Services label styles */
+}
+
+.servicesContainer {
+  /* Services container with custom scrollbar */
+  position: relative;
+}
+
+.serviceItem {
+  /* Individual service item styles */
+}
+
+.serviceName {
+  /* Service name styles */
+}
+
+.serviceDetails {
+  /* Service details styles */
+}
+
+.serviceDetailText {
+  /* Service detail text styles */
+}
+
+.buttonSection {
+  /* Button section styles */
+}
+
+.continueButton {
+  /* Continue button styles */
+}
+
+/* Custom scrollbar styles */
+.scrollBar {
+  scrollbar-width: thin;
+  scrollbar-color: #959595 transparent;
+}
+
 .scrollBar::-webkit-scrollbar {
-  width: 14px;
+  width: 4px;
 }
 
 .scrollBar::-webkit-scrollbar-track {
   background: transparent;
-  border-radius: 10px;
 }
 
 .scrollBar::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 10px;
-  border: 4px solid rgba(0, 0, 0, 0);
-  background-clip: padding-box;
-}
-
-.scrollBar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.15);
-  background-clip: padding-box;
-}
-
-.policyContent p {
-  margin-bottom: 16px !important;
-}
-
-.policyContent p:last-child {
-  margin-bottom: 0 !important;
-}
-
-/* Account Info Modal specific styles */
-.accountInfoModal {
-  font-family: 'Roboto', sans-serif;
-}
-
-/* Custom scrollbar for services container */
-.servicesContainer {
-  position: relative;
-}
-
-.servicesContainer::-webkit-scrollbar {
-  width: 4px;
-}
-
-.servicesContainer::-webkit-scrollbar-track {
-  background: transparent;
-  border-radius: 30px;
-}
-
-.servicesContainer::-webkit-scrollbar-thumb {
   background: #959595;
   border-radius: 30px;
 }
 
-.servicesContainer::-webkit-scrollbar-thumb:hover {
+.scrollBar::-webkit-scrollbar-thumb:hover {
   background: #b0b0b0;
 }
 
-/* Landscape mode responsive styles for mobile AccountInfoModal */
-@media screen and (orientation: landscape) and (max-height: 500px) {
+/* Landscape mode specific adjustments */
+@media screen and (orientation: landscape) and (max-width: 1024px) {
   .accountInfoModalWrapper {
-    max-width: 90vw !important;
-    max-height: 85vh !important;
+    /* Landscape specific modal styles */
   }
 
   .modalContainer {
-    padding: 12px !important;
-    gap: 16px !important;
-  }
-
-  .headerSection {
-    gap: 12px !important;
-  }
-
-  .headerTitle {
-    font-size: 18px !important;
-    line-height: 130% !important;
-  }
-
-  .headerDescription {
-    font-size: 14px !important;
-    line-height: 130% !important;
-  }
-
-  .contentSection {
-    gap: 12px !important;
-    max-width: 100% !important;
-  }
-
-  .infoRow {
-    gap: 8px !important;
-  }
-
-  .labelText {
-    font-size: 14px !important;
-    width: 100px !important;
-  }
-
-  .valueText {
-    font-size: 14px !important;
-  }
-
-  .servicesLabel {
-    font-size: 14px !important;
-    width: 100px !important;
+    /* Landscape container adjustments */
+    padding: 24px 16px;
+    gap: 16px;
+    width: 596px;
   }
 
   .servicesContainer {
-    min-height: 65px !important;
-    max-height: calc(30vh - 85px) !important;
-    padding: 12px !important;
-    overflow-y: auto !important;
+    /* Landscape services container */
+    max-height: 265px;
   }
 
-  .serviceItem {
-    margin-top: 12px !important;
-  }
-
-  .serviceName {
-    font-size: 14px !important;
-  }
-
-  .serviceDetails {
-    margin-top: 8px !important;
-    padding-bottom: 8px !important;
-  }
-
-  .serviceDetailText {
-    font-size: 12px !important;
-  }
-
-  .buttonSection {
-    max-width: 100% !important;
-  }
-
-  .continueButton {
-    height: 36px !important;
-    padding: 8px 16px !important;
-    font-size: 14px !important;
+  /* Scrollbar positioning for landscape */
+  .servicesContainer::-webkit-scrollbar {
+    position: absolute;
+    right: 0;
+    top: 13px;
+    height: 86px;
   }
 }
 
-@media screen and (orientation: landscape) and (max-height: 400px) {
-  .accountInfoModalWrapper {
-    max-width: 95vw !important;
-    max-height: 90vh !important;
-  }
-
+/* Mobile portrait mode */
+@media screen and (max-width: 768px) and (orientation: portrait) {
   .modalContainer {
-    padding: 8px !important;
-    gap: 12px !important;
-  }
-
-  .headerSection {
-    gap: 8px !important;
-  }
-
-  .headerTitle {
-    font-size: 16px !important;
-  }
-
-  .headerDescription {
-    font-size: 12px !important;
-  }
-
-  .contentSection {
-    gap: 8px !important;
-  }
-
-  .servicesContainer {
-    min-height: 50px !important;
-    max-height: calc(25vh - 60px) !important;
-    padding: 8px !important;
-    overflow-y: auto !important;
-  }
-
-  .serviceItem {
-    margin-top: 8px !important;
-  }
-
-  .serviceDetails {
-    margin-top: 6px !important;
-    padding-bottom: 6px !important;
-  }
-
-  .continueButton {
-    height: 32px !important;
-    padding: 6px 12px !important;
-    font-size: 12px !important;
+    padding: 16px;
+    gap: 32px;
   }
 }
 
-/* Landscape mode responsive styles for mobile DeleteAccountPolicyModal */
-@media screen and (orientation: landscape) and (max-height: 500px) {
-  .policyModalWrapper {
-    max-width: 90vw !important;
-    max-height: 85vh !important;
-    min-height: auto !important;
-  }
-
-  .policyModalContainer {
-    padding: 12px !important;
-    gap: 16px !important;
-  }
-
-  .policyHeaderSection {
-    gap: 12px !important;
-  }
-
-  .policyHeaderTitle {
-    font-size: 18px !important;
-    line-height: 130% !important;
-  }
-
-  .policyContentSection {
-    gap: 12px !important;
-    max-width: 100% !important;
-  }
-
-  .policyContentContainer {
-    min-height: 120px !important;
-    max-height: calc(30vh - 60px) !important;
-    padding: 12px !important;
-    font-size: 12px !important;
-    overflow-y: auto !important;
-  }
-
-  .policyButtonSection {
-    gap: 12px !important;
-    max-width: 100% !important;
-  }
-
-  .policyContinueButton {
-    height: 36px !important;
-    padding: 8px 16px !important;
-    font-size: 14px !important;
-  }
-
-  .policyCheckboxSection {
-    gap: 8px !important;
-  }
-
-  .policyCheckboxLabel {
-    font-size: 11px !important;
-  }
-
-  .policySpinner {
-    height: 120px !important;
-  }
-}
-
-@media screen and (orientation: landscape) and (max-height: 400px) {
-  .policyModalWrapper {
-    max-width: 95vw !important;
-    max-height: 90vh !important;
-    min-height: auto !important;
-  }
-
-  .policyModalContainer {
-    padding: 8px !important;
-    gap: 12px !important;
-  }
-
-  .policyHeaderSection {
-    gap: 8px !important;
-  }
-
-  .policyHeaderTitle {
-    font-size: 16px !important;
-  }
-
-  .policyContentSection {
-    gap: 8px !important;
-  }
-
-  .policyContentContainer {
-    min-height: 100px !important;
-    max-height: calc(25vh - 50px) !important;
-    padding: 8px !important;
-    font-size: 11px !important;
-    overflow-y: auto !important;
-  }
-
-  .policyButtonSection {
-    gap: 8px !important;
-  }
-
-  .policyContinueButton {
-    height: 32px !important;
-    padding: 6px 12px !important;
-    font-size: 12px !important;
-  }
-
-  .policyCheckboxLabel {
-    font-size: 10px !important;
-  }
-
-  .policySpinner {
-    height: 100px !important;
+/* Tablet and desktop */
+@media screen and (min-width: 769px) and (orientation: portrait) {
+  .modalContainer {
+    padding: 32px;
+    gap: 32px;
   }
 }

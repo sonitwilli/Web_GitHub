@@ -8,6 +8,9 @@ import { changeTimeOpenModalRequireLogin } from '../store/slices/appSlice';
 export interface PageDataResponseType {
   message?: messageDelete;
   status?: string;
+  data?: {
+    refetch_delay?: string;
+  };
 }
 
 interface messageDelete {
@@ -58,7 +61,7 @@ export const useDeleteDataBlock = (): UseDeleteDataBlockResult => {
           );
         } else {
           res = await axiosInstance.post(
-            'config/personal_content/remove/history_view',
+            `config/personal_content/remove/${type}`,
             {
               profile_id: info?.profile?.profile_id,
               items,
@@ -108,8 +111,6 @@ export const useDeleteDataBlock = (): UseDeleteDataBlockResult => {
         showToast({
           title: ERROR_CONNECTION,
           desc: HAVING_ERROR,
-          styleData:
-            'bg-eerie-black rounded-2xl border border-black-olive-404040',
         });
         return {} as AxiosResponse<PageDataResponseType>;
       }

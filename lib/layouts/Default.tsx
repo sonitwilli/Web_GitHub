@@ -3,7 +3,8 @@ import Footer from './Footer';
 import Header, { HeaderContext } from './Header';
 import dynamic from 'next/dynamic';
 import useScreenSize from '../hooks/useScreenSize';
-import { useContext, useEffect, useMemo, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
+// import { useContext, useEffect, useMemo, useState } from 'react';
 import useFirebase from '../hooks/useFirebase';
 import ScrollTop from '../components/buttons/ScrollTop';
 import { AppContext } from '../components/container/AppContainer';
@@ -11,8 +12,8 @@ import { AppContext } from '../components/container/AppContainer';
 import PreventKidModal from '@/lib/components/modal/PreventKidModal';
 import { useRouter } from 'next/router';
 import SideTagButton from '@/lib/components/buttons/SideTagButton';
-import { useNetwork } from '@/lib/components/contexts';
-import { NetworkError } from '@/lib/components/error';
+// import { useNetwork } from '@/lib/components/contexts';
+// import { NetworkError } from '@/lib/components/error';
 // import OrientationChangePopup from '@/lib/components/overlays/OrientationChangePopup';
 import MonitorLayout from './MonitorLayout';
 
@@ -39,7 +40,7 @@ function DefaultLayoutContent({ children }: Props) {
   const router = useRouter();
   useFirebase();
 
-  const { hasBlockedRoute } = useNetwork();
+  // const { hasBlockedRoute } = useNetwork();
   const [openMobileMenu, setOpenMobileMenu] = useState(false);
 
   // Chỉ hiện ở Mobile và Tablet
@@ -62,18 +63,18 @@ function DefaultLayoutContent({ children }: Props) {
   //   return false;
   // }, []);
 
-  useEffect(() => {
-    if (hasBlockedRoute) {
-      document.documentElement.style.overflow = 'hidden';
-    } else {
-      document.documentElement.style.overflow = '';
-    }
+  // useEffect(() => {
+  //   if (hasBlockedRoute) {
+  //     document.documentElement.style.overflow = 'hidden';
+  //   } else {
+  //     document.documentElement.style.overflow = '';
+  //   }
 
-    // Cleanup function to reset overflow when component unmounts
-    return () => {
-      document.documentElement.style.overflow = '';
-    };
-  }, [hasBlockedRoute]);
+  //   // Cleanup function to reset overflow when component unmounts
+  //   return () => {
+  //     document.documentElement.style.overflow = '';
+  //   };
+  // }, [hasBlockedRoute]);
 
   const { scrollDistance } = useScroll();
   const { width } = useScreenSize();
@@ -125,20 +126,13 @@ function DefaultLayoutContent({ children }: Props) {
           </div>
         ) : null}
 
-        {scrollDistance > 0 && !hasBlockedRoute && <ScrollTop />}
+        {scrollDistance > 0 && <ScrollTop />}
         <PreventKidModal />
         <DownloadAppControlBar />
         {/* <OrientationChangePopup /> */}
       </main>
       <Footer />
       <SideTagButton />
-
-      {/* Network Error Overlay */}
-      {hasBlockedRoute && (
-        <>
-          <NetworkError />
-        </>
-      )}
     </HeaderContext.Provider>
   );
 }

@@ -56,7 +56,7 @@ const LibrarySlideItem: React.FC<PropType> = (props) => {
       {isSelectionMode && (
         <div
           onClick={handleDivClick}
-          className="absolute cursor-pointer top-0 z-[2] w-[calc(100%-16px)] h-[calc(100%-34px)] bg-black-05 rounded-2xl"
+          className="absolute cursor-pointer top-0 z-[2] w-[calc(100%-16px)] h-[calc(100%-31px)] bg-black-05 rounded-[12px]"
         >
           <label
             className="mr-2 cursor-pointer absolute z-[1] top-[11px] right-0 left-auto"
