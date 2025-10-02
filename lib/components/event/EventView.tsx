@@ -550,7 +550,7 @@ const EventView = ({ dataEvent, eventId }: Props) => {
             </div>
           </div>
 
-          <div className="mt-6 text-base line-clamp-3 overflow-hidden text-ellipsis">
+          <div className="text-base line-clamp-3 overflow-hidden text-ellipsis">
             {dataEvent?.description}
           </div>
         </div>

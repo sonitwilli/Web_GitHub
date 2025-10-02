@@ -177,7 +177,7 @@ export default function LibraryBlockItem({
   if (isLoading && queryId) {
     return (
       <div className="relative">
-        <div className="flex items-center gap-[16px] justify-between sm:justify-start mb-0 xl:mb-4">
+        <div className={`flex items-center gap-[16px] justify-between sm:justify-start ${queryId ? 'mb-[68px] sm:mb-0 xl:mb-4' : 'mb-0 xl:mb-4'}`}>
           {
             <h2
               className={`${
@@ -226,7 +226,7 @@ export default function LibraryBlockItem({
           : 'relative'
       }`}
     >
-      <div className="flex items-center gap-[16px] justify-between sm:justify-start mb-0 xl:mb-4">
+      <div className={`flex items-center gap-[16px] justify-between sm:justify-start ${queryId ? 'mb-[68px] sm:mb-0 xl:mb-4' : 'mb-0 xl:mb-4'}`}>
         {
           <h2
             className={`${

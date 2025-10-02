@@ -141,8 +141,8 @@ const PhoneInputModal = forwardRef<PhoneInputModalRef, Props>(
     if (!visible) return null;
 
     return (
-      <div className="fixed top-1/2 left-1/2 z-[1002] w-[320px] tablet:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] p-[24px] tablet:p-[32px] bg-eerie-black">
-        <h1 className="text-[20px] mb-4 tablet:mb-8 tablet:text-2xl text-center tablet:text-left font-semibold text-smoke-white">
+      <div className="fixed top-1/2 left-1/2 z-[1002] w-[calc(100%-32px)] xs:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] py-[24px] px-[16px] xs:px-[24px] tablet:p-[32px] bg-eerie-black">
+        <h1 className="text-[20px] mb-6 tablet:mb-8 tablet:text-2xl text-left font-semibold text-smoke-white">
           {content.title || 'Đăng nhập hoặc đăng ký'}
         </h1>
         <form onSubmit={handleSubmit(handleFormSubmit)}>
@@ -178,7 +178,7 @@ const PhoneInputModal = forwardRef<PhoneInputModalRef, Props>(
           <button
             type="submit"
             disabled={!status}
-            className={`text-[16px] mt-6 tablet:mt-8 h-12 w-full rounded-[52px] text-smoke-white font-medium transition-colors duration-300 cursor-pointer ${
+            className={`text-[16px] mt-6 xs:mt-8 h-12 w-full rounded-[52px] text-smoke-white font-medium transition-colors duration-300 cursor-pointer ${
               status
                 ? 'fpl-bg border-none outline-none hover:opacity-90 active:scale-[0.98]'
                 : 'cursor-not-allowed bg-charleston-green text-neutral-400'
@@ -186,7 +186,7 @@ const PhoneInputModal = forwardRef<PhoneInputModalRef, Props>(
           >
             {content.buttons?.accept || CONTINUE_BUTTON_TEXT}
           </button>
-          <span className="mt-8 flex items-center gap-2">
+          <span className="mt-4 xs:mt-[19px] flex items-center gap-2">
             <label className="relative inline-flex cursor-pointer items-start accept-checkbox">
               <input
                 type="checkbox"
@@ -196,7 +196,7 @@ const PhoneInputModal = forwardRef<PhoneInputModalRef, Props>(
               />
               <div className="h-[16px] w-[16px] shrink-0 rounded-[2px] border border-ash-grey bg-transparent peer-checked:border-none peer-checked:bg-[url('/images/svg/check.svg')] peer-checked:bg-no-repeat peer-checked:bg-cover" />
             </label>
-            <span className="text-[10px] tablet:text-[14px] leading-[130%] tracking-[0.07px] text-dark-gray accept-text">
+            <span className="text-[14px] leading-[130%] tracking-[0.07px] text-dark-gray accept-text">
               Tôi đã đọc và đồng ý với{' '}
               <Link
                 prefetch={false}

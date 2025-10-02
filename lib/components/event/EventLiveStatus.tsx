@@ -91,7 +91,7 @@ export default function EventLiveStatus({ dataEvent }: Props) {
           setEventStatus('scheduled'); // Chỉ hiển thị "Phát sóng vào" khi còn hơn 1 giờ
         }
       } else if (now >= start && now <= end) {
-        setStatus(dataEvent?.label_event || 'Live');
+        setStatus(dataEvent?.label_event || null);
         setEventStatus('live');
       } else if (now > end) {
         setStatus('Đã kết thúc');
@@ -115,7 +115,7 @@ export default function EventLiveStatus({ dataEvent }: Props) {
   const isSchedule = eventStatus === 'scheduled';
 
   return (
-    <div className="flex items-center gap-2 min-h-8 sm:gap-3">
+    <div className="flex items-center gap-2 min-h-8 sm:gap-3 mb-6">
       {isSchedule && (
         <span className="text-white font-medium text-base sm:text-[20px] leading-snug">
           Phát sóng vào

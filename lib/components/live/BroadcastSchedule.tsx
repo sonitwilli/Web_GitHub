@@ -355,7 +355,7 @@ const BroadcastSchedule: FC<Props> = ({
         }`}
       >
         {isFullscreen && (
-          <div className="flex justify-between items-start px-4 py-3 bg-eerie-black">
+          <div className="flex justify-between items-start px-4 py-3 bg-eerie-black flex-shrink-0">
             <h2 className="text-white text-[28px] font-semibold">
               Lịch phát sóng
             </h2>
@@ -369,9 +369,13 @@ const BroadcastSchedule: FC<Props> = ({
             />
           </div>
         )}
-        <div className="w-full h-full flex flex-col">
+        <div
+          className={`w-full flex flex-col ${
+            isFullscreen ? 'h-[calc(100%-66px)]' : 'h-full'
+          }`}
+        >
           {/* Header with channel name and dropdown */}
-          <div className="flex justify-between items-center p-4 bg-eerie-black gap-4 tablet:gap-6">
+          <div className="flex justify-between items-center p-4 bg-eerie-black gap-4 tablet:gap-6 flex-shrink-0">
             <h2 className="text-white text-base tablet:text-lg font-semibold line-clamp-2 overflow-hidden text-ellipsis">
               {dataChannel?.name}
             </h2>
@@ -436,7 +440,7 @@ const BroadcastSchedule: FC<Props> = ({
           {/* Main content area */}
           <div
             ref={containerRef}
-            className={`flex-1 overflow-y-auto ${styles.scrollBar}`}
+            className={`flex-1 overflow-y-auto ${styles.scrollBar} min-h-0`}
           >
             {stateErrorBroadcastSchedule === 'error-api' ? (
               <div className="text-sm tablet:text-base w-full bg-transparent flex justify-center text-platium pt-[115px] tablet:pt-[213px] xl:pt-[123px] pl-[33px] pr-[33px] h-[324px] tablet:h-[533px] xl:h-full text-center">

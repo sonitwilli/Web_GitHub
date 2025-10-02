@@ -20,6 +20,7 @@ import styles from './ModalVerify.module.css';
 import ModalManagementCode from './ModalManagementCode';
 import { setOtpType } from '@/lib/store/slices/otpSlice';
 import { SwitchModeType } from '@/lib/api/login';
+import CustomImage from '../common/CustomImage';
 
 // Interface for VerifyContent
 export interface VerifyContent {
@@ -239,7 +240,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
       return (
         <div
           key="verify-content-stable"
-          className="text-left text-white mt-4 mb-8"
+          className="text-left text-white mt-4 mb-6 xs:mb-8"
           dangerouslySetInnerHTML={{
             __html: verifyContent.content as string,
           }}
@@ -581,7 +582,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
             setOtpPinCode(null);
             setWrongOtpMsg(null);
           }}
-          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-[360px] sm:h-auto bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
+          contentClassName={`w-full px-4 sm:px-8 outline-0 max-w-[calc(100%-32px)] sm:max-w-[460px] h-auto bg-raisin-black rounded-[16px] py-6 sm:py-8 pt-0 text-white shadow-lg ${contentClass}`}
           overlayClassName={
             overlayClass ||
             `fixed inset-0 bg-black-06 flex justify-center items-center z-[9999]`
@@ -626,7 +627,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                 memoizedContent
               )}
               {verifyContent.placeholder_input !== 'Nhập số điện thoại' && (
-                <div className="form-container mb-[32px]">
+                <div className="form-container mb-[24px] xs:mb-[32px]">
                   <div className="flex items-center gap-3 justify-between">
                     <input
                       ref={verifyInputRef}
@@ -637,7 +638,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                         wrongOtpMsg
                           ? 'border-scarlet focus:border-scarlet'
                           : 'border-black-olive-404040 focus:border-gray'
-                      } border outline-0 w-full h-[56px] px-4 bg-[rgba(0,0,0,0.05)] text-white placeholder-davys-grey text-base rounded-[104px] focus:ring-0`}
+                      } border outline-0 w-full h-[48px] xs:h-[56px] px-4 bg-[rgba(0,0,0,0.05)] text-white placeholder-davys-grey text-base rounded-[104px] focus:ring-0`}
                       placeholder={verifyContent.placeholder_input}
                       value={form.verify_input}
                       onChange={(e) => handleInputChange(e, 6)}
@@ -650,7 +651,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                           className={`font-semibold text-base ${
                             resendTimeout
                               ? 'text-spanish-gray bg-charleston-green h-[56px] w-[56px] rounded-full flex-none cursor-default pointer-events-none'
-                              : 'text-white-smoke text-nowrap h-[56px] px-6 rounded-[40px] fpl-bg cursor-pointer'
+                              : 'text-white-smoke text-[14px] xs:text-base text-nowrap h-[48px] xs:h-[56px] px-6 rounded-[40px] fpl-bg cursor-pointer'
                           }`}
                           onClick={() =>
                             resendTimeout ? null : onSubmit(item.action, '')
@@ -694,7 +695,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                         {item.content}
                       </button>
                     ))}
-                  <div className="flex items-center justify-center gap-2 mt-[24px]">
+                  <div className="flex items-center justify-center gap-2 mt-[16px] xs:mt-[24px] flex-col xs:flex-row">
                     <p className="text-spanish-gray text-base font-medium">
                       Chưa nhận được mã?{' '}
                     </p>
@@ -720,7 +721,7 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                   </div>
                   {/* Dropdown hiển thị các phương thức khác */}
                   {showOtherMethods && (
-                    <div className="flex flex-col gap-[20px] mt-6">
+                    <div className="flex flex-col gap-[20px] mt-4 xs:mt-6">
                       {verifyContent?.switch_mode?.modes &&
                         verifyContent?.switch_mode?.modes.length > 0 &&
                         verifyContent.switch_mode.modes.map((mode, index) => {
@@ -734,13 +735,14 @@ const VerifyModalNew = forwardRef<VerifyModalNewRef, VerifyModalNewProps>(
                                 );
                                 setShowOtherMethods(false);
                               }}
-                              className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors"
+                              className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke text-[14px] xs:text-[16px] font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors"
                             >
                               {mode.icon && (
-                                <img
+                                <CustomImage
                                   src={mode.icon}
+                                  placeHolder="/images/Exclude.png"
                                   alt="icon"
-                                  className="w-6 h-6"
+                                  className="w-4 xs:w-6 h-4 xs:h-6"
                                 />
                               )}
                               {mode.text}

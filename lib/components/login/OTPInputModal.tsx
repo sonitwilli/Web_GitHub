@@ -10,6 +10,7 @@ import {
 import ClickAnimation from '../animation/ClickAnimation';
 import { LOGIN_PHONE_NUMBER } from '@/lib/constant/texts';
 import { SwitchModeType } from '@/lib/api/login';
+import CustomImage from '../common/CustomImage';
 
 type Props = {
   resPhoneInput?: verifyUserWithPhoneNumberResponse['data'] | null;
@@ -79,7 +80,7 @@ export default function OTPInputModal({
   }, [otpCountdown]);
 
   useEffect(() => {
-    if (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) {
+    if (countdown > 0 || switchMode?.modes && switchMode?.modes?.length > 1) {
       setShowOtherOtpMethods(false);
     }
   }, [countdown, switchMode]);
@@ -160,7 +161,7 @@ export default function OTPInputModal({
     if (responseMsg.includes(phone)) {
       const [part1, part2] = responseMsg.split(phone);
       return (
-        <p className="content text-spanish-gray mb-8 text-[14px] tablet:text-[16px]">
+        <p className="content text-spanish-gray mb-6 xs:mb-8 text-[14px] tablet:text-[16px]">
           {part1}
           <span className="font-semibold text-white-smoke"> {phone} </span>
           {part2}
@@ -169,11 +170,11 @@ export default function OTPInputModal({
     }
 
     return responseMsg ? (
-      <p className="text-[14px] tablet:text-[16px] content text-spanish-gray mb-8">
+      <p className="text-[14px] tablet:text-[16px] content text-spanish-gray mb-6 xs:mb-8">
         {responseMsg}
       </p>
     ) : (
-      <p className="text-[14px] tablet:text-[16px] content text-spanish-gray mb-8">
+      <p className="text-[14px] tablet:text-[16px] content text-spanish-gray mb-6 xs:mb-8">
         Nhấn nút
         <span className="text-white-smoke font-semibold">
           {' '}
@@ -189,27 +190,27 @@ export default function OTPInputModal({
   };
 
   return (
-    <div className="fixed top-1/2 left-1/2 z-[1002] w-[320px] tablet:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] p-[24px] pb-[8px] tablet:p-[32px] tablet:pb-[8px] bg-eerie-black">
+    <div className="fixed top-1/2 left-1/2 z-[1002] w-[calc(100%-32px)] xs:w-[460px] transform -translate-x-1/2 -translate-y-1/2 rounded-[16px] py-[24px] px-[16px] xs:px-[24px] tablet:p-[32px] bg-eerie-black">
       <div>
-        <h1 className="text-[20px] mb-4 tablet:mb-8 tablet:text-2xl text-center tablet:text-left font-semibold text-smoke-white">
+        <h1 className="text-[20px] mb-4 tablet:mb-8 tablet:text-2xl text-left font-semibold text-smoke-white">
           {title || 'Xác thực mã OTP'}
         </h1>
 
         {renderDescription()}
 
         {!resSendOTP ? (
-          <div className="space-y-4">
+          <div>
             <button
               onClick={() =>
                 clickSendOTP(resPhoneInput?.switch_mode?.default?.method || '')
               }
-              className="relative h-12 w-full rounded-[52px] fpl-bg text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 mb-[24px]"
+              className="relative h-12 w-full text-[14px] xs:text-[16px] rounded-[52px] fpl-bg text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2"
             >
               {resPhoneInput?.switch_mode?.default?.icon && (
                 <img
                   src={resPhoneInput.switch_mode.default.icon}
                   alt="icon"
-                  className="w-6 h-6"
+                  className="w-[16px] h-[16px] xs:w-6 xs:h-6"
                 />
               )}
               {resPhoneInput?.switch_mode?.default?.text || 'Nhận mã OTP ngay'}
@@ -221,10 +222,10 @@ export default function OTPInputModal({
             {/* Hiển thị text "Chọn phương thức khác" nếu có modes */}
             {switchMode?.modes && switchMode.modes.length > 0 && (
               <div className="text-center">
-                {!showOtherMethods && (
+                {!showOtherMethods && switchMode?.modes && switchMode?.modes?.length > 1 && (
                   <button
                     onClick={() => setShowOtherMethods(!showOtherMethods)}
-                    className="cursor-pointer text-fpl transition-colors text-[16px] font-medium mb-[24px]"
+                    className="xs:mt-[24px] mt-[16px] cursor-pointer text-fpl transition-colors text-[16px] font-medium"
                   >
                     Chọn phương thức khác
                   </button>
@@ -232,7 +233,7 @@ export default function OTPInputModal({
 
                 {/* Dropdown hiển thị các phương thức khác */}
                 {showOtherMethods && (
-                  <div className="mt-2 space-y-2">
+                  <div className="flex flex-col xs:gap-[24px] gap-[16px] xs:mt-[24px] mt-[16px]">
                     {switchMode.modes.map((mode, index) => {
                       if (mode.method !== switchMode?.default?.method) {
                         return (
@@ -243,13 +244,14 @@ export default function OTPInputModal({
                               setSelectedMethod(mode.method || '');
                               setShowOtherMethods(false);
                             }}
-                            className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors mb-[24px]"
+                            className="w-full h-12 rounded-[52px] bg-charleston-green text-white-smoke text-[14px] xs:text-[16px] font-medium cursor-pointer flex items-center justify-center gap-2 hover:bg-black-olive-404040 transition-colors"
                           >
                             {mode.icon && (
-                              <img
+                              <CustomImage
                                 src={mode.icon}
                                 alt="icon"
-                                className="w-6 h-6"
+                                className="w-[16px] h-[16px] xs:w-6 xs:h-6"
+                                placeHolder="/images/Exclude.png"
                               />
                             )}
                             {mode.text}
@@ -266,7 +268,7 @@ export default function OTPInputModal({
         ) : (
           <form
             onSubmit={handleSubmit(handleOtpSubmit)}
-            className="grid grid-cols-[1fr_auto] gap-x-2 gap-y-1 mb-4"
+            className="grid grid-cols-[1fr_auto] gap-x-2"
           >
             {/* Input OTP */}
             <input
@@ -312,7 +314,7 @@ export default function OTPInputModal({
                 type="button"
                 onClick={() => clickReSendOTP(selectedMethod || '')}
                 disabled={isLoadingReSendOTP}
-                className="row-span-1 w-[138px] h-[48px] tablet:h-14 rounded-[52px] fpl-bg text-white-smoke text-[14px] tablet:text-base font-medium cursor-pointer hover:opacity-90 active:scale-[0.98]"
+                className="row-span-1 w-[121px] xs:w-[138px] h-[48px] tablet:h-14 rounded-[52px] fpl-bg text-white-smoke text-[14px] tablet:text-base font-medium cursor-pointer hover:opacity-90 active:scale-[0.98]"
               >
                 Gửi lại OTP
               </button>
@@ -329,7 +331,7 @@ export default function OTPInputModal({
             <button
               type="submit"
               disabled={!isOtpValid}
-              className={`col-span-2 h-12 mt-8 w-full rounded-[52px] font-medium transition-colors duration-200 border-none outline-none
+              className={`col-span-2 h-12 mt-6 xs:mt-8 w-full rounded-[52px] font-medium transition-colors duration-200 border-none outline-none
               ${
                 isOtpValid
                   ? 'fpl-bg text-white hover:opacity-90 active:scale-[0.98] cursor-pointer'
@@ -343,18 +345,18 @@ export default function OTPInputModal({
             {/* Hiển thị các phương thức OTP khác */}
             {switchMode?.modes && switchMode.modes.length > 0 && (
               <div className="col-span-2 mt-6">
-                <p className="text-[16px] font-medium text-spanish-gray mb-4 text-center">
-                  Bạn chưa nhận được mã?{' '}
+                <div className="flex flex-col xs:flex-row items-center justify-center gap-2">
+                  <p className="text-[16px] font-medium text-spanish-gray text-center">Bạn chưa nhận được mã?{' '}</p>
                   <span
-                    className={`${
+                    className={`cursor-pointer text-[16px] font-medium ${
                       (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) ? 'text-gray' : 'text-fpl'
                     }`}
                     onClick={() => (countdown > 0 || switchMode?.modes?.length === 1 || switchMode?.modes?.length === 0) ? null : setShowOtherOtpMethods(!showOtherOtpMethods)}
                   >
                     Chọn phương thức khác
                   </span>
-                </p>
-                <div className="space-y-[20px]" hidden={!showOtherOtpMethods}>
+                </div>
+                <div className="space-y-[20px] mt-4 xs:mt-6" hidden={!showOtherOtpMethods}>
                   {switchMode.modes.map((mode, index) => (
                     <button
                       key={index}
@@ -368,10 +370,10 @@ export default function OTPInputModal({
                         <img
                           src={mode.icon}
                           alt="icon"
-                          className="w-6 h-6 flex-shrink-0"
+                          className="w-[16px] h-[16px] xs:w-6 xs:h-6 flex-shrink-0"
                         />
                       )}
-                      <span className="text-white-smoke font-normal text-[16px] text-center">
+                      <span className="text-white-smoke font-normal text-[14px] xs:text-[16px] text-center">
                         {mode.text}
                       </span>
                     </button>

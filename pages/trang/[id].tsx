@@ -56,12 +56,7 @@ export default function CategoryPage() {
   } = usePageApi({});
   useEffect(() => {
     if (blocksSortedRecommend?.length > 0) {
-      trackingLoadBlockDisplayLog511(
-        blocksSortedRecommend.filter(
-          (item) =>
-            item?.need_recommend === '1' || item?.need_recommend === '2',
-        ),
-      );
+      trackingLoadBlockDisplayLog511(blocksSortedRecommend);
     }
   }, [blocksSortedRecommend]);
   const router = useRouter();

@@ -46,7 +46,7 @@ export default function useEvent({ slide, block }: Props) {
             if (countdowntime < 1) {
               status = null;
             } else if (countdowntime < 60) {
-              status = `Còn ${Math.round(countdowntime)} giây nữa`;
+              status = `Còn ${Math.floor(countdowntime)} giây nữa`;
             } else {
               const min = Math.floor(countdowntime / 60);
               status = `Còn ${min} phút nữa`;

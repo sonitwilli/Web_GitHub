@@ -237,7 +237,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
       const base = profileData?.nickname || profile?.nickname || '';
       const nick = removeVietnameseTones(base)
         .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '')
+        .replace(/[^a-zA-z0-9]+/g, '')
         .slice(0, 24);
       setNickname(nick);
       localStorage.setItem('initialNickname', nick);
@@ -256,10 +256,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   }, [profileData]);
 
   useEffect(() => {
-    if (!isEditingNickname) return;
-
-    setIsValidatingNickname(false);
-
     // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi nickname khác giá trị ban đầu
     if (nicknameChangeCount >= 1 && nickname !== initialNickname) {
       const timer = setTimeout(() => {
@@ -267,7 +263,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           setIsValidatingNickname(true);
           const errs = await validateNickname(nickname);
           setNicknameErrors(errs.slice(0, 1));
-          setIsValidatingNickname(false);
+          // Thêm delay nhỏ để đảm bảo loading spinner hiển thị
+          setTimeout(() => {
+            setIsValidatingNickname(false);
+          }, 300);
         })();
       }, 1000);
       return () => clearTimeout(timer);
@@ -275,18 +274,19 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   }, [nickname, isEditingNickname, nicknameChangeCount, initialNickname]);
 
   useEffect(() => {
-    if (!displayName) return;
-
     setIsValidatingDisplayName(false);
-
     // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi displayName khác giá trị ban đầu
     if (displayNameChangeCount >= 1 && displayName !== initialDisplayName) {
       const timer = setTimeout(() => {
         (async () => {
           setIsValidatingDisplayName(true);
           const errs = await validateDisplayName(displayName);
+          console.log('errs', errs);
+          
           setDisplayNameErrors(errs.slice(0, 1));
-          setIsValidatingDisplayName(false);
+          setTimeout(() => {
+            setIsValidatingDisplayName(false);
+          }, 300);
         })();
       }, 1000);
       return () => clearTimeout(timer);
@@ -295,8 +295,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   // Validation cho tên hồ sơ
   useEffect(() => {
-    if (!name) return;
-
     setIsValidatingName(false);
 
     // Chỉ chạy validation từ lần thay đổi thứ 2 trở đi và khi name khác giá trị ban đầu
@@ -306,7 +304,9 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           setIsValidatingName(true);
           const errs = await validateName(name);
           setNameErrors(errs.slice(0, 1));
-          setIsValidatingName(false);
+          setTimeout(() => {
+            setIsValidatingName(false);
+          }, 300);
         })();
       }, 1000);
       return () => clearTimeout(timer);
@@ -516,18 +516,22 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
   const validateNickname = async (value: string): Promise<string[]> => {
     const v = (value || '').trim();
-    const lower = v.toLowerCase();
     const len = v.length;
-    const allowed = /^[a-z0-9._]+$/.test(lower);
+    const allowed = /^[a-zA-Z0-9._]+$/.test(v);
 
-    if (v === localStorage.getItem('initialNickname')) {
+    // Normalize nickname để so sánh với initialNickname
+    const normalizedV = removeVietnameseTones(v)
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]+/g, '');
+
+    if (normalizedV === localStorage.getItem('initialNickname')) {
       return [];
     }
 
     // Priority 1
     if (!(len >= 2 && len <= 15) || !allowed || v === '') {
       return [
-        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, 0-9, dấu gạch dưới _ , dấu chấm .)',
+        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, A-Z, 0-9, dấu gạch dưới _ , dấu chấm .)',
       ];
     }
     // Priority 2
@@ -538,7 +542,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     }
 
     // Priority 3
-    if (/__|\.\.|_.|._/.test(v)) {
+    if (/__|\.\.|__.|.__/.test(v)) {
       return [
         'Biệt danh không thể chứa liên tiếp nhiều dấu gạch dưới, dấu chấm.',
       ];
@@ -546,7 +550,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
     // Remote validation
     try {
-      const apiRes = await verifyProfileName({ nickname: v });
+      const apiRes = await verifyProfileName({ nickname: v.toLowerCase() });
       if (apiRes?.status === '1') {
         return [];
       }
@@ -745,6 +749,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               <input
                 type="text"
                 value={displayName}
+                placeholder="Nhập tên hiển thị"
                 onChange={(e) => {
                   setDisplayName(e.target.value);
                   setDisplayNameChangeCount((prev) => prev + 1);
@@ -774,10 +779,20 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
           {/* Nickname */}
           {title === EDIT_PROFILE && (
-            <div className="w-full mb-[24px]">
-              <p className="text-white-smoke font-medium text-base leading-[1.3] mb-2">
+            <div
+              className={`w-full mb-[24px] flex gap-2 ${
+                isEditingNickname ? 'flex-col' : 'flex-row items-center'
+              }`}
+            >
+              <p className="text-white-smoke font-medium text-base leading-[1.3]">
                 Biệt danh
               </p>
+              {isEditingNickname && !msgWarningEditNickname && (
+                <p className="text-silver-chalice text-base leading-[1.3]">
+                  Thêm chữ cái (a-z, A-Z) và số để chọn biệt danh duy nhất. Bạn
+                  có thể thay đổi biệt danh của mình một lần trong mỗi 14 ngày.
+                </p>
+              )}
               {msgWarningEditNickname && (
                 <p className="text-silver-chalice text-base leading-[1.3] mb-2">
                   {msgWarningEditNickname}
@@ -785,7 +800,19 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               )}
               {!isEditingNickname ? (
                 <div className="flex items-center gap-2 text-silver-chalice text-base leading-[1.3]">
-                  <span>@{nickname}</span>
+                  <span
+                    onClick={() => {
+                      setIsEditingNickname(true);
+                      setNicknameChangeCount(0);
+                      setInitialNickname(
+                        removeVietnameseTones(nickname)
+                          .toLowerCase()
+                          .replace(/[^a-zA-Z0-9]+/g, ''),
+                      );
+                    }}
+                  >
+                    @{nickname}
+                  </span>
                   <button
                     type="button"
                     aria-label="Chỉnh sửa biệt danh"
@@ -793,7 +820,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                     onClick={() => {
                       setIsEditingNickname(true);
                       setNicknameChangeCount(0);
-                      setInitialNickname(nickname);
+                      setInitialNickname(
+                        removeVietnameseTones(nickname)
+                          .toLowerCase()
+                          .replace(/[^a-zA-Z0-9]+/g, ''),
+                      );
                     }}
                   >
                     <BiPencil className="ml-1" fontSize={16} />
@@ -819,7 +850,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                       setNicknameChangeCount((prev) => prev + 1);
                       if (nicknameErrors.length) setNicknameErrors([]);
                     }}
-                    maxLength={24}
+                    maxLength={15}
+                    placeholder="Nhập biệt danh"
                     className={`border ${
                       nicknameErrors.length
                         ? 'border-scarlet focus:border-scarlet'
@@ -840,7 +872,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
                 </div>
               )}
               {nicknameErrors.length > 0 && (
-                <div className="mt-3 text-left text-[#ef1348] text-base leading-6">
+                <div className="mt-1 text-left text-[#ef1348] text-base leading-6">
                   {nicknameErrors.map((msg, idx) => (
                     <div key={`nick-err-${idx}`}>{msg}</div>
                   ))}

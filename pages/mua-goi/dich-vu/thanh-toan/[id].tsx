@@ -173,7 +173,6 @@ const PendingPaymentPage: React.FC = () => {
             : null,
       },
     ]);
-    trackingRegisterPaymentLog417({ Event: 'Pending' });
   }, [router.isReady, router.query, redirectUrl]);
 
   // Polling logic (simulate startChecking)
@@ -249,6 +248,7 @@ const PendingPaymentPage: React.FC = () => {
               },
             });
           }
+          trackingRegisterPaymentLog417({ Event: 'Pending' });
         } catch (error) {
           console.log('checkTransactionStatusApi error', error);
           router.push({

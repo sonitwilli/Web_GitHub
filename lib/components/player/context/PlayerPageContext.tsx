@@ -963,19 +963,25 @@ export function PlayerPageContextProvider({ children }: Props) {
                 { key: trackingStoreKey.PLAYER_IS_REQUIRED_LOGIN, value: '1' },
               ],
             });
-            // yêu cầu login
+
+            setShowLoginPlayer(true);
+            setShowModalLogin(true);
+
+            // yêu cầu login - Ưu tiên load trailer_url ngay để player play luôn
             if (response?.data?.trailer_url) {
               setLoginManifestUrl(response?.data?.trailer_url);
             }
-            setShowLoginPlayer(true);
-            setShowModalLogin(true);
+
+            // Nếu không có trailer_url, vẫn dispatch login modal
             if (streamType === 'vod' || streamType === 'playlist') {
               dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
             }
             if (
               (streamType === 'event' || streamType === 'premiere') &&
-              response?.data?.require_vip_plan
+              channelDetailData?.type === 'event' &&
+              !previewHandled
             ) {
+              setShowModalLogin(false);
               dispatch(changeTimeOpenModalRequireLogin(new Date().getTime()));
             }
           } else if (status === 406) {
@@ -1391,6 +1397,11 @@ export function PlayerPageContextProvider({ children }: Props) {
     }
     if (!dataEvent) return;
     if (isPrepareLive === false) {
+      // Skip re-init nếu đang play trailer_url (tránh giật player trên Edge/Safari)
+      if (showLoginPlayer && loginManifestUrl) {
+        console.log('--- SKIP re-init: already playing trailer_url');
+        return;
+      }
       // Re-init lại player flow sau khi chuẩn bị xong
       setDataStream({}); // <- force clear để Player component re-render lại
       getData(); // Gọi lại để fetch stream & phát lại

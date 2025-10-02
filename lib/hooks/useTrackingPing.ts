@@ -44,9 +44,6 @@ export const checkScreen = (): TrackingScreen => {
       case 7:
         value = 'PingTrailer';
         break;
-      case 8:
-        value = 'PingPladio';
-        break;
       case 9:
         value = 'PingPreview';
         break;

@@ -153,7 +153,6 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
   const handleClose = useCallback(() => {
     if (intervalRef.current) clearInterval(intervalRef.current);
     onClose();
-    trackingCancelExtraRegisterLog418({});
   }, [onClose]);
 
   if (!data) {
@@ -175,7 +174,10 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
         {/* Mobile close icon */}
         <button
           className="text-gray-500 float-right block md:hidden absolute right-2 top-2 z-10"
-          onClick={handleClose}
+          onClick={() => {
+            handleClose();
+            trackingCancelExtraRegisterLog418({});
+          }}
           aria-label="Đóng"
         >
           <IoCloseCircle className="w-6 h-6 text-dim-gray" />
@@ -205,7 +207,10 @@ const ModalPaymentQR: React.FC<ModalPaymentQRProps> = ({
           {/* Desktop close icon */}
           <button
             className="text-gray-500 float-right mt-0 hidden md:block absolute right-3 top-3 z-10 cursor-pointer"
-            onClick={handleClose}
+            onClick={() => {
+              handleClose();
+              trackingCancelExtraRegisterLog418({});
+            }}
             aria-label="Đóng"
           >
             <IoCloseCircle className="w-6 h-6 text-dim-gray" />

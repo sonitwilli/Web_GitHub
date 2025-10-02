@@ -164,7 +164,7 @@ const LibrarySlide: React.FC<PropType> = (props) => {
       <div className={`block-slider ${slideClassName}`}>
         {/* Selection controls */}
         {slidesItems && slidesItems.length > 0 && (
-          <div className="flex items-center gap-4 mb-6 absolute top-[-2px] right-0">
+          <div className="flex items-center gap-4 mb-6 absolute top-[42px] sm:top-[-2px] right-auto sm:right-0 left-0 sm:left-auto ">
             {!isSelectionMode && queryId && (
               <button
                 onClick={toggleSelectionMode}

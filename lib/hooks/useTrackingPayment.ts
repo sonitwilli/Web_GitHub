@@ -26,6 +26,7 @@ const getPaymentTrackingData = () => {
     ItemId: playerParams?.ItemId || '',
     RefItemId: playerParams?.ItemId || '',
     ItemName: paymentData?.payment?.data?.plan_id || '',
+    playing_session: playerParams?.playing_session || '',
   };
 };
 
@@ -45,21 +46,31 @@ export const trackingRegisterPaymentLog417 = ({
     const playerParams: any = getPlayerParams();
     const paymentParams = getPaymentTrackingData();
     const isTvod = playerParams.FType === '2';
-    console.log('---PAYMENT trackingRegisterPaymentLog417', playerParams);
 
     let LogId = '417';
-    Event = Status === 'Success' ? 'RegisteredSuccess' : 'RegisteredFailed';
+    Event =
+      Status === 'Pending' || Status === 'TimeOut'
+        ? Status
+        : Status === 'Success'
+        ? 'RegisteredSuccess'
+        : 'RegisteredFailed';
     if (isTvod) {
       LogId = '141';
-      Event = Status === 'Success' ? 'EnrolledSuccess' : 'EnrolledFailed';
+      Event =
+        Status === 'Pending' || Status === 'TimeOut'
+          ? Status
+          : Status === 'Success'
+          ? 'EnrolledSuccess'
+          : 'EnrolledFailed';
     }
-    tracking({
+    const data = {
       LogId,
       Event,
       ErrCode,
       ErrMessage,
       ...paymentParams,
-    });
+    };
+    tracking(data);
   } catch {}
 };
 
@@ -71,6 +82,7 @@ export const trackingCancelExtraRegisterLog418 = ({
     if (typeof window === 'undefined') {
       return;
     }
+    console.log('---PAYMENT DATA trackingCancelExtraRegisterLog418');
     const paymentParams = getPaymentTrackingData();
     tracking({
       LogId: '418',

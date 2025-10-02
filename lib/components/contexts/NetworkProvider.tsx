@@ -35,7 +35,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         if (router.asPath !== url) {
           // Show toast khi user cố navigate
           showToast({
-            title: 'Không có kết nối mạng',
+            title: 'Mất kết nối mạng',
             customIcon: <NoInternetIcon />,
             timeout: 3000,
           });
@@ -60,7 +60,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
         if (isOffline) {
           // Show toast khi user dùng back/forward
           showToast({
-            title: 'Không có kết nối mạng',
+            title: 'Mất kết nối mạng',
             customIcon: <NoInternetIcon />,
             timeout: 3000,
           });
@@ -79,7 +79,7 @@ const NetworkProvider: React.FC<Props> = ({ children }) => {
           event.stopPropagation();
           // Show toast khi user click link
           showToast({
-            title: 'Không có kết nối mạng',
+            title: 'Mất kết nối mạng',
             customIcon: <NoInternetIcon />,
             timeout: 3000,
           });

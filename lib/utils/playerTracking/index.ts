@@ -10,7 +10,6 @@ import {
   SELECTED_SUBTITLE,
   SELECTED_SUBTITLE_LABEL,
   SELECTED_VIDEO_QUALITY,
-  SOURCE_PROVIDER,
   VIDEO_CURRENT_TIME,
   VIDEO_ID,
   VIDEO_TIME_BEFORE_ERROR,
@@ -496,11 +495,11 @@ export const getTrackingParamIsLive = () => {
   // 5: Preview Channel => pathname + field previewHandled
   // 6: Preview Liveshow => pathname + field previewHandled
   // 7: Trailer => data stream
-  // 8: Pladio
+  // 8: Pladio => Không còn dùng, luôn trả về VOD nếu là content PLADIO
   // 9: PreviewVOD => pathname + field previewHandled
   // 10: Timeshift => pathname
   const url = window.location.pathname;
-  const { dataStream, dataChannel } = getContentData();
+  const { dataStream } = getContentData();
   const isVod = url.includes('/xem-video/');
   const isChannel = url.includes('/xem-truyen-hinh/');
   const isEvent = url.includes('/su-kien/');
@@ -510,9 +509,6 @@ export const getTrackingParamIsLive = () => {
   if (isVod) {
     if (isPreview) {
       return 9;
-    }
-    if (dataChannel?.source_provider === SOURCE_PROVIDER.PLADIO) {
-      return 8;
     }
     if (dataStream) {
       const isTrailer = dataStream?.is_trailer;
