@@ -230,6 +230,28 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
         />
       )}
       
+      {/* Google Analytics */}
+      {process.env.NEXT_PUBLIC_GA && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
+            strategy="afterInteractive"
+          />
+          <Script
+            id="ga-script"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA}');
+              `,
+            }}
+          />
+        </>
+      )}
+      
       <div className="f-container" id="nvm"></div>
       <SeoHead seo={seoProps} />
       <NetworkProvider>
