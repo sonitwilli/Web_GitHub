@@ -399,7 +399,7 @@ const InforVideoComponent = (props: PropsVideo) => {
             </div>
           </div>
           <div className="meta_data mb-[16px] xl:mb-[24px] text-spanish-gray text-[14px] xl:text-[16px]">
-            <div className="flex mb-[8px] xl:mb-[12px] gap-[6px] xl:gap-[8px]">
+            <div className="flex flex-wrap mb-[8px] xl:mb-[12px] gap-[6px] xl:gap-[8px]">
               {dataVideo?.meta_data?.map((meta, index) => (
                 <div key={index} className="flex gap-[6px] xl:gap-[8px]">
                   <span>{meta}</span>
