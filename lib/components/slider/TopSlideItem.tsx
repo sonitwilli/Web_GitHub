@@ -234,8 +234,8 @@ export default function TopSlideItem({ slide, block, isInview, index }: Props) {
             slide?.detail?.short_description) && (
             <div className="flex items-center gap-[2px] md:gap-[6px] mt-[8px] tablet:max-w-none truncate">
               {vodDetailHighlight && vodDetailHighlight?.length > 0 && (
-                <div className="max-w-[390px] tablet:max-w-[590px]">
-                  <div className="whitespace-nowrap overflow-hidden [&>div]:inline-flex [&>div]:items-center [&>div]:gap-[6px]">
+                <div className="max-w-[390px] xl:max-w-[590px]">
+                  <div className="whitespace-nowrap overflow-hidden truncate [&>div]:inline-flex [&>div]:items-center [&>div]:gap-[6px]">
                     <VodMetaData
                       metaData={vodDetailHighlight}
                       type="top-slide"

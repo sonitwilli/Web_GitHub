@@ -14,7 +14,7 @@ export default function VodMetaData({ metaData, type }: Props) {
       {metaData?.map((detail, index) => (
         <div
           key={index}
-          className={`flex items-center gap-[2px] md:gap-[4px] font-[500] text-shadow-top-slide`}
+          className={`inline-flex items-center gap-[2px] md:gap-[4px] font-[500] text-shadow-top-slide`}
         >
           <span
             className={` text-[18px] ${detail?.color ? 'text-fpl' : ''} ${
