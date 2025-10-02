@@ -586,7 +586,7 @@ export default function Header() {
                     return (
                       <Link
                         key={`menu-item-${index}-${menu.id}`}
-                        href={`/trang/${menu.id}`}
+                        href={menu.id === 'home' || menu.id === 'home-kids' ? '/' : `/trang/${menu.id}`}
                         className={`text-primary-gray hover:text-fpl 2xl:text-[18px] font-[600] xl:max-w-[110px] xl:line-clamp-1 ${
                           menu.id === activeMenu?.id ? 'text-white' : ''
                         }`}

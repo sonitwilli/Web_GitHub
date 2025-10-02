@@ -186,11 +186,16 @@ const generateTVSeriesStructuredData = (
   const episodeTotal = vodData.episode_total ? parseInt(String(vodData.episode_total), 10) : 1;
   const isMovie = episodeTotal <= 1;
 
+  const prioritizedName = (vodData.title_vie as string) || 
+                         (vodData.title as string) || 
+                         (vodData.title_origin as string) || 
+                         title;
+
   const structuredData: Record<string, unknown> = {
     '@context': 'https://schema.org',
     '@type': isMovie ? 'Movie' : 'TVSeries',
     url,
-    name: title,
+    name: prioritizedName,
     image: finalImage,
   };
 
@@ -227,8 +232,7 @@ const generateTVSeriesStructuredData = (
       }
     }
     if (availableLanguage && availableLanguage.length > 0) {
-      structuredData.inLanguage = availableLanguage[0]; // Use first language as string
-      structuredData.availableLanguage = availableLanguage; // Keep array for all languages
+      structuredData.inLanguage = availableLanguage;
     }
     if (canonical) {
       structuredData.url = canonical;

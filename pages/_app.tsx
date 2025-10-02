@@ -5,6 +5,7 @@ import { RootState, store } from '@/lib/store';
 import AppContainer from '@/lib/components/container/AppContainer';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { useRouter } from 'next/router';
+import Script from 'next/script';
 import PageLoading from '@/lib/components/loading/page-loading';
 import { DEVICE_ID, TAB_ID } from '@/lib/constant/texts';
 import { generateId } from '@/lib/utils/methods';
@@ -227,6 +228,45 @@ export default function App({ Component, pageProps }: AppPropsWithSeo) {
   }
   return (
     <Provider store={store}>
+      {/* Google Tag Manager */}
+      {process.env.NEXT_PUBLIC_GTM && (
+        <Script
+          id="gtm-script"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+              })(window,document,'script','dataLayer','${process.env.NEXT_PUBLIC_GTM}');
+            `,
+          }}
+        />
+      )}
+      
+      {/* Google Analytics */}
+      {process.env.NEXT_PUBLIC_GA && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA}`}
+            strategy="afterInteractive"
+          />
+          <Script
+            id="ga-script"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${process.env.NEXT_PUBLIC_GA}');
+              `,
+            }}
+          />
+        </>
+      )}
+      
       <div className="f-container" id="nvm"></div>
       <SeoHead seo={seoProps} />
       <NetworkProvider>
