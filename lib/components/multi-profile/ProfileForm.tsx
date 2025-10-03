@@ -458,8 +458,6 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
     // Priority 1: Length and allowed characters
     if (!(len >= 2 && len <= 20) || !allowed || v === '') {
-      console.log('Length and allowed characters', v);
-
       return [
         'Tên hiển thị không hợp lệ. Tên hiển thị bao gồm từ 2 đến 15 ký tự (a-z, 0-9)',
       ];
@@ -531,7 +529,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     // Priority 1
     if (!(len >= 2 && len <= 15) || !allowed || v === '') {
       return [
-        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, A-Z, 0-9, dấu gạch dưới _ , dấu chấm .)',
+        'Biệt danh bao gồm từ 2 đến 15 ký tự (a-z, 0-9, dấu gạch dưới _ , dấu chấm .)',
       ];
     }
     // Priority 2
@@ -683,6 +681,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               <input
                 type="text"
                 value={name}
+                placeholder="Nhập tên hồ sơ"
                 onChange={(e) => {
                   setName(e.target.value);
                   setNameChangeCount((prev) => prev + 1);
@@ -789,8 +788,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
               </p>
               {isEditingNickname && !msgWarningEditNickname && (
                 <p className="text-silver-chalice text-base leading-[1.3]">
-                  Thêm chữ cái (a-z, A-Z) và số để chọn biệt danh duy nhất. Bạn
-                  có thể thay đổi biệt danh của mình một lần trong mỗi 14 ngày.
+                  Thêm chữ cái và số để chọn biệt danh duy nhất. Bạn có thể thay đổi biệt danh của mình một lần trong mỗi 14 ngày.
                 </p>
               )}
               {msgWarningEditNickname && (
